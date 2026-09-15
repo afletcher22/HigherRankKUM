@@ -2,38 +2,43 @@
 
 `HigherRankKUM` is a research successor to `afletcher22/Rank3KUM`, not a fork and not a replacement for the rank-three proof artifact.
 
-## Primary migration source
+## Generic migration source
 
-- Source repository: `afletcher22/Rank3KUM`
-- Source branch: `higher-rank-gluing-experiment`
-- Source commit: `31ade8d073d7bedbf03b49612a76cea74dbc3b58`
-- Source tree: `45c7020a7c4232797ecd8c2c872db4f348c08baf`
-- Lean toolchain at source: `leanprover/lean4:v4.33.0-rc2`
-- mathlib revision at source: `v4.33.0-rc2`
+The initial higher-rank infrastructure was extracted from:
 
-This checkpoint contains the furthest higher-rank generalization work found in the Rank3KUM repository at migration time, including the arbitrary-rank restriction/contraction gluing machinery and the generic tight-set induction reduction.
+- source repository: `afletcher22/Rank3KUM`;
+- source branch: `higher-rank-gluing-experiment`;
+- source commit: `31ade8d073d7bedbf03b49612a76cea74dbc3b58`;
+- source tree: `45c7020a7c4232797ecd8c2c872db4f348c08baf`;
+- Lean toolchain: `leanprover/lean4:v4.33.0-rc2`;
+- mathlib: `v4.33.0-rc2`.
 
-## Supporting source checkpoints
+That checkpoint contained the arbitrary-rank restriction/contraction gluing machinery and generic tight-set induction that were subsequently separated from rank-three-specific imports.
 
-- `generic-gluing-ablation` head: `22af08319c3489c49d1c5c6d874c2b81c8e57660`
-  - Used as supporting evidence about which gluing machinery survives independently of the rank-three proof architecture.
-- `version-3` head at migration audit: `eff642a2e01fac4fc1f6f76e592eeea46c3152c9`
-  - This branch is treated as the publication/Palomar line for Rank3KUM, not as the source of higher-rank research code.
+## Frozen rank-three base
 
-## Migration principle
+The completed rank-three proof is separately vendored from the publication/Palomar line:
 
-The new repository contains only machinery that is genuinely useful for higher-rank KUM research.
+- source repository: `afletcher22/Rank3KUM`;
+- source branch at selection time: `version-3`;
+- exact source commit: `eff642a2e01fac4fc1f6f76e592eeea46c3152c9`;
+- source commit tree: `05ec48559859c6f64d90cbac38b352c287fdf503`;
+- exact source `Rank3KUM/` subtree: `a73e2f94c811a4f2f072e197d1a03656bc53f616`;
+- source root `Rank3KUM.lean` blob: `d5772bbc9f798d202ddd41af84b928dab67e91d4`.
 
-Rank-three-specific proof machinery remains historically associated with `Rank3KUM`, but HigherRankKUM does **not** treat that repository as a build dependency. References to Rank3KUM are provenance only. The trusted HigherRankKUM Lean tree must remain buildable if Rank3KUM later changes or disappears.
+The directory `vendor/Rank3KUM/Rank3KUM/` has the same Git tree SHA `a73e2f94c811a4f2f072e197d1a03656bc53f616`, providing direct Git-level confirmation that the Lean source subtree is byte-for-byte identical to the selected v3 source. The root source and license were copied alongside it.
 
-When a certified low-rank result is needed internally, it must be either proved natively in HigherRankKUM or vendored as an immutable, provenance-recorded snapshot. Until then, higher-rank theorems take the appropriate solver certificate explicitly.
+`vendor/Rank3KUM/SOURCE.md` and `vendor/Rank3KUM/SHA256SUMS` make this origin and integrity independently auditable inside HigherRankKUM.
 
-See `docs/DEPENDENCY_POLICY.md`.
+## Supporting historical checkpoints
 
-## Namespace policy
+- `generic-gluing-ablation` head `22af08319c3489c49d1c5c6d874c2b81c8e57660` was used when auditing which gluing machinery survives independently of the rank-three proof architecture.
+- Rank3KUM `version-3` remains the publication/Palomar line. Later edits there do not alter HigherRankKUM's frozen snapshot unless an explicit vendor upgrade is performed.
 
-Migrated declarations live under `HigherRankKUM`, even when their first implementation originated under `Rank3KUM`. This makes the dependency boundary explicit and prevents the research successor from masquerading as an extension of the old namespace.
+## Namespace and dependency policy
 
-## Reproducibility rule
+Generic declarations live under `HigherRankKUM`. The vendored legacy source deliberately retains its original `Rank3KUM` namespace so it can remain unchanged. A single adapter, `HigherRankKUM/LowRank/RankThree.lean`, translates the completed rank-three theorem into HigherRankKUM's generic solver interface.
 
-Every copied or rewritten theorem retains a traceable source entry in `docs/MIGRATION_MANIFEST.md`. If a theorem is materially rewritten during migration, the manifest records both its Rank3KUM source declaration and its new HigherRankKUM declaration.
+Rank3KUM is therefore historical provenance and frozen local source, **not a live build dependency**.
+
+Every migrated or adapted theorem should remain traceable through `docs/MIGRATION_MANIFEST.md`.
