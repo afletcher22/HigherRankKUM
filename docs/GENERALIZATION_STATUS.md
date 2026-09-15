@@ -5,7 +5,8 @@ This file distinguishes certified generic infrastructure from rank-specific resu
 ## Status vocabulary
 
 - **Formalized generic** — Lean theorem has no fixed ambient-rank hypothesis and lives in the HigherRankKUM generic dependency chain.
-- **Formalized conditional** — Lean theorem is generic but assumes lower-rank KUM solvers or other hypotheses not yet supplied internally by this repo.
+- **Formalized internal** — a rank-specific theorem is proved entirely inside HigherRankKUM and is available without external project dependencies.
+- **Formalized conditional** — Lean theorem assumes a lower-rank KUM solver or another hypothesis not yet supplied internally by this repo.
 - **Internalization pending** — a result is certified in the source project, but HigherRankKUM does not yet contain its own internal certified implementation.
 - **Research target** — no formal proof is currently present in HigherRankKUM.
 
@@ -35,7 +36,7 @@ The following has been migrated from the Rank3KUM higher-rank exploration and se
 
 `SolvesDivisibleKUMBelow α r` records that all positive lower ranks are solved in this divisible sense.
 
-The migrated theorem
+The theorem
 
 `exists_cyclicBasisOrder_of_nonempty_proper_tight_of_lower_ranks`
 
@@ -47,19 +48,27 @@ Thus, **inside the divisible subproblem**, new work at rank `r` can be restricte
 
 ## Low-rank bases
 
-- Rank 1: **formalized internally** in `HigherRankKUM/LowRank/RankOne.lean`.
-- Rank 2: **internalization pending**. A certified proof exists in the source project through HalfWeave, but HigherRankKUM intentionally has no live dependency on that code.
+- Rank 1: **formalized internal** in `HigherRankKUM/LowRank/RankOne.lean`.
+- Rank 2: **formalized internal** in `HigherRankKUM/LowRank/RankTwo.lean` and its `RankTwo/` support modules. The implementation is a compressed HalfWeave proof using the weakest largest-first block hypothesis needed by the argument.
 - Rank 3: **internalization pending**. The completed theorem exists in Rank3KUM, but HigherRankKUM intentionally has no live dependency on Rank3KUM.
 
-Ranks 2 and 3 should eventually be supplied by native internal proofs or by a clearly marked immutable vendored snapshot with exact provenance. Until then, the generic induction theorem remains conditional on explicit solver certificates.
+The rank-two internalization was independently rebuilt in the HigherRankKUM namespace rather than connected through an external Git dependency. CI confirms that the trusted tree contains no Rank3KUM imports.
+
+Rank three should eventually be supplied by a native internal proof or by a clearly marked immutable vendored snapshot with exact provenance. Until then, the generic induction theorem remains conditional only where rank three is needed.
 
 No axiom is introduced to bridge this gap.
 
 ## Rank 4
 
-For the **divisible** rank-four subproblem (`|E| = 4k`), the generic theorem shows that all cases with a nonempty proper tight set reduce to ranks 1, 2, and 3. `HigherRankKUM/Rank4/TightReduction.lean` exposes this specialization while taking the missing rank-2 and rank-3 solver certificates explicitly.
+For the **divisible** rank-four subproblem (`|E| = 4k`), the generic theorem shows that all cases with a nonempty proper tight set reduce to ranks 1, 2, and 3. Ranks 1 and 2 are already internal.
 
-Once ranks 2 and 3 are internalized, only the strictly uniformly dense divisible branch remains new within the divisible regime.
+`HigherRankKUM/Rank4/TightReduction.lean` therefore takes only
+
+`SolvesDivisibleKUMAtRank α 3`
+
+as an explicit solver certificate. Once rank three is internalized, the entire nonempty-proper-tight divisible rank-four branch will be internally discharged.
+
+At that point, only the strictly uniformly dense divisible branch remains new within the divisible regime.
 
 However, full rank-four KUM contains an additional arithmetic regime that did not occur in rank three: ground sizes with
 
@@ -86,11 +95,10 @@ These should be re-derived in HigherRankKUM from the generic reduction rather th
 
 Immediate targets are:
 
-1. internalize certified rank 2 without introducing a live Rank3KUM dependency;
-2. internalize certified rank 3 without introducing a live Rank3KUM dependency;
-3. then discharge the explicit rank-2/rank-3 hypotheses in the divisible rank-four tight-set corollary;
-4. characterize the strictly uniformly dense divisible rank-four branch;
-5. separately investigate the `gcd(|E|,4)=2` regime;
-6. determine which rank-three strict-branch ideas (deletion, repair, splicing, gap control) have meaningful rank-four analogues before porting any implementation.
+1. internalize certified rank 3 without introducing a live Rank3KUM dependency;
+2. then discharge the final explicit low-rank hypothesis in the divisible rank-four tight-set corollary;
+3. characterize the strictly uniformly dense divisible rank-four branch;
+4. separately investigate the `gcd(|E|,4)=2` regime;
+5. determine which rank-three strict-branch ideas (deletion, repair, splicing, gap control) have meaningful rank-four analogues before porting any implementation.
 
 See `docs/DEPENDENCY_POLICY.md` for the standalone-repository requirement.
