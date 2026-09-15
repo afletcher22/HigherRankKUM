@@ -43,8 +43,12 @@ jobs:
           fi
           grep -q '^name = "Rank3KUM"$' lakefile.toml
           grep -q '^srcDir = "vendor/Rank3KUM"$' lakefile.toml
+      - name: Verify Sprint 2 obstruction certificate
+        run: python3 experiments/sprint2_pair_obstruction_certificate.py
       - name: Build Sprint 2 modules
         run: |
           lake build +HigherRankKUM.BinaryRelationCycle
           lake build +HigherRankKUM.PairCycle
+          lake build +HigherRankKUM.PairCycleIndexing
+          lake build +HigherRankKUM.AdmissiblePairCycle
           lake build +HigherRankKUM.PairCycleObstruction
