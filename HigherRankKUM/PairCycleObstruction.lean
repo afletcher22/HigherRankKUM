@@ -1,5 +1,4 @@
-import HigherRankKUM.PairCycle
-import HigherRankKUM.CyclicIndex
+import HigherRankKUM.AdmissiblePairCycle
 import Mathlib.Data.Nat.ModEq
 
 namespace HigherRankKUM
@@ -89,6 +88,32 @@ theorem orientable_of_local_slack
   have hforced := (not_orientable_iff_forced_no_fixed_point hN hcop hfull).1 hnot
   obtain ⟨i, hi⟩ := hslack
   exact hi (hforced.1 i)
+
+/-- Matroid application: for an exact admissible pair cycle in the nontrivial
+range, the only fixed-cycle orientation obstruction is a forced Boolean
+transition at every pair whose total successor-cycle composition has no fixed
+point. -/
+theorem admissible_pair_cycle_not_orientable_iff
+    {α : Type*} {M : Matroid α} {N h : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N h hN)
+    (hh : 0 < h) (hhN : h < N) (hcop : Nat.gcd N h = 1) :
+    ¬ PairRelationOrientable N h hN (A.localRelation hh) ↔
+      (∀ i, BijectionRelation (A.localRelation hh i)) ∧
+      (¬ ∃ x,
+        composeList (relationCycleList N h hN (A.localRelation hh)) x x) := by
+  exact not_orientable_iff_forced_no_fixed_point hN hcop
+    (A.localRelation_fullSupport hh hhN)
+
+/-- Matroid corollary: a single local relation with slack makes the given
+admissible pair cycle orientable at the compatibility-relation level. -/
+theorem admissible_pair_cycle_orientable_of_local_slack
+    {α : Type*} {M : Matroid α} {N h : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N h hN)
+    (hh : 0 < h) (hhN : h < N) (hcop : Nat.gcd N h = 1)
+    (hslack : ∃ i, ¬ BijectionRelation (A.localRelation hh i)) :
+    PairRelationOrientable N h hN (A.localRelation hh) := by
+  exact orientable_of_local_slack hN hcop
+    (A.localRelation_fullSupport hh hhN) hslack
 
 end PairCycleObstruction
 end HigherRankKUM
