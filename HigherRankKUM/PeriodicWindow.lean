@@ -91,7 +91,7 @@ theorem cyclicIndex_blockPosition_mul
       omega
     exact hstep.trans_le hblock_le
   calc
-    (i.val + d.val + r * j) % (r * k) =
+    (d.val + r * i.val + r * j) % (r * k) =
         (d.val + r * (i.val + j)) % (r * k) := by
           congr 1
           ring
