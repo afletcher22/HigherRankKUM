@@ -2,13 +2,14 @@
 
 Source checkpoint: `afletcher22/Rank3KUM@31ade8d073d7bedbf03b49612a76cea74dbc3b58` (`higher-rank-gluing-experiment`).
 
-This document records where HigherRankKUM's initial generic infrastructure came from. Rank3KUM is **provenance, not a build dependency**.
+This document records where HigherRankKUM's initial infrastructure came from. Rank3KUM is **provenance, not a build dependency**.
 
 Status labels:
 
 - **MIGRATED** — now lives in HigherRankKUM's trusted Lean tree.
 - **REFACTORED** — reusable mathematics was separated from rank-three-specific dependencies during migration.
-- **INTERNALIZATION PENDING** — certified low-rank mathematics exists in the source project but is not yet independently available inside HigherRankKUM.
+- **COMPRESSED MIGRATION** — the mathematical route was retained, but a smaller dependency slice was rebuilt instead of copying the full source subsystem.
+- **INTERNALIZATION PENDING** — certified mathematics exists in the source project, but HigherRankKUM does not yet contain its own internal certified implementation.
 - **REFERENCE ONLY** — retained as a proof-pattern/regression reference, not copied into the trusted tree.
 - **DROP** — publication, Palomar, compression-history, or obsolete duplicate material that does not belong here.
 
@@ -34,17 +35,29 @@ Status labels:
 | Source mathematics | Status | HigherRankKUM destination | Policy |
 |---|---|---|---|
 | Rank-one part of `LowRankCyclicGeneral.lean` | MIGRATED | `HigherRankKUM/LowRank/RankOne.lean` | Fully internal and standalone. |
-| Rank-two HalfWeave route | INTERNALIZATION PENDING | future `HigherRankKUM/LowRank/RankTwo.lean` | Must be proved internally or vendored immutably; no live Rank3KUM dependency. |
+| Rank-two HalfWeave route | COMPRESSED MIGRATION | `HigherRankKUM/LowRank/RankTwo.lean` plus `LowRank/RankTwo/*` | Rebuilt from the minimal dependency slice needed by the direct proof; no Rank3KUM import and no legacy fully-sorted closure-block stack. |
 | Completed rank-three theorem | INTERNALIZATION PENDING | future internal/vendored rank-three base | Must be made internally available without a live Rank3KUM dependency. |
-| `solvesDivisibleKUMAtRank_one/two/three` wrappers | PARTIAL | future `HigherRankKUM/LowRank/Solvers.lean` | Rank 1 can be discharged now; ranks 2–3 remain explicit solver hypotheses until internalized. |
+| `solvesDivisibleKUMAtRank_one/two/three` wrappers | PARTIAL | current rank-one/rank-two modules; future rank-three base | Ranks 1 and 2 are internally discharged. Rank 3 remains an explicit solver hypothesis where needed. |
 
-No axioms are introduced to pretend the missing low-rank internalizations are present.
+### Rank-two compression details
+
+The source HalfWeave development spans a larger collection of files, including legacy stronger sorted-block infrastructure. HigherRankKUM keeps only the mathematical dependency slice used by the direct uniform-density proof:
+
+- `LowRank/RankTwo/Indexing.lean` — cyclic half-weave indexing;
+- `LowRank/RankTwo/LargestFirst.lean` — the weak largest-first contiguous-block condition and crossing lemmas;
+- `LowRank/RankTwo/FinitePartition.lean` — generic finite-partition flattening with a largest block first;
+- `LowRank/RankTwo/Matroid.lean` — singleton-closure partition, density bound, and adjacent-base theorem;
+- `LowRank/RankTwo.lean` — bridge to the generic `CyclicBasisOrder` interface and `solvesDivisibleKUMAtRank_two`.
+
+The stronger legacy `SortedBlockModel` route is intentionally not part of the migrated trusted tree.
+
+No axioms are introduced to pretend the missing rank-three internalization is present.
 
 ## First higher-rank consequence
 
 | Rank3KUM source | Status | HigherRankKUM destination | Notes |
 |---|---|---|---|
-| `RankFourTightCorollaryGeneral.lean` | REFACTORED | `HigherRankKUM/Rank4/TightReduction.lean` | Clean specialization of the generic theorem; rank-2 and rank-3 solver certificates remain explicit hypotheses. |
+| `RankFourTightCorollaryGeneral.lean` | REFACTORED | `HigherRankKUM/Rank4/TightReduction.lean` | Clean specialization of the generic theorem; ranks 1 and 2 are internal, so only the rank-3 solver certificate remains explicit. |
 | `RankFourTightReduction.lean` | REFERENCE ONLY | documentation/regression reference | Explicit `1+3`, `2+2`, `3+1` derivation is not the production architecture. |
 | `HigherRankTightCorollaries.lean` | FUTURE RE-DERIVATION | future `HigherRankKUM/Consequences/` | Rank-5/6 consequences should be recovered from the generic reduction rather than copied with duplicate bookkeeping. |
 
@@ -94,9 +107,9 @@ Lean / pinned mathlib
         ↓
 HigherRankKUM generic core
         ↓
-internal low-rank solver interface
+internal rank-1 / rank-2 solvers
         ↓
-conditional / discharged tight-set induction
+conditional lower-rank induction (rank 3 still explicit where needed)
         ↓
 rank-4 and higher-rank research
 ```
