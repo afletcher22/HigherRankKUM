@@ -4,50 +4,59 @@ HigherRankKUM is intended to remain buildable and mathematically stable even if 
 
 ## Hard rule
 
-The trusted HigherRankKUM Lean tree must not depend on a live Rank3KUM branch, tag, release, or repository path.
+The trusted HigherRankKUM development must not depend on a live Rank3KUM branch, tag, release, or repository path.
 
 In particular:
 
-- no `import Rank3KUM...` statements are permitted in `HigherRankKUM/`;
-- Rank3KUM must not appear as a Lake dependency;
-- higher-rank theorems must not rely on mutable branch names from Rank3KUM;
-- references to Rank3KUM in documentation are provenance only, not build dependencies.
+- Rank3KUM must not appear as an external Lake/Git dependency;
+- higher-rank theorems must not rely on mutable Rank3KUM refs;
+- the generic HigherRankKUM core must not import rank-three-specific proof machinery;
+- documentation links to Rank3KUM are provenance only.
 
-CI enforces the import boundary.
+## Frozen local rank-three base
+
+The completed rank-three theorem is available through a vendored immutable source snapshot at `vendor/Rank3KUM/`.
+
+The snapshot was copied byte-for-byte from:
+
+- repository `afletcher22/Rank3KUM`;
+- branch `version-3` at selection time;
+- commit `eff642a2e01fac4fc1f6f76e592eeea46c3152c9`;
+- `Rank3KUM/` tree `a73e2f94c811a4f2f072e197d1a03656bc53f616`.
+
+It is registered as a **local** Lake library with `srcDir = "vendor/Rank3KUM"`. No network access to Rank3KUM is needed to build HigherRankKUM after checkout.
+
+Only `HigherRankKUM/LowRank/RankThree.lean` may import the vendored `Rank3KUM` namespace. That adapter exposes the narrow generic certificate
+
+`solvesDivisibleKUMAtRank_three : SolvesDivisibleKUMAtRank α 3`.
+
+Higher-rank modules depend on that certificate, not on the internal rank-three architecture.
 
 ## Low-rank solver policy
 
-Ranks 1 and 2 are proved directly inside HigherRankKUM.
+- Rank 1 is proved directly inside HigherRankKUM.
+- Rank 2 is proved directly inside HigherRankKUM through the compressed HalfWeave implementation.
+- Rank 3 is internal through the frozen vendored v3 source plus the narrow adapter above.
 
-The rank-two theorem was internalized as a compressed HalfWeave development rather than as a dependency on the source repository. This is the preferred pattern when a source proof can be migrated without dragging in unrelated historical machinery.
+Thus all lower-rank inputs required by the divisible rank-four proper-tight reduction are locally available.
 
-Rank 3 should eventually be supplied internally in one of two acceptable ways:
+## Integrity checks
 
-1. **Native internal proof** — migrate/reorganize the certified proof into this repository while preserving its mathematical statement and provenance; or
-2. **Vendored immutable snapshot** — copy the exact required certified source into this repository under a clearly marked vendor/legacy subtree, together with provenance and source commit hashes.
+The vendored directory is treated as immutable legacy source.
 
-A live Git dependency on Rank3KUM is intentionally not an acceptable final architecture.
+- `vendor/Rank3KUM/SOURCE.md` records its exact origin.
+- `vendor/Rank3KUM/SHA256SUMS` records hashes for all vendored Lean files.
+- CI verifies those hashes.
+- CI rejects `Rank3KUM` imports anywhere in `HigherRankKUM/` except `LowRank/RankThree.lean`.
+- CI rejects a live Git dependency on Rank3KUM.
 
-Until rank 3 is internalized, higher-rank theorems that require it take `SolvesDivisibleKUMAtRank α 3` as an explicit hypothesis. This keeps the trusted generic machinery fully self-contained and avoids introducing axioms.
+If the vendored base is ever intentionally upgraded, it should be done as an explicit snapshot replacement with new source commit/tree provenance and a fresh integrity manifest—not by following a branch.
 
 ## External dependencies
 
-The initial migration uses only Lean/mathlib as external build dependencies:
+The build's external dependency surface is Lean/mathlib:
 
-- Lean: `v4.33.0-rc2`
-- mathlib input revision: `v4.33.0-rc2`
+- Lean: `v4.33.0-rc2`;
+- mathlib input revision: `v4.33.0-rc2`.
 
-`lake-manifest.json` records the exact resolved transitive package commits for the checkpoint. CI runs `lake update` and then requires the committed manifest to remain unchanged, detecting dependency-resolution drift.
-
-## CI boundary checks
-
-The main CI job verifies all of the following before accepting a build:
-
-1. the pinned dependency graph resolves without changing `lake-manifest.json`;
-2. trusted Lean modules contain no `Rank3KUM` import;
-3. `lakefile.toml` contains no Rank3KUM dependency;
-4. the HigherRankKUM library builds successfully.
-
-## Provenance is not dependency
-
-The original development history in Rank3KUM remains important for attribution, comparison, and auditing. `docs/PROVENANCE.md` and `docs/MIGRATION_MANIFEST.md` record those origins. That historical relationship must not be confused with a runtime or build dependency.
+`lake-manifest.json` records the exact resolved transitive package commits.
