@@ -1,0 +1,60 @@
+name: Vendor Rank3KUM v3 snapshot
+
+on:
+  push:
+    branches:
+      - vendor-rank3-v3
+
+permissions:
+  contents: write
+
+jobs:
+  vendor:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout HigherRankKUM
+        uses: actions/checkout@v4
+        with:
+          ref: vendor-rank3-v3
+          fetch-depth: 0
+
+      - name: Checkout frozen Rank3KUM v3 source
+        uses: actions/checkout@v4
+        with:
+          repository: afletcher22/Rank3KUM
+          ref: eff642a2e01fac4fc1f6f76e592eeea46c3152c9
+          path: .vendor-source-rank3
+          persist-credentials: false
+
+      - name: Copy frozen source tree
+        run: |
+          set -euo pipefail
+          rm -rf vendor/Rank3KUM
+          mkdir -p vendor/Rank3KUM
+          cp -a .vendor-source-rank3/Rank3KUM vendor/Rank3KUM/Rank3KUM
+          cp .vendor-source-rank3/Rank3KUM.lean vendor/Rank3KUM/Rank3KUM.lean
+          cp .vendor-source-rank3/LICENSE vendor/Rank3KUM/LICENSE
+          cat > vendor/Rank3KUM/SOURCE.md <<'EOF'
+          # Vendored Rank3KUM source
+
+          This directory is an immutable source snapshot vendored from:
+
+          - repository: `afletcher22/Rank3KUM`
+          - branch at selection time: `version-3`
+          - exact commit: `eff642a2e01fac4fc1f6f76e592eeea46c3152c9`
+
+          The Lean sources and license are copied byte-for-byte from that commit.
+          HigherRankKUM does not depend on the external Rank3KUM repository at build time.
+          EOF
+          rm -rf .vendor-source-rank3
+          rm -f .github/workflows/vendor-rank3-v3.yml
+
+      - name: Commit vendored snapshot
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vendor/Rank3KUM .github/workflows/vendor-rank3-v3.yml
+          git commit -m "vendor: freeze Rank3KUM version-3 at eff642a2"
+          git push origin HEAD:vendor-rank3-v3
