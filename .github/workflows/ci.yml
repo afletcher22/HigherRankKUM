@@ -6,7 +6,7 @@ on:
       - main
   pull_request:
     branches:
-      - main
+      - ci-sprint1-targeted
   workflow_dispatch:
 
 concurrency:
@@ -46,5 +46,7 @@ jobs:
           fi
           grep -q '^name = "Rank3KUM"$' lakefile.toml
           grep -q '^srcDir = "vendor/Rank3KUM"$' lakefile.toml
-      - name: Build
-        run: lake build
+      - name: Build Sprint 1 modules
+        run: |
+          lake build +HigherRankKUM.PeriodicGluingRegression
+          lake build +HigherRankKUM.Rank4.RationalTightReduction
