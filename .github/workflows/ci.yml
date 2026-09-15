@@ -20,7 +20,19 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-      - name: Fetch dependencies
+      - name: Fetch pinned dependencies
         run: lake update
+      - name: Verify dependency lock
+        run: git diff --exit-code -- lake-manifest.json
+      - name: Enforce standalone Rank3KUM boundary
+        run: |
+          if grep -R -nE '^[[:space:]]*import[[:space:]]+Rank3KUM([.]|$)' HigherRankKUM HigherRankKUM.lean; then
+            echo "HigherRankKUM trusted modules must not import Rank3KUM."
+            exit 1
+          fi
+          if grep -n 'Rank3KUM' lakefile.toml; then
+            echo "Rank3KUM must not be a Lake dependency."
+            exit 1
+          fi
       - name: Build
         run: lake build
