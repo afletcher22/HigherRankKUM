@@ -139,7 +139,8 @@ theorem exists_cyclicBasisOrder_of_ratio_nonempty_proper_tight_of_lower_ranks
       (by simpa [hab, Nat.mul_comm] using hRank)
       hDense hX hXrank (hSolveA (a * p)) (hSolveB (b * p))
   subst g
-  simpa [Nat.mul_comm] using hOrder
+  exact exists_cyclicBasisOrder_congr M
+    (Nat.mul_comm (a + b) p) (Nat.mul_comm (a + b) q) hOrder
 
 end
 
