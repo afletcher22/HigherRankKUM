@@ -121,7 +121,7 @@ theorem admissible_two_boundary_repair_iff_contract_bases
     (hQL : Disjoint Q (A.core s))
     (hQ'R : Disjoint Q' (A.core (rightBoundaryIndex N h hN s))) :
     (M.IsBase (Q ∪ A.core s) ∧
-        M.IsBase (Q' ∪ A.core (rightBoundaryIndex N h hN s))) ↔
+        M.IsBase (Q' ∪ A.core (rightBoundaryIndex N h hN s)))) ↔
       ((M.contract (A.core s)).IsBase Q ∧
         (M.contract (A.core (rightBoundaryIndex N h hN s)).IsBase Q') := by
   exact two_boundary_repair_iff_contract_bases M
