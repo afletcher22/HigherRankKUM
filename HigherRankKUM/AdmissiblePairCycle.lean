@@ -139,7 +139,8 @@ lemma endpoint_index_ne (hh : 0 < h) (hhN : h < N) (i : Fin N) :
 
 lemma endpoint_blocks_disjoint (hh : 0 < h) (hhN : h < N) (i : Fin N) :
     Disjoint (A.block i) (A.block (cyclicIndex N hN i h)) :=
-  A.block_disjoint_of_ne (endpoint_index_ne (N := N) (h := h) hN hh hhN i).symm
+  A.block_disjoint_of_ne
+    (endpoint_index_ne (N := N) (h := h) (hN := hN) hh hhN i).symm
 
 lemma block_disjoint_core (hh : 0 < h) (hhN : h < N) (i : Fin N) :
     Disjoint (A.block i) (A.core i) := by
