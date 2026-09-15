@@ -1,0 +1,69 @@
+import HigherRankKUM.PairCycle
+import Mathlib.Combinatorics.Matroid.Dual
+
+namespace HigherRankKUM
+namespace AdjacentRepair
+
+open Set
+
+variable {α : Type*}
+
+/-- A proposed local re-pairing across two boundary windows is valid exactly
+when the proposed left and right pieces are bases after contracting the two
+unchanged boundary interiors.  This is the matroid core of the adjacent-pair
+repair operation; no representability or simplicity is assumed. -/
+theorem two_boundary_repair_iff_contract_bases
+    (M : Matroid α) {L R Q Q' : Set α}
+    (hL : M.Indep L) (hR : M.Indep R)
+    (hQL : Disjoint Q L) (hQ'R : Disjoint Q' R) :
+    (M.IsBase (Q ∪ L) ∧ M.IsBase (Q' ∪ R)) ↔
+      ((M.contract L).IsBase Q ∧ (M.contract R).IsBase Q') := by
+  constructor
+  · rintro ⟨hQ, hQ'⟩
+    exact ⟨hL.contract_isBase_iff.2 ⟨hQ, hQL⟩,
+      hR.contract_isBase_iff.2 ⟨hQ', hQ'R⟩⟩
+  · rintro ⟨hQ, hQ'⟩
+    exact ⟨(hL.contract_isBase_iff.1 hQ).1,
+      (hR.contract_isBase_iff.1 hQ').1⟩
+
+/-- If each boundary window is completed by a two-element pair, then both
+boundary contractions have rank two. -/
+theorem boundary_contract_ranks_eq_two
+    (M : Matroid α) {L R : Set α} {a₀ a₁ b₀ b₁ : α}
+    (ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁)
+    (hL : M.Indep L) (hR : M.Indep R)
+    (hAL : Disjoint ({a₀, a₁} : Set α) L)
+    (hBR : Disjoint ({b₀, b₁} : Set α) R)
+    (hA : M.IsBase ({a₀, a₁} ∪ L))
+    (hB : M.IsBase ({b₀, b₁} ∪ R)) :
+    (M.contract L).eRank = 2 ∧ (M.contract R).eRank = 2 := by
+  exact ⟨PairCycle.endpoint_contract_eRank_eq_two M ha hL hAL hA,
+    PairCycle.endpoint_contract_eRank_eq_two M hb hR hBR hB⟩
+
+/-- On a common four-element ground set `U`, asking that `U \ Q` be a base of
+the right boundary matroid is equivalent to asking that `Q` be a base of its
+dual.  Thus complementary two-pair repair is a common-basis problem between
+the left boundary matroid and the dual of the right one. -/
+theorem complement_isBase_iff_dual_isBase
+    (R : Matroid α) {U Q : Set α}
+    (hE : R.E = U) (hQ : Q ⊆ U) :
+    R.IsBase (U \ Q) ↔ R✶.IsBase Q := by
+  have hsub : U \ Q ⊆ R.E := by
+    rw [hE]
+    exact Set.sdiff_subset
+  rw [R.base_iff_dual_isBase_compl hsub]
+  have hdiff : R.E \ (U \ Q) = Q := by
+    rw [hE]
+    exact Set.sdiff_sdiff_cancel_left hQ
+  rw [hdiff]
+
+/-- Explicit common-basis packaging of the previous lemma. -/
+theorem complementary_bases_iff_common_base_with_dual
+    (L R : Matroid α) {U Q : Set α}
+    (hRE : R.E = U) (hQ : Q ⊆ U) :
+    (L.IsBase Q ∧ R.IsBase (U \ Q)) ↔
+      (L.IsBase Q ∧ R✶.IsBase Q) := by
+  rw [complement_isBase_iff_dual_isBase R hRE hQ]
+
+end AdjacentRepair
+end HigherRankKUM
