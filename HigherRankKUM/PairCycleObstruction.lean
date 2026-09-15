@@ -26,7 +26,7 @@ theorem stepIndex_injective {N h : ℕ} (hN : 0 < N)
   exact (Nat.ModEq.cancel_right_of_coprime hcop hmod).eq_of_lt_of_lt i.isLt j.isLt
 
 /-- Hence `j ↦ jh (mod N)` is an equivalence of pair indices. -/
-def stepEquiv (N h : ℕ) (hN : 0 < N) (hcop : Nat.gcd N h = 1) :
+noncomputable def stepEquiv (N h : ℕ) (hN : 0 < N) (hcop : Nat.gcd N h = 1) :
     Fin N ≃ Fin N :=
   Equiv.ofBijective (stepIndex N h hN)
     ⟨stepIndex_injective hN hcop,
@@ -61,16 +61,19 @@ theorem not_orientable_iff_forced_no_fixed_point
     ¬ PairRelationOrientable N h hN R ↔
       (∀ i, BijectionRelation (R i)) ∧
       (¬ ∃ x, composeList (relationCycleList N h hN R) x x) := by
-  have hlistFull := relationCycleList_mem_fullSupport hN hfull
+  have hlistFull := relationCycleList_mem_fullSupport (h := h) hN hfull
   rw [PairRelationOrientable, not_cyclicSatisfiable_iff hlistFull]
   constructor
   · rintro ⟨hall, hfix⟩
     refine ⟨?_, hfix⟩
     intro i
-    let j := (stepEquiv N h hN hcop).symm i
-    have hj : R i ∈ relationCycleList N h hN R := by
-      simp [relationCycleList, j, stepEquiv]
-    exact hall (R i) hj
+    have hsurj : Function.Surjective (stepIndex N h hN) :=
+      Finite.injective_iff_surjective.mp (stepIndex_injective hN hcop)
+    obtain ⟨j, hj⟩ := hsurj i
+    have hmem : R (stepIndex N h hN j) ∈ relationCycleList N h hN R := by
+      simp [relationCycleList]
+    rw [hj] at hmem
+    exact hall (R i) hmem
   · rintro ⟨hall, hfix⟩
     exact ⟨fun S hS => by
       simp [relationCycleList] at hS
