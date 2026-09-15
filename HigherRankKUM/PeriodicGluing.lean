@@ -35,14 +35,14 @@ theorem exists_cyclicBasisOrder_of_periodic_restrict_contract
         (Nat.mul_pos (by omega) hp) σ := by
   let left : Fin (a * p) ≃ X :=
     σL.trans (restrictGroundEquiv M X)
-  let right : Fin (b * p) ≃ (M.E \\ X : Set α) :=
+  let right : Fin (b * p) ≃ (M.E \ X : Set α) :=
     σR.trans (contractGroundEquiv M X)
-  have hDisjoint : Disjoint X (M.E \\ X) :=
+  have hDisjoint : Disjoint X (M.E \ X) :=
     Set.disjoint_sdiff_right
   let localOrder : Fin ((a + b) * p) ≃
-      (X ∪ (M.E \\ X) : Set α) :=
+      (X ∪ (M.E \ X) : Set α) :=
     balancedBlockOrder hDisjoint left right
-  have hUnion : X ∪ (M.E \\ X) = M.E :=
+  have hUnion : X ∪ (M.E \ X) = M.E :=
     Set.union_sdiff_cancel hX
   let order : Fin ((a + b) * p) ≃ M.E :=
     localOrder.trans (Equiv.setCongr hUnion)
