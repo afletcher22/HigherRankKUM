@@ -95,14 +95,14 @@ def candidate_moves(state):
             left, right = list(state[i]), list(state[j])
             left[a], right[b] = right[b], left[a]
             new[i], new[j] = tuple(left), tuple(right)
-            new = tuple(new)
+            raw = tuple(new)
             # Only the window ending at i and the window starting at i+1
-            # can change their element sets. Check the proposed general
-            # boundary criterion against all windows in this finite case.
-            boundary_ok = all(mask(aligned(new, k)) in BASES
+            # can change their element sets. Check before canonical rotation,
+            # while i still refers to the source-state boundary.
+            boundary_ok = all(mask(aligned(raw, k)) in BASES
                               for k in ((i - H + 1) % N, j))
-            assert boundary_ok == admissible(new)
-            yield (i, a, b), canonical(new), boundary_ok
+            assert boundary_ok == admissible(raw)
+            yield (i, a, b), canonical(raw), boundary_ok
 
 
 def all_pair_cycles():
