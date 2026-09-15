@@ -70,14 +70,16 @@ theorem exists_cyclicBasisOrder_of_rank_four_gcd_two_of_nonempty_proper_tight
         calc
           M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞) := hEcard
           _ = (((1 + 1) * (2 * k + 1) : ℕ) : ℕ∞) := by
-            congr 1
-            omega)
+            congr 1 <;> omega)
       (by simpa using hRank)
       hDenseReduced hXReduced
       (by simpa using hXrank)
       (by simpa using hSolve2Odd)
       (by simpa using hSolve2Odd)
-  simpa using hOrder
+  exact exists_cyclicBasisOrder_congr M
+    (by omega : (1 + 1) * (2 * k + 1) = 4 * k + 2)
+    (by omega : (1 + 1) * 2 = 4)
+    hOrder
 
 end
 
