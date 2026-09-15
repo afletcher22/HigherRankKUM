@@ -46,4 +46,5 @@ jobs:
       - name: Build Sprint 2 modules
         run: |
           lake build +HigherRankKUM.BinaryRelationCycle
-          if [ -f HigherRankKUM/PairCycle.lean ]; then lake build +HigherRankKUM.PairCycle; fi
+          lake build +HigherRankKUM.PairCycle
+          lake build +HigherRankKUM.PairCycleObstruction
