@@ -34,25 +34,33 @@ Assume `n=4k` and uniform density with parameter `k`.
 
 ### Nonempty proper tight set
 
-Once divisible KUM is available **internally in HigherRankKUM** at ranks 1, 2, and 3, the arbitrary-rank theorem
+The arbitrary-rank theorem
 
 `exists_cyclicBasisOrder_of_nonempty_proper_tight_of_lower_ranks`
 
-immediately gives the rank-four result for every instance with a nonempty proper tight set.
+reduces this branch to divisible KUM at ranks 1, 2, and 3.
 
-Internally, a proper tight set can have rank 1, 2, or 3, so the factor splits are respectively:
+Ranks 1 and 2 are now formalized internally in HigherRankKUM. Consequently, the production rank-four specialization
+
+`exists_cyclicBasisOrder_of_rank_four_of_nonempty_proper_tight`
+
+currently requires only a certificate
+
+`SolvesDivisibleKUMAtRank α 3`.
+
+Once rank 3 is internalized, every divisible rank-four instance with a nonempty proper tight set will be internally discharged.
+
+A proper tight set can have rank 1, 2, or 3, so the factor splits are respectively:
 
 - `1 + 3`;
 - `2 + 2`;
 - `3 + 1`.
 
-`HigherRankKUM/Rank4/TightReduction.lean` already records the clean rank-four specialization, taking rank-2 and rank-3 solver certificates explicitly while those bases remain internalization-pending.
-
 The general theorem supersedes a hand-written case split as the production proof. The old explicit Rank3KUM rank-four experiment remains a provenance/regression reference only and is not a build dependency.
 
 ### No nonempty proper tight set
 
-This is the strictly uniformly dense divisible rank-four branch. It is the main new structural target after the low-rank bases are internalized.
+This is the strictly uniformly dense divisible rank-four branch. It is the main new structural target after rank 3 is internalized.
 
 The rank-three strict proof should be treated as a source of candidate proof patterns, not as code to port automatically. In particular, the following need fresh rank-four formulations:
 
@@ -71,15 +79,16 @@ Rank-4 KUM
 │   └── coprime theorem in the literature
 │
 ├── gcd(n,4)=2
-│   └── separate higher-rank research branch (not covered by divisible machinery)
+│   └── separate higher-rank research branch
+│       (not covered by divisible machinery)
 │
 └── gcd(n,4)=4   [n=4k]
     │
     ├── nonempty proper tight set
     │   └── generic lower-rank tight-set induction
-    │       ├── 1+3
-    │       ├── 2+2
-    │       └── 3+1
+    │       ├── rank 1: internal
+    │       ├── rank 2: internal
+    │       └── rank 3: internalization pending
     │
     └── no nonempty proper tight set
         └── strict divisible rank-four research frontier
@@ -87,9 +96,8 @@ Rank-4 KUM
 
 ## Immediate formal milestones
 
-1. Internalize the rank-two divisible solver without a live Rank3KUM dependency.
-2. Internalize the rank-three divisible solver without a live Rank3KUM dependency.
-3. Discharge the explicit rank-2/rank-3 hypotheses in `HigherRankKUM/Rank4/TightReduction.lean`.
-4. Keep the strict divisible and gcd-two research tracks separate.
+1. Internalize the certified rank-three divisible solver without a live Rank3KUM dependency.
+2. Discharge the final rank-three hypothesis in `HigherRankKUM/Rank4/TightReduction.lean`.
+3. Keep the strict divisible and gcd-two research tracks separate.
 
 See `docs/DEPENDENCY_POLICY.md`.
