@@ -37,12 +37,15 @@ theorem boundary_contract_ranks_eq_two
     (hA : M.IsBase ({a₀, a₁} ∪ L))
     (hB : M.IsBase ({b₀, b₁} ∪ R)) :
     (M.contract L).eRank = 2 ∧ (M.contract R).eRank = 2 := by
-  exact ⟨PairCycle.endpoint_contract_eRank_eq_two M ha hL hAL hA,
-    PairCycle.endpoint_contract_eRank_eq_two M hb hR hBR hB⟩
+  exact ⟨
+    PairCycle.endpoint_contract_eRank_eq_two
+      (a₀ := a₀) (a₁ := a₁) (b₀ := a₀) (b₁ := a₁) M ha hL hAL hA,
+    PairCycle.endpoint_contract_eRank_eq_two
+      (a₀ := b₀) (a₁ := b₁) (b₀ := b₀) (b₁ := b₁) M hb hR hBR hB⟩
 
 /-- On a common four-element ground set `U`, asking that `U \ Q` be a base of
 the right boundary matroid is equivalent to asking that `Q` be a base of its
-dual.  Thus complementary two-pair repair is a common-basis problem between
+dual. Thus complementary two-pair repair is a common-basis problem between
 the left boundary matroid and the dual of the right one. -/
 theorem complement_isBase_iff_dual_isBase
     (R : Matroid α) {U Q : Set α}
