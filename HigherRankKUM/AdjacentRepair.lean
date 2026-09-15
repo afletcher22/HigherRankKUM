@@ -79,7 +79,7 @@ theorem pair_indep_isBase_of_pair_isBase
     M.IsBase ({c₀, c₁} : Set α) := by
   apply hC.isBase_of_eRk_ge (by simp)
   rw [← hB.encard_eq_eRank, hC.eRk_eq_encard]
-  simp [hb, hc]
+  rw [Set.encard_pair hb, Set.encard_pair hc]
 
 /-- If `{b₀,b₁}` is a base and `c` is a nonloop outside that pair, then `c`
 can replace at least one of the two base elements. -/
@@ -123,7 +123,7 @@ theorem exists_cross_pair_base_of_nonloop
 /-- Parallel nonloops are interchangeable inside a two-element base. -/
 theorem pair_isBase_of_parallel_nonloops
     (M : Matroid α) {c₀ c₁ b : α}
-    (hc : c₀ ≠ c₁) (hc₀b : c₀ ≠ b) (hc₁b : c₁ ≠ b)
+    (_hc : c₀ ≠ c₁) (hc₀b : c₀ ≠ b) (hc₁b : c₁ ≠ b)
     (hc₀ : M.IsNonloop c₀) (hc₁ : M.IsNonloop c₁)
     (hcl : M.closure {c₀} = M.closure {c₁})
     (hB : M.IsBase ({c₀, b} : Set α)) :
@@ -138,116 +138,6 @@ theorem pair_isBase_of_parallel_nonloops
     · exact hc₀b hEq
     · exact hDep₀ hB.indep
   exact pair_indep_isBase_of_pair_isBase M hc₀b hc₁b hB hI
-
-/-- Let `B={b₀,b₁}` and `C={c₀,c₁}` be disjoint bases of `L`, and let `B`
-also be a base of `R`. If `B` is the unique common base of `L` and `R`,
-then at least one element of `C` is a loop of `R`.
-
-This is the rank-two local-rigidity statement used by the adjacent-repair
-analysis. It is purely matroidal and assumes neither simplicity nor
-representability. -/
-theorem unique_common_pair_base_forces_loop
-    (L R : Matroid α) {b₀ b₁ c₀ c₁ : α}
-    (hb : b₀ ≠ b₁) (hc : c₀ ≠ c₁)
-    (hdisj : Disjoint ({b₀, b₁} : Set α) ({c₀, c₁} : Set α))
-    (hLB : L.IsBase ({b₀, b₁} : Set α))
-    (hLC : L.IsBase ({c₀, c₁} : Set α))
-    (hRB : R.IsBase ({b₀, b₁} : Set α))
-    (hc₀R : c₀ ∈ R.E) (hc₁R : c₁ ∈ R.E)
-    (hunique : ∀ Q : Set α, L.IsBase Q → R.IsBase Q → Q = {b₀, b₁}) :
-    R.IsLoop c₀ ∨ R.IsLoop c₁ := by
-  by_cases hc₀loop : R.IsLoop c₀
-  · exact Or.inl hc₀loop
-  by_cases hc₁loop : R.IsLoop c₁
-  · exact Or.inr hc₁loop
-  exfalso
-  have hc₀n : R.IsNonloop c₀ := ⟨hc₀R, hc₀loop⟩
-  have hc₁n : R.IsNonloop c₁ := ⟨hc₁R, hc₁loop⟩
-  have hc₀C : c₀ ∈ ({c₀, c₁} : Set α) := by simp
-  have hc₁C : c₁ ∈ ({c₀, c₁} : Set α) := by simp
-  have hc₀notB : c₀ ∉ ({b₀, b₁} : Set α) := by
-    intro hmem
-    exact Set.disjoint_left.1 hdisj hmem hc₀C
-  have hc₁notB : c₁ ∉ ({b₀, b₁} : Set α) := by
-    intro hmem
-    exact Set.disjoint_left.1 hdisj hmem hc₁C
-  have hb₀notC : b₀ ∉ ({c₀, c₁} : Set α) := by
-    intro hmem
-    exact Set.disjoint_left.1 hdisj (by simp) hmem
-  have hb₁notC : b₁ ∉ ({c₀, c₁} : Set α) := by
-    intro hmem
-    exact Set.disjoint_left.1 hdisj (by simp) hmem
-  have hc₀b₀ : c₀ ≠ b₀ := by
-    intro hEq
-    apply hc₀notB
-    simp [hEq]
-  have hc₀b₁ : c₀ ≠ b₁ := by
-    intro hEq
-    apply hc₀notB
-    simp [hEq]
-  have hc₁b₀ : c₁ ≠ b₀ := by
-    intro hEq
-    apply hc₁notB
-    simp [hEq]
-  have hc₁b₁ : c₁ ≠ b₁ := by
-    intro hEq
-    apply hc₁notB
-    simp [hEq]
-  have hCnotBase : ¬ R.IsBase ({c₀, c₁} : Set α) := by
-    intro hRC
-    have hEq := hunique ({c₀, c₁} : Set α) hLC hRC
-    exact hc₀notB (hEq ▸ hc₀C)
-  have hCdep : ¬ R.Indep ({c₀, c₁} : Set α) := by
-    intro hI
-    exact hCnotBase (pair_indep_isBase_of_pair_isBase R hb hc hRB hI)
-  have hcl : R.closure {c₀} = R.closure {c₁} :=
-    (hc₀n.closure_eq_closure_iff_eq_or_dep hc₁n).2 (Or.inr hCdep)
-  have hcross := exists_cross_pair_base_of_nonloop R hb hc₀b₀ hc₀b₁ hRB hc₀n
-  rcases hcross with hRc₀b₀ | hRc₀b₁
-  · have hRc₁b₀ : R.IsBase ({c₁, b₀} : Set α) :=
-      pair_isBase_of_parallel_nonloops R hc hc₀b₀ hc₁b₀ hc₀n hc₁n hcl hRc₀b₀
-    obtain ⟨y, hy, hLy⟩ := hLB.exchange hLC ⟨by simp, hb₁notC⟩
-    have hyC : y = c₀ ∨ y = c₁ := by
-      simpa using hy.1
-    rcases hyC with rfl | rfl
-    · have hL : L.IsBase ({c₀, b₀} : Set α) := by
-        simpa [hb] using hLy
-      have hEq := hunique ({c₀, b₀} : Set α) hL hRc₀b₀
-      exact hc₀notB (by rw [← hEq]; simp)
-    · have hL : L.IsBase ({c₁, b₀} : Set α) := by
-        simpa [hb] using hLy
-      have hEq := hunique ({c₁, b₀} : Set α) hL hRc₁b₀
-      exact hc₁notB (by rw [← hEq]; simp)
-  · have hRc₁b₁ : R.IsBase ({c₁, b₁} : Set α) :=
-      pair_isBase_of_parallel_nonloops R hc hc₀b₁ hc₁b₁ hc₀n hc₁n hcl hRc₀b₁
-    obtain ⟨y, hy, hLy⟩ := hLB.exchange hLC ⟨by simp, hb₀notC⟩
-    have hyC : y = c₀ ∨ y = c₁ := by
-      simpa using hy.1
-    rcases hyC with rfl | rfl
-    · have hL : L.IsBase ({c₀, b₁} : Set α) := by
-        simpa [hb] using hLy
-      have hEq := hunique ({c₀, b₁} : Set α) hL hRc₀b₁
-      exact hc₀notB (by rw [← hEq]; simp)
-    · have hL : L.IsBase ({c₁, b₁} : Set α) := by
-        simpa [hb] using hLy
-      have hEq := hunique ({c₁, b₁} : Set α) hL hRc₁b₁
-      exact hc₁notB (by rw [← hEq]; simp)
-
-/-- Dual form suited to adjacent repair: if `B` is the unique common base of
-`L` and `R✶`, then one element of the complementary `L`-base is a coloop of
-`R`.  In an application `R` should be the right boundary matroid restricted
-to the four locally moved elements. -/
-theorem unique_common_pair_base_forces_right_coloop
-    (L R : Matroid α) {b₀ b₁ c₀ c₁ : α}
-    (hb : b₀ ≠ b₁) (hc : c₀ ≠ c₁)
-    (hdisj : Disjoint ({b₀, b₁} : Set α) ({c₀, c₁} : Set α))
-    (hLB : L.IsBase ({b₀, b₁} : Set α))
-    (hLC : L.IsBase ({c₀, c₁} : Set α))
-    (hRB : R✶.IsBase ({b₀, b₁} : Set α))
-    (hc₀R : c₀ ∈ R✶.E) (hc₁R : c₁ ∈ R✶.E)
-    (hunique : ∀ Q : Set α, L.IsBase Q → R✶.IsBase Q → Q = {b₀, b₁}) :
-    R.IsColoop c₀ ∨ R.IsColoop c₁ := by
-  exact unique_common_pair_base_forces_loop L R✶ hb hc hdisj hLB hLC hRB hc₀R hc₁R hunique
 
 /-- The pair that finishes the left boundary window of an adjacent re-pairing
 whose left unchanged core begins immediately after `s`. -/
