@@ -10,11 +10,12 @@ variable {α : Type*}
 /-- The four-element boundary matroid obtained by contracting an unchanged
 interior `C` and then restricting to the four locally moved elements `U`. -/
 def boundaryMinor (M : Matroid α) (C U : Set α) : Matroid α :=
-  (M.contract C) ↾ U
+  Matroid.restrict (M.contract C) U
 
 @[simp]
 theorem boundaryMinor_ground (M : Matroid α) (C U : Set α) :
-    (boundaryMinor M C U).E = U := rfl
+    (boundaryMinor M C U).E = U := by
+  simp [boundaryMinor]
 
 /-- A loop in a restricted contraction is an ambient closure relation, provided
 the element really belongs to the contraction ground. -/
@@ -23,9 +24,13 @@ theorem mem_closure_of_boundaryMinor_isLoop
     (he : e ∈ (M.contract C).E)
     (hloop : (boundaryMinor M C U).IsLoop e) :
     e ∈ M.closure C := by
-  have hr := (Matroid.restrict_isLoop_iff).1 hloop
+  have hloop' : (Matroid.restrict (M.contract C) U).IsLoop e := by
+    simpa [boundaryMinor] using hloop
+  have hr :=
+    (Matroid.restrict_isLoop_iff (M := M.contract C) (R := U) (e := e)).1 hloop'
   rcases hr.2 with hcontract | hout
-  · exact (Matroid.contract_isLoop_iff_mem_closure.1 hcontract).1
+  · exact ((Matroid.contract_isLoop_iff_mem_closure
+      (M := M) (C := C) (e := e)).1 hcontract).1
   · exact (hout he).elim
 
 /-- Ambient-closure form of local repair rigidity.  Let `B={b₀,b₁}` and
