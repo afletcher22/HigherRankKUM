@@ -2,9 +2,9 @@
 
 This document separates arithmetic regimes before structural case splitting. That distinction is essential in rank four.
 
-## Arithmetic split
-
 Let `n = |E(M)|` and `r(M)=4`.
+
+## Arithmetic split
 
 ### 1. Coprime regime
 
@@ -14,61 +14,51 @@ This belongs to the existing coprime KUM theorem in the literature and is not th
 
 ### 2. Intermediate gcd-two regime
 
-`gcd(n,4)=2`, equivalently
+`gcd(n,4)=2`, equivalently `n ≡ 2 (mod 4)`.
 
-`n ≡ 2 (mod 4)`.
-
-This regime has no analogue in rank three: when `r=3`, every non-coprime size is automatically divisible by 3. At rank four, that implication fails.
-
-The current HigherRankKUM abstraction `SolvesDivisibleKUMAtRank α 4` does not cover this regime because it assumes `n = 4k`.
+This regime has no analogue in rank three: for rank 3, every non-coprime size is divisible by 3. The current `SolvesDivisibleKUMAtRank α 4` abstraction does not cover this regime because it assumes `n=4k`.
 
 ### 3. Divisible regime
 
-`4 | n`, so `n = 4k`.
+`4 | n`, so `n=4k`.
 
-This is the regime addressed by the migrated generic tight-set induction machinery.
+This is the regime addressed by the generic tight-set induction machinery.
 
 ## Structural split inside the divisible regime
 
 Assume `n=4k` and uniform density with parameter `k`.
 
-### Nonempty proper tight set
+### Nonempty proper tight set — formalized
 
-The arbitrary-rank theorem
+Ranks 1, 2, and 3 are all available internally in HigherRankKUM. Therefore the arbitrary-rank theorem
 
 `exists_cyclicBasisOrder_of_nonempty_proper_tight_of_lower_ranks`
 
-reduces this branch to divisible KUM at ranks 1, 2, and 3.
+specializes to the unconditional internal theorem
 
-Ranks 1 and 2 are now formalized internally in HigherRankKUM. Consequently, the production rank-four specialization
+`exists_cyclicBasisOrder_of_rank_four_of_nonempty_proper_tight`.
 
-`exists_cyclicBasisOrder_of_rank_four_of_nonempty_proper_tight`
+Thus every finite uniformly dense rank-four matroid on `4k` elements with a nonempty proper tight set has a cyclic basis ordering.
 
-currently requires only a certificate
-
-`SolvesDivisibleKUMAtRank α 3`.
-
-Once rank 3 is internalized, every divisible rank-four instance with a nonempty proper tight set will be internally discharged.
-
-A proper tight set can have rank 1, 2, or 3, so the factor splits are respectively:
+A proper tight set has rank 1, 2, or 3, corresponding conceptually to:
 
 - `1 + 3`;
 - `2 + 2`;
 - `3 + 1`.
 
-The general theorem supersedes a hand-written case split as the production proof. The old explicit Rank3KUM rank-four experiment remains a provenance/regression reference only and is not a build dependency.
+The production proof does not hand-split these cases; the generic lower-rank induction theorem handles them uniformly. Rank 3 is supplied by the frozen local v3 proof under `vendor/Rank3KUM/`.
 
-### No nonempty proper tight set
+### No nonempty proper tight set — open structural frontier
 
-This is the strictly uniformly dense divisible rank-four branch. It is the main new structural target after rank 3 is internalized.
+This is the strictly uniformly dense divisible rank-four branch. It is now the only new structural branch remaining **inside the divisible regime**.
 
-The rank-three strict proof should be treated as a source of candidate proof patterns, not as code to port automatically. In particular, the following need fresh rank-four formulations:
+The rank-three strict proof is a source of proof patterns, not code to port mechanically. Fresh rank-four formulations are needed for:
 
-- deletion preserving the relevant density margin;
+- deletion preserving an adequate density margin;
 - the replacement for the rank-three two-gap obstruction;
-- repair/insertion conditions after solving a smaller instance;
+- repair/insertion after solving a smaller instance;
 - exchange-support or matching conditions controlling reinsertion;
-- any finite exceptional geometry that replaces the rank-three six-point route.
+- finite exceptional geometry, if any, replacing the rank-three six-point route.
 
 ## Current schematic coverage
 
@@ -79,25 +69,25 @@ Rank-4 KUM
 │   └── coprime theorem in the literature
 │
 ├── gcd(n,4)=2
-│   └── separate higher-rank research branch
-│       (not covered by divisible machinery)
+│   └── separate arithmetic research branch
 │
 └── gcd(n,4)=4   [n=4k]
     │
     ├── nonempty proper tight set
-    │   └── generic lower-rank tight-set induction
-    │       ├── rank 1: internal
-    │       ├── rank 2: internal
-    │       └── rank 3: internalization pending
+    │   └── SOLVED / FORMALIZED in HigherRankKUM
+    │       ├── 1+3
+    │       ├── 2+2
+    │       └── 3+1
     │
     └── no nonempty proper tight set
-        └── strict divisible rank-four research frontier
+        └── OPEN: strict divisible rank-four frontier
 ```
 
-## Immediate formal milestones
+## Immediate research milestones
 
-1. Internalize the certified rank-three divisible solver without a live Rank3KUM dependency.
-2. Discharge the final rank-three hypothesis in `HigherRankKUM/Rank4/TightReduction.lean`.
-3. Keep the strict divisible and gcd-two research tracks separate.
+1. Audit the literature specifically for `gcd(n,4)=2` results before inventing new arithmetic machinery.
+2. Characterize the strict divisible rank-four class computationally and structurally.
+3. Test deletion/reinsertion and exchange-support formulations on finite rank-four examples.
+4. Keep the strict-divisible and gcd-two tracks separate until a theorem genuinely connects them.
 
-See `docs/DEPENDENCY_POLICY.md`.
+See `docs/GENERALIZATION_STATUS.md` and `experiments/rank4/README.md`.
