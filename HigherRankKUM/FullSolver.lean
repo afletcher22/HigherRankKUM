@@ -25,6 +25,10 @@ def SolvesKUMAtRank (α : Type*) (r : ℕ) : Prop :=
     ∃ order : Fin n ≃ N.E,
       CyclicBasisOrder N r hn order
 
+/-- Full KUM is solved at every positive rank strictly below `r`. -/
+def SolvesKUMBelow (α : Type*) (r : ℕ) : Prop :=
+  ∀ s : ℕ, 0 < s → s < r → SolvesKUMAtRank α s
+
 /-- A full fixed-rank KUM solver specializes to the existing divisible
 solver interface. -/
 theorem SolvesKUMAtRank.to_divisible
