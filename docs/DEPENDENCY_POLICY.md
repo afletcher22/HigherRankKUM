@@ -17,16 +17,18 @@ CI enforces the import boundary.
 
 ## Low-rank solver policy
 
-Rank 1 is proved directly inside HigherRankKUM.
+Ranks 1 and 2 are proved directly inside HigherRankKUM.
 
-Ranks 2 and 3 should eventually be supplied internally in one of two acceptable ways:
+The rank-two theorem was internalized as a compressed HalfWeave development rather than as a dependency on the source repository. This is the preferred pattern when a source proof can be migrated without dragging in unrelated historical machinery.
 
-1. **Native internal proof** — migrate or reprove the minimal certified low-rank solver inside the HigherRankKUM namespace; or
+Rank 3 should eventually be supplied internally in one of two acceptable ways:
+
+1. **Native internal proof** — migrate/reorganize the certified proof into this repository while preserving its mathematical statement and provenance; or
 2. **Vendored immutable snapshot** — copy the exact required certified source into this repository under a clearly marked vendor/legacy subtree, together with provenance and source commit hashes.
 
 A live Git dependency on Rank3KUM is intentionally not an acceptable final architecture.
 
-Until ranks 2 and 3 are internalized, generic higher-rank theorems should take `SolvesDivisibleKUMAtRank` certificates as explicit hypotheses. This keeps the trusted generic machinery fully self-contained and avoids introducing axioms.
+Until rank 3 is internalized, higher-rank theorems that require it take `SolvesDivisibleKUMAtRank α 3` as an explicit hypothesis. This keeps the trusted generic machinery fully self-contained and avoids introducing axioms.
 
 ## External dependencies
 
@@ -35,7 +37,16 @@ The initial migration uses only Lean/mathlib as external build dependencies:
 - Lean: `v4.33.0-rc2`
 - mathlib input revision: `v4.33.0-rc2`
 
-`lake-manifest.json` records the exact resolved transitive package commits for the checkpoint.
+`lake-manifest.json` records the exact resolved transitive package commits for the checkpoint. CI runs `lake update` and then requires the committed manifest to remain unchanged, detecting dependency-resolution drift.
+
+## CI boundary checks
+
+The main CI job verifies all of the following before accepting a build:
+
+1. the pinned dependency graph resolves without changing `lake-manifest.json`;
+2. trusted Lean modules contain no `Rank3KUM` import;
+3. `lakefile.toml` contains no Rank3KUM dependency;
+4. the HigherRankKUM library builds successfully.
 
 ## Provenance is not dependency
 
