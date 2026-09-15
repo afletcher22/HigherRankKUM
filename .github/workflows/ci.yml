@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Install elan
         run: |
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
@@ -46,5 +48,9 @@ jobs:
           fi
           grep -q '^name = "Rank3KUM"$' lakefile.toml
           grep -q '^srcDir = "vendor/Rank3KUM"$' lakefile.toml
+      - name: Verify Sprint 2 obstruction certificate
+        run: python3 experiments/sprint2_pair_obstruction_certificate.py
+      - name: Build Sprint 2 modules
+        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure
       - name: Build
         run: lake build

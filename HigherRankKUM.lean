@@ -23,3 +23,11 @@ import HigherRankKUM.LowRank.RankTwo
 import HigherRankKUM.LowRank.RankThree
 import HigherRankKUM.Rank4.TightReduction
 import HigherRankKUM.Rank4.RationalTightReduction
+import HigherRankKUM.BinaryRelationCycle
+import HigherRankKUM.BinaryRelationLocalStructure
+import HigherRankKUM.BinaryRelationFlip
+import HigherRankKUM.PairCycle
+import HigherRankKUM.PairCycleIndexing
+import HigherRankKUM.AdmissiblePairCycle
+import HigherRankKUM.PairCycleCardinality
+import HigherRankKUM.PairCycleObstruction

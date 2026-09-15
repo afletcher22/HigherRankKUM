@@ -114,7 +114,7 @@ lemma block_union_core_eq_window (hh : 0 < h) (i : Fin N) :
   · rintro x ⟨z, rfl⟩
     by_cases hz : z.1.val = 0
     · left
-      subst hz
+      rw [hz]
       cases z.2 <;> simp [block, pairSet, window, alignedWindow]
     · right
       let j : Fin (h - 1) := ⟨z.1.val - 1, by omega⟩
@@ -211,9 +211,10 @@ lemma endpoint_block_union_core_eq_next_window
   · rintro x ⟨z, rfl⟩
     by_cases hz : z.1.val = h - 1
     · left
-      subst hz
+      rw [hz]
+      have hsum : 1 + (h - 1) = h := by omega
       cases z.2 <;>
-        simp [block, pairSet, window, alignedWindow, cyclicIndex_add]
+        simp [block, pairSet, window, alignedWindow, cyclicIndex_add, hsum]
     · right
       let j : Fin (h - 1) := ⟨z.1.val, by omega⟩
       refine ⟨(j, z.2), ?_⟩
