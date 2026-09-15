@@ -48,7 +48,9 @@ jobs:
       - name: Build Sprint 2 modules
         run: |
           lake build +HigherRankKUM.BinaryRelationCycle
+          lake build +HigherRankKUM.BinaryRelationLocalStructure
           lake build +HigherRankKUM.PairCycle
           lake build +HigherRankKUM.PairCycleIndexing
           lake build +HigherRankKUM.AdmissiblePairCycle
+          lake build +HigherRankKUM.PairCycleCardinality
           lake build +HigherRankKUM.PairCycleObstruction
