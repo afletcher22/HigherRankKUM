@@ -59,7 +59,7 @@ theorem exists_tight_rank_factorization
       hXfinite.eq_of_subset_of_encard_le hX.1 hcard_eq.symm.le
     exact hXproper hXE
   have hs_pos : 0 < s := Nat.pos_of_ne_zero hs_ne_zero
-  have hs_lt : s < q * g := lt_of_le_of_ne hs_le hs_ne_toprank
+  have hs_lt : s < q * g := by omega
   have hNatTight : q * X.ncard = p * s := by
     have htight := hX.2
     rw [← hXfinite.cast_ncard_eq, hXrank] at htight
@@ -72,7 +72,7 @@ theorem exists_tight_rank_factorization
   obtain ⟨a, haeq⟩ := hq_dvd_s
   have ha_pos : 0 < a := by
     by_contra! ha0
-    have : a = 0 := Nat.eq_zero_of_le_zero ha0
+    have ha_zero : a = 0 := Nat.eq_zero_of_le_zero ha0
     subst a
     simp at haeq
     exact hs_ne_zero haeq
@@ -135,10 +135,10 @@ theorem exists_cyclicBasisOrder_of_ratio_nonempty_proper_tight_of_lower_ranks
     exists_cyclicBasisOrder_of_ratio_tight_of_rank_solutions
       (M := M) (X := X) (a := a) (b := b) (p := p) (q := q)
       ha hb hp hq hE
-      (by simpa [hab] using hEcard)
-      (by simpa [hab] using hRank)
-      hDense hX hXrank hSolveA hSolveB
-  simpa [hab] using hOrder
+      (by simpa [hab, Nat.mul_comm] using hEcard)
+      (by simpa [hab, Nat.mul_comm] using hRank)
+      hDense hX hXrank (hSolveA (a * p)) (hSolveB (b * p))
+  simpa [hab, Nat.mul_comm] using hOrder
 
 end
 
