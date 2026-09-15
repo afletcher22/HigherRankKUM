@@ -36,6 +36,42 @@ theorem tightRatio_one_iff
     TightRatio M k 1 X ↔ Tight M k X := by
   simp [TightRatio, Tight]
 
+/-- Scaling numerator and denominator by the same natural factor preserves
+uniform density. -/
+theorem UniformlyDenseRatio.scale
+    (M : Matroid α) (p q c : ℕ)
+    (hDense : UniformlyDenseRatio M p q) :
+    UniformlyDenseRatio M (c * p) (c * q) := by
+  intro X hX
+  have h := hDense X hX
+  calc
+    ((c * q : ℕ) : ℕ∞) * X.encard =
+        (c : ℕ∞) * ((q : ℕ∞) * X.encard) := by
+          rw [ENat.natCast_mul]
+          simp [mul_assoc]
+    _ ≤ (c : ℕ∞) * ((p : ℕ∞) * M.eRk X) := by
+          gcongr
+    _ = ((c * p : ℕ) : ℕ∞) * M.eRk X := by
+          rw [ENat.natCast_mul]
+          simp [mul_assoc]
+
+/-- Scaling numerator and denominator preserves tightness. -/
+theorem TightRatio.scale
+    (M : Matroid α) (p q c : ℕ) {X : Set α}
+    (hX : TightRatio M p q X) :
+    TightRatio M (c * p) (c * q) X := by
+  refine ⟨hX.1, ?_⟩
+  calc
+    ((c * q : ℕ) : ℕ∞) * X.encard =
+        (c : ℕ∞) * ((q : ℕ∞) * X.encard) := by
+          rw [ENat.natCast_mul]
+          simp [mul_assoc]
+    _ = (c : ℕ∞) * ((p : ℕ∞) * M.eRk X) := by
+          rw [hX.2]
+    _ = ((c * p : ℕ) : ℕ∞) * M.eRk X := by
+          rw [ENat.natCast_mul]
+          simp [mul_assoc]
+
 /-- Rational uniform density is inherited by restriction. -/
 theorem UniformlyDenseRatio.restrict
     (M : Matroid α) (p q : ℕ)
@@ -87,6 +123,31 @@ theorem UniformlyDenseRatio.tight_factors
       UniformlyDenseRatio (Matroid.contract M X) p q := by
   exact ⟨UniformlyDenseRatio.restrict M p q hDense hX.1,
     UniformlyDenseRatio.contract_tight M p q hDense hX hXfinite⟩
+
+/--
+If a finite `p/q`-tight set has rank `q*a`, then it has exactly `p*a`
+elements. Positivity of `q` is the only cancellation hypothesis needed.
+-/
+theorem TightRatio.encard_eq_mul_of_eRk_eq_mul
+    (M : Matroid α) (p q a : ℕ) (hq : 0 < q)
+    {X : Set α}
+    (hXfinite : X.Finite)
+    (hX : TightRatio M p q X)
+    (hXrank : M.eRk X = ((q * a : ℕ) : ℕ∞)) :
+    X.encard = ((p * a : ℕ) : ℕ∞) := by
+  have hNat : q * X.ncard = p * (q * a) := by
+    have h := hX.2
+    rw [← hXfinite.cast_ncard_eq, hXrank] at h
+    exact_mod_cast h
+  have hNat' : q * X.ncard = q * (p * a) := by
+    calc
+      q * X.ncard = p * (q * a) := hNat
+      _ = q * (p * a) := by ring
+  have hcard : X.ncard = p * a :=
+    Nat.eq_of_mul_eq_mul_left hq hNat'
+  calc
+    X.encard = (X.ncard : ℕ∞) := hXfinite.cast_ncard_eq.symm
+    _ = ((p * a : ℕ) : ℕ∞) := by rw [hcard]
 
 end
 
