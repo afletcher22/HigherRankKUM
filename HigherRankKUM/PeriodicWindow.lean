@@ -14,7 +14,8 @@ theorem cyclicIndex_add
     cyclicIndex n hn (cyclicIndex n hn i a) b =
       cyclicIndex n hn i (a + b) := by
   apply Fin.ext
-  simp [cyclicIndex, Nat.add_mod, Nat.add_assoc]
+  simp only [cyclicIndex_val]
+  rw [Nat.mod_add_mod, Nat.add_assoc]
 
 /-- The order of two successive cyclic shifts is immaterial. -/
 theorem cyclicIndex_add_commute
@@ -276,13 +277,23 @@ theorem cyclicWindow_balancedBlockOrder_scaled_decomposition
       rfl
     refine ⟨blockPosition a p i u,
       blockPosition b p i ⟨0, hb⟩, ?_⟩
+    have hstart :
+        z = blockPosition (a + b) p i (Fin.castAdd b u) := by
+      calc
+        z = blockPosition (a + b) p i d := hz.symm
+        _ = blockPosition (a + b) p i (Fin.castAdd b u) := by
+          rw [hdu]
     calc
       cyclicWindow ((a + b) * q) (Nat.mul_pos (by omega) hp)
           (balancedBlockOrder hPQ left right) z =
         cyclicWindow ((a + b) * q) (Nat.mul_pos (by omega) hp)
           (balancedBlockOrder hPQ left right)
           (blockPosition (a + b) p i (Fin.castAdd b u)) := by
-            rw [← hz, hdu]
+            exact congrArg
+              (fun t : Fin ((a + b) * p) =>
+                cyclicWindow ((a + b) * q) (Nat.mul_pos (by omega) hp)
+                  (balancedBlockOrder hPQ left right) t)
+              hstart
       _ = cyclicWindow (b * q) (Nat.mul_pos hb hp) right
             (blockPosition b p i ⟨0, hb⟩) ∪
           cyclicWindow (a * q) (Nat.mul_pos ha hp) left
@@ -297,13 +308,23 @@ theorem cyclicWindow_balancedBlockOrder_scaled_decomposition
       omega
     refine ⟨blockPosition a p (cyclicIndex p hp i 1) ⟨0, ha⟩,
       blockPosition b p i v, ?_⟩
+    have hstart :
+        z = blockPosition (a + b) p i (Fin.natAdd a v) := by
+      calc
+        z = blockPosition (a + b) p i d := hz.symm
+        _ = blockPosition (a + b) p i (Fin.natAdd a v) := by
+          rw [hdv]
     calc
       cyclicWindow ((a + b) * q) (Nat.mul_pos (by omega) hp)
           (balancedBlockOrder hPQ left right) z =
         cyclicWindow ((a + b) * q) (Nat.mul_pos (by omega) hp)
           (balancedBlockOrder hPQ left right)
           (blockPosition (a + b) p i (Fin.natAdd a v)) := by
-            rw [← hz, hdv]
+            exact congrArg
+              (fun t : Fin ((a + b) * p) =>
+                cyclicWindow ((a + b) * q) (Nat.mul_pos (by omega) hp)
+                  (balancedBlockOrder hPQ left right) t)
+              hstart
       _ = cyclicWindow (b * q) (Nat.mul_pos hb hp) right
             (blockPosition b p i v) ∪
           cyclicWindow (a * q) (Nat.mul_pos ha hp) left
