@@ -1,6 +1,7 @@
 import HigherRankKUM.TightInduction
 import HigherRankKUM.LowRank.RankOne
 import HigherRankKUM.LowRank.RankTwo
+import HigherRankKUM.LowRank.RankThree
 
 namespace HigherRankKUM
 
@@ -10,10 +11,7 @@ variable {α : Type*}
 
 /--
 Divisible rank-four KUM with a nonempty proper tight set reduces uniformly to
-the divisible rank-one, rank-two, and rank-three solvers.
-
-Ranks one and two are internal to HigherRankKUM. Rank three remains an explicit
-solver certificate so the rank-four layer has no dependency on Rank3KUM.
+the internally available divisible rank-one, rank-two, and rank-three solvers.
 -/
 theorem exists_cyclicBasisOrder_of_rank_four_of_nonempty_proper_tight
     (M : Matroid α) (k : ℕ)
@@ -25,8 +23,7 @@ theorem exists_cyclicBasisOrder_of_rank_four_of_nonempty_proper_tight
     {X : Set α}
     (hX : Tight M k X)
     (hXnonempty : X.Nonempty)
-    (hXproper : X ≠ M.E)
-    (hSolve3 : SolvesDivisibleKUMAtRank α 3) :
+    (hXproper : X ≠ M.E) :
     ∃ order : Fin (4 * k) ≃ M.E,
       CyclicBasisOrder M 4 (by omega) order := by
   have hBelow : SolvesDivisibleKUMBelow α 4 := by
@@ -40,7 +37,7 @@ theorem exists_cyclicBasisOrder_of_rank_four_of_nonempty_proper_tight
       · subst s
         exact solvesDivisibleKUMAtRank_two
       · subst s
-        exact hSolve3
+        exact solvesDivisibleKUMAtRank_three
   exact
     exists_cyclicBasisOrder_of_nonempty_proper_tight_of_lower_ranks
       M 4 k (by omega) hk hE hRank hEcard hDense
