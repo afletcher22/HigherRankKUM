@@ -3,3 +3,11 @@ import HigherRankKUM.Density
 import HigherRankKUM.CyclicOrder
 import HigherRankKUM.TightContraction
 import HigherRankKUM.GenericGluing
+import HigherRankKUM.BalancedInterleave
+import HigherRankKUM.BalancedWindow
+import HigherRankKUM.BalancedWindowRight
+import HigherRankKUM.BalancedWindowDecomposition
+import HigherRankKUM.BalancedGluing
+import HigherRankKUM.DivisibleSolver
+import HigherRankKUM.TightFactorReduction
+import HigherRankKUM.TightInduction
