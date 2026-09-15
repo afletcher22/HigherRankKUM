@@ -17,7 +17,9 @@ The repository currently contains:
 - an abstract `SolvesDivisibleKUMAtRank` interface;
 - generic tight-factor reduction;
 - the theorem reducing every divisible rank-`r` instance with a nonempty proper tight set to solved lower ranks;
-- an independent rank-one divisible KUM solver.
+- independent internal divisible KUM solvers at ranks one and two.
+
+The rank-two solver uses a compressed HalfWeave development internal to this repository: cyclic half-weave indexing, a largest-first finite-partition lemma, singleton-closure classes, and the bridge to the generic cyclic-basis-order interface. It does not import Rank3KUM.
 
 The migration source and declaration-level policy are recorded in `docs/PROVENANCE.md` and `docs/MIGRATION_MANIFEST.md`.
 
@@ -29,7 +31,9 @@ Rank four has three arithmetic regimes:
 2. `gcd(|E|,4)=2`, equivalently `|E| ≡ 2 (mod 4)`;
 3. `4 | |E|` — the divisible regime addressed by the present `r*k` machinery.
 
-Inside the divisible regime, once ranks 1–3 are available internally through the solver interface, every instance with a nonempty proper tight set follows from generic induction. The remaining divisible structural target is therefore the strictly uniformly dense branch.
+Inside the divisible regime, ranks one and two are already available internally. Thus every instance with a nonempty proper tight set follows from generic induction once the rank-three solver is internalized. `HigherRankKUM/Rank4/TightReduction.lean` currently takes only the rank-three solver certificate explicitly.
+
+After rank three is internalized, the remaining divisible structural target is the strictly uniformly dense branch.
 
 The `gcd=2` regime is a separate full-rank-four target and must not be conflated with the strict divisible branch. See `docs/RANK4_COVERAGE.md`.
 
@@ -39,9 +43,11 @@ HigherRankKUM is intended to remain stable on its own even if Rank3KUM changes l
 
 - The trusted Lean tree must not import Rank3KUM.
 - Rank3KUM is provenance, not a build dependency.
-- Rank 1 is proved directly here.
-- Ranks 2 and 3 will eventually be supplied by native internal proofs or by a clearly marked vendored immutable snapshot, not by a live Git dependency.
-- Until then, generic higher-rank theorems take low-rank solver certificates explicitly.
+- Ranks one and two are proved internally here.
+- Rank three will eventually be supplied by a native internal proof or by a clearly marked vendored immutable snapshot, not by a live Git dependency.
+- Until then, higher-rank results needing rank three take the solver certificate explicitly.
+
+CI checks the standalone dependency boundary and verifies that `lake update` does not change the committed dependency lockfile.
 
 See `docs/DEPENDENCY_POLICY.md`.
 
