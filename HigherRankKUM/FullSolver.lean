@@ -7,6 +7,23 @@ noncomputable section
 
 variable {α : Type*}
 
+/--
+Transport existence of a cyclic basis ordering across equal natural size and
+rank parameters. This packages the dependent `Fin` transport in one place so
+arithmetic reductions do not rewrite through positivity proofs at call sites.
+-/
+theorem exists_cyclicBasisOrder_congr
+    (M : Matroid α) {n n' r r' : ℕ}
+    {hn : 0 < n} {hn' : 0 < n'}
+    (hN : n = n') (hR : r = r')
+    (hOrder : ∃ order : Fin n ≃ M.E,
+      CyclicBasisOrder M r hn order) :
+    ∃ order : Fin n' ≃ M.E,
+      CyclicBasisOrder M r' hn' order := by
+  subst n'
+  subst r'
+  simpa using hOrder
+
 /-- KUM at one exact rank/ground-size pair. -/
 def SolvesKUMAtRankSize (α : Type*) (r n : ℕ) : Prop :=
   ∀ (N : Matroid α)
