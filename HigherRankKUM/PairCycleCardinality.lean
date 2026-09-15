@@ -39,9 +39,9 @@ theorem core_encard
   have hf := A.core_coordinate_injective hh hhN i
   rw [AdmissiblePairCycle.Data.core, ← Set.image_univ, hf.encard_image]
   simp only [Set.encard_univ, ENat.card_eq_coe_fintype_card, Fintype.card_prod,
-    Fintype.card_fin, Fintype.card_bool, Nat.cast_mul]
-  congr 1
-  omega
+    Fintype.card_fin, Fintype.card_bool]
+  have hnat : (h - 1) * 2 = 2 * h - 2 := by omega
+  exact congrArg (fun n : ℕ => (n : ℕ∞)) hnat
 
 end AdmissiblePairCycle.Data
 end HigherRankKUM
