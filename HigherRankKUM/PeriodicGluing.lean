@@ -1,5 +1,5 @@
 import HigherRankKUM.PeriodicWindow
-import HigherRankKUM.GenericGluing
+import HigherRankKUM.BalancedGluing
 
 namespace HigherRankKUM
 
