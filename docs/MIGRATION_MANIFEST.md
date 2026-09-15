@@ -1,119 +1,82 @@
 # Migration Manifest
 
-Source checkpoint: `afletcher22/Rank3KUM@31ade8d073d7bedbf03b49612a76cea74dbc3b58` (`higher-rank-gluing-experiment`).
+HigherRankKUM has two distinct source relationships with `afletcher22/Rank3KUM`:
 
-This document records where HigherRankKUM's initial infrastructure came from. Rank3KUM is **provenance, not a build dependency**.
+1. generic higher-rank infrastructure was migrated/refactored from `31ade8d073d7bedbf03b49612a76cea74dbc3b58` (`higher-rank-gluing-experiment`);
+2. the completed rank-three proof is vendored immutably from `eff642a2e01fac4fc1f6f76e592eeea46c3152c9` (`version-3` at selection time).
 
-Status labels:
-
-- **MIGRATED** — now lives in HigherRankKUM's trusted Lean tree.
-- **REFACTORED** — reusable mathematics was separated from rank-three-specific dependencies during migration.
-- **COMPRESSED MIGRATION** — the mathematical route was retained, but a smaller dependency slice was rebuilt instead of copying the full source subsystem.
-- **INTERNALIZATION PENDING** — certified mathematics exists in the source project, but HigherRankKUM does not yet contain its own internal certified implementation.
-- **REFERENCE ONLY** — retained as a proof-pattern/regression reference, not copied into the trusted tree.
-- **DROP** — publication, Palomar, compression-history, or obsolete duplicate material that does not belong here.
+Rank3KUM is not a live build dependency.
 
 ## Generic core
 
 | Rank3KUM source | Status | HigherRankKUM destination | Notes |
 |---|---|---|---|
-| `UniformDensity.lean` — generic density/tight declarations | REFACTORED | `HigherRankKUM/Density.lean` | Rank-three tight-set classification was intentionally left behind. |
-| `CyclicOrder.lean` — `cyclicIndex` API | REFACTORED | `HigherRankKUM/CyclicIndex.lean` | Extracted away from the old `TwoGap.Final` import. |
-| `GenericGluing.lean` — `cyclicWindow`, `CyclicBasisOrder` | REFACTORED | `HigherRankKUM/CyclicOrder.lean` | Generic cyclic-order language now has no rank-three dependency. |
-| `TightContraction.lean` | MIGRATED | `HigherRankKUM/TightContraction.lean` | Rank-independent contraction rank/basis/density lemmas. |
-| `GenericGluing.lean` — abstract gluing + tight factors | MIGRATED | `HigherRankKUM/GenericGluing.lean` | Kept after separating the cyclic-order interface. |
+| `UniformDensity.lean` — generic density/tight declarations | REFACTORED | `HigherRankKUM/Density.lean` | Rank-three tight classification left out of generic core. |
+| `CyclicOrder.lean` — cyclic indexing | REFACTORED | `HigherRankKUM/CyclicIndex.lean` | Detached from `TwoGap.Final`. |
+| `GenericGluing.lean` — `cyclicWindow`, generic cyclic order | REFACTORED | `HigherRankKUM/CyclicOrder.lean` | Generic interface has no rank-three dependency. |
+| `TightContraction.lean` | MIGRATED | `HigherRankKUM/TightContraction.lean` | Rank-independent contraction bookkeeping. |
+| `GenericGluing.lean` — gluing + tight factors | MIGRATED | `HigherRankKUM/GenericGluing.lean` | Generic theorem layer. |
 | `BalancedInterleaveGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedInterleave.lean` | Arbitrary positive `s,t,k`. |
-| `BalancedWindowGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedWindow.lean` | Arbitrary-rank left-start schedule arithmetic. |
-| `BalancedWindowRightGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedWindowRight.lean` | Arbitrary-rank right-start schedule arithmetic. |
-| `BalancedWindowDecompositionGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedWindowDecomposition.lean` | Full `(L^s R^t)^k` decomposition. |
-| `BalancedGluingGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedGluing.lean` | Concrete arbitrary-rank restriction/contraction gluing. |
-| `TightFactorReductionGeneral.lean` — abstract solver + reduction | REFACTORED | `HigherRankKUM/DivisibleSolver.lean`, `HigherRankKUM/TightFactorReduction.lean` | Abstract solver interface is separated from concrete low-rank implementations. |
-| `TightInductionGeneral.lean` | REFACTORED | `HigherRankKUM/TightInduction.lean` | Arbitrary-rank tight-set induction now depends only on HigherRankKUM generic modules. |
+| `BalancedWindowGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedWindow.lean` | Left-start schedule arithmetic. |
+| `BalancedWindowRightGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedWindowRight.lean` | Right-start schedule arithmetic. |
+| `BalancedWindowDecompositionGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedWindowDecomposition.lean` | Full balanced window decomposition. |
+| `BalancedGluingGeneral.lean` | MIGRATED | `HigherRankKUM/BalancedGluing.lean` | Arbitrary-rank restriction/contraction gluing. |
+| `TightFactorReductionGeneral.lean` | REFACTORED | `HigherRankKUM/DivisibleSolver.lean`, `HigherRankKUM/TightFactorReduction.lean` | Abstract solver separated from concrete low ranks. |
+| `TightInductionGeneral.lean` | REFACTORED | `HigherRankKUM/TightInduction.lean` | Arbitrary-rank proper-tight induction. |
 
 ## Low-rank bases
 
-| Source mathematics | Status | HigherRankKUM destination | Policy |
+| Source mathematics | Status | HigherRankKUM destination | Notes |
 |---|---|---|---|
-| Rank-one part of `LowRankCyclicGeneral.lean` | MIGRATED | `HigherRankKUM/LowRank/RankOne.lean` | Fully internal and standalone. |
-| Rank-two HalfWeave route | COMPRESSED MIGRATION | `HigherRankKUM/LowRank/RankTwo.lean` plus `LowRank/RankTwo/*` | Rebuilt from the minimal dependency slice needed by the direct proof; no Rank3KUM import and no legacy fully-sorted closure-block stack. |
-| Completed rank-three theorem | INTERNALIZATION PENDING | future internal/vendored rank-three base | Must be made internally available without a live Rank3KUM dependency. |
-| `solvesDivisibleKUMAtRank_one/two/three` wrappers | PARTIAL | current rank-one/rank-two modules; future rank-three base | Ranks 1 and 2 are internally discharged. Rank 3 remains an explicit solver hypothesis where needed. |
+| Rank-one part of `LowRankCyclicGeneral.lean` | INTERNALIZED | `HigherRankKUM/LowRank/RankOne.lean` | Standalone native proof. |
+| Rank-two HalfWeave route | INTERNALIZED / COMPRESSED | `HigherRankKUM/LowRank/RankTwo*` | Minimal five-module implementation; legacy sorted-block machinery omitted. |
+| Complete rank-three v3 proof | VENDORED IMMUTABLY | `vendor/Rank3KUM/` | Byte-for-byte snapshot of `eff642a2...`; original namespace retained. |
+| Generic bridge from `CyclicBasisOrder3` | ADAPTED | `HigherRankKUM/LowRank/RankThree.lean` | Exposes `solvesDivisibleKUMAtRank_three`. |
 
-### Rank-two compression details
+The vendored `Rank3KUM/` source subtree has source and destination tree SHA
 
-The source HalfWeave development spans a larger collection of files, including legacy stronger sorted-block infrastructure. HigherRankKUM keeps only the mathematical dependency slice used by the direct uniform-density proof:
+`a73e2f94c811a4f2f072e197d1a03656bc53f616`.
 
-- `LowRank/RankTwo/Indexing.lean` — cyclic half-weave indexing;
-- `LowRank/RankTwo/LargestFirst.lean` — the weak largest-first contiguous-block condition and crossing lemmas;
-- `LowRank/RankTwo/FinitePartition.lean` — generic finite-partition flattening with a largest block first;
-- `LowRank/RankTwo/Matroid.lean` — singleton-closure partition, density bound, and adjacent-base theorem;
-- `LowRank/RankTwo.lean` — bridge to the generic `CyclicBasisOrder` interface and `solvesDivisibleKUMAtRank_two`.
+## Rank-four consequence
 
-The stronger legacy `SortedBlockModel` route is intentionally not part of the migrated trusted tree.
-
-No axioms are introduced to pretend the missing rank-three internalization is present.
-
-## First higher-rank consequence
-
-| Rank3KUM source | Status | HigherRankKUM destination | Notes |
+| Source idea | Status | HigherRankKUM destination | Notes |
 |---|---|---|---|
-| `RankFourTightCorollaryGeneral.lean` | REFACTORED | `HigherRankKUM/Rank4/TightReduction.lean` | Clean specialization of the generic theorem; ranks 1 and 2 are internal, so only the rank-3 solver certificate remains explicit. |
-| `RankFourTightReduction.lean` | REFERENCE ONLY | documentation/regression reference | Explicit `1+3`, `2+2`, `3+1` derivation is not the production architecture. |
-| `HigherRankTightCorollaries.lean` | FUTURE RE-DERIVATION | future `HigherRankKUM/Consequences/` | Rank-5/6 consequences should be recovered from the generic reduction rather than copied with duplicate bookkeeping. |
+| `RankFourTightCorollaryGeneral.lean` | REFACTORED / DISCHARGED | `HigherRankKUM/Rank4/TightReduction.lean` | Production proof uses generic lower-rank induction. Ranks 1,2,3 are all internally supplied; there are no solver hypotheses left. |
+| old explicit `RankFourTightReduction.lean` | REFERENCE ONLY | historical comparison | The explicit `1+3`, `2+2`, `3+1` split is not the production architecture. |
+| `HigherRankTightCorollaries.lean` | FUTURE RE-DERIVATION | future `HigherRankKUM/Consequences/` | Rank-5/6 consequences should use generic induction. |
 
-## Rank-three-specific machinery — reference only
+## Rank-three proof machinery
 
-The following is not part of the HigherRankKUM trusted tree:
+The files under `vendor/Rank3KUM/` are deliberately frozen legacy source. They include `TwoGap`, `NearTightGeometry`, `StrictDensity`, `Splicing`, six-point machinery, `Version2`, and the final induction proof. They are **not** part of the generic HigherRankKUM architecture.
 
-- `TwoGap.lean` and `TwoGap/*`
-- `NearTightGeometry.lean`
-- `StrictDensity.lean`
-- `SixPointCombinatorics.lean`
-- `SixPointMatroid.lean`
-- `Version2/*`
-- `FinalInduction.lean`
-- `FinalReduction.lean`
-- `InductionStep.lean`
-- `Splicing.lean`
-- `SpliceWrap.lean`
-- `ContractInterleave.lean`
-- old rank-three `BalancedGluing.lean`
-
-They remain useful as proof-pattern references when searching for rank-four machinery, but copying them wholesale would blur the boundary between generic infrastructure and rank-three geometry.
+Only `HigherRankKUM/LowRank/RankThree.lean` may import the vendored library. New higher-rank proofs should not import rank-three internals directly.
 
 ## Infrastructure
 
-The initial migration checkpoint preserves:
+- Lean: `leanprover/lean4:v4.33.0-rc2`.
+- mathlib input revision: `v4.33.0-rc2`.
+- `lake-manifest.json` pins resolved transitive dependencies.
+- `vendor/Rank3KUM/SHA256SUMS` protects the frozen source snapshot.
+- CI checks lockfile stability, vendor integrity, local-only Rank3KUM resolution, and the complete Lean build.
 
-- Lean `leanprover/lean4:v4.33.0-rc2`;
-- mathlib input revision `v4.33.0-rc2`;
-- the exact resolved transitive package commits in `lake-manifest.json`;
-- a standalone CI boundary that rejects trusted `Rank3KUM` imports and detects lockfile drift.
+## Material intentionally excluded
 
-## Material intentionally dropped
+Rank3KUM publication files, paper assets, Palomar metadata/scripts, challenge packaging, compression-history tooling, and Rank3KUM README/CITATION metadata are not vendored. HigherRankKUM copies the Lean proof source and license needed for the theorem base, not the old repository as a whole.
 
-- `Challenge.lean`, `Solution.lean`, `formalization.yaml`, `comparator.json`
-- Palomar scripts and metadata
-- rank-three paper-alignment documents
-- compression-baseline tooling unless later reused as a generic maintenance tool
-- `CITATION.cff` until HigherRankKUM has an independent citable release
-
-## Dependency boundary
-
-The intended trusted dependency graph is now:
+## Trusted dependency graph
 
 ```text
 Lean / pinned mathlib
         ↓
 HigherRankKUM generic core
         ↓
-internal rank-1 / rank-2 solvers
+rank 1 ─ rank 2 ─ rank 3 adapter
+                  ↓
+          frozen local Rank3KUM v3
         ↓
-conditional lower-rank induction (rank 3 still explicit where needed)
+proper-tight induction
         ↓
 rank-4 and higher-rank research
 ```
 
-Rank3KUM is outside this graph. It appears only in provenance and research-reference documentation.
-
-See `docs/DEPENDENCY_POLICY.md`.
+There is no live edge from this graph to the external Rank3KUM repository.
