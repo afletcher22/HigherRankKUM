@@ -57,7 +57,7 @@ theorem exists_cyclicBasisOrder_of_periodic_restrict_contract
     intro z
     obtain ⟨iL, iR, hz⟩ :=
       cyclicWindow_balancedBlockOrder_scaled_decomposition
-        ha hb hp hDisjoint left right z
+        (q := q) ha hb hp hDisjoint left right z
     refine ⟨iL, iR, ?_⟩
     simpa only [order, localOrder, left, right,
       cyclicWindow, Equiv.trans_apply, Equiv.setCongr_apply,
