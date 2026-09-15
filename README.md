@@ -29,13 +29,21 @@ Rank four has three arithmetic regimes:
 2. `gcd(|E|,4)=2`, equivalently `|E| ≡ 2 (mod 4)`;
 3. `4 | |E|` — the divisible regime addressed by the present `r*k` machinery.
 
-Inside the divisible regime, once ranks 1–3 are wired into the solver interface, every instance with a nonempty proper tight set follows from generic induction. The remaining divisible structural target is therefore the strictly uniformly dense branch.
+Inside the divisible regime, once ranks 1–3 are available internally through the solver interface, every instance with a nonempty proper tight set follows from generic induction. The remaining divisible structural target is therefore the strictly uniformly dense branch.
 
 The `gcd=2` regime is a separate full-rank-four target and must not be conflated with the strict divisible branch. See `docs/RANK4_COVERAGE.md`.
 
 ## Repository policy
 
-Generic modules should not import rank-three-specific proof machinery. The completed rank-three theorem will eventually enter through a narrow, pinned adapter rather than by copying the Rank3KUM proof stack.
+HigherRankKUM is intended to remain stable on its own even if Rank3KUM changes later.
+
+- The trusted Lean tree must not import Rank3KUM.
+- Rank3KUM is provenance, not a build dependency.
+- Rank 1 is proved directly here.
+- Ranks 2 and 3 will eventually be supplied by native internal proofs or by a clearly marked vendored immutable snapshot, not by a live Git dependency.
+- Until then, generic higher-rank theorems take low-rank solver certificates explicitly.
+
+See `docs/DEPENDENCY_POLICY.md`.
 
 Experimental rank-four searches and candidate lemmas should remain separated from the trusted generic dependency graph until their mathematical role is understood.
 
@@ -45,3 +53,5 @@ The initial migration checkpoint preserves the source environment:
 
 - Lean `v4.33.0-rc2`
 - mathlib `v4.33.0-rc2`
+
+The committed Lake manifest pins the resolved transitive dependency graph for reproducibility.
