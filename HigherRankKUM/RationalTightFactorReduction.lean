@@ -15,8 +15,9 @@ Rational tight-factor reduction with the rank factorization made explicit.
 
 The ambient instance has size `(a+b)*p` and rank `(a+b)*q`. A finite tight
 set of rank `a*q` therefore has size `a*p`; its contraction has size `b*p`
-and rank `b*q`. If full KUM is available at those two factor ranks, the
-periodic density-free gluing theorem produces a cyclic basis order of `M`.
+and rank `b*q`. It is enough to solve KUM at those two exact rank/size pairs;
+the periodic density-free gluing theorem then produces a cyclic basis order
+of `M`.
 -/
 theorem exists_cyclicBasisOrder_of_ratio_tight_of_rank_solutions
     (M : Matroid α) {X : Set α} {a b p q : ℕ}
@@ -27,8 +28,8 @@ theorem exists_cyclicBasisOrder_of_ratio_tight_of_rank_solutions
     (hDense : UniformlyDenseRatio M p q)
     (hX : TightRatio M p q X)
     (hXrank : M.eRk X = ((a * q : ℕ) : ℕ∞))
-    (hSolveL : SolvesKUMAtRank α (a * q))
-    (hSolveR : SolvesKUMAtRank α (b * q)) :
+    (hSolveL : SolvesKUMAtRankSize α (a * q) (a * p))
+    (hSolveR : SolvesKUMAtRankSize α (b * q) (b * p)) :
     ∃ order : Fin ((a + b) * p) ≃ M.E,
       CyclicBasisOrder M ((a + b) * q)
         (Nat.mul_pos (by omega) hp) order := by
@@ -90,11 +91,11 @@ theorem exists_cyclicBasisOrder_of_ratio_tight_of_rank_solutions
     UniformlyDenseRatio.scale
       (Matroid.contract M X) p q b hContractDense0
   obtain ⟨σL, hL⟩ :=
-    hSolveL (Matroid.restrict M X) (a * p)
+    hSolveL (Matroid.restrict M X)
       (Nat.mul_pos ha hq) (Nat.mul_pos ha hp)
       hRestrictFinite hRestrictRank hRestrictCard hRestrictDense
   obtain ⟨σR, hR⟩ :=
-    hSolveR (Matroid.contract M X) (b * p)
+    hSolveR (Matroid.contract M X)
       (Nat.mul_pos hb hq) (Nat.mul_pos hb hp)
       hContractFinite hContractRank hContractCard hContractDense
   exact
