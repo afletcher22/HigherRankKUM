@@ -7,16 +7,9 @@ noncomputable section
 
 variable {α : Type*}
 
-/--
-`SolvesKUMAtRank α r` packages full KUM at a fixed positive rank `r`:
-for every finite uniformly dense rank-`r` matroid, with arbitrary positive
-ground-set size `n`, there is a cyclic basis ordering.
-
-Uniform density is expressed intrinsically using the actual size/rank ratio,
-`r * |X| ≤ n * r(X)`.
--/
-def SolvesKUMAtRank (α : Type*) (r : ℕ) : Prop :=
-  ∀ (N : Matroid α) (n : ℕ)
+/-- KUM at one exact rank/ground-size pair. -/
+def SolvesKUMAtRankSize (α : Type*) (r n : ℕ) : Prop :=
+  ∀ (N : Matroid α)
     (hr : 0 < r) (hn : 0 < n)
     (_hE : N.E.Finite)
     (_hRank : N.eRank = r)
@@ -24,6 +17,15 @@ def SolvesKUMAtRank (α : Type*) (r : ℕ) : Prop :=
     (_hDense : UniformlyDenseRatio N n r),
     ∃ order : Fin n ≃ N.E,
       CyclicBasisOrder N r hn order
+
+/--
+`SolvesKUMAtRank α r` packages full KUM at fixed rank `r`, uniformly over
+all ground-set sizes. It is intentionally factored through
+`SolvesKUMAtRankSize` so reductions can expose only the exact size dependency
+they really need.
+-/
+def SolvesKUMAtRank (α : Type*) (r : ℕ) : Prop :=
+  ∀ n : ℕ, SolvesKUMAtRankSize α r n
 
 /-- Full KUM is solved at every positive rank strictly below `r`. -/
 def SolvesKUMBelow (α : Type*) (r : ℕ) : Prop :=
@@ -45,7 +47,7 @@ theorem SolvesKUMAtRank.to_divisible
       _ = ((r * k : ℕ) : ℕ∞) * N.eRk X := by
             rw [ENat.natCast_mul]
             simp [mul_assoc]
-  exact hSolve N (r * k) hr (Nat.mul_pos hr hk)
+  exact hSolve (r * k) N hr (Nat.mul_pos hr hk)
     hE hRank hEcard hRatio
 
 end
