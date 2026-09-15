@@ -164,7 +164,7 @@ theorem left_block_isBase_leftRepairMinor
   have hjGround : A.block j ⊆ (M.contract (A.core s)).E := by
     simpa [j] using right_block_subset_left_contract_ground A h2N s
   rw [leftRepairMinor, LocalRepairClosure.boundaryMinor,
-    Matroid.isBase_restrict_iff]
+    Matroid.isBase_restrict_iff (hX := Set.union_subset hiGround hjGround)]
   exact hcontract.isBasis_of_subset
     (hX := Set.union_subset hiGround hjGround) Set.subset_union_left
 
@@ -187,7 +187,7 @@ theorem right_block_isBase_rightRepairMinor
         (M.contract (A.core j)).E := by
     simpa [j] using left_block_subset_right_contract_ground A h2N s
   rw [rightRepairMinor, LocalRepairClosure.boundaryMinor,
-    Matroid.isBase_restrict_iff]
+    Matroid.isBase_restrict_iff (hX := Set.union_subset hiGround hjGround)]
   exact hcontract.isBasis_of_subset
     (hX := Set.union_subset hiGround hjGround) Set.subset_union_right
 
