@@ -22,14 +22,18 @@ This checkpoint contains the furthest higher-rank generalization work found in t
 
 ## Migration principle
 
-The new repository should contain only machinery that is genuinely useful for higher-rank KUM research.
+The new repository contains only machinery that is genuinely useful for higher-rank KUM research.
 
-Rank-three-specific proof machinery remains in `Rank3KUM`. HigherRankKUM may depend on a pinned Rank3KUM theorem adapter when it needs the already-proved rank-three result as an induction base, but the generic core should not import rank-three-specific modules.
+Rank-three-specific proof machinery remains historically associated with `Rank3KUM`, but HigherRankKUM does **not** treat that repository as a build dependency. References to Rank3KUM are provenance only. The trusted HigherRankKUM Lean tree must remain buildable if Rank3KUM later changes or disappears.
+
+When a certified low-rank result is needed internally, it must be either proved natively in HigherRankKUM or vendored as an immutable, provenance-recorded snapshot. Until then, higher-rank theorems take the appropriate solver certificate explicitly.
+
+See `docs/DEPENDENCY_POLICY.md`.
 
 ## Namespace policy
 
-Migrated declarations should live under `HigherRankKUM`, even when their first implementation originated under `Rank3KUM`. This makes the dependency boundary explicit and prevents the research successor from masquerading as an extension of the old namespace.
+Migrated declarations live under `HigherRankKUM`, even when their first implementation originated under `Rank3KUM`. This makes the dependency boundary explicit and prevents the research successor from masquerading as an extension of the old namespace.
 
 ## Reproducibility rule
 
-Every copied or rewritten theorem should retain a traceable source entry in `docs/MIGRATION_MANIFEST.md`. If a theorem is materially rewritten during migration, the manifest should record both its Rank3KUM source declaration and its new HigherRankKUM declaration.
+Every copied or rewritten theorem retains a traceable source entry in `docs/MIGRATION_MANIFEST.md`. If a theorem is materially rewritten during migration, the manifest records both its Rank3KUM source declaration and its new HigherRankKUM declaration.
