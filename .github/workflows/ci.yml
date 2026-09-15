@@ -1,0 +1,50 @@
+name: Lean CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: lean-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch pinned dependencies
+        run: lake update
+      - name: Verify dependency lock
+        run: git diff --exit-code -- lake-manifest.json
+      - name: Verify vendored Rank3KUM integrity
+        run: |
+          test -f vendor/Rank3KUM/SHA256SUMS
+          (cd vendor/Rank3KUM && sha256sum -c SHA256SUMS)
+          grep -q 'eff642a2e01fac4fc1f6f76e592eeea46c3152c9' vendor/Rank3KUM/SOURCE.md
+      - name: Enforce standalone Rank3KUM boundary
+        run: |
+          matches="$(grep -R -nE '^[[:space:]]*import[[:space:]]+Rank3KUM([.]|$)' HigherRankKUM HigherRankKUM.lean || true)"
+          bad="$(printf '%s\n' "$matches" | grep -v '^HigherRankKUM/LowRank/RankThree.lean:' || true)"
+          if [ -n "$bad" ]; then
+            echo "$bad"
+            echo "Only the dedicated rank-three adapter may import the vendored Rank3KUM library."
+            exit 1
+          fi
+          if grep -nE 'github\.com/.*/Rank3KUM|git[[:space:]]*=.*Rank3KUM' lakefile.toml; then
+            echo "HigherRankKUM must not have a live Git dependency on Rank3KUM."
+            exit 1
+          fi
+          grep -q '^name = "Rank3KUM"$' lakefile.toml
+          grep -q '^srcDir = "vendor/Rank3KUM"$' lakefile.toml
+      - name: Build
+        run: lake build
