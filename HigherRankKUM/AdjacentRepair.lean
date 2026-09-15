@@ -1,4 +1,4 @@
-import HigherRankKUM.PairCycle
+import HigherRankKUM.AdmissiblePairCycle
 import Mathlib.Combinatorics.Matroid.Dual
 
 namespace HigherRankKUM
@@ -10,7 +10,7 @@ variable {α : Type*}
 
 /-- A proposed local re-pairing across two boundary windows is valid exactly
 when the proposed left and right pieces are bases after contracting the two
-unchanged boundary interiors.  This is the matroid core of the adjacent-pair
+unchanged boundary interiors. This is the matroid core of the adjacent-pair
 repair operation; no representability or simplicity is assumed. -/
 theorem two_boundary_repair_iff_contract_bases
     (M : Matroid α) {L R Q Q' : Set α}
@@ -67,6 +67,66 @@ theorem complementary_bases_iff_common_base_with_dual
     (L.IsBase Q ∧ R.IsBase (U \ Q)) ↔
       (L.IsBase Q ∧ R✶.IsBase Q) := by
   rw [complement_isBase_iff_dual_isBase R hRE hQ]
+
+/-- The pair that finishes the left boundary window of an adjacent re-pairing
+whose left unchanged core begins immediately after `s`. -/
+def leftBoundaryIndex (N h : ℕ) (hN : 0 < N) (s : Fin N) : Fin N :=
+  cyclicIndex N hN s h
+
+/-- The adjacent pair on the right side of the same local re-pairing. -/
+def rightBoundaryIndex (N h : ℕ) (hN : 0 < N) (s : Fin N) : Fin N :=
+  cyclicIndex N hN s (h + 1)
+
+/-- In an admissible pair cycle, the two contractions governing an adjacent
+re-pairing are both rank two. The left interior is `A.core s`; the right
+interior is the core beginning at the right modified pair. -/
+theorem admissible_boundary_contract_ranks_eq_two
+    {M : Matroid α} {N h : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N h hN)
+    (hh : 0 < h) (hhN : h < N) (s : Fin N) :
+    (M.contract (A.core s)).eRank = 2 ∧
+      (M.contract (A.core (rightBoundaryIndex N h hN s))).eRank = 2 := by
+  let i := leftBoundaryIndex N h hN s
+  let j := rightBoundaryIndex N h hN s
+  have hiDis : Disjoint
+      ({A.element i false, A.element i true} : Set α) (A.core s) := by
+    simpa [i, leftBoundaryIndex, AdmissiblePairCycle.Data.block,
+      AdmissiblePairCycle.pairSet] using
+      A.endpoint_block_disjoint_core hh hhN s
+  have hiBase : M.IsBase
+      ({A.element i false, A.element i true} ∪ A.core s) := by
+    simpa [i, leftBoundaryIndex, AdmissiblePairCycle.Data.block,
+      AdmissiblePairCycle.pairSet] using A.endpoint_basis_right hh s
+  have hjDis : Disjoint
+      ({A.element j false, A.element j true} : Set α) (A.core j) := by
+    simpa [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet] using
+      A.block_disjoint_core hh hhN j
+  have hjBase : M.IsBase
+      ({A.element j false, A.element j true} ∪ A.core j) := by
+    simpa [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet] using
+      A.endpoint_basis_left hh j
+  have hranks := boundary_contract_ranks_eq_two M
+    (A.element_ne i) (A.element_ne j)
+    (A.core_indep hh s) (A.core_indep hh j)
+    hiDis hjDis hiBase hjBase
+  simpa [j, rightBoundaryIndex] using hranks
+
+/-- Cycle-specific form of the two-boundary repair criterion. This theorem
+isolates the only two basis tests a proposed local re-pairing must satisfy;
+it does not assert that such a re-pairing exists. -/
+theorem admissible_two_boundary_repair_iff_contract_bases
+    {M : Matroid α} {N h : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N h hN)
+    (hh : 0 < h) (s : Fin N) {Q Q' : Set α}
+    (hQL : Disjoint Q (A.core s))
+    (hQ'R : Disjoint Q' (A.core (rightBoundaryIndex N h hN s))) :
+    (M.IsBase (Q ∪ A.core s) ∧
+        M.IsBase (Q' ∪ A.core (rightBoundaryIndex N h hN s))) ↔
+      ((M.contract (A.core s)).IsBase Q ∧
+        (M.contract (A.core (rightBoundaryIndex N h hN s)).IsBase Q') := by
+  exact two_boundary_repair_iff_contract_bases M
+    (A.core_indep hh s)
+    (A.core_indep hh (rightBoundaryIndex N h hN s)) hQL hQ'R
 
 end AdjacentRepair
 end HigherRankKUM
