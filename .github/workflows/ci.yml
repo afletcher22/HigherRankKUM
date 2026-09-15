@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - main
-      - initial-generalization-import
   pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 concurrency:
   group: lean-ci-${{ github.workflow }}-${{ github.ref }}
