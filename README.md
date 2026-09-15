@@ -2,7 +2,7 @@
 
 HigherRankKUM is a research repository for extending the Kajitani–Ueno–Miyano cyclic basis-ordering program beyond the completed rank-three case.
 
-It is a successor to [`afletcher22/Rank3KUM`](https://github.com/afletcher22/Rank3KUM), not a fork or replacement for that proof artifact. The initial codebase extracts the furthest genuinely higher-rank machinery developed during the Rank3KUM project and reorganizes it so the generic core has no hidden dependence on rank-three geometry.
+It is a successor to [`afletcher22/Rank3KUM`](https://github.com/afletcher22/Rank3KUM), not a fork or replacement for that proof artifact. The higher-rank core has been reorganized so its generic machinery is independent of rank-three geometry, while the completed rank-three proof is retained locally as a frozen vendored base theorem.
 
 ## Current formal core
 
@@ -17,11 +17,23 @@ The repository currently contains:
 - an abstract `SolvesDivisibleKUMAtRank` interface;
 - generic tight-factor reduction;
 - the theorem reducing every divisible rank-`r` instance with a nonempty proper tight set to solved lower ranks;
-- independent internal divisible KUM solvers at ranks one and two.
+- internal divisible KUM solvers at ranks 1 and 2;
+- an internal rank-3 solver backed by an immutable vendored copy of the Rank3KUM version-3 proof.
 
-The rank-two solver uses a compressed HalfWeave development internal to this repository: cyclic half-weave indexing, a largest-first finite-partition lemma, singleton-closure classes, and the bridge to the generic cyclic-basis-order interface. It does not import Rank3KUM.
+The migration source and declaration-level policy are recorded in `docs/PROVENANCE.md`, `docs/MIGRATION_MANIFEST.md`, and `docs/DEPENDENCY_POLICY.md`.
 
-The migration source and declaration-level policy are recorded in `docs/PROVENANCE.md` and `docs/MIGRATION_MANIFEST.md`.
+## Vendored rank-three theorem
+
+`vendor/Rank3KUM/` is a byte-for-byte Lean-source snapshot of:
+
+- source repository: `afletcher22/Rank3KUM`;
+- source branch at selection time: `version-3`;
+- exact source commit: `eff642a2e01fac4fc1f6f76e592eeea46c3152c9`;
+- exact source `Rank3KUM/` tree: `a73e2f94c811a4f2f072e197d1a03656bc53f616`.
+
+The snapshot is a local Lake library, not a Git dependency. `HigherRankKUM/LowRank/RankThree.lean` is the only HigherRankKUM module allowed to import it and exposes the narrow theorem `solvesDivisibleKUMAtRank_three`.
+
+`vendor/Rank3KUM/SHA256SUMS` records checksums for the frozen Lean source. CI verifies those checksums and the exact source commit recorded in `vendor/Rank3KUM/SOURCE.md`.
 
 ## Rank-four program
 
@@ -31,33 +43,24 @@ Rank four has three arithmetic regimes:
 2. `gcd(|E|,4)=2`, equivalently `|E| ≡ 2 (mod 4)`;
 3. `4 | |E|` — the divisible regime addressed by the present `r*k` machinery.
 
-Inside the divisible regime, ranks one and two are already available internally. Thus every instance with a nonempty proper tight set follows from generic induction once the rank-three solver is internalized. `HigherRankKUM/Rank4/TightReduction.lean` currently takes only the rank-three solver certificate explicitly.
-
-After rank three is internalized, the remaining divisible structural target is the strictly uniformly dense branch.
+Within the divisible regime, ranks 1–3 are now internally available. Therefore every rank-four instance with a nonempty proper tight set is formally discharged by the generic lower-rank induction theorem. The remaining new structural target there is the strictly uniformly dense branch.
 
 The `gcd=2` regime is a separate full-rank-four target and must not be conflated with the strict divisible branch. See `docs/RANK4_COVERAGE.md`.
 
 ## Repository policy
 
-HigherRankKUM is intended to remain stable on its own even if Rank3KUM changes later.
+HigherRankKUM is intended to remain stable on its own even if Rank3KUM later changes, is reorganized, or disappears.
 
-- The trusted Lean tree must not import Rank3KUM.
-- Rank3KUM is provenance, not a build dependency.
-- Ranks one and two are proved internally here.
-- Rank three will eventually be supplied by a native internal proof or by a clearly marked vendored immutable snapshot, not by a live Git dependency.
-- Until then, higher-rank results needing rank three take the solver certificate explicitly.
-
-CI checks the standalone dependency boundary and verifies that `lake update` does not change the committed dependency lockfile.
-
-See `docs/DEPENDENCY_POLICY.md`.
-
-Experimental rank-four searches and candidate lemmas should remain separated from the trusted generic dependency graph until their mathematical role is understood.
+- There is no live Git dependency on Rank3KUM.
+- Rank3KUM is provenance plus a frozen local source snapshot.
+- Only `HigherRankKUM/LowRank/RankThree.lean` may import the vendored `Rank3KUM` library.
+- The generic core must remain independent of rank-three-specific proof machinery.
+- Experimental rank-four searches and candidate lemmas remain outside the trusted dependency graph until their mathematical role is understood.
 
 ## Toolchain
 
-The initial migration checkpoint preserves the source environment:
+The initial migration preserves:
 
-- Lean `v4.33.0-rc2`
-- mathlib `v4.33.0-rc2`
-
-The committed Lake manifest pins the resolved transitive dependency graph for reproducibility.
+- Lean `v4.33.0-rc2`;
+- mathlib `v4.33.0-rc2`;
+- the exact resolved transitive dependency graph in `lake-manifest.json`.
