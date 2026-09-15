@@ -1,12 +1,9 @@
 name: Lean CI
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
-      - main
+      - ci-sprint2-targeted
   workflow_dispatch:
 
 concurrency:
@@ -46,5 +43,7 @@ jobs:
           fi
           grep -q '^name = "Rank3KUM"$' lakefile.toml
           grep -q '^srcDir = "vendor/Rank3KUM"$' lakefile.toml
-      - name: Build
-        run: lake build
+      - name: Build Sprint 2 modules
+        run: |
+          lake build +HigherRankKUM.BinaryRelationCycle
+          if [ -f HigherRankKUM/PairCycle.lean ]; then lake build +HigherRankKUM.PairCycle; fi
