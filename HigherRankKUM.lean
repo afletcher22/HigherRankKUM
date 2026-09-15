@@ -34,3 +34,4 @@ import HigherRankKUM.PairCycleObstruction
 import HigherRankKUM.AdjacentRepair
 import HigherRankKUM.LocalRepairRigidity
 import HigherRankKUM.LocalRepairBoundary
+import HigherRankKUM.LocalRepairClosure
