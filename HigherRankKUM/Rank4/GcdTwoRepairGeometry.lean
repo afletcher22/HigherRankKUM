@@ -166,7 +166,7 @@ theorem left_block_isBase_leftRepairMinor
   rw [leftRepairMinor, LocalRepairClosure.boundaryMinor,
     Matroid.isBase_restrict_iff]
   exact hcontract.isBasis_of_subset
-    (Set.union_subset hiGround hjGround) (Set.subset_union_left)
+    (hX := Set.union_subset hiGround hjGround) Set.subset_union_left
 
 /-- The right modified block is a base of the right repair minor. -/
 theorem right_block_isBase_rightRepairMinor
@@ -189,7 +189,7 @@ theorem right_block_isBase_rightRepairMinor
   rw [rightRepairMinor, LocalRepairClosure.boundaryMinor,
     Matroid.isBase_restrict_iff]
   exact hcontract.isBasis_of_subset
-    (Set.union_subset hiGround hjGround) (Set.subset_union_right)
+    (hX := Set.union_subset hiGround hjGround) Set.subset_union_right
 
 /-- In the right boundary minor, the complement of the left modified block is
 exactly the right modified block. -/
@@ -198,8 +198,16 @@ theorem repairGround_sdiff_left_block
     (A : AdmissiblePairCycle.Data M N 2 hN) (h2N : 2 < N) (s : Fin N) :
     repairGround A s \ A.block (AdjacentRepair.leftBoundaryIndex N 2 hN s) =
       A.block (AdjacentRepair.rightBoundaryIndex N 2 hN s) := by
-  rw [repairGround]
-  exact Set.union_diff_left (modified_blocks_disjoint A h2N s)
+  ext x
+  constructor
+  · rintro ⟨hx, hxnot⟩
+    rcases hx with hxleft | hxright
+    · exact (hxnot hxleft).elim
+    · exact hxright
+  · intro hxright
+    refine ⟨Or.inr hxright, ?_⟩
+    intro hxleft
+    exact Set.disjoint_left.1 (modified_blocks_disjoint A h2N s) hxleft hxright
 
 /-- The current left pair is a base of the dual right repair minor. -/
 theorem left_block_isBase_dual_rightRepairMinor
