@@ -11,3 +11,4 @@ import HigherRankKUM.BalancedGluing
 import HigherRankKUM.DivisibleSolver
 import HigherRankKUM.TightFactorReduction
 import HigherRankKUM.TightInduction
+import HigherRankKUM.LowRank.RankOne
