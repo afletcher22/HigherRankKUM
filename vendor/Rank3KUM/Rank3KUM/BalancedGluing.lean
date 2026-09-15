@@ -59,7 +59,7 @@ theorem exists_cyclicBasisOrder3_of_point_pair_gluing_clean
 
 /-- The contraction ground is definitionally the complement of the contracted set. -/
 def gluingContractGroundEquivClean (M : Matroid α) (X : Set α) :
-    (Matroid.contract M X).E ≃ (M.E \\ X : Set α) :=
+    (Matroid.contract M X).E ≃ (M.E \ X : Set α) :=
   Equiv.setCongr (by simp)
 
 /-- The restriction ground is the restricted set. -/
@@ -93,16 +93,16 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
   · -- rank-one tight set: points are `X`, pairs come from `M / X`.
     have hXcard : X.encard = (k : ℕ∞) := hOne.2
     have hsum :
-        X.encard + (M.E \\ X).encard = M.E.encard := by
+        X.encard + (M.E \ X).encard = M.E.encard := by
       rw [← Set.encard_union_eq Set.disjoint_sdiff_right,
         Set.union_sdiff_cancel hX.1]
     have hComplementCard :
-        (M.E \\ X).encard = ((2 * k : ℕ) : ℕ∞) := by
+        (M.E \ X).encard = ((2 * k : ℕ) : ℕ∞) := by
       apply ENat.add_right_injective_of_ne_top
         (by simp : (k : ℕ∞) ≠ ⊤)
       calc
-        (k : ℕ∞) + (M.E \\ X).encard =
-            X.encard + (M.E \\ X).encard := by rw [hXcard]
+        (k : ℕ∞) + (M.E \ X).encard =
+            X.encard + (M.E \ X).encard := by rw [hXcard]
         _ = M.E.encard := hsum
         _ = ((3 * k : ℕ) : ℕ∞) := hEcard
         _ = (k : ℕ∞) + ((2 * k : ℕ) : ℕ∞) := by
@@ -110,12 +110,12 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
           congr 1
           omega
     have hXfinite : X.Finite := hE.subset hX.1
-    have hComplementFinite : (M.E \\ X).Finite :=
+    have hComplementFinite : (M.E \ X).Finite :=
       hE.subset Set.sdiff_subset
     let : Fintype X := hXfinite.fintype
-    let : Fintype (M.E \\ X : Set α) := hComplementFinite.fintype
+    let : Fintype (M.E \ X : Set α) := hComplementFinite.fintype
     let : Fintype (Matroid.contract M X).E :=
-      Fintype.ofEquiv (M.E \\ X : Set α)
+      Fintype.ofEquiv (M.E \ X : Set α)
         (gluingContractGroundEquivClean M X).symm
     let : DecidableEq (Matroid.contract M X).E := Classical.decEq _
     have hXncard : X.ncard = k := by
@@ -123,9 +123,9 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
         rw [hXfinite.cast_ncard_eq]
         exact hXcard
       exact_mod_cast hcast
-    have hComplementNcard : (M.E \\ X).ncard = 2 * k := by
+    have hComplementNcard : (M.E \ X).ncard = 2 * k := by
       have hcast :
-          ((M.E \\ X).ncard : ℕ∞) = ((2 * k : ℕ) : ℕ∞) := by
+          ((M.E \ X).ncard : ℕ∞) = ((2 * k : ℕ) : ℕ∞) := by
         rw [hComplementFinite.cast_ncard_eq]
         exact hComplementCard
       exact_mod_cast hcast
@@ -133,10 +133,10 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
         Fintype.card (Matroid.contract M X).E = 2 * k := by
       calc
         Fintype.card (Matroid.contract M X).E =
-            Fintype.card (M.E \\ X : Set α) :=
+            Fintype.card (M.E \ X : Set α) :=
           Fintype.card_congr (gluingContractGroundEquivClean M X)
-        _ = Nat.card (M.E \\ X : Set α) := Fintype.card_eq_nat_card
-        _ = (M.E \\ X).ncard := by simp only [Nat.card_coe_set_eq]
+        _ = Nat.card (M.E \ X : Set α) := Fintype.card_eq_nat_card
+        _ = (M.E \ X).ncard := by simp only [Nat.card_coe_set_eq]
         _ = 2 * k := hComplementNcard
     have hContractDense : UniformlyDense (Matroid.contract M X) k :=
       UniformlyDense.contract_tight_rank_one M k hDense hX hOne.1
@@ -153,7 +153,7 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
       simpa only [Nat.card_coe_set_eq] using hXncard
     let points : Fin k ≃ X :=
       (Finite.equivFinOfCardEq hXNatCard).symm
-    let pairs : Fin k × Bool ≃ (M.E \\ X : Set α) :=
+    let pairs : Fin k × Bool ≃ (M.E \ X : Set α) :=
       rankTwoOrder.trans (gluingContractGroundEquivClean M X)
     have hpairs_coe (p : Fin k × Bool) :
         (pairs p : α) =
@@ -190,15 +190,15 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
     have hXflat : M.IsFlat X := tight_isFlat M k hE hDense hX
     have hXcard : X.encard = ((2 * k : ℕ) : ℕ∞) := hTwo.2
     have hsum :
-        X.encard + (M.E \\ X).encard = M.E.encard := by
+        X.encard + (M.E \ X).encard = M.E.encard := by
       rw [← Set.encard_union_eq Set.disjoint_sdiff_right,
         Set.union_sdiff_cancel hX.1]
-    have hComplementCard : (M.E \\ X).encard = (k : ℕ∞) := by
+    have hComplementCard : (M.E \ X).encard = (k : ℕ∞) := by
       apply ENat.add_right_injective_of_ne_top
         (ENat.natCast_ne_top (2 * k))
       calc
-        ((2 * k : ℕ) : ℕ∞) + (M.E \\ X).encard =
-            X.encard + (M.E \\ X).encard := by rw [hXcard]
+        ((2 * k : ℕ) : ℕ∞) + (M.E \ X).encard =
+            X.encard + (M.E \ X).encard := by rw [hXcard]
         _ = M.E.encard := hsum
         _ = ((3 * k : ℕ) : ℕ∞) := hEcard
         _ = ((2 * k : ℕ) : ℕ∞) + (k : ℕ∞) := by
@@ -209,10 +209,10 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
       rw [Matroid.eRank_def, Matroid.restrict_ground_eq,
         M.restrict_eRk_eq Set.Subset.rfl, hTwo.1]
     have hXfinite : X.Finite := hE.subset hXflat.subset_ground
-    have hComplementFinite : (M.E \\ X).Finite :=
+    have hComplementFinite : (M.E \ X).Finite :=
       hE.subset Set.sdiff_subset
     let : Fintype X := hXfinite.fintype
-    let : Fintype (M.E \\ X : Set α) := hComplementFinite.fintype
+    let : Fintype (M.E \ X : Set α) := hComplementFinite.fintype
     let : Fintype (M.restrict X).E :=
       Fintype.ofEquiv X (gluingRestrictGroundEquivClean M X).symm
     let : DecidableEq (M.restrict X).E := Classical.decEq _
@@ -234,14 +234,14 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
     obtain ⟨rankTwoOrder, hadj⟩ :=
       HalfWeave.exists_cyclic_adjacent_base_order_of_uniformlyDense_direct
         (M.restrict X) k hk hRestrictCard hRestrictDense hRestrictRank
-    have hComplementNcard : (M.E \\ X).ncard = k := by
-      have hcast : ((M.E \\ X).ncard : ℕ∞) = (k : ℕ∞) := by
+    have hComplementNcard : (M.E \ X).ncard = k := by
+      have hcast : ((M.E \ X).ncard : ℕ∞) = (k : ℕ∞) := by
         rw [hComplementFinite.cast_ncard_eq]
         exact hComplementCard
       exact_mod_cast hcast
-    have hComplementNatCard : Nat.card (M.E \\ X : Set α) = k := by
+    have hComplementNatCard : Nat.card (M.E \ X : Set α) = k := by
       simpa only [Nat.card_coe_set_eq] using hComplementNcard
-    let points : Fin k ≃ (M.E \\ X : Set α) :=
+    let points : Fin k ≃ (M.E \ X : Set α) :=
       (Finite.equivFinOfCardEq hComplementNatCard).symm
     let pairs : Fin k × Bool ≃ X :=
       rankTwoOrder.trans (gluingRestrictGroundEquivClean M X)
@@ -279,8 +279,8 @@ theorem exists_cyclicBasisOrder3_of_nonempty_proper_tight_gluing_clean
         hpairs_coe (cyclicIndex k hk i 1, false)]
       simpa [HalfWeave.weaveNext,
         halfWeave_cyclicSucc_eq_cyclicIndex] using hadj (i, true)
-    have hPQ : Disjoint (M.E \\ X) X := Set.disjoint_sdiff_left
-    have hUnion : (M.E \\ X) ∪ X = M.E :=
+    have hPQ : Disjoint (M.E \ X) X := Set.disjoint_sdiff_left
+    have hUnion : (M.E \ X) ∪ X = M.E :=
       Set.sdiff_union_of_subset hXflat.subset_ground
     apply exists_cyclicBasisOrder3_of_point_pair_gluing_clean
       M hk hPQ hUnion points pairs
