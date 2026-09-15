@@ -36,7 +36,7 @@ structure Data (M : Matroid α) (N h : ℕ) (hN : 0 < N) where
   pairEquiv : Fin N × Bool ≃ M.E
   groundSize : M.E.encard = ((2 * N : ℕ) : ℕ∞)
   rankEq : M.eRank = ((2 * h : ℕ) : ℕ∞)
-  alignedBase : ∀ i : Fin N, M.IsBase (alignedWindow hN pairEquiv i)
+  alignedBase : ∀ i : Fin N, M.IsBase (alignedWindow (h := h) hN pairEquiv i)
 
 namespace Data
 
@@ -47,7 +47,7 @@ abbrev element (i : Fin N) (b : Bool) : α := elem A.pairEquiv i b
 
 abbrev block (i : Fin N) : Set α := pairSet A.pairEquiv i
 
-abbrev window (i : Fin N) : Set α := alignedWindow hN A.pairEquiv i
+abbrev window (i : Fin N) : Set α := alignedWindow (h := h) hN A.pairEquiv i
 
 /-- The `h-1` complete pair blocks strictly between the two endpoint pairs of
 a shifted rank window. -/
@@ -67,7 +67,7 @@ lemma element_injective :
 
 lemma element_ne (i : Fin N) : A.element i false ≠ A.element i true := by
   intro h
-  have hp := A.element_injective (x := (i, false)) (y := (i, true)) h
+  have hp : (i, false) = (i, true) := A.element_injective h
   exact Bool.false_ne_true (congrArg Prod.snd hp)
 
 lemma block_subset_ground (i : Fin N) : A.block i ⊆ M.E := by
@@ -83,13 +83,13 @@ lemma block_disjoint_of_ne {i j : Fin N} (hij : i ≠ j) :
   intro x hxi hxj
   simp only [block, pairSet, Set.mem_insert_iff, Set.mem_singleton_iff] at hxi hxj
   rcases hxi with rfl | rfl <;> rcases hxj with h | h
-  · have hp := A.element_injective (x := (i, false)) (y := (j, false)) h
+  · have hp : (i, false) = (j, false) := A.element_injective h
     exact hij (congrArg Prod.fst hp)
-  · have hp := A.element_injective (x := (i, false)) (y := (j, true)) h
+  · have hp : (i, false) = (j, true) := A.element_injective h
     exact hij (congrArg Prod.fst hp)
-  · have hp := A.element_injective (x := (i, true)) (y := (j, false)) h
+  · have hp : (i, true) = (j, false) := A.element_injective h
     exact hij (congrArg Prod.fst hp)
-  · have hp := A.element_injective (x := (i, true)) (y := (j, true)) h
+  · have hp : (i, true) = (j, true) := A.element_injective h
     exact hij (congrArg Prod.fst hp)
 
 lemma block_subset_window (hh : 0 < h) (i : Fin N) :

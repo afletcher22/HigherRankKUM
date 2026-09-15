@@ -39,7 +39,7 @@ theorem crossBaseRelation_fullSupport
       have hb' : b = b₀ ∨ b = b₁ := by simpa using hbmem.1
       have hremove : ({a₀, a₁} : Set α) \ {a₁} = {a₀} := by
         ext z
-        simp only [Set.mem_diff, Set.mem_insert_iff, Set.mem_singleton_iff]
+        simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
         aesop
       rw [hremove] at hbase
       rcases hb' with rfl | rfl
@@ -55,7 +55,7 @@ theorem crossBaseRelation_fullSupport
       have hb' : b = b₀ ∨ b = b₁ := by simpa using hbmem.1
       have hremove : ({a₀, a₁} : Set α) \ {a₀} = {a₁} := by
         ext z
-        simp only [Set.mem_diff, Set.mem_insert_iff, Set.mem_singleton_iff]
+        simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
         aesop
       rw [hremove] at hbase
       rcases hb' with rfl | rfl
