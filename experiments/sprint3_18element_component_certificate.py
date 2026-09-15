@@ -61,6 +61,23 @@ def moves(S):
             assert ok==admissible(T)
             yield (i,a,b),canon(T),ok
 
+def local_repartitions(S,i):
+    """All six ordered 2+2 repartitions of the four elements in adjacent blocks i,i+1."""
+    j=(i+1)%N
+    U=tuple(sorted(S[i]+S[j]))
+    for Q in combinations(U,2):
+        Qset=frozenset(Q)
+        Qp=tuple(Q)
+        Qc=tuple(x for x in U if x not in Qset)
+        T=list(S); T[i]=Qp; T[j]=Qc; T=tuple(T)
+        ok=all(mask(aligned(T,k)) in BASES for k in ((i-1)%N,(i+1)%N))
+        assert ok==admissible(T)
+        yield Qset,canon(T),ok
+
+def cyclic_gaps(indices):
+    xs=tuple(sorted(indices)); assert xs
+    return tuple(sorted((xs[(i+1)%len(xs)]-xs[i])%N for i in range(len(xs))))
+
 def density_check():
     assert rank_elim(V)==rank_span(V)==4
     n=0
@@ -96,6 +113,38 @@ def component():
         for T in G[S]:
             if T not in d: d[T]=d[S]+1; Q.append(T)
     assert len(d)==len(seen)
+
+    # Audit the full local 2+2 operation. There are six ordered choices for the
+    # left pair, including the current repartition and the wholesale block swap.
+    G6={}; rigid={}
+    for S in seen:
+        nbrs=set(); r=[]
+        for i in range(N):
+            valid=[]
+            for _,T,ok in local_repartitions(S,i):
+                if ok:
+                    assert T in seen
+                    valid.append(T)
+                    if T!=S: nbrs.add(T)
+            if len(valid)==1: r.append(i)
+        G6[S]=nbrs; rigid[S]=tuple(r)
+    assert all(S in G6[T] for S in G6 for T in G6[S])
+    assert all(len(rigid[S])==3 for S in bad)
+
+    gap_hist=Counter(cyclic_gaps(rigid[S]) for S in bad)
+    gap_distance=Counter((cyclic_gaps(rigid[S]),d[S]) for S in bad)
+    assert gap_hist==Counter({(1,3,5):4608,(1,1,7):2304,(3,3,3):768})
+    assert gap_distance==Counter({((1,3,5),1):4608,((1,1,7),1):2304,((3,3,3),2):768})
+
+    d6={S:0 for S in good}; Q=deque(good)
+    while Q:
+        S=Q.popleft()
+        for T in G6[S]:
+            if T not in d6: d6[T]=d6[S]+1; Q.append(T)
+    assert len(d6)==len(seen)
+    assert Counter(d6[S] for S in bad)==Counter({1:6912,2:768})
+    assert d6[start]==2 and max(d6.values())==2
+
     Q=deque([start]); par={start:None}; pm={}; target=None
     while Q:
         S=Q.popleft()
@@ -105,7 +154,32 @@ def component():
     path=[]; T=target
     while par[T] is not None: path.append({'exchange':pm[T],'pairs_by_label':T}); T=par[T]
     path.reverse(); z=ori[target]; order=flatten(target,z); assert cbo(order)
-    return {'component_vertices':len(seen),'orientable_vertices':len(good),'unorientable_vertices':len(bad),'directed_admissible_moves':sum(map(len,G.values())),'unorientable_distance_histogram':dict(sorted(Counter(d[S] for S in bad).items())),'maximum_distance_to_orientable':max(d.values()),'starting_cycle_distance_to_orientable':d[start],'repair_path':path,'repaired_orientations':z,'repaired_cbo_labels':order,'repaired_cbo_vectors':tuple(V[x] for x in order),'boundary_criterion_checks':len(seen)*N*4}
+    return {
+        'component_vertices':len(seen),
+        'orientable_vertices':len(good),
+        'unorientable_vertices':len(bad),
+        'directed_admissible_moves':sum(map(len,G.values())),
+        'unorientable_distance_histogram':dict(sorted(Counter(d[S] for S in bad).items())),
+        'maximum_distance_to_orientable':max(d.values()),
+        'starting_cycle_distance_to_orientable':d[start],
+        'rigid_boundary_count_histogram':dict(sorted(Counter(len(rigid[S]) for S in bad).items())),
+        'rigid_boundary_gap_histogram':{','.join(map(str,k)):v for k,v in sorted(gap_hist.items())},
+        'rigid_gap_distance_histogram':{
+            f"{','.join(map(str,k))}|distance={dist}":v
+            for (k,dist),v in sorted(gap_distance.items())
+        },
+        'full_repartition_component_vertices':len(G6),
+        'full_repartition_directed_admissible_moves':sum(map(len,G6.values())),
+        'full_repartition_unorientable_distance_histogram':dict(sorted(Counter(d6[S] for S in bad).items())),
+        'full_repartition_maximum_distance_to_orientable':max(d6.values()),
+        'full_repartition_starting_cycle_distance_to_orientable':d6[start],
+        'repair_path':path,
+        'repaired_orientations':z,
+        'repaired_cbo_labels':order,
+        'repaired_cbo_vectors':tuple(V[x] for x in order),
+        'boundary_criterion_checks':len(seen)*N*4,
+        'full_repartition_boundary_checks':len(seen)*N*6,
+    }
 
 def main():
     out={'scope':'one labelled 18-element binary rank-four matroid and one adjacent-exchange component','vectors_by_label':V,'initial_pairs_by_label':INITIAL,'initial_pairs_by_vector':tuple((V[a],V[b]) for a,b in INITIAL),'strict_density_proper_subsets_checked':density_check(),'historical_one_break_orders_checked':one_break_check(),**component(),'status':'exact finite computational certificate; not a universal bounded-repair theorem'}
