@@ -18,7 +18,10 @@ theorem core_coordinate_injective
       (fun z : Fin (h - 1) × Bool =>
         A.element (cyclicIndex N hN i (z.1.val + 1)) z.2) := by
   intro z w hzw
-  have hp := A.element_injective hzw
+  have hp :
+      (cyclicIndex N hN i (z.1.val + 1), z.2) =
+        (cyclicIndex N hN i (w.1.val + 1), w.2) :=
+    A.element_injective hzw
   have hi := congrArg Prod.fst hp
   have hb := congrArg Prod.snd hp
   have hoffz : z.1.val + 1 < N := by omega
@@ -34,8 +37,8 @@ theorem core_encard
     (hh : 0 < h) (hhN : h < N) (i : Fin N) :
     (A.core i).encard = ((2 * h - 2 : ℕ) : ℕ∞) := by
   have hf := A.core_coordinate_injective hh hhN i
-  rw [AdmissiblePairCycle.Data.core, hf.encard_range]
-  simp only [ENat.card_eq_coe_fintype_card, Fintype.card_prod,
+  rw [AdmissiblePairCycle.Data.core, ← Set.image_univ, hf.encard_image]
+  simp only [Set.encard_univ, ENat.card_eq_coe_fintype_card, Fintype.card_prod,
     Fintype.card_fin, Fintype.card_bool, Nat.cast_mul]
   congr 1
   omega
