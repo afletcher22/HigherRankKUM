@@ -12,3 +12,4 @@ import HigherRankKUM.DivisibleSolver
 import HigherRankKUM.TightFactorReduction
 import HigherRankKUM.TightInduction
 import HigherRankKUM.LowRank.RankOne
+import HigherRankKUM.Rank4.TightReduction
