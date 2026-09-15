@@ -34,7 +34,7 @@ Assume `n=4k` and uniform density with parameter `k`.
 
 ### Nonempty proper tight set
 
-Once divisible KUM is supplied at ranks 1, 2, and 3, the arbitrary-rank theorem
+Once divisible KUM is available **internally in HigherRankKUM** at ranks 1, 2, and 3, the arbitrary-rank theorem
 
 `exists_cyclicBasisOrder_of_nonempty_proper_tight_of_lower_ranks`
 
@@ -46,11 +46,13 @@ Internally, a proper tight set can have rank 1, 2, or 3, so the factor splits ar
 - `2 + 2`;
 - `3 + 1`.
 
-The general theorem supersedes a hand-written case split as the production proof, while the old explicit Rank3KUM rank-four experiment remains useful as an independent regression oracle.
+`HigherRankKUM/Rank4/TightReduction.lean` already records the clean rank-four specialization, taking rank-2 and rank-3 solver certificates explicitly while those bases remain internalization-pending.
+
+The general theorem supersedes a hand-written case split as the production proof. The old explicit Rank3KUM rank-four experiment remains a provenance/regression reference only and is not a build dependency.
 
 ### No nonempty proper tight set
 
-This is the strictly uniformly dense divisible rank-four branch. It is the main new structural target after the migration and low-rank adapters are complete.
+This is the strictly uniformly dense divisible rank-four branch. It is the main new structural target after the low-rank bases are internalized.
 
 The rank-three strict proof should be treated as a source of candidate proof patterns, not as code to port automatically. In particular, the following need fresh rank-four formulations:
 
@@ -83,6 +85,11 @@ Rank-4 KUM
         └── strict divisible rank-four research frontier
 ```
 
-## Immediate formal milestone
+## Immediate formal milestones
 
-After the rank-1/2/3 solver adapters are available, add a short theorem in `HigherRankKUM/Rank4/TightReduction.lean` deriving the entire nonempty-proper-tight divisible rank-four branch from the generic induction theorem. Do not reimplement the three factor cases there.
+1. Internalize the rank-two divisible solver without a live Rank3KUM dependency.
+2. Internalize the rank-three divisible solver without a live Rank3KUM dependency.
+3. Discharge the explicit rank-2/rank-3 hypotheses in `HigherRankKUM/Rank4/TightReduction.lean`.
+4. Keep the strict divisible and gcd-two research tracks separate.
+
+See `docs/DEPENDENCY_POLICY.md`.
