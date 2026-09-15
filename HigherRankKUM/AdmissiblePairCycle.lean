@@ -114,13 +114,20 @@ lemma block_union_core_eq_window (hh : 0 < h) (i : Fin N) :
   · rintro x ⟨z, rfl⟩
     by_cases hz : z.1.val = 0
     · left
-      rw [hz]
-      cases z.2 <;> simp [block, pairSet, window, alignedWindow]
+      change A.element (cyclicIndex N hN i z.1.val) z.2 ∈ A.block i
+      have hidx : cyclicIndex N hN i z.1.val = i := by
+        rw [hz]
+        exact cyclicIndex_zero N hN i
+      rw [hidx]
+      cases z.2 <;> simp [block, pairSet]
     · right
       let j : Fin (h - 1) := ⟨z.1.val - 1, by omega⟩
       refine ⟨(j, z.2), ?_⟩
-      simp [core, j]
-      congr 2
+      change A.element (cyclicIndex N hN i (j.val + 1)) z.2 =
+        A.element (cyclicIndex N hN i z.1.val) z.2
+      apply congrArg (fun t : Fin N => A.element t z.2)
+      congr 1
+      simp [j]
       omega
 
 lemma core_indep (hh : 0 < h) (i : Fin N) : M.Indep (A.core i) :=
@@ -132,7 +139,7 @@ lemma endpoint_index_ne (hh : 0 < h) (hhN : h < N) (i : Fin N) :
 
 lemma endpoint_blocks_disjoint (hh : 0 < h) (hhN : h < N) (i : Fin N) :
     Disjoint (A.block i) (A.block (cyclicIndex N hN i h)) :=
-  A.block_disjoint_of_ne (A.endpoint_index_ne hh hhN i).symm
+  A.block_disjoint_of_ne (endpoint_index_ne (N := N) (h := h) hN hh hhN i).symm
 
 lemma block_disjoint_core (hh : 0 < h) (hhN : h < N) (i : Fin N) :
     Disjoint (A.block i) (A.core i) := by
@@ -141,13 +148,13 @@ lemma block_disjoint_core (hh : 0 < h) (hhN : h < N) (i : Fin N) :
   simp only [block, pairSet, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
   obtain ⟨z, hzx⟩ := hc
   rcases hx with rfl | rfl
-  · have hp := A.element_injective
-      (show A.element i false = A.element (cyclicIndex N hN i (z.1.val + 1)) z.2 by simpa using hzx.symm)
+  · have hp : (i, false) = (cyclicIndex N hN i (z.1.val + 1), z.2) :=
+      A.element_injective (by simpa using hzx.symm)
     have hi := congrArg Prod.fst hp
     have hoff : z.1.val + 1 < N := by omega
     exact (cyclicIndex_ne_self_of_pos_of_lt N hN i (by omega) hoff) hi.symm
-  · have hp := A.element_injective
-      (show A.element i true = A.element (cyclicIndex N hN i (z.1.val + 1)) z.2 by simpa using hzx.symm)
+  · have hp : (i, true) = (cyclicIndex N hN i (z.1.val + 1), z.2) :=
+      A.element_injective (by simpa using hzx.symm)
     have hi := congrArg Prod.fst hp
     have hoff : z.1.val + 1 < N := by omega
     exact (cyclicIndex_ne_self_of_pos_of_lt N hN i (by omega) hoff) hi.symm
@@ -159,15 +166,17 @@ lemma endpoint_block_disjoint_core (hh : 0 < h) (hhN : h < N) (i : Fin N) :
   simp only [block, pairSet, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
   obtain ⟨z, hzx⟩ := hc
   rcases hx with rfl | rfl
-  · have hp := A.element_injective
-      (show A.element (cyclicIndex N hN i h) false =
-          A.element (cyclicIndex N hN i (z.1.val + 1)) z.2 by simpa using hzx.symm)
+  · have hp :
+        (cyclicIndex N hN i h, false) =
+          (cyclicIndex N hN i (z.1.val + 1), z.2) :=
+      A.element_injective (by simpa using hzx.symm)
     have hi := congrArg Prod.fst hp
     have heq := cyclicIndex_injective_offsets N hN i hhN (by omega) hi
     omega
-  · have hp := A.element_injective
-      (show A.element (cyclicIndex N hN i h) true =
-          A.element (cyclicIndex N hN i (z.1.val + 1)) z.2 by simpa using hzx.symm)
+  · have hp :
+        (cyclicIndex N hN i h, true) =
+          (cyclicIndex N hN i (z.1.val + 1), z.2) :=
+      A.element_injective (by simpa using hzx.symm)
     have hi := congrArg Prod.fst hp
     have heq := cyclicIndex_injective_offsets N hN i hhN (by omega) hi
     omega
@@ -176,8 +185,10 @@ lemma core_subset_next_window (hh : 0 < h) (i : Fin N) :
     A.core i ⊆ A.window (cyclicIndex N hN i 1) := by
   rintro x ⟨z, rfl⟩
   refine ⟨(⟨z.1.val, by omega⟩, z.2), ?_⟩
-  simp only [window, alignedWindow]
-  congr 2
+  change A.element
+      (cyclicIndex N hN (cyclicIndex N hN i 1) z.1.val) z.2 =
+    A.element (cyclicIndex N hN i (z.1.val + 1)) z.2
+  apply congrArg (fun t : Fin N => A.element t z.2)
   rw [cyclicIndex_add]
   congr 1
   omega
@@ -189,14 +200,18 @@ lemma endpoint_block_subset_next_window (hh : 0 < h) (i : Fin N) :
   have hpred : h - 1 < h := by omega
   rcases hx with rfl | rfl
   · refine ⟨(⟨h - 1, hpred⟩, false), ?_⟩
-    simp only [window, alignedWindow]
-    congr 2
+    change A.element
+        (cyclicIndex N hN (cyclicIndex N hN i 1) (h - 1)) false =
+      A.element (cyclicIndex N hN i h) false
+    apply congrArg (fun t : Fin N => A.element t false)
     rw [cyclicIndex_add]
     congr 1
     omega
   · refine ⟨(⟨h - 1, hpred⟩, true), ?_⟩
-    simp only [window, alignedWindow]
-    congr 2
+    change A.element
+        (cyclicIndex N hN (cyclicIndex N hN i 1) (h - 1)) true =
+      A.element (cyclicIndex N hN i h) true
+    apply congrArg (fun t : Fin N => A.element t true)
     rw [cyclicIndex_add]
     congr 1
     omega
@@ -211,17 +226,26 @@ lemma endpoint_block_union_core_eq_next_window
   · rintro x ⟨z, rfl⟩
     by_cases hz : z.1.val = h - 1
     · left
-      rw [hz]
-      have hsum : 1 + (h - 1) = h := by omega
-      cases z.2 <;>
-        simp [block, pairSet, window, alignedWindow, cyclicIndex_add, hsum]
+      change A.element
+          (cyclicIndex N hN (cyclicIndex N hN i 1) z.1.val) z.2 ∈
+        A.block (cyclicIndex N hN i h)
+      have hidx :
+          cyclicIndex N hN (cyclicIndex N hN i 1) z.1.val =
+            cyclicIndex N hN i h := by
+        rw [hz, cyclicIndex_add]
+        congr 1
+        omega
+      rw [hidx]
+      cases z.2 <;> simp [block, pairSet]
     · right
       let j : Fin (h - 1) := ⟨z.1.val, by omega⟩
       refine ⟨(j, z.2), ?_⟩
-      simp only [core, j, window, alignedWindow]
-      congr 2
+      change A.element (cyclicIndex N hN i (j.val + 1)) z.2 =
+        A.element (cyclicIndex N hN (cyclicIndex N hN i 1) z.1.val) z.2
+      apply congrArg (fun t : Fin N => A.element t z.2)
       rw [cyclicIndex_add]
       congr 1
+      simp [j]
       omega
 
 lemma endpoint_basis_left (hh : 0 < h) (i : Fin N) :
