@@ -59,6 +59,6 @@ jobs:
           python3 experiments/sprint3_18element_component_certificate.py > /tmp/sprint3-18-result.json
           diff -u experiments/sprint3_18element_component_result.json /tmp/sprint3-18-result.json
       - name: Build Sprint 2 and local repair modules
-        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity
+        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary
       - name: Build
         run: lake build
