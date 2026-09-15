@@ -55,6 +55,21 @@ theorem UniformlyDenseRatio.scale
           rw [ENat.natCast_mul]
           simp [mul_assoc]
 
+/-- A positive common natural factor can be cancelled from the density ratio. -/
+theorem UniformlyDenseRatio.unscale
+    (M : Matroid α) (p q c : ℕ) (hc : 0 < c)
+    (hDense : UniformlyDenseRatio M (c * p) (c * q)) :
+    UniformlyDenseRatio M p q := by
+  intro X hX
+  have hc0 : (c : ℕ∞) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt hc)
+  have hctop : (c : ℕ∞) ≠ ⊤ := ENat.natCast_ne_top c
+  have hscaled :
+      (c : ℕ∞) * ((q : ℕ∞) * X.encard) ≤
+        (c : ℕ∞) * ((p : ℕ∞) * M.eRk X) := by
+    simpa [ENat.natCast_mul, mul_assoc] using hDense X hX
+  exact (ENat.mul_le_mul_left_iff hc0 hctop).mp hscaled
+
 /-- Scaling numerator and denominator preserves tightness. -/
 theorem TightRatio.scale
     (M : Matroid α) (p q c : ℕ) {X : Set α}
@@ -71,6 +86,23 @@ theorem TightRatio.scale
     _ = ((c * p : ℕ) : ℕ∞) * M.eRk X := by
           rw [ENat.natCast_mul]
           simp [mul_assoc]
+
+/-- A positive common natural factor can be cancelled from tightness. -/
+theorem TightRatio.unscale
+    (M : Matroid α) (p q c : ℕ) (hc : 0 < c) {X : Set α}
+    (hX : TightRatio M (c * p) (c * q) X) :
+    TightRatio M p q X := by
+  refine ⟨hX.1, ?_⟩
+  have hc0 : (c : ℕ∞) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt hc)
+  have hctop : (c : ℕ∞) ≠ ⊤ := ENat.natCast_ne_top c
+  have heq :
+      (c : ℕ∞) * ((q : ℕ∞) * X.encard) =
+        (c : ℕ∞) * ((p : ℕ∞) * M.eRk X) := by
+    simpa [ENat.natCast_mul, mul_assoc] using hX.2
+  apply le_antisymm
+  · exact (ENat.mul_le_mul_left_iff hc0 hctop).mp heq.le
+  · exact (ENat.mul_le_mul_left_iff hc0 hctop).mp heq.ge
 
 /-- Rational uniform density is inherited by restriction. -/
 theorem UniformlyDenseRatio.restrict
