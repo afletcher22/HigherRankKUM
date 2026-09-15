@@ -66,6 +66,6 @@ jobs:
           assert actual == expected, '18-element certificate output differs from committed expected data'
           PY
       - name: Build Sprint 2 and local repair modules
-        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary +HigherRankKUM.LocalRepairClosure
+        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary +HigherRankKUM.LocalRepairClosure +HigherRankKUM.Rank4.GcdTwoRepairGeometry
       - name: Build
         run: lake build
