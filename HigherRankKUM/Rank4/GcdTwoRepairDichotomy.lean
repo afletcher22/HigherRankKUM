@@ -1,4 +1,6 @@
 import HigherRankKUM.Rank4.GcdTwoRepairMove
+import HigherRankKUM.BinaryRelationLocalStructure
+import HigherRankKUM.PairCycle
 
 namespace HigherRankKUM
 namespace Rank4GcdTwoRepair
@@ -74,6 +76,92 @@ theorem exists_cross_or_swap_common_base_of_closurePotential_lt_card
   obtain ⟨s, Q, hL, hR, hne⟩ :=
     exists_alternative_repartition_of_closurePotential_lt_card A h2N hlt
   exact ⟨s, Q, alternative_common_base_cross_or_swap A s hL hR hne⟩
+
+/-- Cross-base relation of the left boundary minor between the two old repair
+blocks. -/
+def leftBoundaryCrossRelation
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (s : Fin N) :
+    BinaryRelationCycle.Relation :=
+  let i := AdjacentRepair.leftBoundaryIndex N 2 hN s
+  let j := AdjacentRepair.rightBoundaryIndex N 2 hN s
+  PairCycle.crossBaseRelation (leftRepairMinor A s)
+    (A.element i false) (A.element i true)
+    (A.element j false) (A.element j true)
+
+/-- Cross-base relation of the dual right boundary minor on the same four
+moved elements. -/
+def dualRightBoundaryCrossRelation
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (s : Fin N) :
+    BinaryRelationCycle.Relation :=
+  let i := AdjacentRepair.leftBoundaryIndex N 2 hN s
+  let j := AdjacentRepair.rightBoundaryIndex N 2 hN s
+  PairCycle.crossBaseRelation ((rightRepairMinor A s)✶)
+    (A.element i false) (A.element i true)
+    (A.element j false) (A.element j true)
+
+/-- If the old right block itself is a common base, then both boundary
+cross-relations have full support: in each boundary matroid both old pair
+blocks are bases. -/
+theorem boundary_crossRelations_fullSupport_of_swapCommonBase
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (h2N : 2 < N)
+    (s : Fin N) {Q : Set α} (hswap : IsSwapCommonBase A s Q) :
+    BinaryRelationCycle.FullSupport (leftBoundaryCrossRelation A s) ∧
+    BinaryRelationCycle.FullSupport (dualRightBoundaryCrossRelation A s) := by
+  let i := AdjacentRepair.leftBoundaryIndex N 2 hN s
+  let j := AdjacentRepair.rightBoundaryIndex N 2 hN s
+  have hdis : Disjoint
+      ({A.element i false, A.element i true} : Set α)
+      ({A.element j false, A.element j true} : Set α) := by
+    simpa [i, j, AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet] using
+      modified_blocks_disjoint A h2N s
+  have hLi : (leftRepairMinor A s).IsBase
+      ({A.element i false, A.element i true} : Set α) := by
+    simpa [i, AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet] using
+      left_block_isBase_leftRepairMinor A h2N s
+  have hSi : ((rightRepairMinor A s)✶).IsBase
+      ({A.element i false, A.element i true} : Set α) := by
+    simpa [i, AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet] using
+      left_block_isBase_dual_rightRepairMinor A h2N s
+  have hLjBlock : (leftRepairMinor A s).IsBase (A.block j) := by
+    simpa [hswap.2.2] using hswap.1
+  have hSjBlock : ((rightRepairMinor A s)✶).IsBase (A.block j) := by
+    simpa [hswap.2.2] using hswap.2.1
+  have hLj : (leftRepairMinor A s).IsBase
+      ({A.element j false, A.element j true} : Set α) := by
+    simpa [j, AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet] using hLjBlock
+  have hSj : ((rightRepairMinor A s)✶).IsBase
+      ({A.element j false, A.element j true} : Set α) := by
+    simpa [j, AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet] using hSjBlock
+  constructor
+  · simpa [leftBoundaryCrossRelation, i, j] using
+      PairCycle.crossBaseRelation_fullSupport (leftRepairMinor A s)
+        (A.element_ne i) (A.element_ne j) hdis hLi hLj
+  · simpa [dualRightBoundaryCrossRelation, i, j] using
+      PairCycle.crossBaseRelation_fullSupport ((rightRepairMinor A s)✶)
+        (A.element_ne i) (A.element_ne j) hdis hSi hSj
+
+/-- Representation-free description of the exceptional swap-only geometry.
+If a boundary admits the wholesale swap and the two boundary matroids have no
+common cross cell, then their cross-base patterns are both bijections.  Since
+they are pointwise disjoint, they are the two complementary perfect matchings
+of the `2 × 2` Boolean grid, exactly as found by the exhaustive four-element
+classification. -/
+theorem swap_only_crossRelations_are_bijections
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (h2N : 2 < N)
+    (s : Fin N) {Q : Set α} (hswap : IsSwapCommonBase A s Q)
+    (hnoCrossCell : ∀ x y,
+      ¬ (leftBoundaryCrossRelation A s x y ∧
+        dualRightBoundaryCrossRelation A s x y)) :
+    BinaryRelationCycle.BijectionRelation (leftBoundaryCrossRelation A s) ∧
+    BinaryRelationCycle.BijectionRelation (dualRightBoundaryCrossRelation A s) := by
+  obtain ⟨hLfull, hSfull⟩ :=
+    boundary_crossRelations_fullSupport_of_swapCommonBase A h2N s hswap
+  exact BinaryRelationCycle.bijectionRelations_of_disjoint_fullSupport
+    hLfull hSfull hnoCrossCell
 
 end Rank4GcdTwoRepair
 end HigherRankKUM
