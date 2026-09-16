@@ -136,7 +136,8 @@ theorem common_base_repartition_pair_decomposition
       · exact Or.inr ⟨hx, hxQ⟩
   calc
     repairGround A s = Q ∪ (repairGround A s \ Q) := hpartition.symm
-    _ = ({q₀, q₁} : Set α) ∪ {r₀, r₁} := by rw [hQ, hRcomp]
+    _ = Q ∪ {r₀, r₁} := by rw [hRcomp]
+    _ = ({q₀, q₁} : Set α) ∪ {r₀, r₁} := by rw [hQ]
 
 /-- The two common-base conditions on the restricted repair minors promote to
 the two ambient rank-four basis conditions that can actually replace the
