@@ -37,3 +37,4 @@ import HigherRankKUM.LocalRepairBoundary
 import HigherRankKUM.LocalRepairClosure
 import HigherRankKUM.PotentialAscent
 import HigherRankKUM.Rank4.GcdTwoRepairCorollary
+import HigherRankKUM.Rank4.GcdTwoClosurePotential
