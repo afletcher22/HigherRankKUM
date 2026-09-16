@@ -54,13 +54,10 @@ def RelationOrientable
   PairCycleObstruction.PairRelationOrientable N 2 hN
     (A.localRelation (by omega))
 
-/-- The exact remaining termination reduction for the closure-potential
-strategy.  If every non-orientable admissible pair-cycle admits one legal
-repair with strictly larger closure potential, then bounded strict ascent
-forces eventual reachability of a relation-orientable state.
-
-Thus all termination bookkeeping is discharged here; the remaining hard
-matroid statement is precisely the local strict-ascent hypothesis `hascent`. -/
+/-- Strong sufficient reduction: if every non-orientable state has a strictly
+closure-potential-increasing repair, then every state reaches a
+relation-orientable state.  This theorem remains useful, but Sprint 4 finite
+search found that its hypothesis is too strong to expect universally. -/
 theorem exists_reachable_relationOrientable_of_strict_closure_ascent
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
     (h2N : 2 < N)
@@ -75,9 +72,7 @@ theorem exists_reachable_relationOrientable_of_strict_closure_ascent
     (RepairMove h2N) RelationOrientable closurePotential (4 * N)
     (fun A => closurePotential_le_four_mul A) hascent
 
-/-- Local-maximum version of the same reduction: under the strict-ascent
-hypothesis, any state from which no legal repair raises the closure potential
-is already relation-orientable. -/
+/-- Local-maximum version of the strict-ascent reduction. -/
 theorem relationOrientable_of_no_closure_ascent
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
     (h2N : 2 < N)
@@ -90,6 +85,49 @@ theorem relationOrientable_of_no_closure_ascent
     RelationOrientable A := by
   exact PotentialAscent.good_of_no_strict_ascent
     (RepairMove h2N) RelationOrientable closurePotential hascent A hmax
+
+/-- Refined Sprint 4 reduction.  A non-orientable state is allowed either to
+escape directly to a relation-orientable repaired state, or to continue by a
+strictly closure-potential-increasing repair.  Since `closurePotential ≤ 4N`,
+this disjunction still guarantees finite reachability of an orientable state.
+
+Unlike pure strict ascent, this hypothesis is compatible with closure-potential
+plateaus that already have an edge into the orientable region. -/
+theorem exists_reachable_relationOrientable_of_escape_or_strict_closure_ascent
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (h2N : 2 < N)
+    (hstep : ∀ A : AdmissiblePairCycle.Data M N 2 hN,
+      ¬ RelationOrientable A →
+      (∃ B : AdmissiblePairCycle.Data M N 2 hN,
+        RepairMove h2N A B ∧ RelationOrientable B) ∨
+      (∃ B : AdmissiblePairCycle.Data M N 2 hN,
+        RepairMove h2N A B ∧ closurePotential A < closurePotential B)) :
+    ∀ A : AdmissiblePairCycle.Data M N 2 hN,
+      ∃ B : AdmissiblePairCycle.Data M N 2 hN,
+        Relation.ReflTransGen (RepairMove h2N) A B ∧ RelationOrientable B := by
+  exact PotentialAscent.exists_reachable_good_of_bounded_escape_or_strict_ascent
+    (RepairMove h2N) RelationOrientable closurePotential (4 * N)
+    (fun A => closurePotential_le_four_mul A) hstep
+
+/-- At a closure-potential local maximum, the refined step hypothesis reduces
+to an immediate escape statement: the state is already relation-orientable or
+has a one-step repair to a relation-orientable state. -/
+theorem relationOrientable_or_exists_orientable_repair_of_no_closure_ascent
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (h2N : 2 < N)
+    (hstep : ∀ A : AdmissiblePairCycle.Data M N 2 hN,
+      ¬ RelationOrientable A →
+      (∃ B : AdmissiblePairCycle.Data M N 2 hN,
+        RepairMove h2N A B ∧ RelationOrientable B) ∨
+      (∃ B : AdmissiblePairCycle.Data M N 2 hN,
+        RepairMove h2N A B ∧ closurePotential A < closurePotential B))
+    (A : AdmissiblePairCycle.Data M N 2 hN)
+    (hmax : ∀ B, RepairMove h2N A B → closurePotential B ≤ closurePotential A) :
+    RelationOrientable A ∨
+      ∃ B : AdmissiblePairCycle.Data M N 2 hN,
+        RepairMove h2N A B ∧ RelationOrientable B := by
+  exact PotentialAscent.good_or_exists_good_move_of_no_strict_ascent
+    (RepairMove h2N) RelationOrientable closurePotential hstep A hmax
 
 end Rank4GcdTwoRepair
 end HigherRankKUM
