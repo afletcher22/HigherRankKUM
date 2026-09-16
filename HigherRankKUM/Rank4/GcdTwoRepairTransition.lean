@@ -38,7 +38,7 @@ noncomputable def repairedPairPartition
     (R : LocalRepartition A s) :
     (repairedPairPartition A h2N s R).block
       (AdjacentRepair.leftBoundaryIndex N 2 hN s) = R.leftBlock := by
-  simp [repairedPairPartition]
+  simp [repairedPairPartition, PairBlockPartition.Data.replaceTwo]
 
 @[simp] theorem repairedPairPartition_right_block
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
@@ -46,7 +46,8 @@ noncomputable def repairedPairPartition
     (R : LocalRepartition A s) :
     (repairedPairPartition A h2N s R).block
       (AdjacentRepair.rightBoundaryIndex N 2 hN s) = R.rightBlock := by
-  simp [repairedPairPartition, modified_indices_ne h2N s]
+  simp [repairedPairPartition, PairBlockPartition.Data.replaceTwo,
+    modified_indices_ne h2N s]
 
 @[simp] theorem repairedPairPartition_other_block
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
@@ -55,7 +56,7 @@ noncomputable def repairedPairPartition
     (hki : k ≠ AdjacentRepair.leftBoundaryIndex N 2 hN s)
     (hkj : k ≠ AdjacentRepair.rightBoundaryIndex N 2 hN s) :
     (repairedPairPartition A h2N s R).block k = A.block k := by
-  simp [repairedPairPartition, PairBlockPartition.Data.replacedBlock, hki, hkj]
+  simp [repairedPairPartition, PairBlockPartition.Data.replaceTwo, hki, hkj]
 
 /-- Global Boolean labelling of the repaired pair partition.  The labels inside
 each two-element block are deliberately noncomputable and irrelevant; the
