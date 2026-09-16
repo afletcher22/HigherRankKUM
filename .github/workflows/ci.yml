@@ -49,7 +49,7 @@ jobs:
           grep -q '^name = "Rank3KUM"$' lakefile.toml
           grep -q '^srcDir = "vendor/Rank3KUM"$' lakefile.toml
       - name: Build pair-cycle and local repair modules
-        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.PairBlockPartition +HigherRankKUM.PairBlockPartitionReplace +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary +HigherRankKUM.LocalRepairClosure +HigherRankKUM.PotentialAscent +HigherRankKUM.Rank4.GcdTwoRepairGeometry +HigherRankKUM.Rank4.GcdTwoRepairCorollary +HigherRankKUM.Rank4.GcdTwoRepairState +HigherRankKUM.Rank4.GcdTwoClosurePotential
+        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.PairBlockPartition +HigherRankKUM.PairBlockPartitionReplace +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary +HigherRankKUM.LocalRepairClosure +HigherRankKUM.PotentialAscent +HigherRankKUM.Rank4.GcdTwoRepairGeometry +HigherRankKUM.Rank4.GcdTwoRepairCorollary +HigherRankKUM.Rank4.GcdTwoRepairState +HigherRankKUM.Rank4.GcdTwoRepairTransition +HigherRankKUM.Rank4.GcdTwoClosurePotential
       - name: Verify Sprint 2 obstruction certificate
         run: python3 experiments/sprint2_pair_obstruction_certificate.py
       - name: Verify 10-element adjacent repair certificate
