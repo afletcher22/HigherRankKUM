@@ -12,195 +12,258 @@
 
 ## Bounded question
 
-Study the **global geometry forced by repeated rank-four neighbor-closure obstructions** in the strict `gcd(|E|,4)=2` branch.
+Study the global geometry forced by repeated rank-four neighbor-closure obstructions in the strict `gcd(|E|,4)=2` branch.
 
-Sprint 3 proved a local statement: if an adjacent `2+2` repair is unique, then one of four neighboring ambient closure incidences must occur. Equivalently, if all four such incidences are absent, some alternative common-base repartition exists.
+Sprint 3 proved a local statement: if an adjacent `2+2` repair is unique, one of four neighboring ambient closure incidences must occur. Equivalently, if all four such incidences are absent, some alternative common-base repartition exists.
 
-Sprint 4 asks what happens when those closure obstructions accumulate around an odd admissible pair cycle. The immediate aim is to find either:
+Sprint 4 asks how these local repairs interact around an odd admissible pair cycle. The current goal is **not** to prove pair-cycle existence. Instead, conditional on an admissible pair cycle, identify dynamics that force eventual fixed-cycle orientability.
 
-1. a structural contradiction to persistent closure saturation under strict uniform density; or
-2. a monotone invariant / potential showing that admissibility-preserving repartitions can leave the rigid region and eventually create Boolean slack.
+Keep four questions separate:
 
-This sprint does **not** assume that every strict gcd-two rank-four matroid already has an admissible pair-cycle representation. Pair-cycle existence remains a separate unresolved hypothesis.
+1. fixed-cycle relation orientability;
+2. existence of alternative admissible repartitions;
+3. reachability of an orientable admissible pair cycle;
+4. existence of an admissible pair cycle in the first place.
 
-## Initial abstract guardrail
+## Abstract four-element guardrail
 
 `experiments/sprint4_abstract_repartition_guardrail.py` enumerates all rank-two matroids on a labelled four-element ground and all ordered pairs `(L,S)` of such boundary matroids.
 
-Fix the current pair `B={0,1}` and opposite pair `D={2,3}`. Retain configurations where:
+Fix `B={0,1}` and `D={2,3}`. Among configurations where `B` is a common base, neither element of `D` is a loop of `L`, and neither element of `B` is a coloop of `S`:
 
-- `B` is a common base of `L` and `S`;
-- neither element of `D` is a loop of `L`;
-- neither element of `B` is a coloop of `S`.
-
-These are the abstract four-element hypotheses corresponding to the negation of the local rigidity alternatives.
-
-Exact result:
-
-- 36 rank-two matroids occur on the labelled four-element ground;
+- 36 rank-two matroids occur;
 - 1,296 ordered boundary pairs are checked;
-- 100 satisfy the closure-free surrogate together with the current common base;
-- none has the current pair as its unique common base;
+- 100 satisfy the closure-free surrogate;
+- none has `B` as unique common base;
 - 98 have a one-element cross common base;
-- exactly 2 have **no** cross common base, with the wholesale opposite block `D` as the only alternative;
-- common-base counts among the 100 qualifying pairs are `2:22`, `3:28`, `4:34`, `5:15`, `6:1`.
+- exactly 2 do not: the only alternative is the wholesale opposite block `D`;
+- common-base count histogram: `2:22`, `3:28`, `4:34`, `5:15`, `6:1`.
 
-The two wholesale-swap-only examples are the swapped ordered pair of base families
+The exceptional swapped pair has base families
 
-- `{01,03,12,23}` and `{01,02,13,23}`.
+- `{01,03,12,23}`;
+- `{01,02,13,23}`.
 
-This is an exact finite abstract guardrail, not a representability theorem and not a global KUM result.
-
-## Guardrail carried forward
-
-Do **not** silently replace
-
-> an alternative local `2+2` repartition exists
-
-by
-
-> a one-element cross exchange exists.
-
-The latter is false for the abstract local hypotheses presently formalized. Any future cross-exchange theorem needs an additional hypothesis derived from the ambient pair-cycle geometry, strict density, representability, or another global condition.
+**Guardrail:** do not replace “an alternative local `2+2` repartition exists” by “a one-element cross exchange exists.” The latter is false under the abstract hypotheses currently formalized.
 
 ## Candidate closure potential
 
-`experiments/sprint4_closure_potential_audit.py` tests a concrete repair-potential candidate on both preserved binary witnesses. For pair blocks `B_i`, define
+For pair blocks `B_i`, define
 
 `Phi = sum_i (|B_(i+1) ∩ cl(B_(i-1))| + |B_i ∩ cl(B_(i+2))|)`.
 
-Equivalently after cyclic reindexing, this is the symmetric sum over distance-two block pairs. These are precisely the two directional families of neighbor-closure incidences appearing in the Sprint 3 local-rigidity obstruction.
+After cyclic reindexing this is the symmetric sum over distance-two block pairs. It is built from the exact neighbor-closure incidences appearing in Sprint 3 local rigidity.
 
-### Ten-element witness
+### Preserved 10-element witness
 
 Across all 576 admissible pair cycles:
 
-- 8 are unorientable and 568 orientable;
-- all 8 unorientable cycles have `Phi = 4`;
-- orientable cycles have scores `4:40`, `5:208`, `6:272`, `7:48`;
+- 8 are unorientable, 568 orientable;
+- all 8 unorientable cycles have `Phi=4`;
+- orientable histogram: `4:40`, `5:208`, `6:272`, `7:48`;
 - every unorientable cycle has a legal full `2+2` repartition with strictly larger `Phi`;
-- every such unorientable cycle reaches an orientable cycle in one strictly score-increasing repair.
+- every unorientable cycle reaches an orientable cycle in one strictly score-increasing repair.
 
-This already shows that `Phi` is **not** an orientability classifier: 40 orientable cycles also have score 4.
+`Phi` is not an orientability classifier because 40 orientable states also have score 4.
 
-### Eighteen-element witness
+### Preserved 18-element witness
 
-Across the exact 30,720-vertex adjacent-exchange component:
+Across the exact 30,720-vertex component:
 
-- all 7,680 unorientable states have `Phi` equal to 18 or 20, with histogram `18:3072`, `20:4608`;
-- all 23,040 orientable states have `Phi` equal to 21, 22, or 23, with histogram `21:9216`, `22:4608`, `23:9216`;
+- 7,680 unorientable states, with `Phi=18:3072`, `Phi=20:4608`;
+- 23,040 orientable states, with `Phi=21:9216`, `22:4608`, `23:9216`;
 - every unorientable state is closure-saturated at all 9 local boundaries;
-- orientable states have either 8 or 9 closure-saturated boundaries (`8:4608`, `9:18432`);
-- every unorientable state has a legal full `2+2` repartition that strictly increases `Phi`;
-- 6,912 reach an orientable state in one strictly score-increasing repair;
-- the remaining 768 reach one in two strictly score-increasing repairs.
+- every unorientable state has a legal full `2+2` repair that strictly increases `Phi`;
+- 6,912 reach orientable in one strictly increasing repair;
+- 768 need two strictly increasing repairs.
 
-This is the first finite evidence in the project for a **monotone closure-ascent mechanism** rather than merely bounded repair distance.
+This remains witness-specific.
 
-It remains witness-specific. A universal theorem would need to show, for an arbitrary unorientable admissible pair cycle, that some legal repartition strictly increases a suitably bounded matroidal potential, and that maximal potential forces Boolean slack / orientability. Neither implication is currently proved.
+## Exhaustive normalized binary `N=5`
 
-## Exhaustive normalized binary `N=5` audit
-
-`experiments/sprint4_n5_binary_closure_potential_exhaustive.py` goes beyond a single ten-element witness. For a binary admissible pair cycle with `N=5`, adjacent blocks `B_0 ∪ B_1` form a basis, so a `GF(2)` linear automorphism normalizes them to
+`experiments/sprint4_n5_binary_closure_potential_exhaustive.py` exhausts normalized admissible pair cycles over `GF(2)^4`, fixing
 
 - `B_0=(1,2)`;
 - `B_1=(4,8)`.
 
-The script exhausts every choice of the remaining three unordered nonzero-vector pairs, allowing repeated vector values as distinct labelled elements.
-
 Exact result:
 
 - 49,896 normalized admissible configurations;
-- 43,546 strictly uniformly dense configurations;
-- exactly 80 unorientable configurations in total;
-- **all 80 unorientable configurations are already strictly uniformly dense**;
-- their closure scores split `Phi=2:40` and `Phi=4:40`;
-- every one of the 80 has a legal full `2+2` repartition that strictly increases `Phi` **and is already orientable**;
-- maximum available score gain is `+1` for 40 cases and `+2` for 40 cases.
+- 43,546 strictly uniformly dense;
+- exactly 80 unorientable in total;
+- all 80 are strictly uniformly dense;
+- closure scores: `Phi=2:40`, `Phi=4:40`;
+- all 80 have a legal full `2+2` repair that both strictly increases `Phi` and is already orientable;
+- maximum gain: `+1` in 40 cases, `+2` in 40 cases;
+- distance-two closure-edge patterns, modulo dihedral symmetry:
+  - `(0,0,0,0,2)` — 40;
+  - `(0,0,0,2,2)` — 40.
 
-The five distance-two closure-edge contributions have only two dihedral pattern classes:
+This is exact only for represented binary `N=5`.
 
-- `(0,0,0,0,2)` — 40 cases;
-- `(0,0,0,2,2)` — 40 cases.
+## Binary `N=7` plateau falsification
 
-No other closure-edge pattern occurs among the binary `N=5` obstructions.
+The universal statement
 
-This is exact exhaustive evidence only for represented binary `N=5`; it is not a theorem for arbitrary fields, arbitrary odd `N`, or nonrepresentable matroids. A targeted exploratory `GF(3)^4` falsification sample also found the same score-ascent behavior, but sampled data is intentionally **not** promoted to a repository certificate.
+> every non-orientable admissible pair cycle has a strictly `Phi`-increasing legal repair
 
-## Formal potential infrastructure
+is **false**.
 
-### Generic termination lemma
+`experiments/sprint4_n7_binary_phi_plateau_certificate.py` gives an exact fixed binary `N=7` regression witness:
 
-`HigherRankKUM/PotentialAscent.lean` separates the generic termination logic from the matroid-specific problem.
+`((1,2),(4,8),(13,14),(4,8),(13,14),(5,9),(7,8))`.
 
-`PotentialAscent.exists_reachable_good_of_bounded_strict_ascent` proves:
+Certified properties:
 
-> if a natural-valued potential is globally bounded and every non-good state has a legal move with strictly larger potential, then every state reaches a good state by finitely many moves.
+- every adjacent block union is a basis;
+- the represented rank-four matroid on 14 labelled elements is strictly uniformly dense;
+- maximum flat occupancies are rank 1: `3`, rank 2: `6`, rank 3: `10`, exactly below the strict-density thresholds;
+- forced relation bits are `(0,0,0,1,1,1,0)`, hence the state is unorientable;
+- distance-two closure-edge scores are `(0,4,4,0,0,0,2)`;
+- `Phi=10`;
+- all 12 legal local-repartition occurrences are exhausted, with 6 distinct targets;
+- gain histogram is `0:9`, `-1:2`, `-2:1`;
+- **no legal repair increases `Phi`**;
+- nevertheless a legal equal-`Phi` repair is already orientable.
 
-`PotentialAscent.good_of_no_strict_ascent` packages the corresponding local-maximum contrapositive.
+One explicit equal-score orientable target, repairing boundary 6, is
 
-Thus a future rank-four proof does not need a separate anti-cycling argument once bounded strict ascent is established.
+`((1,7),(4,8),(13,14),(4,8),(13,14),(5,9),(2,8))`.
+
+This counterexample is a permanent guardrail against restoring unconditional strict ascent as the target theorem.
+
+### Exploratory larger-odd-`N` checks
+
+Uncommitted randomized binary falsification searches support the refined dynamics statement:
+
+- among 1,000 sampled strict unorientable `N=7` states, 978 had both strict ascent and a direct orientable repair; 22 were `Phi` plateaus, and all 22 had a direct orientable repair;
+- among 52 sampled strict unorientable `N=9` states, 49 had strict ascent and a direct orientable repair; 3 were plateaus, all with direct orientable repair;
+- among 14 sampled strict unorientable `N=11` states, 12 had strict ascent and a direct orientable repair; 2 were plateaus, both with direct orientable repair.
+
+These samples are search guidance only, not certificates.
+
+## Formal infrastructure
+
+### Generic potential theorems
+
+`HigherRankKUM/PotentialAscent.lean` contains:
+
+- `exists_reachable_good_of_bounded_strict_ascent`;
+- `good_of_no_strict_ascent`.
+
+After the `N=7` falsification it also contains the weaker generic principle:
+
+- `exists_reachable_good_of_bounded_escape_or_strict_ascent`;
+- `good_or_exists_good_move_of_no_strict_ascent`.
+
+The refined principle allows a non-good state either to move directly to a good state or, if it continues, to move with strictly larger bounded potential.
 
 ### Rank-four closure potential
 
-`HigherRankKUM/Rank4/GcdTwoClosurePotential.lean` formalizes the exact four Sprint 3 neighbor-closure incidences at each repair boundary.
+`HigherRankKUM/Rank4/GcdTwoClosurePotential.lean` formalizes:
 
-Definitions:
-
-- `closureIndicator` — `0/1` indicator of one ambient closure incidence;
-- `boundaryClosureScore A s` — sum of the four local incidences;
-- `closurePotential A` — sum of boundary scores over all `s : Fin N`.
-
-Structural theorems added:
-
+- `closureIndicator`;
+- `boundaryClosureScore A s`;
+- `closurePotential A`;
 - `boundaryClosureScore_le_four`;
 - `closurePotential_le_four_mul`: `closurePotential A ≤ 4N`;
-- `boundaryClosureScore_pos_of_unique`: a unique local repartition forces positive local score;
-- `card_le_closurePotential_of_all_unique`: if every boundary is rigid then `N ≤ closurePotential A`;
-- `exists_alternative_repartition_of_closurePotential_lt_card`: if `closurePotential A < N`, some boundary has an alternative common-base `2+2` repartition.
+- `boundaryClosureScore_pos_of_unique`;
+- `card_le_closurePotential_of_all_unique`;
+- `exists_alternative_repartition_of_closurePotential_lt_card`.
 
-The last theorem is the first global closure-potential consequence derived from the Sprint 3 local rigidity theorem. It is representation-free but does **not** yet prove strict potential ascent.
+The last theorem is representation-free but only guarantees an alternative common-base repartition when `Phi < N`; it does not control the new score or orientability.
 
-## First structural targets
+## Repaired-state constructor — validated checkpoint
 
-### A. Closure-saturation bookkeeping
+The former proof-engineering gap
 
-For each boundary of an admissible rank-four pair cycle, record which of the four neighbor-closure incidences hold. Determine what cyclic patterns are compatible with strict uniform density.
+`common base Q -> new AdmissiblePairCycle.Data`
 
-The binary `N=5` exhaustive audit has reduced its obstruction patterns to two dihedral closure types, giving a small test case for a future abstract classification. The 18-element witness's exact rigid-gap classes `(1,3,5)`, `(1,1,7)`, `(3,3,3)` remain witness-specific.
+is now closed.
 
-### B. Propagation through rank-two flats
+New reusable layers:
 
-In rank four, each relevant core is one pair block. Repeated closure incidences therefore constrain how neighboring pair blocks sit in rank-two flats. Search for implications of the form:
+- `HigherRankKUM/PairBlockPartition.lean` — abstract partition of the ground into 2-element blocks and reconstruction of a global `Fin N × Bool ≃ M.E`;
+- `HigherRankKUM/PairBlockPartitionReplace.lean` — replacing two blocks by any disjoint two-element pair with the same four-element union preserves the pair partition;
+- `HigherRankKUM/Rank4/GcdTwoRepairTransition.lean` — a `LocalRepartition` gives a new global pair equivalence with exact changed/unchanged pair-set theorems;
+- `HigherRankKUM/Rank4/GcdTwoRepairAdmissible.lean` — the replacement preserves all aligned rank-four basis windows, producing a new `AdmissiblePairCycle.Data`.
+
+**Validated source checkpoint:** `a9479db5cc563a30913686cdf63d92456c0a6a4f`.
+
+**Validation:** GitHub Actions run `35087640770` fully green, including targeted Lean stack, all finite certificates, and full `lake build`.
+
+This closes the state-transition engineering bottleneck. A common-base repair is no longer merely a local set witness; it can be iterated as an actual admissible pair-cycle state transition.
+
+## Repair graph and corrected dynamics reduction
+
+`HigherRankKUM/Rank4/GcdTwoRepairMove.lean` adds:
+
+- `commonBaseRepairTarget`;
+- `RepairMove` — one legal local repartition followed by the repaired admissible-state constructor;
+- `repairMove_commonBaseRepairTarget`;
+- `RelationOrientable` — fixed pair-cycle Boolean-relation orientability;
+- `exists_reachable_relationOrientable_of_strict_closure_ascent` — retained as a strong conditional theorem, but its universal hypothesis is now known false;
+- `exists_reachable_relationOrientable_of_escape_or_strict_closure_ascent` — the corrected reduction;
+- the corresponding local-maximum escape theorem.
+
+The corrected hard hypothesis is:
+
+> for every non-orientable admissible pair-cycle state, either some one-step `RepairMove` is relation-orientable, or some `RepairMove` strictly increases `closurePotential`.
+
+Because `closurePotential ≤ 4N`, that disjunction is sufficient for finite reachability of an orientable admissible state.
+
+**Current combined source head:** `a5498fa0073d35d801ebea0fb196811cd2110f6a`.
+
+**Current validation run:** `35143111762` pending at the time of this ledger update. Do not treat this combined dynamics head as fully green until that run completes.
+
+## Refined mathematical target
+
+The next theorem should no longer attempt unconditional ascent. A more promising proof decomposition is:
+
+1. assume `A` is not `RelationOrientable` in the intended odd-`N` gcd-two regime;
+2. use the Sprint 2 obstruction theorem to conclude that every local Boolean relation is a forced bijection and the total successor composition is fixed-point-free;
+3. choose a legal alternative common-base repair using the Sprint 3/Sprint 4 rank-two boundary geometry;
+4. inspect the repaired state:
+   - if an affected local relation gains Boolean slack, use `admissible_pair_cycle_orientable_of_local_slack` to obtain the **escape** branch;
+   - if all affected local relations remain forced bijections, prove that the repair can be chosen so that `closurePotential` strictly increases.
+
+This is materially sharper than the old target. The potential only needs to be monotone on repairs that **remain inside the forced non-orientable region**.
+
+The key local research question is therefore:
+
+> What closure/rank-two-flat constraints are forced when both the old state and a legal repaired state retain functional full-support Boolean relations at every affected index?
+
+A theorem answering that may convert “no local slack after repair” directly into strict closure gain.
+
+## Additional structural targets
+
+### Closure-saturation bookkeeping
+
+Classify cyclic patterns of the four neighbor-closure incidences under strict uniform density. The binary `N=5` obstruction patterns provide the smallest exact test cases, while the `N=7` plateau shows that high closure score alone does not force ascent.
+
+### Propagation through rank-two flats
+
+Because each rank-four core is one pair block, repeated closure incidences constrain neighboring blocks inside rank-two flats. Search for statements such as:
 
 - repeated one-sided closure forces a larger low-rank flat;
-- alternating closure directions force a short periodic configuration;
-- sufficiently dense closure saturation contradicts strict uniform density.
+- alternating closure directions force periodicity;
+- persistence of forced Boolean bijections across a repair forces one of the affected distance-two closure contributions to increase.
 
-Any such statement must be tested against the existing 10- and 18-element witnesses before formalization.
+### Orientability bridge
 
-### C. Repair potential
+`RelationOrientable` is deliberately only the fixed pair-cycle relation notion. Keep the later theorem converting an orientable admissible pair cycle into the desired cyclic basis ordering explicit and separate.
 
-The finite audits identify `Phi` above as the first concrete candidate. The next hard question is to understand a **single legal repartition's effect on `Phi` abstractly**.
-
-The formal target is now precise: prove, under unorientability plus appropriate strict-density/global closure hypotheses, that at least one legal full `2+2` repartition strictly increases `closurePotential`. Boundedness and termination are already separated out formally.
-
-If `Phi` itself fails abstractly, use the counterexample to refine it with represented-intersection information or Boolean-relation slack rather than reverting immediately to broad search. A coarser rank-deficit-only potential was already falsified on the ten-element witness and should not replace `Phi`.
-
-## Non-goals
+## Non-goals / guardrails
 
 - no claim that rank-four KUM is solved;
-- no universal pair-cycle-existence theorem unless separately proved;
-- no assumption that the local-repair graph is connected;
-- no universal one- or two-step repair theorem inferred from the finite witnesses;
-- no broad random rank-four search until the closure-propagation question is sharper;
-- no representability assumption in the abstract local statements unless explicitly introduced.
+- no claim that every strict gcd-two rank-four matroid admits an admissible pair cycle;
+- no assumption that the repair graph is connected;
+- no universal one- or two-step repair theorem inferred from finite witnesses;
+- no universal strict-`Phi`-ascent claim — explicitly falsified by the certified binary `N=7` plateau;
+- no cross-exchange theorem without additional hypotheses;
+- no representability assumption in abstract statements unless explicit;
+- no broad random search substituted for structural proof.
 
-## Success criterion for this sprint
+## Sprint success criterion
 
-Produce at least one reusable global structural lemma about closure accumulation, or a rigorously certified finite reduction that narrows the possible closure-saturated cyclic patterns enough to support the next Lean theorem. Preserve a clean distinction between:
-
-1. fixed-cycle orientability;
-2. existence of alternative admissible repartitions;
-3. reachability of an orientable cycle;
-4. existence of an admissible pair cycle in the first place.
+Produce a reusable structural lemma about repairs that **remain non-orientable**, ideally proving a strict increase in closure geometry under the no-slack hypothesis; or find and certify a counterexample that forces a further refinement. The proof-engineering side is now sufficiently complete that future mathematical repair lemmas can be expressed directly as state transitions.
