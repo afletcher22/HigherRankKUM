@@ -110,6 +110,6 @@ jobs:
           assert actual == expected, 'normalized binary N5 closure potential audit differs from committed expected data'
           PY
       - name: Build pair-cycle and local repair modules
-        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary +HigherRankKUM.LocalRepairClosure +HigherRankKUM.Rank4.GcdTwoRepairGeometry +HigherRankKUM.Rank4.GcdTwoRepairCorollary
+        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary +HigherRankKUM.LocalRepairClosure +HigherRankKUM.PotentialAscent +HigherRankKUM.Rank4.GcdTwoRepairGeometry +HigherRankKUM.Rank4.GcdTwoRepairCorollary
       - name: Build
         run: lake build
