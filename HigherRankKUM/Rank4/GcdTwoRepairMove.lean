@@ -54,6 +54,38 @@ def RelationOrientable
   PairCycleObstruction.PairRelationOrientable N 2 hN
     (A.localRelation (by omega))
 
+/-- In the intended odd-`N` gcd-two regime, a non-orientable admissible state
+has a forced bijection relation at every local index.  This is the local part
+of the Sprint 2 obstruction theorem, packaged for the repair-dynamics layer. -/
+theorem all_local_relations_bijective_of_not_relationOrientable
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN)
+    (h2N : 2 < N) (hcop : Nat.gcd N 2 = 1)
+    (hnot : ¬ RelationOrientable A) :
+    ∀ i : Fin N,
+      BinaryRelationCycle.BijectionRelation
+        (A.localRelation (by omega) i) := by
+  have hforced :=
+    (PairCycleObstruction.admissible_pair_cycle_not_orientable_iff
+      A (by omega) h2N hcop).1 (by
+        simpa [RelationOrientable] using hnot)
+  exact hforced.1
+
+/-- Conversely, in the odd-`N` gcd-two regime a single local relation with
+Boolean slack makes the whole fixed pair cycle relation-orientable.  This is
+the formal escape test used by the refined Sprint 4 dynamics. -/
+theorem relationOrientable_of_local_slack
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN)
+    (h2N : 2 < N) (hcop : Nat.gcd N 2 = 1)
+    (hslack : ∃ i : Fin N,
+      ¬ BinaryRelationCycle.BijectionRelation
+        (A.localRelation (by omega) i)) :
+    RelationOrientable A := by
+  simpa [RelationOrientable] using
+    PairCycleObstruction.admissible_pair_cycle_orientable_of_local_slack
+      A (by omega) h2N hcop hslack
+
 /-- Strong sufficient reduction: if every non-orientable state has a strictly
 closure-potential-increasing repair, then every state reaches a
 relation-orientable state.  This theorem remains useful, but Sprint 4 finite
