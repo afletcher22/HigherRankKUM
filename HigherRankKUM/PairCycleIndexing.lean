@@ -12,6 +12,17 @@ theorem cyclicIndex_add (n : ℕ) (hn : 0 < n) (i : Fin n) (a b : ℕ) :
   have h := (Nat.mod_modEq (i.val + a) n).add_right b
   simpa [Nat.add_assoc] using h
 
+/-- For a fixed offset, cyclic translation is injective in the starting index. -/
+theorem cyclicIndex_injective_start
+    (n : ℕ) (hn : 0 < n) (a : ℕ) :
+    Function.Injective (fun i : Fin n => cyclicIndex n hn i a) := by
+  intro i j hEq
+  apply Fin.ext
+  have hmod : i.val + a ≡ j.val + a [MOD n] := by
+    change (i.val + a) % n = (j.val + a) % n
+    exact congrArg Fin.val hEq
+  exact (Nat.ModEq.add_right_cancel' a hmod).eq_of_lt_of_lt i.isLt j.isLt
+
 /-- From a common cyclic start, offsets smaller than the modulus are injective. -/
 theorem cyclicIndex_injective_offsets
     (n : ℕ) (hn : 0 < n) (i : Fin n) {a b : ℕ}
