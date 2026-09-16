@@ -44,6 +44,57 @@ theorem alternative_common_base_cross_or_swap
   · exact Or.inr ⟨hL, hR, hswap⟩
   · exact Or.inl ⟨hL, hR, hne, hswap⟩
 
+/-- A cross common base really contains one element from each of the two old
+adjacent pair blocks.  This turns the extensional definition
+`Q ≠ oldLeft, oldRight` into the concrete one-from-each-side form needed by
+later parity and closure arguments. -/
+theorem crossCommonBase_eq_pair_one_from_each
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (h2N : 2 < N)
+    (s : Fin N) {Q : Set α} (hcross : IsCrossCommonBase A s Q) :
+    ∃ x y : α,
+      x ∈ A.block (AdjacentRepair.leftBoundaryIndex N 2 hN s) ∧
+      y ∈ A.block (AdjacentRepair.rightBoundaryIndex N 2 hN s) ∧
+      Q = {x, y} := by
+  let i := AdjacentRepair.leftBoundaryIndex N 2 hN s
+  let j := AdjacentRepair.rightBoundaryIndex N 2 hN s
+  obtain ⟨q₀, q₁, r₀, r₁, hqne, _hrne, hQ, _hcomp, _hpart⟩ :=
+    common_base_repartition_pair_decomposition A h2N s hcross.1 hcross.2.1
+  have hQsub : Q ⊆ repairGround A s := by
+    have hsub := hcross.1.subset_ground
+    simpa [leftRepairMinor, LocalRepairClosure.boundaryMinor] using hsub
+  have hq₀Q : q₀ ∈ Q := by rw [hQ]; simp
+  have hq₁Q : q₁ ∈ Q := by rw [hQ]; simp
+  have hq₀rg := hQsub hq₀Q
+  have hq₁rg := hQsub hq₁Q
+  simp only [repairGround] at hq₀rg hq₁rg
+  have hpair_eq_of_mem (k : Fin N) {x y : α} (hxy : x ≠ y)
+      (hx : x ∈ A.block k) (hy : y ∈ A.block k) :
+      ({x, y} : Set α) = A.block k := by
+    simp only [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
+      Set.mem_insert_iff, Set.mem_singleton_iff] at hx hy
+    rcases hx with hx0 | hx1 <;> rcases hy with hy0 | hy1
+    · exfalso
+      exact hxy (hx0.trans hy0.symm)
+    · subst x
+      subst y
+      rfl
+    · subst x
+      subst y
+      exact Set.pair_comm _ _
+    · exfalso
+      exact hxy (hx1.trans hy1.symm)
+  rcases hq₀rg with hq₀L | hq₀R
+  · rcases hq₁rg with hq₁L | hq₁R
+    · have hpair := hpair_eq_of_mem i hqne hq₀L hq₁L
+      exact (hcross.2.2.1 (hQ.trans (by simpa [i] using hpair))).elim
+    · exact ⟨q₀, q₁, by simpa [i] using hq₀L, by simpa [j] using hq₁R, hQ⟩
+  · rcases hq₁rg with hq₁L | hq₁R
+    · refine ⟨q₁, q₀, by simpa [i] using hq₁L, by simpa [j] using hq₀R, ?_⟩
+      simpa [Set.pair_comm] using hQ
+    · have hpair := hpair_eq_of_mem j hqne hq₀R hq₁R
+      exact (hcross.2.2.2 (hQ.trans (by simpa [j] using hpair))).elim
+
 /-- A cross common base gives an actual edge in the repaired admissible
 pair-cycle graph via the canonical common-base target. -/
 theorem repairMove_of_crossCommonBase
