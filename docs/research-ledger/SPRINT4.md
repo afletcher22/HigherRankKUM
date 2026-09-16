@@ -63,6 +63,42 @@ by
 
 The latter is false for the abstract local hypotheses presently formalized. Any future cross-exchange theorem needs an additional hypothesis derived from the ambient pair-cycle geometry, strict density, representability, or another global condition.
 
+## Candidate closure potential
+
+`experiments/sprint4_closure_potential_audit.py` tests a concrete repair-potential candidate on both preserved binary witnesses. For pair blocks `B_i`, define
+
+`Phi = sum_i (|B_(i+1) ∩ cl(B_(i-1))| + |B_i ∩ cl(B_(i+2))|)`.
+
+These are precisely the two directional families of neighbor-closure incidences appearing in the Sprint 3 local-rigidity obstruction.
+
+### Ten-element witness
+
+Across all 576 admissible pair cycles:
+
+- 8 are unorientable and 568 orientable;
+- all 8 unorientable cycles have `Phi = 4`;
+- orientable cycles have scores `4:40`, `5:208`, `6:272`, `7:48`;
+- every unorientable cycle has a legal full `2+2` repartition with strictly larger `Phi`;
+- every such unorientable cycle reaches an orientable cycle in one strictly score-increasing repair.
+
+This already shows that `Phi` is **not** an orientability classifier: 40 orientable cycles also have score 4.
+
+### Eighteen-element witness
+
+Across the exact 30,720-vertex adjacent-exchange component:
+
+- all 7,680 unorientable states have `Phi` equal to 18 or 20, with histogram `18:3072`, `20:4608`;
+- all 23,040 orientable states have `Phi` equal to 21, 22, or 23, with histogram `21:9216`, `22:4608`, `23:9216`;
+- every unorientable state is closure-saturated at all 9 local boundaries;
+- orientable states have either 8 or 9 closure-saturated boundaries (`8:4608`, `9:18432`);
+- every unorientable state has a legal full `2+2` repartition that strictly increases `Phi`;
+- 6,912 reach an orientable state in one strictly score-increasing repair;
+- the remaining 768 reach one in two strictly score-increasing repairs.
+
+This is the first finite evidence in the project for a **monotone closure-ascent mechanism** rather than merely bounded repair distance.
+
+It remains witness-specific. A universal theorem would need to show, for an arbitrary unorientable admissible pair cycle, that some legal repartition strictly increases a suitably bounded matroidal potential, and that maximal potential forces Boolean slack / orientability. Neither implication is currently proved.
+
 ## First structural targets
 
 ### A. Closure-saturation bookkeeping
@@ -83,14 +119,11 @@ Any such statement must be tested against the existing 10- and 18-element witnes
 
 ### C. Repair potential
 
-If closure saturation itself is not contradictory, seek a potential on admissible pair cycles that changes under a legal full `2+2` repartition. Candidate potentials may use:
+The finite audits now identify `Phi` above as the first concrete candidate. The next question is to understand a **single legal repartition's effect on `Phi` abstractly**.
 
-- number of rigid boundaries;
-- weighted closure incidences;
-- sizes/ranks of neighboring closure flats;
-- Boolean-relation slack from the Sprint 2 obstruction formalization.
+A useful theorem would have the form: under unorientability plus appropriate local/global closure hypotheses, at least one legal full `2+2` repartition strictly increases a bounded potential. It must distinguish a genuine move from the wholesale block swap when that swap leaves the effective geometry unchanged.
 
-A useful potential must prevent cycling and must distinguish a genuine move from the wholesale block swap when that swap leaves the state essentially unchanged.
+If `Phi` itself fails abstractly, use the counterexample to refine it with rank-two-flat sizes or Boolean-relation slack rather than reverting immediately to broad search.
 
 ## Non-goals
 
