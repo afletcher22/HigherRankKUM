@@ -11,8 +11,9 @@ variable {α : Type*}
 /-- Natural-valued indicator of a proposition.  It is kept as a separate
 notion so the closure potential below is visibly a sum of the exact four
 ambient-closure incidences occurring in the Sprint 3 rigidity theorem. -/
-noncomputable def closureIndicator (p : Prop) : ℕ :=
-  if p then 1 else 0
+noncomputable def closureIndicator (p : Prop) : ℕ := by
+  classical
+  exact if p then 1 else 0
 
 @[simp] theorem closureIndicator_eq_one_iff (p : Prop) :
     closureIndicator p = 1 ↔ p := by
