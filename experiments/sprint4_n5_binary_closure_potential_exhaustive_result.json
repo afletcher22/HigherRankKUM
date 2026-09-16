@@ -1,0 +1,76 @@
+{
+  "scope": "all normalized admissible N=5 rank-four pair-block configurations over GF(2)^4",
+  "normalization": {
+    "B0": [
+      1,
+      2
+    ],
+    "B1": [
+      4,
+      8
+    ],
+    "reason": "B0 union B1 is a basis, so a GF(2)-linear automorphism sends it to the standard basis"
+  },
+  "rank_two_flats_checked_for_strict_density": 35,
+  "rank_three_flats_checked_for_strict_density": 15,
+  "normalized_admissible_configurations": 49896,
+  "strict_density_configurations": 43546,
+  "strict_unorientable_configurations": 80,
+  "closure_score_histogram_strict_unorientable": {
+    "2": 40,
+    "4": 40
+  },
+  "maximum_score_gain_histogram": {
+    "1": 40,
+    "2": 40
+  },
+  "strict_unorientable_without_score_increasing_repartition": 0,
+  "strict_unorientable_without_direct_score_increasing_orientable_repartition": 0,
+  "examples_by_closure_score": {
+    "2": [
+      [
+        1,
+        2
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        1,
+        14
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        7,
+        11
+      ]
+    ],
+    "4": [
+      [
+        1,
+        2
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        1,
+        14
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        6,
+        9
+      ]
+    ]
+  },
+  "status": "exact exhaustive normalized binary N=5 evidence; not a universal closure-potential theorem"
+}
