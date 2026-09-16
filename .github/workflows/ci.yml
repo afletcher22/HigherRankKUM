@@ -76,6 +76,17 @@ jobs:
               actual = json.load(f)
           assert actual == expected, 'local rigidity sanity output differs from committed expected data'
           PY
+      - name: Verify Sprint 4 abstract repartition guardrail
+        run: |
+          python3 experiments/sprint4_abstract_repartition_guardrail.py > /tmp/sprint4-repartition-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_abstract_repartition_guardrail_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-repartition-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'Sprint 4 abstract repartition guardrail differs from committed expected data'
+          PY
       - name: Build pair-cycle and local repair modules
         run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairCycleCardinality +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary +HigherRankKUM.LocalRepairClosure +HigherRankKUM.Rank4.GcdTwoRepairGeometry +HigherRankKUM.Rank4.GcdTwoRepairCorollary
       - name: Build
