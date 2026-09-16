@@ -33,6 +33,7 @@ import HigherRankKUM.PairCycleCardinality
 import HigherRankKUM.PairCycleObstruction
 import HigherRankKUM.PairBlockPartition
 import HigherRankKUM.PairBlockPartitionReplace
+import HigherRankKUM.FundamentalCircuitExchange
 import HigherRankKUM.AdjacentRepair
 import HigherRankKUM.LocalRepairRigidity
 import HigherRankKUM.LocalRepairBoundary
