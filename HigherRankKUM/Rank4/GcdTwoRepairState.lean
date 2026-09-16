@@ -5,6 +5,45 @@ namespace Rank4GcdTwoRepair
 
 variable {α : Type*}
 
+/-- Concrete data for a legal adjacent rank-four `2+2` repartition.  This is
+the interface between the common-base geometry and the later construction of
+a repaired `AdmissiblePairCycle.Data` object. -/
+structure LocalRepartition
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (s : Fin N) where
+  leftBlock : Set α
+  rightBlock : Set α
+  leftCard : leftBlock.encard = 2
+  rightCard : rightBlock.encard = 2
+  disjoint : Disjoint leftBlock rightBlock
+  union_eq : leftBlock ∪ rightBlock = repairGround A s
+  leftBoundaryBase : M.IsBase (leftBlock ∪ A.core s)
+  rightBoundaryBase : M.IsBase
+    (rightBlock ∪ A.core (AdjacentRepair.rightBoundaryIndex N 2 hN s))
+
+/-- The current adjacent pair blocks form the distinguished trivial local
+repartition. -/
+def currentLocalRepartition
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (h2N : 2 < N) (s : Fin N) :
+    LocalRepartition A s where
+  leftBlock := A.block (AdjacentRepair.leftBoundaryIndex N 2 hN s)
+  rightBlock := A.block (AdjacentRepair.rightBoundaryIndex N 2 hN s)
+  leftCard := by
+    simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
+      A.element_ne (AdjacentRepair.leftBoundaryIndex N 2 hN s)]
+  rightCard := by
+    simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
+      A.element_ne (AdjacentRepair.rightBoundaryIndex N 2 hN s)]
+  disjoint := modified_blocks_disjoint A h2N s
+  union_eq := rfl
+  leftBoundaryBase := by
+    simpa [AdjacentRepair.leftBoundaryIndex] using
+      A.endpoint_basis_right (by omega) s
+  rightBoundaryBase := by
+    let j := AdjacentRepair.rightBoundaryIndex N 2 hN s
+    simpa [j] using A.endpoint_basis_left (by omega) j
+
 /-- The current left repair block is already a base of the full left boundary
 contraction, before restricting to the four moved elements. -/
 theorem left_block_isBase_left_contract
@@ -158,6 +197,66 @@ theorem common_base_repartition_ambient_boundary_bases
   · exact ((A.core_indep (by omega) s).contract_isBase_iff.1 hQcontract).1
   · simpa [j] using
       ((A.core_indep (by omega) j).contract_isBase_iff.1 hcompContract).1
+
+/-- Every common-base repair canonically determines a legal local repartition
+witness at the set-and-basis level.  No arbitrary element ordering is chosen
+here; the later pair-equivalence constructor may choose labels inside each
+new two-element block independently. -/
+def localRepartitionOfCommonBase
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (h2N : 2 < N) (s : Fin N)
+    {Q : Set α}
+    (hL : (leftRepairMinor A s).IsBase Q)
+    (hR : (rightRepairMinor A s)✶.IsBase Q) :
+    LocalRepartition A s := by
+  have hQsub : Q ⊆ repairGround A s := by
+    have hsub := hL.subset_ground
+    simpa [leftRepairMinor, LocalRepairClosure.boundaryMinor] using hsub
+  have hleftCurrent := left_block_isBase_leftRepairMinor A h2N s
+  have hQcard : Q.encard = 2 := by
+    calc
+      Q.encard = (A.block (AdjacentRepair.leftBoundaryIndex N 2 hN s)).encard :=
+        hL.encard_eq_encard_of_isBase hleftCurrent
+      _ = 2 := by
+        simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
+          A.element_ne (AdjacentRepair.leftBoundaryIndex N 2 hN s)]
+  have hcompBase :
+      (rightRepairMinor A s).IsBase (repairGround A s \ Q) :=
+    (AdjacentRepair.complement_isBase_iff_dual_isBase
+      (rightRepairMinor A s)
+      (by simp [rightRepairMinor, LocalRepairClosure.boundaryMinor])
+      hQsub).2 hR
+  have hrightCurrent := right_block_isBase_rightRepairMinor A h2N s
+  have hcompCard : (repairGround A s \ Q).encard = 2 := by
+    calc
+      (repairGround A s \ Q).encard =
+          (A.block (AdjacentRepair.rightBoundaryIndex N 2 hN s)).encard :=
+        hcompBase.encard_eq_encard_of_isBase hrightCurrent
+      _ = 2 := by
+        simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
+          A.element_ne (AdjacentRepair.rightBoundaryIndex N 2 hN s)]
+  have hpartition : Q ∪ (repairGround A s \ Q) = repairGround A s := by
+    apply Set.Subset.antisymm
+    · exact Set.union_subset hQsub Set.sdiff_subset
+    · intro x hx
+      by_cases hxQ : x ∈ Q
+      · exact Or.inl hxQ
+      · exact Or.inr ⟨hx, hxQ⟩
+  have hdis : Disjoint Q (repairGround A s \ Q) := by
+    rw [Set.disjoint_left]
+    intro x hxQ hxcomp
+    exact hxcomp.2 hxQ
+  have hbases := common_base_repartition_ambient_boundary_bases A h2N s hL hR
+  exact {
+    leftBlock := Q
+    rightBlock := repairGround A s \ Q
+    leftCard := hQcard
+    rightCard := hcompCard
+    disjoint := hdis
+    union_eq := hpartition
+    leftBoundaryBase := hbases.1
+    rightBoundaryBase := hbases.2
+  }
 
 end Rank4GcdTwoRepair
 end HigherRankKUM
