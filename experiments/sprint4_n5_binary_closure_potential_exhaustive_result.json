@@ -22,6 +22,10 @@
     "2": 40,
     "4": 40
   },
+  "distance_two_closure_edge_pattern_histogram_dihedral": {
+    "0,0,0,0,2": 40,
+    "0,0,0,2,2": 40
+  },
   "maximum_score_gain_histogram": {
     "1": 40,
     "2": 40
