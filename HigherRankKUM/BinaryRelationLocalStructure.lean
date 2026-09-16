@@ -35,5 +35,33 @@ theorem bijectionRelation_of_not_hasThreeAllowed
   by_contra hnf
   exact hsmall (hasThreeAllowed_of_fullSupport_of_not_functional hfull hnf)
 
+/-- Two pointwise-disjoint full-support Boolean relations are necessarily
+bijection relations.  Indeed, if one relation branched in some row, the other
+relation's row support would force an overlap in that same row.
+
+On a `2 × 2` grid this is the abstract reason that the exceptional no-cross
+local repair geometry consists of complementary perfect matchings rather than
+larger cross-base patterns. -/
+theorem bijectionRelations_of_disjoint_fullSupport
+    {R S : Relation}
+    (hR : FullSupport R) (hS : FullSupport S)
+    (hdisj : ∀ x y, ¬ (R x y ∧ S x y)) :
+    BijectionRelation R ∧ BijectionRelation S := by
+  have hRfun : Functional R := by
+    by_contra hnf
+    obtain ⟨x, hx0, hx1⟩ := exists_both_of_not_functional hnf
+    obtain ⟨y, hy⟩ := hS.1 x
+    cases y
+    · exact hdisj x false ⟨hx0, hy⟩
+    · exact hdisj x true ⟨hx1, hy⟩
+  have hSfun : Functional S := by
+    by_contra hnf
+    obtain ⟨x, hx0, hx1⟩ := exists_both_of_not_functional hnf
+    obtain ⟨y, hy⟩ := hR.1 x
+    cases y
+    · exact hdisj x false ⟨hy, hx0⟩
+    · exact hdisj x true ⟨hy, hx1⟩
+  exact ⟨⟨hR, hRfun⟩, ⟨hS, hSfun⟩⟩
+
 end BinaryRelationCycle
 end HigherRankKUM
