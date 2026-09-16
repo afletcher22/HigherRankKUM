@@ -111,5 +111,16 @@ jobs:
               actual = json.load(f)
           assert actual == expected, 'normalized binary N5 closure potential audit differs from committed expected data'
           PY
+      - name: Verify binary N7 closure-potential plateau certificate
+        run: |
+          python3 experiments/sprint4_n7_binary_phi_plateau_certificate.py > /tmp/sprint4-n7-plateau-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_n7_binary_phi_plateau_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-n7-plateau-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'binary N7 closure-potential plateau certificate differs from committed expected data'
+          PY
       - name: Build
         run: lake build
