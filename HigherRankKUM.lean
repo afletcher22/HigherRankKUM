@@ -26,6 +26,7 @@ import HigherRankKUM.Rank4.RationalTightReduction
 import HigherRankKUM.BinaryRelationCycle
 import HigherRankKUM.BinaryRelationLocalStructure
 import HigherRankKUM.BinaryRelationFlip
+import HigherRankKUM.BinaryRelationParity
 import HigherRankKUM.PairCycle
 import HigherRankKUM.PairCycleIndexing
 import HigherRankKUM.AdmissiblePairCycle
