@@ -26,9 +26,12 @@ The candidate potential is
 
 The audit asks whether every unorientable normalized cycle has a legal full
 2+2 repartition that both strictly increases Phi and is orientable, and records
-whether strict density removes any unorientable cases. This is an exact finite
-represented-matroid result, not a theorem for arbitrary matroids, arbitrary odd
-N, or arbitrary fields.
+whether strict density removes any unorientable cases. It also classifies the
+cyclic pattern of the five distance-two closure-edge contributions, modulo the
+dihedral symmetries of the 5-cycle.
+
+This is an exact finite represented-matroid result, not a theorem for arbitrary
+matroids, arbitrary odd N, or arbitrary fields.
 """
 
 import json
@@ -88,14 +91,29 @@ def unorientable(state):
     return forced and sum(rel[0][1] for rel in rels) % 2 == 1
 
 
-def closure_score(state):
-    total = 0
+def closure_edge_scores(state):
+    """Five distance-two contributions whose sum is Phi."""
+    out = []
     for i in range(N):
         left_span = span(state[i])
         right_span = span(state[(i + 2) % N])
-        total += sum(x in left_span for x in state[(i + 2) % N])
-        total += sum(x in right_span for x in state[i])
-    return total
+        out.append(
+            sum(x in left_span for x in state[(i + 2) % N])
+            + sum(x in right_span for x in state[i])
+        )
+    return tuple(out)
+
+
+def canonical_dihedral_pattern(pattern):
+    """Canonical representative under rotations and reflection."""
+    candidates = []
+    for base in (pattern, tuple(reversed(pattern))):
+        candidates.extend(base[i:] + base[:i] for i in range(N))
+    return min(candidates)
+
+
+def closure_score(state):
+    return sum(closure_edge_scores(state))
 
 
 def legal_repartitions(state):
@@ -154,6 +172,7 @@ def main():
     bad_failing_strict_density = 0
     strict_bad_count = 0
     score_histogram = Counter()
+    edge_pattern_histogram = Counter()
     max_gain_histogram = Counter()
     without_increase = 0
     without_direct_orientable_increase = 0
@@ -181,6 +200,9 @@ def main():
                 strict_bad_count += 1
                 score = closure_score(state)
                 score_histogram[score] += 1
+                edge_pattern_histogram[
+                    canonical_dihedral_pattern(closure_edge_scores(state))
+                ] += 1
                 examples.setdefault(score, state)
 
                 increasing = [
@@ -205,6 +227,10 @@ def main():
     assert bad_failing_strict_density == 0
     assert strict_bad_count == 80
     assert score_histogram == Counter({2: 40, 4: 40})
+    assert edge_pattern_histogram == Counter({
+        (0, 0, 0, 0, 2): 40,
+        (0, 0, 0, 2, 2): 40,
+    })
     assert max_gain_histogram == Counter({1: 40, 2: 40})
     assert without_increase == 0
     assert without_direct_orientable_increase == 0
@@ -225,6 +251,9 @@ def main():
         "strict_unorientable_configurations": strict_bad_count,
         "closure_score_histogram_strict_unorientable": {
             str(k): v for k, v in sorted(score_histogram.items())
+        },
+        "distance_two_closure_edge_pattern_histogram_dihedral": {
+            ",".join(map(str, k)): v for k, v in sorted(edge_pattern_histogram.items())
         },
         "maximum_score_gain_histogram": {
             str(k): v for k, v in sorted(max_gain_histogram.items())
