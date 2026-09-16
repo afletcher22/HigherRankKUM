@@ -24,10 +24,11 @@ The candidate potential is
       |B_i intersect cl(B_{i+2})|
   ).
 
-The audit asks whether every strict-density unorientable normalized cycle has a
-legal full 2+2 repartition that both strictly increases Phi and is orientable.
-This is an exact finite represented-matroid result, not a theorem for arbitrary
-matroids, arbitrary odd N, or arbitrary fields.
+The audit asks whether every unorientable normalized cycle has a legal full
+2+2 repartition that both strictly increases Phi and is orientable, and records
+whether strict density removes any unorientable cases. This is an exact finite
+represented-matroid result, not a theorem for arbitrary matroids, arbitrary odd
+N, or arbitrary fields.
 """
 
 import json
@@ -149,7 +150,9 @@ def main():
 
     admissible_count = 0
     strict_count = 0
-    bad_count = 0
+    all_bad_count = 0
+    bad_failing_strict_density = 0
+    strict_bad_count = 0
     score_histogram = Counter()
     max_gain_histogram = Counter()
     without_increase = 0
@@ -163,13 +166,19 @@ def main():
                     continue
                 state = (B0, B1, b2, b3, b4)
                 admissible_count += 1
-                if not strict_density(state):
-                    continue
-                strict_count += 1
-                if not unorientable(state):
+
+                is_bad = unorientable(state)
+                is_strict = strict_density(state)
+                if is_bad:
+                    all_bad_count += 1
+                    if not is_strict:
+                        bad_failing_strict_density += 1
+                if is_strict:
+                    strict_count += 1
+                if not (is_bad and is_strict):
                     continue
 
-                bad_count += 1
+                strict_bad_count += 1
                 score = closure_score(state)
                 score_histogram[score] += 1
                 examples.setdefault(score, state)
@@ -192,7 +201,9 @@ def main():
     assert len(RANK3_FLATS) == 15
     assert admissible_count == 49896
     assert strict_count == 43546
-    assert bad_count == 80
+    assert all_bad_count == 80
+    assert bad_failing_strict_density == 0
+    assert strict_bad_count == 80
     assert score_histogram == Counter({2: 40, 4: 40})
     assert max_gain_histogram == Counter({1: 40, 2: 40})
     assert without_increase == 0
@@ -209,7 +220,9 @@ def main():
         "rank_three_flats_checked_for_strict_density": len(RANK3_FLATS),
         "normalized_admissible_configurations": admissible_count,
         "strict_density_configurations": strict_count,
-        "strict_unorientable_configurations": bad_count,
+        "all_unorientable_configurations": all_bad_count,
+        "unorientable_configurations_failing_strict_density": bad_failing_strict_density,
+        "strict_unorientable_configurations": strict_bad_count,
         "closure_score_histogram_strict_unorientable": {
             str(k): v for k, v in sorted(score_histogram.items())
         },
