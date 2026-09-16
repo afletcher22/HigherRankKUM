@@ -24,7 +24,7 @@ noncomputable def closureIndicator (p : Prop) : ℕ :=
   classical
   simp [closureIndicator]
 
- theorem closureIndicator_le_one (p : Prop) : closureIndicator p ≤ 1 := by
+theorem closureIndicator_le_one (p : Prop) : closureIndicator p ≤ 1 := by
   classical
   simp [closureIndicator]
 
@@ -88,7 +88,7 @@ theorem closurePotential_le_four_mul
       apply Finset.sum_le_sum
       intro s hs
       exact boundaryClosureScore_le_four A s
-    _ = 4 * N := by simp
+    _ = 4 * N := by simp [Nat.mul_comm]
 
 /-- A unique local repartition has positive closure score, directly by the
 Sprint 3 rank-four rigidity theorem. -/
