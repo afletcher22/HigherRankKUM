@@ -41,4 +41,5 @@ import HigherRankKUM.PotentialAscent
 import HigherRankKUM.Rank4.GcdTwoRepairCorollary
 import HigherRankKUM.Rank4.GcdTwoRepairState
 import HigherRankKUM.Rank4.GcdTwoRepairTransition
+import HigherRankKUM.Rank4.GcdTwoRepairAdmissible
 import HigherRankKUM.Rank4.GcdTwoClosurePotential
