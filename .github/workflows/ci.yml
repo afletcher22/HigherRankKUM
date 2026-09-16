@@ -89,6 +89,17 @@ jobs:
               actual = json.load(f)
           assert actual == expected, 'Sprint 4 abstract repartition guardrail differs from committed expected data'
           PY
+      - name: Verify all four-element no-cross repair types
+        run: |
+          python3 experiments/sprint4_all_local_common_base_classification.py > /tmp/sprint4-all-local-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_all_local_common_base_classification_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-all-local-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'all-local common-base classification differs from committed expected data'
+          PY
       - name: Verify Sprint 4 closure potential audit
         run: |
           python3 experiments/sprint4_closure_potential_audit.py > /tmp/sprint4-closure-potential-result.json
