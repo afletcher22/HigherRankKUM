@@ -21,7 +21,13 @@ structure Data (M : Matroid α) (N : ℕ) where
 /-- Any set of extended cardinality two can be labelled by `Bool`. -/
 noncomputable def boolEquivOfEncardTwo (S : Set α) (hS : S.encard = 2) : Bool ≃ S := by
   classical
-  obtain ⟨x, y, hxy, hSxy⟩ := Set.encard_eq_two.mp hS
+  let hex : ∃ x y, x ≠ y ∧ S = {x, y} := Set.encard_eq_two.mp hS
+  let x : α := Classical.choose hex
+  let hey : ∃ y, x ≠ y ∧ S = {x, y} := Classical.choose_spec hex
+  let y : α := Classical.choose hey
+  have hprops : x ≠ y ∧ S = {x, y} := Classical.choose_spec hey
+  have hxy : x ≠ y := hprops.1
+  have hSxy : S = {x, y} := hprops.2
   rw [hSxy]
   let f : Bool → ({x, y} : Set α) := fun b =>
     match b with
@@ -60,14 +66,17 @@ theorem coordMap_injective : Function.Injective P.coordMap := by
   rintro ⟨i, b⟩ ⟨j, c⟩ h
   by_cases hij : i = j
   · subst j
-    have hlabel : P.label i b = P.label i c :=
-      Subtype.ext (congrArg Subtype.val h)
+    have hval : (P.label i b : α) = (P.label i c : α) := by
+      change ((P.coordMap (i, b) : M.E) : α) = ((P.coordMap (i, c) : M.E) : α)
+      exact congrArg Subtype.val h
+    have hlabel : P.label i b = P.label i c := Subtype.ext hval
     have hbc : b = c := (P.label i).injective hlabel
     subst c
     rfl
   · exfalso
-    have hval : (P.label i b : α) = P.label j c :=
-      congrArg Subtype.val h
+    have hval : (P.label i b : α) = (P.label j c : α) := by
+      change ((P.coordMap (i, b) : M.E) : α) = ((P.coordMap (j, c) : M.E) : α)
+      exact congrArg Subtype.val h
     have hi : (P.label i b : α) ∈ P.block i := (P.label i b).2
     have hj : (P.label j c : α) ∈ P.block j := (P.label j c).2
     have hj' : (P.label i b : α) ∈ P.block j := by
@@ -85,6 +94,7 @@ theorem coordMap_surjective : Function.Surjective P.coordMap := by
   obtain ⟨b, hb⟩ := (P.label i).surjective ⟨x.1, hi⟩
   refine ⟨(i, b), ?_⟩
   apply Subtype.ext
+  change (P.label i b : α) = x.1
   exact congrArg Subtype.val hb
 
 /-- Canonical (up to the noncomputable choices of labels inside blocks)
