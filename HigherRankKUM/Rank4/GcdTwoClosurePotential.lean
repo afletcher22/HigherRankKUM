@@ -27,7 +27,7 @@ noncomputable def closureIndicator (p : Prop) : ℕ := by
 
 theorem closureIndicator_le_one (p : Prop) : closureIndicator p ≤ 1 := by
   classical
-  simp [closureIndicator]
+  by_cases hp : p <;> simp [closureIndicator, hp]
 
 /-- The four local neighbor-closure incidences attached to the repair boundary
 indexed by `s`.  In rank four the two unchanged cores are pair blocks, so this
