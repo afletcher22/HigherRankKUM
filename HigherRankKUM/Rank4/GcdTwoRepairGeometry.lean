@@ -163,10 +163,12 @@ theorem left_block_isBase_leftRepairMinor
     hcontract.subset_ground
   have hjGround : A.block j ⊆ (M.contract (A.core s)).E := by
     simpa [j] using right_block_subset_left_contract_ground A h2N s
+  have hrepairGround : repairGround A s ⊆ (M.contract (A.core s)).E := by
+    simpa [repairGround, i, j] using Set.union_subset hiGround hjGround
   rw [leftRepairMinor, LocalRepairClosure.boundaryMinor,
-    Matroid.isBase_restrict_iff (hX := Set.union_subset hiGround hjGround)]
-  exact hcontract.isBasis_of_subset
-    (hX := Set.union_subset hiGround hjGround) Set.subset_union_left
+    Matroid.isBase_restrict_iff hrepairGround]
+  apply hcontract.isBasis_of_subset (hX := hrepairGround)
+  simp [repairGround, i, j]
 
 /-- The right modified block is a base of the right repair minor. -/
 theorem right_block_isBase_rightRepairMinor
@@ -186,10 +188,12 @@ theorem right_block_isBase_rightRepairMinor
       A.block (AdjacentRepair.leftBoundaryIndex N 2 hN s) ⊆
         (M.contract (A.core j)).E := by
     simpa [j] using left_block_subset_right_contract_ground A h2N s
+  have hrepairGround : repairGround A s ⊆ (M.contract (A.core j)).E := by
+    simpa [repairGround, j] using Set.union_subset hiGround hjGround
   rw [rightRepairMinor, LocalRepairClosure.boundaryMinor,
-    Matroid.isBase_restrict_iff (hX := Set.union_subset hiGround hjGround)]
-  exact hcontract.isBasis_of_subset
-    (hX := Set.union_subset hiGround hjGround) Set.subset_union_right
+    Matroid.isBase_restrict_iff hrepairGround]
+  apply hcontract.isBasis_of_subset (hX := hrepairGround)
+  simp [repairGround, j]
 
 /-- In the right boundary minor, the complement of the left modified block is
 exactly the right modified block. -/
