@@ -13,36 +13,40 @@ Assume:
 - `M` is uniformly dense with parameter `k`;
 - there is no nonempty proper tight set.
 
-The generic tight-set machinery does not further reduce this branch. This is the direct higher-rank analogue of the point where the rank-three proof needed genuinely new strict-density machinery.
+The generic tight-set machinery does not further reduce this branch. Matroid partition already supplies integral basis decompositions, so the open issue is **controlled** deletion/reinsertion rather than mere existence of a deletable basis.
 
 Questions to investigate before porting rank-three code:
 
-1. What deletion condition preserves enough density to invoke induction?
-2. After deleting a basis-sized block, what is the correct rank-four reinsertion obstruction?
-3. Is there a useful analogue of the rank-three two-gap lemma, or does rank four require a matching/exchange-support formulation instead?
+1. What extra property of a deleted basis preserves enough structure for reinsertion?
+2. After solving the smaller instance, what is the correct rank-four reinsertion obstruction?
+3. Is there a useful analogue of the rank-three two-gap lemma, or does rank four require a matching/exchange-support formulation?
 4. Can the obstruction be encoded as a finite Hall-type problem on fundamental circuits or exchange supports?
 5. What are the smallest finite configurations where naive block reinsertion fails?
 6. Does strict density force enough expansion in the exchange graph to eliminate those configurations?
 
-Rank3KUM's `StrictDensity`, `TwoGap`, `Splicing`, `NearTightGeometry`, and six-point files are references for proof patterns only. They should not be copied here mechanically.
+Rank3KUM's `StrictDensity`, `TwoGap`, `Splicing`, `NearTightGeometry`, and six-point files are references for proof patterns only. They should not be copied mechanically.
 
-## Track B — gcd-two rank four
+## Track B — strict gcd-two rank four
 
 Assume:
 
 - `r(M)=4`;
-- `|E(M)| = 4k+2`;
-- hence `gcd(|E(M)|,4)=2`.
+- `|E(M)|=4k+2`;
+- `M` is strictly uniformly dense.
 
-This arithmetic regime is neither covered by the coprime theorem nor by the current divisible `r*k` interface. It should be investigated separately rather than treated as a small variation of Track A.
+Sprint 1 already handles the **proper-tight** gcd-two branch at the rational-density level, conditional in Lean on the odd-size rank-two solver and settled mathematically by the external coprime theorem. Experiments here should therefore target the strict branch rather than rediscover proper-tight gluing.
 
-Initial questions:
+Sprints 2–3 established a concrete pair-cycle route. For an `AdmissiblePairCycle.Data`, fixed-cycle orientation failure is characterized exactly by forced Boolean transitions. Local re-pairing is controlled by two rank-two boundary minors, and uniqueness of the current `2+2` split forces a neighboring ambient closure incidence. A closure-free boundary therefore has another valid full `2+2` repartition.
 
-1. Is there a natural two-phase or doubled-cycle reformulation adapted to the common divisor `2`?
-2. Can the problem be reduced to rank-two structure after grouping positions modulo two?
-3. Does a tight-set decomposition preserve a common density parameter in a form useful for `4k+2` ground sizes?
-4. Are there existing KUM partial results for `gcd(n,r)=2` that should become an additional literature filter before new proof search?
-5. What are the smallest computational instances not covered by known theorems?
+Current experimental questions are:
+
+1. What general hypothesis guarantees the existence of a useful admissible pair cycle in a strict gcd-two matroid?
+2. Can neighbor-closure incidences accumulate around the odd pair cycle without forcing a forbidden large rank-two flat or another strict-density violation?
+3. Is there a monotone potential for local full `2+2` repartitions that eventually creates Boolean slack or reaches an orientable pair cycle?
+4. When the only alternative local repartition is the wholesale block swap, how does that operation change the global forced-transition pattern?
+5. Which structural feature distinguishes the known 18-element distance-two states from distance-one states, beyond the witness-specific rigid-gap pattern?
+
+Do not replace “full local `2+2` repartition” by “single-element exchange” without an additional argument. Closure-freeness alone does not justify that strengthening.
 
 ## Promotion rule
 
