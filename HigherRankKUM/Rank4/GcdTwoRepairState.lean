@@ -5,6 +5,14 @@ namespace Rank4GcdTwoRepair
 
 variable {α : Type*}
 
+/-- Every labelled block in an admissible pair cycle has exactly two elements. -/
+theorem block_encard_eq_two
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (i : Fin N) :
+    (A.block i).encard = 2 := by
+  rw [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet]
+  exact Set.encard_pair (A.element_ne i)
+
 /-- Concrete data for a legal adjacent rank-four `2+2` repartition.  This is
 the interface between the common-base geometry and the later construction of
 a repaired `AdmissiblePairCycle.Data` object. -/
@@ -29,12 +37,8 @@ def currentLocalRepartition
     LocalRepartition A s where
   leftBlock := A.block (AdjacentRepair.leftBoundaryIndex N 2 hN s)
   rightBlock := A.block (AdjacentRepair.rightBoundaryIndex N 2 hN s)
-  leftCard := by
-    simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
-      A.element_ne (AdjacentRepair.leftBoundaryIndex N 2 hN s)]
-  rightCard := by
-    simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
-      A.element_ne (AdjacentRepair.rightBoundaryIndex N 2 hN s)]
+  leftCard := block_encard_eq_two A _
+  rightCard := block_encard_eq_two A _
   disjoint := modified_blocks_disjoint A h2N s
   union_eq := rfl
   leftBoundaryBase := by
@@ -105,9 +109,7 @@ theorem common_base_repartition_pair_decomposition
   have hQcard : Q.encard = 2 := by
     calc
       Q.encard = (A.block i).encard := hL.encard_eq_encard_of_isBase hleftCurrent
-      _ = 2 := by
-        simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
-          A.element_ne i]
+      _ = 2 := block_encard_eq_two A i
   have hcompBase :
       (rightRepairMinor A s).IsBase (repairGround A s \ Q) := by
     exact (AdjacentRepair.complement_isBase_iff_dual_isBase
@@ -121,9 +123,7 @@ theorem common_base_repartition_pair_decomposition
     calc
       (repairGround A s \ Q).encard = (A.block j).encard :=
         hcompBase.encard_eq_encard_of_isBase hrightCurrent
-      _ = 2 := by
-        simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
-          A.element_ne j]
+      _ = 2 := block_encard_eq_two A j
   obtain ⟨q₀, q₁, hqne, hQ⟩ := Set.encard_eq_two.mp hQcard
   obtain ⟨r₀, r₁, hrne, hRcomp⟩ := Set.encard_eq_two.mp hcompCard
   refine ⟨q₀, q₁, r₀, r₁, hqne, hrne, hQ, hRcomp, ?_⟩
@@ -134,7 +134,9 @@ theorem common_base_repartition_pair_decomposition
       by_cases hxQ : x ∈ Q
       · exact Or.inl hxQ
       · exact Or.inr ⟨hx, hxQ⟩
-  simpa [hQ, hRcomp] using hpartition.symm
+  calc
+    repairGround A s = Q ∪ (repairGround A s \ Q) := hpartition.symm
+    _ = ({q₀, q₁} : Set α) ∪ {r₀, r₁} := by rw [hQ, hRcomp]
 
 /-- The two common-base conditions on the restricted repair minors promote to
 the two ambient rank-four basis conditions that can actually replace the
@@ -217,9 +219,7 @@ def localRepartitionOfCommonBase
     calc
       Q.encard = (A.block (AdjacentRepair.leftBoundaryIndex N 2 hN s)).encard :=
         hL.encard_eq_encard_of_isBase hleftCurrent
-      _ = 2 := by
-        simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
-          A.element_ne (AdjacentRepair.leftBoundaryIndex N 2 hN s)]
+      _ = 2 := block_encard_eq_two A _
   have hcompBase :
       (rightRepairMinor A s).IsBase (repairGround A s \ Q) :=
     (AdjacentRepair.complement_isBase_iff_dual_isBase
@@ -232,9 +232,7 @@ def localRepartitionOfCommonBase
       (repairGround A s \ Q).encard =
           (A.block (AdjacentRepair.rightBoundaryIndex N 2 hN s)).encard :=
         hcompBase.encard_eq_encard_of_isBase hrightCurrent
-      _ = 2 := by
-        simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
-          A.element_ne (AdjacentRepair.rightBoundaryIndex N 2 hN s)]
+      _ = 2 := block_encard_eq_two A _
   have hpartition : Q ∪ (repairGround A s \ Q) = repairGround A s := by
     apply Set.Subset.antisymm
     · exact Set.union_subset hQsub Set.sdiff_subset
