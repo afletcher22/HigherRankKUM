@@ -34,16 +34,20 @@ theorem crossBaseRelation_iff_mem_fundCircuit
     intro hb
     exact Set.disjoint_left.1 hAB hb (by simp)
   cases x <;> cases y
-  · have h := hA.mem_fundCircuit_iff_exchange_isBase hb₀E hb₀A (show a₁ ∈ ({a₀, a₁} : Set α) by simp)
+  · have h := HigherRankKUM.Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
+      hA hb₀E hb₀A (show a₁ ∈ ({a₀, a₁} : Set α) by simp)
     rw [crossBaseRelation, bitPick]
     simpa [ha] using h.symm
-  · have h := hA.mem_fundCircuit_iff_exchange_isBase hb₁E hb₁A (show a₁ ∈ ({a₀, a₁} : Set α) by simp)
+  · have h := HigherRankKUM.Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
+      hA hb₁E hb₁A (show a₁ ∈ ({a₀, a₁} : Set α) by simp)
     rw [crossBaseRelation, bitPick]
     simpa [ha] using h.symm
-  · have h := hA.mem_fundCircuit_iff_exchange_isBase hb₀E hb₀A (show a₀ ∈ ({a₀, a₁} : Set α) by simp)
+  · have h := HigherRankKUM.Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
+      hA hb₀E hb₀A (show a₀ ∈ ({a₀, a₁} : Set α) by simp)
     rw [crossBaseRelation, bitPick]
     simpa [ha, Set.pair_comm] using h.symm
-  · have h := hA.mem_fundCircuit_iff_exchange_isBase hb₁E hb₁A (show a₀ ∈ ({a₀, a₁} : Set α) by simp)
+  · have h := HigherRankKUM.Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
+      hA hb₁E hb₁A (show a₀ ∈ ({a₀, a₁} : Set α) by simp)
     rw [crossBaseRelation, bitPick]
     simpa [ha, Set.pair_comm] using h.symm
 
