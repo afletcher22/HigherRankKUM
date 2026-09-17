@@ -2,23 +2,6 @@ import HigherRankKUM.AdjacentRepair
 import HigherRankKUM.BinaryRelationParity
 
 namespace HigherRankKUM
-namespace BinaryRelationCycle
-
-/-- A full-support functional Boolean relation is injective in the input as
-well as functional in the output; equivalently it is the graph of a Boolean
-permutation. -/
-theorem cofunctional_of_bijection {R : Relation} (hR : BijectionRelation R) :
-    ∀ ⦃x₁ x₂ y⦄, R x₁ y → R x₂ y → x₁ = x₂ := by
-  rcases eq_idRel_or_eq_flipRel_of_bijection hR with h | h
-  · subst R
-    intro x₁ x₂ y h₁ h₂
-    simpa [idRel] using h₁.trans h₂.symm
-  · subst R
-    intro x₁ x₂ y h₁ h₂
-    cases x₁ <;> cases x₂ <;> cases y <;> simp [flipRel] at h₁ h₂ ⊢
-
-end BinaryRelationCycle
-
 namespace PairCycle
 
 open Set
