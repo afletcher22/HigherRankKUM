@@ -129,7 +129,7 @@ jobs:
           import json
           with open('experiments/sprint4_n7_binary_phi_plateau_result.json') as f:
               expected = json.load(f)
-          with open('/tmp/sprint4-n7-result.json') as f:
+          with open('/tmp/sprint4-n7-plateau-result.json') as f:
               actual = json.load(f)
           assert actual == expected, 'binary N7 closure-potential plateau certificate differs from committed expected data'
           PY
