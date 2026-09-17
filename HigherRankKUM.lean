@@ -46,6 +46,7 @@ import HigherRankKUM.LocalRepairClosure
 import HigherRankKUM.PotentialAscent
 import HigherRankKUM.Rank4.ThreePairDualBase
 import HigherRankKUM.Rank4.ThreePairDual
+import HigherRankKUM.Rank4.ThreePairTriangle
 import HigherRankKUM.Rank4.GcdTwoRepairCorollary
 import HigherRankKUM.Rank4.GcdTwoRepairState
 import HigherRankKUM.Rank4.GcdTwoRepairTransition
