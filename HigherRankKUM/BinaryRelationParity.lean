@@ -121,8 +121,10 @@ theorem double_relabel_preserves_orientation
   rcases eq_idRel_or_eq_flipRel_of_bijection hR with h | h
   · subst R
     rw [double_relabel_idRel]
+    exact ⟨Iff.rfl, Iff.rfl⟩
   · subst R
     rw [double_relabel_flipRel]
+    exact ⟨Iff.rfl, Iff.rfl⟩
 
 /-- Two pointwise-disjoint bijection relations on `Bool` are exactly the two
 complementary perfect matchings: identity/flip in one order or the other. -/
