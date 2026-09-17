@@ -12,6 +12,22 @@ open PairCycle
 
 variable {α : Type*}
 
+private lemma bitPick_mem_pair (x₀ x₁ : α) (b : Bool) :
+    bitPick x₀ x₁ b ∈ ({x₀, x₁} : Set α) := by
+  cases b <;> simp [bitPick]
+
+private lemma bitPick_ne_other (x₀ x₁ : α) (h : x₀ ≠ x₁) (b : Bool) :
+    bitPick x₀ x₁ b ≠ bitPick x₀ x₁ (Bool.not b) := by
+  cases b
+  · simpa [bitPick] using h
+  · simpa [bitPick] using h.symm
+
+private lemma mem_pair_eq_bitPick_or_other
+    (x₀ x₁ : α) (b : Bool) {e : α}
+    (he : e ∈ ({x₀, x₁} : Set α)) :
+    e = bitPick x₀ x₁ b ∨ e = bitPick x₀ x₁ (Bool.not b) := by
+  cases b <;> simpa [bitPick, or_comm] using he
+
 /-- The rank-four local relation with a whole two-element middle block. -/
 def middlePairRelation (M : Matroid α)
     (x₀ x₁ y₀ y₁ z₀ z₁ : α) : Relation :=
@@ -81,32 +97,6 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
   have hUspan : M.Spanning U :=
     hXYbase.spanning_of_superset hXYsub hUground
 
-  have hneXY (a : α) (ha : a ∈ X) (b : α) (hb : b ∈ Y) : a ≠ b := by
-    intro hab
-    subst b
-    exact Set.disjoint_left.1 hXY ha hb
-  have hneYZ (a : α) (ha : a ∈ Y) (b : α) (hb : b ∈ Z) : a ≠ b := by
-    intro hab
-    subst b
-    exact Set.disjoint_left.1 hYZ ha hb
-  have hneXZ (a : α) (ha : a ∈ X) (b : α) (hb : b ∈ Z) : a ≠ b := by
-    intro hab
-    subst b
-    exact Set.disjoint_left.1 hXZ ha hb
-
-  have hxy00 : x₀ ≠ y₀ := hneXY x₀ (by simp [X]) y₀ (by simp [Y])
-  have hxy01 : x₀ ≠ y₁ := hneXY x₀ (by simp [X]) y₁ (by simp [Y])
-  have hxy10 : x₁ ≠ y₀ := hneXY x₁ (by simp [X]) y₀ (by simp [Y])
-  have hxy11 : x₁ ≠ y₁ := hneXY x₁ (by simp [X]) y₁ (by simp [Y])
-  have hyz00 : y₀ ≠ z₀ := hneYZ y₀ (by simp [Y]) z₀ (by simp [Z])
-  have hyz01 : y₀ ≠ z₁ := hneYZ y₀ (by simp [Y]) z₁ (by simp [Z])
-  have hyz10 : y₁ ≠ z₀ := hneYZ y₁ (by simp [Y]) z₀ (by simp [Z])
-  have hyz11 : y₁ ≠ z₁ := hneYZ y₁ (by simp [Y]) z₁ (by simp [Z])
-  have hxz00 : x₀ ≠ z₀ := hneXZ x₀ (by simp [X]) z₀ (by simp [Z])
-  have hxz01 : x₀ ≠ z₁ := hneXZ x₀ (by simp [X]) z₁ (by simp [Z])
-  have hxz10 : x₁ ≠ z₀ := hneXZ x₁ (by simp [X]) z₀ (by simp [Z])
-  have hxz11 : x₁ ≠ z₁ := hneXZ x₁ (by simp [X]) z₁ (by simp [Z])
-
   funext x z
   apply propext
   let B : Set α := {bitPick x₀ x₁ x, y₀, y₁, bitPick z₀ z₁ z}
@@ -117,13 +107,13 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
     change e ∈ X ∪ Y ∪ Z
     rcases he with h | h | h | h
     · subst e
-      exact Or.inl (Or.inl (by cases x <;> simp [X, bitPick]))
+      exact Or.inl (Or.inl (bitPick_mem_pair x₀ x₁ x))
     · subst e
       exact Or.inl (Or.inr (by simp [Y]))
     · subst e
       exact Or.inl (Or.inr (by simp [Y]))
     · subst e
-      exact Or.inr (by cases z <;> simp [Z, bitPick])
+      exact Or.inr (bitPick_mem_pair z₀ z₁ z)
   have hBR : B ⊆ R.E := by
     simpa [R, U] using hBU
   have hrestrict : R.IsBase B ↔ M.IsBase B := by
@@ -135,31 +125,63 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
       ({bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)} : Set α) := by
     change U \ B =
       ({bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)} : Set α)
-    cases x <;> cases z
-    · change ((({x₀, x₁} : Set α) ∪ {y₀, y₁}) ∪ {z₀, z₁}) \
-          {x₀, y₀, y₁, z₀} = {x₁, z₁}
-      ext e
-      simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
-        Set.mem_singleton_iff]
-      aesop
-    · change ((({x₀, x₁} : Set α) ∪ {y₀, y₁}) ∪ {z₀, z₁}) \
-          {x₀, y₀, y₁, z₁} = {x₁, z₀}
-      ext e
-      simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
-        Set.mem_singleton_iff]
-      aesop
-    · change ((({x₀, x₁} : Set α) ∪ {y₀, y₁}) ∪ {z₀, z₁}) \
-          {x₁, y₀, y₁, z₀} = {x₀, z₁}
-      ext e
-      simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
-        Set.mem_singleton_iff]
-      aesop
-    · change ((({x₀, x₁} : Set α) ∪ {y₀, y₁}) ∪ {z₀, z₁}) \
-          {x₁, y₀, y₁, z₁} = {x₀, z₀}
-      ext e
-      simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
-        Set.mem_singleton_iff]
-      aesop
+    ext e
+    change (e ∈ U ∧ e ∉ B) ↔
+      (e = bitPick x₀ x₁ (Bool.not x) ∨
+        e = bitPick z₀ z₁ (Bool.not z))
+    constructor
+    · rintro ⟨heU, heB⟩
+      change e ∈ X ∪ Y ∪ Z at heU
+      rcases heU with heXY | heZ
+      · rcases heXY with heX | heY
+        · rcases mem_pair_eq_bitPick_or_other x₀ x₁ x heX with hsel | hother
+          · exfalso
+            apply heB
+            subst e
+            simp [B]
+          · exact Or.inl hother
+        · exfalso
+          apply heB
+          have heY' : e = y₀ ∨ e = y₁ := by simpa [Y] using heY
+          rcases heY' with rfl | rfl <;> simp [B]
+      · rcases mem_pair_eq_bitPick_or_other z₀ z₁ z heZ with hsel | hother
+        · exfalso
+          apply heB
+          subst e
+          simp [B]
+        · exact Or.inr hother
+    · intro he
+      rcases he with hxother | hzother
+      · subst e
+        have hxmem : bitPick x₀ x₁ (Bool.not x) ∈ X := by
+          exact bitPick_mem_pair x₀ x₁ (Bool.not x)
+        refine ⟨Or.inl (Or.inl hxmem), ?_⟩
+        intro hmem
+        change bitPick x₀ x₁ (Bool.not x) ∈
+          ({bitPick x₀ x₁ x, y₀, y₁, bitPick z₀ z₁ z} : Set α) at hmem
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hmem
+        rcases hmem with hsel | hy0 | hy1 | hzsel
+        · exact (bitPick_ne_other x₀ x₁ hx x) hsel.symm
+        · exact Set.disjoint_left.1 hXY hxmem (by rw [← hy0]; simp [Y])
+        · exact Set.disjoint_left.1 hXY hxmem (by rw [← hy1]; simp [Y])
+        · exact Set.disjoint_left.1 hXZ hxmem (by
+            rw [← hzsel]
+            exact bitPick_mem_pair z₀ z₁ z)
+      · subst e
+        have hzmem : bitPick z₀ z₁ (Bool.not z) ∈ Z := by
+          exact bitPick_mem_pair z₀ z₁ (Bool.not z)
+        refine ⟨Or.inr hzmem, ?_⟩
+        intro hmem
+        change bitPick z₀ z₁ (Bool.not z) ∈
+          ({bitPick x₀ x₁ x, y₀, y₁, bitPick z₀ z₁ z} : Set α) at hmem
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hmem
+        rcases hmem with hxsel | hy0 | hy1 | hsel
+        · exact Set.disjoint_left.1 hXZ (bitPick_mem_pair x₀ x₁ x) (by
+            rw [hxsel]
+            exact hzmem)
+        · exact Set.disjoint_left.1 hYZ (by rw [← hy0]; simp [Y]) hzmem
+        · exact Set.disjoint_left.1 hYZ (by rw [← hy1]; simp [Y]) hzmem
+        · exact (bitPick_ne_other z₀ z₁ hz z) hsel.symm
   rw [doubleRelabel_apply]
   change M.IsBase B ↔
     N.IsBase {bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)}
