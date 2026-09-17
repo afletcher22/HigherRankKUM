@@ -67,11 +67,11 @@ theorem exists_localRelation_gauge_of_pair_labels
   have hleftTrue :
       B.element t true = bitPick (x t true) (x t false) (g t) := by
     have h := hgTrue t
-    cases g t <;> simpa [bitPick] using h
+    cases hgt : g t <;> simp [hgt, bitPick] at h ⊢ <;> exact h
   have hleftFalse :
       B.element t false = bitPick (x t true) (x t false) (Bool.not (g t)) := by
     have h := hgFalse t
-    cases g t <;> simpa [bitPick] using h
+    cases hgt : g t <;> simp [hgt, bitPick] at h ⊢ <;> exact h
   have hmidFalse :
       B.element m false = bitPick (x m false) (x m true) (g m) := hgFalse m
   have hmidTrue :
