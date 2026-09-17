@@ -6,13 +6,14 @@ namespace HigherRankKUM
 namespace Rank4GcdTwoRepair
 
 open BinaryRelationCycle
+open PairCycle
 open PairCycleIndexing
 open Rank4ThreePairDual
 
 variable {α : Type*}
 
 /-- Two rank-four admissible pair cycles with the same unlabelled pair blocks
-have local Boolean relations differing only by vertex gauges.  The gauge at a
+have local Boolean relations differing only by vertex gauges. The gauge at a
 block records whether the second cycle chose the same Boolean labelling of
 that pair or the swapped labelling.
 
@@ -123,7 +124,7 @@ theorem pairRelationOrientable_iff_of_blocks_eq
         (A.localRelation (by omega)) := by
   obtain ⟨g, hg⟩ := exists_localRelation_gauge_of_blocks_eq A B h2N hblocks
   have hfun :
-      (fun i => B.localRelation (by omega) i) =
+      B.localRelation (by omega) =
         (fun i => gaugeRelation (g i) (g (cyclicIndex N hN i 2))
           (A.localRelation (by omega) i)) := by
     funext i
