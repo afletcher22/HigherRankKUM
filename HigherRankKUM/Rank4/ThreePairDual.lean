@@ -21,10 +21,9 @@ def middlePairRelation (M : Matroid α)
 cell using all of the middle pair `Y` is dual to the complementary rank-two
 basis cell between `X` and `Z`.
 
-More precisely, restrict to the six-element union and dualize.  If `X ∪ Y`
-is already a basis of `M`, then the union is spanning, so bases of the
-restriction are exactly bases of `M` contained in the union.  Taking dual
-complements turns
+Restrict to the six-element union and dualize.  The three pairwise-union
+basis hypotheses put all six elements in the ground set and make the union
+spanning.  Taking dual complements turns
 
 `{x, y₀, y₁, z}`
 
@@ -37,7 +36,9 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
     (hXY : Disjoint ({x₀, x₁} : Set α) ({y₀, y₁} : Set α))
     (hYZ : Disjoint ({y₀, y₁} : Set α) ({z₀, z₁} : Set α))
     (hXZ : Disjoint ({x₀, x₁} : Set α) ({z₀, z₁} : Set α))
-    (hXYbase : M.IsBase (({x₀, x₁} : Set α) ∪ {y₀, y₁})) :
+    (hXYbase : M.IsBase (({x₀, x₁} : Set α) ∪ {y₀, y₁}))
+    (hYZbase : M.IsBase (({y₀, y₁} : Set α) ∪ {z₀, z₁}))
+    (hXZbase : M.IsBase (({x₀, x₁} : Set α) ∪ {z₀, z₁})) :
     middlePairRelation M x₀ x₁ y₀ y₁ z₀ z₁ =
       relabelInput true (relabelOutput true
         (crossBaseRelation
@@ -50,31 +51,19 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
   let R : Matroid α := M ↾ U
   let N : Matroid α := R✶
 
-  have hUspan : M.Spanning U := by
-    apply hXYbase.spanning_of_superset
-    · intro e he
-      exact Or.inl he
-    · intro e he
-      rcases he with heXY | heZ
-      · exact hXYbase.subset_ground heXY
-      · rcases heZ with (rfl | rfl)
-        · have hzE : z₀ ∈ M.E := by
-            have h := hXYbase.subset_ground (show x₀ ∈ (({x₀, x₁} : Set α) ∪ {y₀, y₁}) by simp)
-            have hxN : M.IsNonloop x₀ := hXYbase.indep.isNonloop_of_mem (by simp)
-            by_contra hznot
-            have hzloop : M.IsLoop z₀ := by
-              rwa [isLoop_iff_not_isNonloop, isNonloop_iff_mem_ground] 
-            exact hzloop.not_mem_isBase hXYbase
-          exact hzE
-        · have hzE : z₁ ∈ M.E := by
-            have hzN : M.IsNonloop z₁ := by
-              by_contra hnot
-              have hloop : M.IsLoop z₁ := by
-                rwa [isLoop_iff_not_isNonloop]
-              have hbaseZ : M.IsBase (({x₀, x₁} : Set α) ∪ {y₀, y₁}) := hXYbase
-              exact hloop.not_mem_isBase hbaseZ
-            exact hzN.mem_ground
-          exact hzE
+  have hXYsub : (({x₀, x₁} : Set α) ∪ {y₀, y₁}) ⊆ U := by
+    intro e he
+    exact Or.inl (by simpa [X, Y] using he)
+  have hUground : U ⊆ M.E := by
+    intro e he
+    change e ∈ X ∪ Y ∪ Z at he
+    rcases he with heXY | heZ
+    · exact hXYbase.subset_ground (by simpa [X, Y] using heXY)
+    · exact hXZbase.subset_ground (by
+        have : e ∈ X ∪ Z := Or.inr heZ
+        simpa [X, Z] using this)
+  have hUspan : M.Spanning U :=
+    hXYbase.spanning_of_superset hXYsub hUground
 
   have hneXY (a : α) (ha : a ∈ X) (b : α) (hb : b ∈ Y) : a ≠ b := by
     intro hab
