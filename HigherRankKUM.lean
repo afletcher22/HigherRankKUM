@@ -29,6 +29,7 @@ import HigherRankKUM.BinaryRelationFlip
 import HigherRankKUM.BinaryRelationParity
 import HigherRankKUM.BinaryRelationRelabel
 import HigherRankKUM.BinaryRelationTriangleParity
+import HigherRankKUM.BinaryRelationGauge
 import HigherRankKUM.PairCycle
 import HigherRankKUM.PairCycleFundamentalCircuit
 import HigherRankKUM.PairCycleTriangle
