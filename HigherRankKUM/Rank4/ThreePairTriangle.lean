@@ -189,14 +189,16 @@ theorem middlePairRelation_triangle_not_cyclicSatisfiable
     tauto
 
   have hXbase : N.IsBase X := by
-    have h := dual_restrict_pair_isBase M hXY hXZ hUspan
+    have h := dual_restrict_pair_isBase (X := X) (Y := Y) (Z := Z)
+      M (by simpa [X, Y] using hXY) (by simpa [X, Z] using hXZ) hUspan
       (by simpa [Y, Z] using hYZbase)
     simpa [N, U] using h
   have hYbase : N.IsBase Y := by
     have hspan : M.Spanning (Y ∪ X ∪ Z) := by
       rw [hGroundYXZ]
       exact hUspan
-    have h := dual_restrict_pair_isBase M hXY.symm hYZ hspan
+    have h := dual_restrict_pair_isBase (X := Y) (Y := X) (Z := Z)
+      M (by simpa [X, Y] using hXY.symm) (by simpa [Y, Z] using hYZ) hspan
       (by simpa [X, Z] using hXZbase)
     rw [hGroundYXZ] at h
     simpa [N] using h
@@ -204,7 +206,8 @@ theorem middlePairRelation_triangle_not_cyclicSatisfiable
     have hspan : M.Spanning (Z ∪ X ∪ Y) := by
       rw [hGroundZXY]
       exact hUspan
-    have h := dual_restrict_pair_isBase M hXZ.symm hYZ.symm hspan
+    have h := dual_restrict_pair_isBase (X := Z) (Y := X) (Z := Y)
+      M (by simpa [X, Z] using hXZ.symm) (by simpa [Y, Z] using hYZ.symm) hspan
       (by simpa [X, Y] using hXYbase)
     rw [hGroundZXY] at h
     simpa [N] using h
