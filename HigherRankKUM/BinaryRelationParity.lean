@@ -56,6 +56,22 @@ theorem eq_idRel_or_eq_flipRel_of_bijection
       apply propext
       cases x <;> cases z <;> simp [flipRel, hy, hn00, h10, hn11]
 
+/-- Two pointwise-disjoint bijection relations on `Bool` are exactly the two
+complementary perfect matchings: identity/flip in one order or the other. -/
+theorem complementary_of_disjoint_bijections
+    {R S : Relation}
+    (hR : BijectionRelation R) (hS : BijectionRelation S)
+    (hdisj : ∀ x y, ¬ (R x y ∧ S x y)) :
+    (R = idRel ∧ S = flipRel) ∨ (R = flipRel ∧ S = idRel) := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hR with rfl | rfl <;>
+    rcases eq_idRel_or_eq_flipRel_of_bijection hS with rfl | rfl
+  · exfalso
+    exact hdisj false false ⟨rfl, rfl⟩
+  · exact Or.inl ⟨rfl, rfl⟩
+  · exact Or.inr ⟨rfl, rfl⟩
+  · exfalso
+    exact hdisj false true ⟨by simp [flipRel], by simp [flipRel]⟩
+
 /-- Paired input/output relabellings do not change the cyclic parity of four
 forced Boolean relations.  The same two label swaps occur twice, so the total
 composition is identity exactly when it was identity before the relabelling.
