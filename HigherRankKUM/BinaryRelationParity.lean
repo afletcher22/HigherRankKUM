@@ -72,6 +72,26 @@ theorem complementary_of_disjoint_bijections
   · exfalso
     exact hdisj false true ⟨by simp [flipRel], by simp [flipRel]⟩
 
+/-- Three Boolean bijections have no cyclic fixed point exactly in the four
+odd-parity identity/flip configurations. -/
+theorem not_cyclicSatisfiable_three_bijections_iff
+    {R S T : Relation}
+    (hR : BijectionRelation R) (hS : BijectionRelation S)
+    (hT : BijectionRelation T) :
+    (¬ CyclicSatisfiable [R, S, T]) ↔
+      (R = idRel ∧ S = idRel ∧ T = flipRel) ∨
+      (R = idRel ∧ S = flipRel ∧ T = idRel) ∨
+      (R = flipRel ∧ S = idRel ∧ T = idRel) ∨
+      (R = flipRel ∧ S = flipRel ∧ T = flipRel) := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hR with hR' | hR' <;>
+    rcases eq_idRel_or_eq_flipRel_of_bijection hS with hS' | hS' <;>
+    rcases eq_idRel_or_eq_flipRel_of_bijection hT with hT' | hT'
+  all_goals
+    subst R
+    subst S
+    subst T
+    simp [CyclicSatisfiable, composeList, comp, idRel, flipRel]
+
 /-- Paired input/output relabellings do not change the cyclic parity of four
 forced Boolean relations.  The same two label swaps occur twice, so the total
 composition is identity exactly when it was identity before the relabelling.
