@@ -101,7 +101,15 @@ theorem composeList_eq_of_perm_bijections
       have hR : BijectionRelation R := hRs R (by simp)
       have hS : BijectionRelation S := hRs S (by simp)
       simp only [composeList]
-      rw [← comp_assoc, comp_comm_of_bijections hR hS, comp_assoc]
+      calc
+        comp S (comp R (composeList Rs)) =
+            comp (comp S R) (composeList Rs) :=
+          comp_assoc S R (composeList Rs)
+        _ = comp (comp R S) (composeList Rs) :=
+          congrArg (fun T => comp T (composeList Rs))
+            (comp_comm_of_bijections hS hR)
+        _ = comp R (comp S (composeList Rs)) :=
+          (comp_assoc R S (composeList Rs)).symm
   | @trans Rs Ss Ts h₁ h₂ ih₁ ih₂ =>
       have hSs : ∀ S ∈ Ss, BijectionRelation S := by
         intro S hS
@@ -126,7 +134,7 @@ theorem exists_fixedPoint_iff_eq_idRel
   · subst R
     simp [idRel]
   · subst R
-    simp [flipRel, idRel_ne_flipRel]
+    simp [flipRel, flipRel_ne_idRel]
 
 /-- Two forced Boolean transitions are equal as soon as they agree on whether
 a fixed point exists. -/
