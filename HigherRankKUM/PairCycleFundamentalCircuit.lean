@@ -1,5 +1,6 @@
 import HigherRankKUM.PairCycle
 import HigherRankKUM.FundamentalCircuitExchange
+import HigherRankKUM.BinaryRelationParity
 
 namespace HigherRankKUM
 namespace PairCycle
@@ -45,6 +46,38 @@ theorem crossBaseRelation_iff_mem_fundCircuit
   · have h := hA.mem_fundCircuit_iff_exchange_isBase hb₁E hb₁A (show a₀ ∈ ({a₀, a₁} : Set α) by simp)
     rw [crossBaseRelation, bitPick]
     simpa [ha, Set.pair_comm] using h.symm
+
+/-- Once the two-state cross relation is forced, its entire identity-versus-
+flip orientation is encoded by a single fundamental-circuit incidence.
+
+With the chosen labelling, the relation is the identity exactly when `a₁`
+lies in the fundamental circuit of `b₀` over the basis `{a₀,a₁}`.  Thus a
+forced parity obstruction can be rewritten as an XOR of ordinary circuit
+membership bits. -/
+theorem crossBaseRelation_eq_idRel_iff_mem_fundCircuit
+    (N : Matroid α) {a₀ a₁ b₀ b₁ : α}
+    (ha : a₀ ≠ a₁)
+    (hAB : Disjoint ({a₀, a₁} : Set α) ({b₀, b₁} : Set α))
+    (hA : N.IsBase ({a₀, a₁} : Set α))
+    (hB : N.IsBase ({b₀, b₁} : Set α))
+    (hbij : BinaryRelationCycle.BijectionRelation
+      (crossBaseRelation N a₀ a₁ b₀ b₁)) :
+    crossBaseRelation N a₀ a₁ b₀ b₁ = BinaryRelationCycle.idRel ↔
+      a₁ ∈ N.fundCircuit b₀ ({a₀, a₁} : Set α) := by
+  have hcell := crossBaseRelation_iff_mem_fundCircuit
+    N ha hAB hA hB false false
+  constructor
+  · intro hR
+    apply hcell.mp
+    rw [hR]
+    rfl
+  · intro hmem
+    rcases BinaryRelationCycle.eq_idRel_or_eq_flipRel_of_bijection hbij with hid | hflip
+    · exact hid
+    · exfalso
+      have hff : crossBaseRelation N a₀ a₁ b₀ b₁ false false := hcell.mpr hmem
+      rw [hflip] at hff
+      simpa [BinaryRelationCycle.flipRel] using hff
 
 end PairCycle
 end HigherRankKUM
