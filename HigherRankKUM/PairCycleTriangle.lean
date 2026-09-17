@@ -51,7 +51,7 @@ The proof is representation-free.  The unused partner of `B` is parallel to
 the selected element of `A` (because the first relation is forced), and also
 parallel to the selected element of `C` (because the second relation is
 forced). Parallelism is transitive, so the selected `A` and `C` elements are
-dependent only if they coincide; pairwise disjointness rules that out. -/
+independent only if they coincide; pairwise disjointness rules that out. -/
 theorem crossBaseRelation_triangle_not_cyclicSatisfiable
     (N : Matroid α) {a₀ a₁ b₀ b₁ c₀ c₁ : α}
     (ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁) (hc : c₀ ≠ c₁)
@@ -128,6 +128,37 @@ theorem crossBaseRelation_triangle_not_cyclicSatisfiable
   · have hCA : N.IsBase ({c, a} : Set α) := by
       simpa [crossBaseRelation, c, a] using hzx
     exact hACdep (by simpa [Set.pair_comm] using hCA.indep)
+
+/-- Representation-free triangle parity law. Under the same three-base
+hypotheses, if all three cross relations are forced bijections then an odd
+number of them are flips. -/
+theorem crossBaseRelation_triangle_odd_parity
+    (N : Matroid α) {a₀ a₁ b₀ b₁ c₀ c₁ : α}
+    (ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁) (hc : c₀ ≠ c₁)
+    (hAB : Disjoint ({a₀, a₁} : Set α) ({b₀, b₁} : Set α))
+    (hBC : Disjoint ({b₀, b₁} : Set α) ({c₀, c₁} : Set α))
+    (hAC : Disjoint ({a₀, a₁} : Set α) ({c₀, c₁} : Set α))
+    (hA : N.IsBase ({a₀, a₁} : Set α))
+    (hB : N.IsBase ({b₀, b₁} : Set α))
+    (hC : N.IsBase ({c₀, c₁} : Set α))
+    (hABij : BijectionRelation (crossBaseRelation N a₀ a₁ b₀ b₁))
+    (hBCij : BijectionRelation (crossBaseRelation N b₀ b₁ c₀ c₁))
+    (hCAij : BijectionRelation (crossBaseRelation N c₀ c₁ a₀ a₁)) :
+    (crossBaseRelation N a₀ a₁ b₀ b₁ = idRel ∧
+       crossBaseRelation N b₀ b₁ c₀ c₁ = idRel ∧
+       crossBaseRelation N c₀ c₁ a₀ a₁ = flipRel) ∨
+    (crossBaseRelation N a₀ a₁ b₀ b₁ = idRel ∧
+       crossBaseRelation N b₀ b₁ c₀ c₁ = flipRel ∧
+       crossBaseRelation N c₀ c₁ a₀ a₁ = idRel) ∨
+    (crossBaseRelation N a₀ a₁ b₀ b₁ = flipRel ∧
+       crossBaseRelation N b₀ b₁ c₀ c₁ = idRel ∧
+       crossBaseRelation N c₀ c₁ a₀ a₁ = idRel) ∨
+    (crossBaseRelation N a₀ a₁ b₀ b₁ = flipRel ∧
+       crossBaseRelation N b₀ b₁ c₀ c₁ = flipRel ∧
+       crossBaseRelation N c₀ c₁ a₀ a₁ = flipRel) := by
+  apply (not_cyclicSatisfiable_three_bijections_iff hABij hBCij hCAij).1
+  exact crossBaseRelation_triangle_not_cyclicSatisfiable
+    N ha hb hc hAB hBC hAC hA hB hC hABij hBCij
 
 end PairCycle
 end HigherRankKUM
