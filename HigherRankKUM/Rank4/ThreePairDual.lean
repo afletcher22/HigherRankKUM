@@ -111,7 +111,19 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
   apply propext
   let B : Set α := {bitPick x₀ x₁ x, y₀, y₁, bitPick z₀ z₁ z}
   have hBU : B ⊆ U := by
-    cases x <;> cases z <;> simp [B, U, X, Y, Z, bitPick]
+    intro e he
+    change e ∈ {bitPick x₀ x₁ x, y₀, y₁, bitPick z₀ z₁ z} at he
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at he
+    change e ∈ X ∪ Y ∪ Z
+    rcases he with h | h | h | h
+    · subst e
+      exact Or.inl (Or.inl (by cases x <;> simp [X, bitPick]))
+    · subst e
+      exact Or.inl (Or.inr (by simp [Y]))
+    · subst e
+      exact Or.inl (Or.inr (by simp [Y]))
+    · subst e
+      exact Or.inr (by cases z <;> simp [Z, bitPick])
   have hBR : B ⊆ R.E := by
     simpa [R, U] using hBU
   have hrestrict : R.IsBase B ↔ M.IsBase B := by
@@ -121,11 +133,13 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
     simpa [N] using R.base_iff_dual_isBase_compl hBR
   have hcompl : R.E \ B =
       ({bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)} : Set α) := by
-    cases x <;> cases z <;>
-      simp [R, U, X, Y, Z, B, bitPick, hx, hy, hz,
-        hxy00, hxy01, hxy10, hxy11,
-        hyz00, hyz01, hyz10, hyz11,
-        hxz00, hxz01, hxz10, hxz11]
+    change U \ B =
+      ({bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)} : Set α)
+    cases x <;> cases z <;> ext e <;>
+      simp only [U, X, Y, Z, B, bitPick,
+        Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff,
+        Bool.not_false, Bool.not_true] <;>
+      aesop
   rw [doubleRelabel_apply]
   change M.IsBase B ↔
     N.IsBase {bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)}
