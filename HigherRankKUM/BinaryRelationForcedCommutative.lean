@@ -207,7 +207,7 @@ theorem composeList_ofFn_eq_of_index_replacement
   have hsubperm := hI.subperm hsubset
   obtain ⟨l, hlperm, hIsub⟩ := List.subperm_iff.mp hsubperm
   obtain ⟨rest, hrestperm⟩ := hIsub.exists_perm_append
-  have hindexPerm : List.finRange n ~ I ++ rest :=
+  have hindexPerm : List.Perm (List.finRange n) (I ++ rest) :=
     hlperm.symm.trans hrestperm
   have hnodupAppend : (I ++ rest).Nodup :=
     (List.nodup_finRange n).perm hindexPerm
