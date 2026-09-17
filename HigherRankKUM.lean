@@ -69,3 +69,4 @@ import HigherRankKUM.Rank4.GcdTwoMiddlePairRelation
 import HigherRankKUM.Rank4.GcdTwoLabelGauge
 import HigherRankKUM.Rank4.GcdTwoAbstractLabelGauge
 import HigherRankKUM.Rank4.GcdTwoCrossRepairCanonical
+import HigherRankKUM.Rank4.GcdTwoCrossRepairSupport
