@@ -9,7 +9,7 @@ the total composition.  Only the gauge on the first and last vertices remains.
 
 This is the `List.ofFn` form needed for successor-orbit relation lists. -/
 theorem composeList_ofFn_gauge
-    {n : ℕ} (R : Fin n → Relation) (g : Fin (n + 1) → Bool) :
+    {n : Nat} (R : Fin n → Relation) (g : Fin (n + 1) → Bool) :
     composeList
         (List.ofFn fun j : Fin n =>
           gaugeRelation (g j.castSucc) (g j.succ) (R j)) =
@@ -35,7 +35,7 @@ theorem composeList_ofFn_gauge
 /-- If the initial and terminal vertex gauges coincide, a finite gauged chain
 has exactly the same cyclic satisfiability as the ungauged chain. -/
 theorem cyclicSatisfiable_ofFn_gauge_of_closed
-    {n : ℕ} (R : Fin n → Relation) (g : Fin (n + 1) → Bool)
+    {n : Nat} (R : Fin n → Relation) (g : Fin (n + 1) → Bool)
     (hclose : g (Fin.last n) = g 0) :
     CyclicSatisfiable
         (List.ofFn fun j : Fin n =>
