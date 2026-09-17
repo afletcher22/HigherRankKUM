@@ -3,6 +3,57 @@ import HigherRankKUM.BinaryRelationParity
 namespace HigherRankKUM
 namespace BinaryRelationCycle
 
+/-- For four forced Boolean transitions, cyclic satisfiability is equivalent
+to the two adjacent relation-pairs having the same parity. -/
+private theorem cyclicSatisfiable_four_iff_pair_parities
+    {A B C D : Relation}
+    (hA : BijectionRelation A) (hB : BijectionRelation B)
+    (hC : BijectionRelation C) (hD : BijectionRelation D) :
+    CyclicSatisfiable [A, B, C, D] ↔
+      (CyclicSatisfiable [A, B] ↔ CyclicSatisfiable [C, D]) := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hA with h | h <;> subst A <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hB with h | h <;> subst B <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hC with h | h <;> subst C <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hD with h | h <;> subst D
+  all_goals simp [CyclicSatisfiable, composeList, comp, idRel, flipRel]
+
+/-- Two odd triangles sharing their middle relation identify the parities of
+the opposite relation-pairs.  This is the left-hand cancellation shape used
+by the wholesale-swap argument. -/
+private theorem pair_parity_iff_of_shared_middle_triangle_obstructions
+    {A B C D U : Relation}
+    (hA : BijectionRelation A) (hB : BijectionRelation B)
+    (hC : BijectionRelation C) (hD : BijectionRelation D)
+    (hU : BijectionRelation U)
+    (h₁ : ¬ CyclicSatisfiable [A, U, C])
+    (h₂ : ¬ CyclicSatisfiable [D, U, B]) :
+    CyclicSatisfiable [A, B] ↔ CyclicSatisfiable [C, D] := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hA with h | h <;> subst A <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hB with h | h <;> subst B <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hC with h | h <;> subst C <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hD with h | h <;> subst D <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hU with h | h <;> subst U
+  all_goals
+    simp [CyclicSatisfiable, composeList, comp, idRel, flipRel] at h₁ h₂ ⊢
+
+/-- Mirror cancellation shape in which the shared transition appears first in
+both odd triangles. -/
+private theorem pair_parity_iff_of_shared_left_triangle_obstructions
+    {A B C D U : Relation}
+    (hA : BijectionRelation A) (hB : BijectionRelation B)
+    (hC : BijectionRelation C) (hD : BijectionRelation D)
+    (hU : BijectionRelation U)
+    (h₁ : ¬ CyclicSatisfiable [U, C, A])
+    (h₂ : ¬ CyclicSatisfiable [U, B, D]) :
+    CyclicSatisfiable [A, B] ↔ CyclicSatisfiable [C, D] := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hA with h | h <;> subst A <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hB with h | h <;> subst B <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hC with h | h <;> subst C <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hD with h | h <;> subst D <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hU with h | h <;> subst U
+  all_goals
+    simp [CyclicSatisfiable, composeList, comp, idRel, flipRel] at h₁ h₂ ⊢
+
 /-- Pure Boolean bookkeeping behind the wholesale-swap parity argument.
 
 Suppose four old forced relations `R₁,...,R₄` and four new forced relations
@@ -14,10 +65,8 @@ relation `V`:
 `[R₁,U,S₁]`, `[S₂,U,R₂]`, `[V,S₃,R₃]`, `[V,R₄,S₄]`.
 
 Then the old four-cycle has a fixed point exactly when the new four-cycle
-does.  For identity/flip permutations, an unsatisfiable triangle has odd flip
-parity. XORing the two left triangle equations cancels `U`; XORing the two
-right equations cancels `V`.  The total old and new four-cycle parities are
-therefore equal. -/
+does. XORing the two left triangle parities cancels `U`; XORing the two
+right parities cancels `V`. -/
 theorem cyclicSatisfiable_four_iff_of_shared_triangle_obstructions
     {R₁ R₂ R₃ R₄ S₁ S₂ S₃ S₄ U V : Relation}
     (hR₁ : BijectionRelation R₁) (hR₂ : BijectionRelation R₂)
@@ -31,19 +80,15 @@ theorem cyclicSatisfiable_four_iff_of_shared_triangle_obstructions
     (hR₂' : ¬ CyclicSatisfiable [V, R₄, S₄]) :
     CyclicSatisfiable [R₁, R₂, R₃, R₄] ↔
       CyclicSatisfiable [S₁, S₂, S₃, S₄] := by
-  rcases eq_idRel_or_eq_flipRel_of_bijection hR₁ with h | h <;> subst R₁ <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hR₂ with h | h <;> subst R₂ <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hR₃ with h | h <;> subst R₃ <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hR₄ with h | h <;> subst R₄ <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hS₁ with h | h <;> subst S₁ <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hS₂ with h | h <;> subst S₂ <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hS₃ with h | h <;> subst S₃ <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hS₄ with h | h <;> subst S₄ <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hU with h | h <;> subst U <;>
-  rcases eq_idRel_or_eq_flipRel_of_bijection hV with h | h <;> subst V <;>
-  all_goals
-    simp [CyclicSatisfiable, composeList, comp, idRel, flipRel,
-      idRel_ne_flipRel, flipRel_ne_idRel] at hL₁ hL₂ hR₁' hR₂' ⊢
+  have hLeft : CyclicSatisfiable [R₁, R₂] ↔ CyclicSatisfiable [S₁, S₂] :=
+    pair_parity_iff_of_shared_middle_triangle_obstructions
+      hR₁ hR₂ hS₁ hS₂ hU hL₁ hL₂
+  have hRight : CyclicSatisfiable [R₃, R₄] ↔ CyclicSatisfiable [S₃, S₄] :=
+    pair_parity_iff_of_shared_left_triangle_obstructions
+      hR₃ hR₄ hS₃ hS₄ hV hR₁' hR₂'
+  rw [cyclicSatisfiable_four_iff_pair_parities hR₁ hR₂ hR₃ hR₄,
+    cyclicSatisfiable_four_iff_pair_parities hS₁ hS₂ hS₃ hS₄,
+    hLeft, hRight]
 
 end BinaryRelationCycle
 end HigherRankKUM
