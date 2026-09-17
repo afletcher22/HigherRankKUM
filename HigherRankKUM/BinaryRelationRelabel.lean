@@ -47,6 +47,47 @@ theorem doubleRelabel_bijection_iff {R : Relation} :
         (by simpa using hxy) (by simpa using hxz)
       cases y <;> cases z <;> simp at h ⊢
 
+/-- Relabelling the input side of a forced Boolean relation preserves
+forcedness. -/
+theorem relabelInput_bijection (b : Bool) {R : Relation}
+    (hR : BijectionRelation R) : BijectionRelation (relabelInput b R) := by
+  cases b with
+  | false => simpa [relabelInput] using hR
+  | true =>
+      rcases hR with ⟨⟨hout, hin⟩, hfun⟩
+      refine ⟨⟨?_, ?_⟩, ?_⟩
+      · intro x
+        obtain ⟨y, hy⟩ := hout (Bool.not x)
+        exact ⟨y, by simpa [relabelInput] using hy⟩
+      · intro y
+        obtain ⟨x, hx⟩ := hin y
+        refine ⟨Bool.not x, ?_⟩
+        simpa [relabelInput] using hx
+      · intro x y z hxy hxz
+        exact hfun (by simpa [relabelInput] using hxy)
+          (by simpa [relabelInput] using hxz)
+
+/-- Relabelling the output side of a forced Boolean relation preserves
+forcedness. -/
+theorem relabelOutput_bijection (b : Bool) {R : Relation}
+    (hR : BijectionRelation R) : BijectionRelation (relabelOutput b R) := by
+  cases b with
+  | false => simpa [relabelOutput] using hR
+  | true =>
+      rcases hR with ⟨⟨hout, hin⟩, hfun⟩
+      refine ⟨⟨?_, ?_⟩, ?_⟩
+      · intro x
+        obtain ⟨y, hy⟩ := hout x
+        refine ⟨Bool.not y, ?_⟩
+        simpa [relabelOutput] using hy
+      · intro y
+        obtain ⟨x, hx⟩ := hin (Bool.not y)
+        exact ⟨x, by simpa [relabelOutput] using hx⟩
+      · intro x y z hxy hxz
+        have h := hfun (by simpa [relabelOutput] using hxy)
+          (by simpa [relabelOutput] using hxz)
+        cases y <;> cases z <;> simp at h ⊢
+
 /-- A forced Boolean relation is symmetric: identity and flip are both equal
 to their transpose. -/
 theorem transpose_eq_self_of_bijection {R : Relation}
@@ -61,6 +102,22 @@ theorem eq_of_bijections_of_shared_cell
   rcases eq_idRel_or_eq_flipRel_of_bijection hS with h | h <;> subst S
   all_goals
     cases x <;> cases y <;> simp [idRel, flipRel] at hRxy hSxy ⊢
+
+/-- If two forced Boolean relations agree on the `false` output column, they
+are equal. -/
+theorem eq_of_bijections_of_agree_output_false
+    {R S : Relation} (hR : BijectionRelation R) (hS : BijectionRelation S)
+    (hagree : ∀ x, R x false ↔ S x false) : R = S := by
+  obtain ⟨x, hx⟩ := hR.1.2 false
+  exact eq_of_bijections_of_shared_cell hR hS hx ((hagree x).mp hx)
+
+/-- If two forced Boolean relations agree on the `true` input row, they are
+equal. -/
+theorem eq_of_bijections_of_agree_input_true
+    {R S : Relation} (hR : BijectionRelation R) (hS : BijectionRelation S)
+    (hagree : ∀ y, R true y ↔ S true y) : R = S := by
+  obtain ⟨y, hy⟩ := hR.1.1 true
+  exact eq_of_bijections_of_shared_cell hR hS hy ((hagree y).mp hy)
 
 /-- Relabelling every vertex of a three-relation cycle by Boolean negation
 preserves cyclic satisfiability.  No forcedness hypothesis is needed. -/
