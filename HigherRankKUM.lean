@@ -28,6 +28,7 @@ import HigherRankKUM.BinaryRelationLocalStructure
 import HigherRankKUM.BinaryRelationFlip
 import HigherRankKUM.BinaryRelationParity
 import HigherRankKUM.PairCycle
+import HigherRankKUM.PairCycleFundamentalCircuit
 import HigherRankKUM.PairCycleIndexing
 import HigherRankKUM.AdmissiblePairCycle
 import HigherRankKUM.PairCycleCardinality
