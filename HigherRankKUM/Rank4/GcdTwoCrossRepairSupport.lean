@@ -65,12 +65,16 @@ theorem crossRepairCanonicalElement_offset_other
       A.element (cyclicIndex N hN s q) b := by
   apply crossRepairCanonicalElement_other
   · intro h
-    have hoff := cyclicIndex_injective_offsets N hN s hqN (by omega)
-      (by simpa [AdjacentRepair.leftBoundaryIndex] using h)
+    have hEq : cyclicIndex N hN s q = cyclicIndex N hN s 2 := by
+      simpa [AdjacentRepair.leftBoundaryIndex] using h
+    have hoff := cyclicIndex_injective_offsets N hN s (a := q) (b := 2)
+      hqN (by omega) hEq
     exact hq2 hoff
   · intro h
-    have hoff := cyclicIndex_injective_offsets N hN s hqN (by omega)
-      (by simpa [AdjacentRepair.rightBoundaryIndex] using h)
+    have hEq : cyclicIndex N hN s q = cyclicIndex N hN s 3 := by
+      simpa [AdjacentRepair.rightBoundaryIndex] using h
+    have hoff := cyclicIndex_injective_offsets N hN s (a := q) (b := 3)
+      hqN (by omega) hEq
     exact hq3 hoff
 
 /-- Away from the four starts whose three-block windows meet the repaired pair
