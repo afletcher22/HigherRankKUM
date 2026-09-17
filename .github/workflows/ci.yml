@@ -1,0 +1,150 @@
+name: Lean CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: lean-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch pinned dependencies
+        run: lake update
+      - name: Verify dependency lock
+        run: git diff --exit-code -- lake-manifest.json
+      - name: Verify vendored Rank3KUM integrity
+        run: |
+          test -f vendor/Rank3KUM/SHA256SUMS
+          (cd vendor/Rank3KUM && sha256sum -c SHA256SUMS)
+          grep -q 'eff642a2e01fac4fc1f6f76e592eeea46c3152c9' vendor/Rank3KUM/SOURCE.md
+      - name: Enforce standalone Rank3KUM boundary
+        run: |
+          matches="$(grep -R -nE '^[[:space:]]*import[[:space:]]+Rank3KUM([.]|$)' HigherRankKUM HigherRankKUM.lean || true)"
+          bad="$(printf '%s\n' "$matches" | grep -v '^HigherRankKUM/LowRank/RankThree.lean:' || true)"
+          if [ -n "$bad" ]; then
+            echo "$bad"
+            echo "Only the dedicated rank-three adapter may import the vendored Rank3KUM library."
+            exit 1
+          fi
+          if grep -nE 'github\.com/.*/Rank3KUM|git[[:space:]]*=.*Rank3KUM' lakefile.toml; then
+            echo "HigherRankKUM must not have a live Git dependency on Rank3KUM."
+            exit 1
+          fi
+          grep -q '^name = "Rank3KUM"$' lakefile.toml
+          grep -q '^srcDir = "vendor/Rank3KUM"$' lakefile.toml
+      - name: Build pair-cycle and local repair modules
+        run: lake build +HigherRankKUM.PairCycleObstruction +HigherRankKUM.PairRelationOrbitGauge +HigherRankKUM.PairRelationForcedProduct +HigherRankKUM.PairCycleCardinality +HigherRankKUM.PairBlockPartition +HigherRankKUM.PairBlockPartitionReplace +HigherRankKUM.FundamentalCircuitExchange +HigherRankKUM.BinaryRelationFlip +HigherRankKUM.BinaryRelationLocalStructure +HigherRankKUM.BinaryRelationParity +HigherRankKUM.BinaryRelationRelabel +HigherRankKUM.BinaryRelationTriangleParity +HigherRankKUM.BinaryRelationGauge +HigherRankKUM.BinaryRelationOrbitGauge +HigherRankKUM.BinaryRelationForcedCommutative +HigherRankKUM.PairCycleFundamentalCircuit +HigherRankKUM.PairCycleTriangle +HigherRankKUM.Rank4.ThreePairDualBase +HigherRankKUM.Rank4.ThreePairDual +HigherRankKUM.Rank4.ThreePairTriangle +HigherRankKUM.Rank4.MiddlePairRelabel +HigherRankKUM.Rank4.CrossRepartitionParity +HigherRankKUM.Rank4.CrossRepartitionLocalParity +HigherRankKUM.Rank4.WholesaleSwapParity +HigherRankKUM.AdjacentRepair +HigherRankKUM.LocalRepairRigidity +HigherRankKUM.LocalRepairBoundary +HigherRankKUM.LocalRepairClosure +HigherRankKUM.PotentialAscent +HigherRankKUM.Rank4.GcdTwoRepairGeometry +HigherRankKUM.Rank4.GcdTwoRepairCorollary +HigherRankKUM.Rank4.GcdTwoRepairState +HigherRankKUM.Rank4.GcdTwoRepairTransition +HigherRankKUM.Rank4.GcdTwoRepairAdmissible +HigherRankKUM.Rank4.GcdTwoClosurePotential +HigherRankKUM.Rank4.GcdTwoRepairMove +HigherRankKUM.Rank4.GcdTwoRepairDichotomy +HigherRankKUM.Rank4.GcdTwoRepairParity +HigherRankKUM.Rank4.GcdTwoCrossRepartition +HigherRankKUM.Rank4.GcdTwoMiddlePairRelation +HigherRankKUM.Rank4.GcdTwoLabelGauge +HigherRankKUM.Rank4.GcdTwoAbstractLabelGauge +HigherRankKUM.Rank4.GcdTwoCrossRepairCanonical +HigherRankKUM.Rank4.GcdTwoCrossRepairSupport
+      - name: Verify Sprint 2 obstruction certificate
+        run: python3 experiments/sprint2_pair_obstruction_certificate.py
+      - name: Verify 10-element adjacent repair certificate
+        run: |
+          python3 experiments/sprint3_adjacent_repair_certificate.py > /tmp/sprint3-result.json
+          diff -u experiments/sprint3_adjacent_repair_result.json /tmp/sprint3-result.json
+      - name: Verify 18-element repair component certificate
+        run: |
+          python3 experiments/sprint3_18element_component_certificate.py > /tmp/sprint3-18-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint3_18element_component_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint3-18-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, '18-element certificate output differs from committed expected data'
+          PY
+      - name: Verify local repair rigidity sanity certificate
+        run: |
+          python3 experiments/sprint3_local_rigidity_sanity.py > /tmp/sprint3-rigidity-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint3_local_rigidity_sanity_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint3-rigidity-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'local rigidity sanity output differs from committed expected data'
+          PY
+      - name: Verify Sprint 4 abstract repartition guardrail
+        run: |
+          python3 experiments/sprint4_abstract_repartition_guardrail.py > /tmp/sprint4-repartition-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_abstract_repartition_guardrail_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-repartition-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'Sprint 4 abstract repartition guardrail differs from committed expected data'
+          PY
+      - name: Verify all four-element no-cross repair types
+        run: |
+          python3 experiments/sprint4_all_local_common_base_classification.py > /tmp/sprint4-all-local-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_all_local_common_base_classification_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-all-local-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'all-local common-base classification differs from committed expected data'
+          PY
+      - name: Verify Sprint 4 closure potential audit
+        run: |
+          python3 experiments/sprint4_closure_potential_audit.py > /tmp/sprint4-closure-potential-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_closure_potential_audit_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-closure-potential-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'Sprint 4 closure potential audit differs from committed expected data'
+          PY
+      - name: Verify normalized binary N5 closure potential audit
+        run: |
+          python3 experiments/sprint4_n5_binary_closure_potential_exhaustive.py > /tmp/sprint4-n5-potential-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_n5_binary_closure_potential_exhaustive_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-n5-potential-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'normalized binary N5 closure potential audit differs from committed expected data'
+          PY
+      - name: Verify binary N7 closure-potential plateau certificate
+        run: |
+          python3 experiments/sprint4_n7_binary_phi_plateau_certificate.py > /tmp/sprint4-n7-plateau-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_n7_binary_phi_plateau_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-n7-plateau-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'binary N7 closure-potential plateau certificate differs from committed expected data'
+          PY
+      - name: Verify refined escape-or-ascent witness audit
+        run: |
+          python3 experiments/sprint4_escape_or_ascent_witness_audit.py > /tmp/sprint4-escape-ascent-result.json
+          python3 - <<'PY'
+          import json
+          with open('experiments/sprint4_escape_or_ascent_witness_result.json') as f:
+              expected = json.load(f)
+          with open('/tmp/sprint4-escape-ascent-result.json') as f:
+              actual = json.load(f)
+          assert actual == expected, 'refined escape-or-ascent witness audit differs from committed expected data'
+          PY
+      - name: Verify Sprint 5 six-block certificates
+        run: python3 experiments/sprint5_verify.py
+      - name: Build
+        run: lake build
