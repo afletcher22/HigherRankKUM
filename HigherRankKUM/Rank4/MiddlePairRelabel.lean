@@ -1,4 +1,5 @@
 import HigherRankKUM.Rank4.ThreePairDual
+import HigherRankKUM.BinaryRelationGauge
 
 namespace HigherRankKUM
 namespace Rank4ThreePairDual
@@ -103,6 +104,20 @@ theorem middlePairRelation_relabel_endpoints
   apply propext
   cases p <;> cases q <;> cases x <;> cases z <;>
     simp [middlePairRelation, relabelInput, relabelOutput, bitPick]
+
+/-- Relabelling all three pair blocks acts only through the endpoint gauges.
+The middle pair is consumed as a whole, so its internal Boolean order drops
+out completely. -/
+theorem middlePairRelation_relabel_all
+    (M : Matroid α) (x₀ x₁ y₀ y₁ z₀ z₁ : α) (p q r : Bool) :
+    middlePairRelation M
+        (bitPick x₀ x₁ p) (bitPick x₀ x₁ (Bool.not p))
+        (bitPick y₀ y₁ q) (bitPick y₀ y₁ (Bool.not q))
+        (bitPick z₀ z₁ r) (bitPick z₀ z₁ (Bool.not r)) =
+      gaugeRelation p r (middlePairRelation M x₀ x₁ y₀ y₁ z₀ z₁) := by
+  rw [middlePairRelation_relabel_middle]
+  rw [middlePairRelation_relabel_endpoints]
+  rfl
 
 end Rank4ThreePairDual
 end HigherRankKUM
