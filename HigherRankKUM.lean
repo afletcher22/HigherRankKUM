@@ -57,3 +57,4 @@ import HigherRankKUM.Rank4.GcdTwoClosurePotential
 import HigherRankKUM.Rank4.GcdTwoRepairMove
 import HigherRankKUM.Rank4.GcdTwoRepairDichotomy
 import HigherRankKUM.Rank4.GcdTwoRepairParity
+import HigherRankKUM.Rank4.GcdTwoCrossRepartition
