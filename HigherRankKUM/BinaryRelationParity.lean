@@ -6,6 +6,9 @@ namespace BinaryRelationCycle
 /-- The unique fixed-point-free bijection relation on `Bool`. -/
 def flipRel : Relation := fun x y => x ≠ y
 
+/-- Reverse the direction of a Boolean relation. -/
+def transpose (R : Relation) : Relation := fun x y => R y x
+
 /-- Relabel the input side of a Boolean relation by swapping its two labels
 when `b = true`. -/
 def relabelInput (b : Bool) (R : Relation) : Relation :=
@@ -55,6 +58,45 @@ theorem eq_idRel_or_eq_flipRel_of_bijection
       funext x z
       apply propext
       cases x <;> cases z <;> simp [flipRel, hy, hn00, h10, hn11]
+
+/-- A Boolean bijection relation is injective in the input as well as
+functional in the output. -/
+theorem cofunctional_of_bijection {R : Relation} (hR : BijectionRelation R) :
+    ∀ ⦃x₁ x₂ y⦄, R x₁ y → R x₂ y → x₁ = x₂ := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hR with h | h
+  · subst R
+    intro x₁ x₂ y h₁ h₂
+    simpa [idRel] using h₁.trans h₂.symm
+  · subst R
+    intro x₁ x₂ y h₁ h₂
+    cases x₁ <;> cases x₂ <;> cases y <;> simp [flipRel] at h₁ h₂ ⊢
+
+/-- Transposing a forced Boolean relation preserves forcedness. -/
+theorem transpose_bijection {R : Relation} (hR : BijectionRelation R) :
+    BijectionRelation (transpose R) := by
+  constructor
+  · exact ⟨hR.1.2, hR.1.1⟩
+  · intro x y z hxy hxz
+    exact cofunctional_of_bijection hR hxy hxz
+
+@[simp] theorem transpose_idRel : transpose idRel = idRel := by
+  funext x y
+  apply propext
+  simp [transpose, idRel, eq_comm]
+
+@[simp] theorem transpose_flipRel : transpose flipRel = flipRel := by
+  funext x y
+  apply propext
+  simp [transpose, flipRel, ne_comm]
+
+/-- Simultaneously swapping the two labels on both sides preserves the two
+possible forced orientations. -/
+theorem double_relabel_preserves_orientation
+    {R : Relation} (hR : BijectionRelation R) :
+    (relabelInput true (relabelOutput true R) = idRel ↔ R = idRel) ∧
+    (relabelInput true (relabelOutput true R) = flipRel ↔ R = flipRel) := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hR with rfl | rfl <;>
+    simp [relabelInput, relabelOutput, idRel, flipRel]
 
 /-- Two pointwise-disjoint bijection relations on `Bool` are exactly the two
 complementary perfect matchings: identity/flip in one order or the other. -/
