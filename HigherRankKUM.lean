@@ -40,6 +40,7 @@ import HigherRankKUM.AdmissiblePairCycle
 import HigherRankKUM.PairCycleCardinality
 import HigherRankKUM.PairCycleObstruction
 import HigherRankKUM.PairRelationOrbitGauge
+import HigherRankKUM.PairRelationForcedProduct
 import HigherRankKUM.PairBlockPartition
 import HigherRankKUM.PairBlockPartitionReplace
 import HigherRankKUM.FundamentalCircuitExchange
