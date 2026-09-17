@@ -19,18 +19,16 @@ private theorem pair_union_sdiff_cross_pair
     (({c₀, c₁} : Set α) ∪ {d₀, d₁}) \
         {bitPick c₀ c₁ u, bitPick d₀ d₁ v} =
       {bitPick c₀ c₁ (Bool.not u), bitPick d₀ d₁ (Bool.not v)} := by
-  have hc0d0 : c₀ ≠ d₀ := by
-    intro h
-    exact Set.disjoint_left.1 hCD (by simp) (by simpa [h])
-  have hc0d1 : c₀ ≠ d₁ := by
-    intro h
-    exact Set.disjoint_left.1 hCD (by simp) (by simpa [h])
-  have hc1d0 : c₁ ≠ d₀ := by
-    intro h
-    exact Set.disjoint_left.1 hCD (by simp) (by simpa [h])
-  have hc1d1 : c₁ ≠ d₁ := by
-    intro h
-    exact Set.disjoint_left.1 hCD (by simp) (by simpa [h])
+  have hcross_ne : ∀ {c d : α},
+      c ∈ ({c₀, c₁} : Set α) →
+      d ∈ ({d₀, d₁} : Set α) → c ≠ d := by
+    intro c d hcMem hdMem hEq
+    subst d
+    exact Set.disjoint_left.1 hCD hcMem hdMem
+  have hc0d0 : c₀ ≠ d₀ := hcross_ne (by simp) (by simp)
+  have hc0d1 : c₀ ≠ d₁ := hcross_ne (by simp) (by simp)
+  have hc1d0 : c₁ ≠ d₀ := hcross_ne (by simp) (by simp)
+  have hc1d1 : c₁ ≠ d₁ := hcross_ne (by simp) (by simp)
   cases u <;> cases v <;>
     ext x <;>
     simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
