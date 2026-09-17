@@ -162,10 +162,10 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hmem
         rcases hmem with hsel | hy0 | hy1 | hzsel
         · exact (bitPick_ne_other x₀ x₁ hx x) hsel.symm
-        · exact Set.disjoint_left.1 hXY hxmem (by rw [← hy0]; simp [Y])
-        · exact Set.disjoint_left.1 hXY hxmem (by rw [← hy1]; simp [Y])
+        · exact Set.disjoint_left.1 hXY hxmem (by rw [hy0]; simp [Y])
+        · exact Set.disjoint_left.1 hXY hxmem (by rw [hy1]; simp [Y])
         · exact Set.disjoint_left.1 hXZ hxmem (by
-            rw [← hzsel]
+            rw [hzsel]
             exact bitPick_mem_pair z₀ z₁ z)
       · subst e
         have hzmem : bitPick z₀ z₁ (Bool.not z) ∈ Z := by
@@ -177,10 +177,10 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hmem
         rcases hmem with hxsel | hy0 | hy1 | hsel
         · exact Set.disjoint_left.1 hXZ (bitPick_mem_pair x₀ x₁ x) (by
-            rw [hxsel]
+            rw [← hxsel]
             exact hzmem)
-        · exact Set.disjoint_left.1 hYZ (by rw [← hy0]; simp [Y]) hzmem
-        · exact Set.disjoint_left.1 hYZ (by rw [← hy1]; simp [Y]) hzmem
+        · exact Set.disjoint_left.1 hYZ (by rw [hy0]; simp [Y]) hzmem
+        · exact Set.disjoint_left.1 hYZ (by rw [hy1]; simp [Y]) hzmem
         · exact (bitPick_ne_other z₀ z₁ hz z) hsel.symm
   rw [doubleRelabel_apply]
   change M.IsBase B ↔
