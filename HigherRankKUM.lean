@@ -53,6 +53,7 @@ import HigherRankKUM.Rank4.ThreePairDual
 import HigherRankKUM.Rank4.ThreePairTriangle
 import HigherRankKUM.Rank4.MiddlePairRelabel
 import HigherRankKUM.Rank4.CrossRepartitionParity
+import HigherRankKUM.Rank4.CrossRepartitionLocalParity
 import HigherRankKUM.Rank4.WholesaleSwapParity
 import HigherRankKUM.Rank4.GcdTwoRepairCorollary
 import HigherRankKUM.Rank4.GcdTwoRepairState
