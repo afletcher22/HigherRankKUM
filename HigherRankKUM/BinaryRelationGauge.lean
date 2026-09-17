@@ -31,6 +31,12 @@ theorem gaugeRelation_bijection
     BijectionRelation (gaugeRelation a b R) := by
   exact relabelInput_bijection a (relabelOutput_bijection b hR)
 
+/-- Vertex gauging preserves forcedness in both directions. -/
+theorem gaugeRelation_bijection_iff
+    (a b : Bool) {R : Relation} :
+    BijectionRelation (gaugeRelation a b R) ↔ BijectionRelation R := by
+  rw [gaugeRelation, relabelInput_bijection_iff, relabelOutput_bijection_iff]
+
 /-- A chain packages each relation together with the gauge on its output
 vertex.  The next relation automatically uses that same gauge on its input. -/
 def gaugeChain : Bool → List (Relation × Bool) → List Relation
