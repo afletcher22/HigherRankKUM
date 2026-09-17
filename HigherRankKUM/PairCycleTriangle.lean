@@ -129,9 +129,43 @@ theorem crossBaseRelation_triangle_not_cyclicSatisfiable
       simpa [crossBaseRelation, c, a] using hzx
     exact hACdep (by simpa [Set.pair_comm] using hCA.indep)
 
+/-- In the rank-two triangle, two forced sides force the third side to be
+forced as well. Otherwise the third relation would provide Boolean slack and
+hence a cyclic solution, contradicting the triangle obstruction. -/
+theorem crossBaseRelation_triangle_third_bijection
+    (N : Matroid α) {a₀ a₁ b₀ b₁ c₀ c₁ : α}
+    (ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁) (hc : c₀ ≠ c₁)
+    (hAB : Disjoint ({a₀, a₁} : Set α) ({b₀, b₁} : Set α))
+    (hBC : Disjoint ({b₀, b₁} : Set α) ({c₀, c₁} : Set α))
+    (hAC : Disjoint ({a₀, a₁} : Set α) ({c₀, c₁} : Set α))
+    (hA : N.IsBase ({a₀, a₁} : Set α))
+    (hB : N.IsBase ({b₀, b₁} : Set α))
+    (hC : N.IsBase ({c₀, c₁} : Set α))
+    (hABij : BijectionRelation (crossBaseRelation N a₀ a₁ b₀ b₁))
+    (hBCij : BijectionRelation (crossBaseRelation N b₀ b₁ c₀ c₁)) :
+    BijectionRelation (crossBaseRelation N c₀ c₁ a₀ a₁) := by
+  let RAB := crossBaseRelation N a₀ a₁ b₀ b₁
+  let RBC := crossBaseRelation N b₀ b₁ c₀ c₁
+  let RCA := crossBaseRelation N c₀ c₁ a₀ a₁
+  have hCAfull : FullSupport RCA := by
+    dsimp [RCA]
+    exact crossBaseRelation_fullSupport N hc ha hAC.symm hC hA
+  have hfull : ∀ R ∈ [RAB, RBC, RCA], FullSupport R := by
+    intro R hR
+    simp only [List.mem_cons, List.mem_singleton] at hR
+    rcases hR with rfl | rfl | rfl
+    · exact hABij.1
+    · exact hBCij.1
+    · exact hCAfull
+  by_contra hnot
+  have hcyc : CyclicSatisfiable [RAB, RBC, RCA] :=
+    cyclicSatisfiable_of_exists_not_bijection hfull ⟨RCA, by simp, hnot⟩
+  exact (crossBaseRelation_triangle_not_cyclicSatisfiable
+    N ha hb hc hAB hBC hAC hA hB hC hABij hBCij) hcyc
+
 /-- Representation-free triangle parity law. Under the same three-base
-hypotheses, if all three cross relations are forced bijections then an odd
-number of them are flips. -/
+hypotheses, two forced sides force the third side to be forced, and the three
+identity/flip orientations have odd parity. -/
 theorem crossBaseRelation_triangle_odd_parity
     (N : Matroid α) {a₀ a₁ b₀ b₁ c₀ c₁ : α}
     (ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁) (hc : c₀ ≠ c₁)
@@ -142,8 +176,7 @@ theorem crossBaseRelation_triangle_odd_parity
     (hB : N.IsBase ({b₀, b₁} : Set α))
     (hC : N.IsBase ({c₀, c₁} : Set α))
     (hABij : BijectionRelation (crossBaseRelation N a₀ a₁ b₀ b₁))
-    (hBCij : BijectionRelation (crossBaseRelation N b₀ b₁ c₀ c₁))
-    (hCAij : BijectionRelation (crossBaseRelation N c₀ c₁ a₀ a₁)) :
+    (hBCij : BijectionRelation (crossBaseRelation N b₀ b₁ c₀ c₁)) :
     (crossBaseRelation N a₀ a₁ b₀ b₁ = idRel ∧
        crossBaseRelation N b₀ b₁ c₀ c₁ = idRel ∧
        crossBaseRelation N c₀ c₁ a₀ a₁ = flipRel) ∨
@@ -156,6 +189,8 @@ theorem crossBaseRelation_triangle_odd_parity
     (crossBaseRelation N a₀ a₁ b₀ b₁ = flipRel ∧
        crossBaseRelation N b₀ b₁ c₀ c₁ = flipRel ∧
        crossBaseRelation N c₀ c₁ a₀ a₁ = flipRel) := by
+  have hCAij := crossBaseRelation_triangle_third_bijection
+    N ha hb hc hAB hBC hAC hA hB hC hABij hBCij
   apply (not_cyclicSatisfiable_three_bijections_iff hABij hBCij hCAij).1
   exact crossBaseRelation_triangle_not_cyclicSatisfiable
     N ha hb hc hAB hBC hAC hA hB hC hABij hBCij
