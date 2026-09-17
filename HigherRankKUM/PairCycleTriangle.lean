@@ -135,7 +135,7 @@ theorem crossBaseRelation_triangle_third_bijection
     exact crossBaseRelation_fullSupport N hc ha hAC.symm hC hA
   have hfull : ∀ R ∈ [RAB, RBC, RCA], FullSupport R := by
     intro R hR
-    simp only [List.mem_cons, List.mem_singleton] at hR
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hR
     rcases hR with rfl | rfl | rfl
     · exact hABij.1
     · exact hBCij.1
