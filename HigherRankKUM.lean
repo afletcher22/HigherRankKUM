@@ -71,3 +71,4 @@ import HigherRankKUM.Rank4.GcdTwoAbstractLabelGauge
 import HigherRankKUM.Rank4.GcdTwoCrossRepairCanonical
 import HigherRankKUM.Rank4.GcdTwoCrossRepairSupport
 import HigherRankKUM.Rank4.GcdTwoCrossRepairParity
+import HigherRankKUM.Rank4.GcdTwoClosurePropagation
