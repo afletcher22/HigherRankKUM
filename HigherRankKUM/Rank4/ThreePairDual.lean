@@ -140,7 +140,8 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
         hx, hy, hz,
         hxy00, hxy01, hxy10, hxy11,
         hyz00, hyz01, hyz10, hyz11,
-        hxz00, hxz01, hxz10, hxz11]
+        hxz00, hxz01, hxz10, hxz11] <;>
+      aesop
   rw [doubleRelabel_apply]
   change M.IsBase B ↔
     N.IsBase {bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)}
