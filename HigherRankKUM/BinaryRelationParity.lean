@@ -81,7 +81,9 @@ theorem cyclicSatisfiable_four_relabel
     subst R₂
     subst R₃
     subst R₄
-    cases u <;> cases v <;> native_decide
+    cases u <;> cases v <;>
+      simp [CyclicSatisfiable, composeList, comp, relabelInput, relabelOutput,
+        idRel, flipRel]
 
 end BinaryRelationCycle
 end HigherRankKUM
