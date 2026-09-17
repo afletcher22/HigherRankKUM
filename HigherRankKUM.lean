@@ -27,6 +27,7 @@ import HigherRankKUM.BinaryRelationCycle
 import HigherRankKUM.BinaryRelationLocalStructure
 import HigherRankKUM.BinaryRelationFlip
 import HigherRankKUM.BinaryRelationParity
+import HigherRankKUM.BinaryRelationRelabel
 import HigherRankKUM.BinaryRelationTriangleParity
 import HigherRankKUM.PairCycle
 import HigherRankKUM.PairCycleFundamentalCircuit
@@ -43,6 +44,8 @@ import HigherRankKUM.LocalRepairRigidity
 import HigherRankKUM.LocalRepairBoundary
 import HigherRankKUM.LocalRepairClosure
 import HigherRankKUM.PotentialAscent
+import HigherRankKUM.Rank4.ThreePairDualBase
+import HigherRankKUM.Rank4.ThreePairDual
 import HigherRankKUM.Rank4.GcdTwoRepairCorollary
 import HigherRankKUM.Rank4.GcdTwoRepairState
 import HigherRankKUM.Rank4.GcdTwoRepairTransition
