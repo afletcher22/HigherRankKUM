@@ -135,12 +135,30 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
       ({bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)} : Set α) := by
     change U \ B =
       ({bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)} : Set α)
-    cases x <;> cases z <;> ext e <;>
-      simp [U, X, Y, Z, B, bitPick,
-        hx, hy, hz,
-        hxy00, hxy01, hxy10, hxy11,
-        hyz00, hyz01, hyz10, hyz11,
-        hxz00, hxz01, hxz10, hxz11] <;>
+    cases x <;> cases z
+    · change ((({x₀, x₁} : Set α) ∪ {y₀, y₁}) ∪ {z₀, z₁}) \
+          {x₀, y₀, y₁, z₀} = {x₁, z₁}
+      ext e
+      simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
+        Set.mem_singleton_iff]
+      aesop
+    · change ((({x₀, x₁} : Set α) ∪ {y₀, y₁}) ∪ {z₀, z₁}) \
+          {x₀, y₀, y₁, z₁} = {x₁, z₀}
+      ext e
+      simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
+        Set.mem_singleton_iff]
+      aesop
+    · change ((({x₀, x₁} : Set α) ∪ {y₀, y₁}) ∪ {z₀, z₁}) \
+          {x₁, y₀, y₁, z₀} = {x₀, z₁}
+      ext e
+      simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
+        Set.mem_singleton_iff]
+      aesop
+    · change ((({x₀, x₁} : Set α) ∪ {y₀, y₁}) ∪ {z₀, z₁}) \
+          {x₁, y₀, y₁, z₁} = {x₀, z₀}
+      ext e
+      simp only [Set.mem_sdiff, Set.mem_union, Set.mem_insert_iff,
+        Set.mem_singleton_iff]
       aesop
   rw [doubleRelabel_apply]
   change M.IsBase B ↔
