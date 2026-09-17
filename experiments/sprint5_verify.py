@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parent
 CASES = (
     ('sprint5_n7_escape_ascent_audit.py', 'sprint5_n7_escape_ascent_result.json'),
     ('sprint5_six_block_parity_audit.py', 'sprint5_six_block_parity_result.json'),
+    ('sprint5_center_cross_dichotomy_audit.py', 'sprint5_center_cross_dichotomy_result.json'),
     ('sprint5_finite_field_parity_audit.py', 'sprint5_finite_field_parity_result.json'),
 )
 
