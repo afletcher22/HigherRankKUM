@@ -58,13 +58,13 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
     middlePairRelation M x₀ x₁ y₀ y₁ z₀ z₁ =
       doubleRelabel
         (crossBaseRelation
-          ((M ↾ (({x₀, x₁} : Set α) ∪ {y₀, y₁} ∪ {z₀, z₁}))✶)
+          ((M.restrict (({x₀, x₁} : Set α) ∪ {y₀, y₁} ∪ {z₀, z₁}))✶)
           x₀ x₁ z₀ z₁) := by
   let X : Set α := {x₀, x₁}
   let Y : Set α := {y₀, y₁}
   let Z : Set α := {z₀, z₁}
   let U : Set α := X ∪ Y ∪ Z
-  let R : Matroid α := M ↾ U
+  let R : Matroid α := M.restrict U
   let N : Matroid α := R✶
 
   have hXYsub : (({x₀, x₁} : Set α) ∪ {y₀, y₁}) ⊆ U := by
