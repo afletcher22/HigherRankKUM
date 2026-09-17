@@ -23,7 +23,7 @@ theorem comp_gaugeRelation_cancel
   funext x z
   apply propext
   cases a <;> cases b <;> cases c <;> cases x <;> cases z <;>
-    simp [gaugeRelation, relabelInput, relabelOutput, comp] <;> tauto
+    simp [gaugeRelation, relabelInput, relabelOutput, comp, or_comm]
 
 /-- Gauging a forced Boolean relation preserves forcedness. -/
 theorem gaugeRelation_bijection
