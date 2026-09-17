@@ -53,6 +53,80 @@ theorem middlePairRelation_eq_contract_crossBaseRelation
   rw [← hset]
   exact hshift
 
+/-- Contraction-side rank-four triangle obstruction.
+
+If `A ∪ B`, `C ∪ B`, and `D ∪ B` are bases, then after contracting the
+middle pair `B`, the endpoint pairs `A,C,D` are rank-two bases.  Hence two
+forced middle-pair relations around `A-C-D` obstruct the cyclic triple.
+This is the outer-triangle ingredient in the wholesale-swap proof. -/
+theorem middlePairRelation_contract_triangle_not_cyclicSatisfiable
+    (M : Matroid α)
+    {a₀ a₁ b₀ b₁ c₀ c₁ d₀ d₁ : α}
+    (ha : a₀ ≠ a₁) (hc : c₀ ≠ c₁) (hd : d₀ ≠ d₁)
+    (hAB : Disjoint ({a₀, a₁} : Set α) ({b₀, b₁} : Set α))
+    (hCB : Disjoint ({c₀, c₁} : Set α) ({b₀, b₁} : Set α))
+    (hDB : Disjoint ({d₀, d₁} : Set α) ({b₀, b₁} : Set α))
+    (hAC : Disjoint ({a₀, a₁} : Set α) ({c₀, c₁} : Set α))
+    (hCD : Disjoint ({c₀, c₁} : Set α) ({d₀, d₁} : Set α))
+    (hAD : Disjoint ({a₀, a₁} : Set α) ({d₀, d₁} : Set α))
+    (hABbase : M.IsBase (({a₀, a₁} : Set α) ∪ {b₀, b₁}))
+    (hCBbase : M.IsBase (({c₀, c₁} : Set α) ∪ {b₀, b₁}))
+    (hDBbase : M.IsBase (({d₀, d₁} : Set α) ∪ {b₀, b₁}))
+    (hABC : BijectionRelation (middlePairRelation M a₀ a₁ b₀ b₁ c₀ c₁))
+    (hCBD : BijectionRelation (middlePairRelation M c₀ c₁ b₀ b₁ d₀ d₁)) :
+    ¬ CyclicSatisfiable
+      [middlePairRelation M a₀ a₁ b₀ b₁ c₀ c₁,
+       middlePairRelation M c₀ c₁ b₀ b₁ d₀ d₁,
+       middlePairRelation M d₀ d₁ b₀ b₁ a₀ a₁] := by
+  let B : Set α := {b₀, b₁}
+  let N : Matroid α := M.contract B
+  have hBind : M.Indep B := by
+    apply hABbase.indep.subset
+    intro e he
+    exact Or.inr (by simpa [B] using he)
+  have hAbase : N.IsBase ({a₀, a₁} : Set α) := by
+    dsimp [N]
+    exact hBind.contract_isBase_iff.2 ⟨hABbase, by simpa [B] using hAB⟩
+  have hCbase : N.IsBase ({c₀, c₁} : Set α) := by
+    dsimp [N]
+    exact hBind.contract_isBase_iff.2 ⟨hCBbase, by simpa [B] using hCB⟩
+  have hDbase : N.IsBase ({d₀, d₁} : Set α) := by
+    dsimp [N]
+    exact hBind.contract_isBase_iff.2 ⟨hDBbase, by simpa [B] using hDB⟩
+
+  have hR₁ :
+      middlePairRelation M a₀ a₁ b₀ b₁ c₀ c₁ =
+        crossBaseRelation N a₀ a₁ c₀ c₁ := by
+    simpa [N, B] using
+      (middlePairRelation_eq_contract_crossBaseRelation M hBind hAB hCB.symm)
+  have hR₂ :
+      middlePairRelation M c₀ c₁ b₀ b₁ d₀ d₁ =
+        crossBaseRelation N c₀ c₁ d₀ d₁ := by
+    simpa [N, B] using
+      (middlePairRelation_eq_contract_crossBaseRelation M hBind hCB hDB.symm)
+  have hR₃ :
+      middlePairRelation M d₀ d₁ b₀ b₁ a₀ a₁ =
+        crossBaseRelation N d₀ d₁ a₀ a₁ := by
+    simpa [N, B] using
+      (middlePairRelation_eq_contract_crossBaseRelation M hBind hDB hAB.symm)
+
+  have hACbij : BijectionRelation (crossBaseRelation N a₀ a₁ c₀ c₁) := by
+    rw [hR₁] at hABC
+    exact hABC
+  have hCDbij : BijectionRelation (crossBaseRelation N c₀ c₁ d₀ d₁) := by
+    rw [hR₂] at hCBD
+    exact hCBD
+  have htri : ¬ CyclicSatisfiable
+      [crossBaseRelation N a₀ a₁ c₀ c₁,
+       crossBaseRelation N c₀ c₁ d₀ d₁,
+       crossBaseRelation N d₀ d₁ a₀ a₁] :=
+    PairCycle.crossBaseRelation_triangle_not_cyclicSatisfiable
+      N ha hc hd hAC hCD hAD hAbase hCbase hDbase hACbij hCDbij
+
+  intro hcyc
+  rw [hR₁, hR₂, hR₃] at hcyc
+  exact htri hcyc
+
 /-- Six-element representation-free rank-four triangle obstruction.
 
 Let `X,Y,Z` be three pairwise-disjoint two-element blocks such that each
