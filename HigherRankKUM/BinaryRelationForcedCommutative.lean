@@ -94,6 +94,15 @@ theorem composeList_eq_of_perm_bijections
         exact hRs S ((h₁.mem_iff).2 hS)
       exact (ih₁ hRs).trans (ih₂ hSs)
 
+/-- Composition distributes over concatenation of relation lists. -/
+theorem composeList_append (Rs Ss : List Relation) :
+    composeList (Rs ++ Ss) = comp (composeList Rs) (composeList Ss) := by
+  induction Rs with
+  | nil => simp [composeList]
+  | cons R Rs ih =>
+      simp only [List.cons_append, composeList]
+      rw [ih, comp_assoc]
+
 /-- For a forced Boolean relation, having a fixed point is equivalent to being
 the identity relation. -/
 theorem exists_fixedPoint_iff_eq_idRel
@@ -116,6 +125,42 @@ theorem eq_of_bijections_of_fixedPoint_iff
     subst R
     subst S
     simp [idRel, flipRel] at hfix ⊢
+
+/-- For lists made entirely of forced Boolean transitions, equivalence of
+cyclic satisfiability upgrades to equality of the total composed relation. -/
+theorem composeList_eq_of_cyclicSatisfiable_iff_bijections
+    {Rs Ss : List Relation}
+    (hRs : ∀ R ∈ Rs, BijectionRelation R)
+    (hSs : ∀ S ∈ Ss, BijectionRelation S)
+    (hcyc : CyclicSatisfiable Rs ↔ CyclicSatisfiable Ss) :
+    composeList Rs = composeList Ss := by
+  apply eq_of_bijections_of_fixedPoint_iff
+    (composeList_bijection hRs) (composeList_bijection hSs)
+  simpa [CyclicSatisfiable] using hcyc
+
+/-- Global forced-replacement principle.  If the old and new global relation
+lists can each be permuted into an affected sublist followed by the same
+remainder, then equality of the affected composed transitions implies equality
+of the full composed transitions.  This removes any dependence on where the
+affected relations occur in the successor-orbit order. -/
+theorem composeList_eq_of_perm_replacement
+    {old new affectedOld affectedNew rest : List Relation}
+    (holdPerm : old.Perm (affectedOld ++ rest))
+    (hnewPerm : new.Perm (affectedNew ++ rest))
+    (hold : ∀ R ∈ old, BijectionRelation R)
+    (hnew : ∀ R ∈ new, BijectionRelation R)
+    (haffected : composeList affectedOld = composeList affectedNew) :
+    composeList old = composeList new := by
+  calc
+    composeList old = composeList (affectedOld ++ rest) :=
+      composeList_eq_of_perm_bijections holdPerm hold
+    _ = comp (composeList affectedOld) (composeList rest) :=
+      composeList_append affectedOld rest
+    _ = comp (composeList affectedNew) (composeList rest) := by rw [haffected]
+    _ = composeList (affectedNew ++ rest) :=
+      (composeList_append affectedNew rest).symm
+    _ = composeList new :=
+      (composeList_eq_of_perm_bijections hnewPerm hnew).symm
 
 end BinaryRelationCycle
 end HigherRankKUM
