@@ -1,4 +1,5 @@
 import HigherRankKUM.PairCycleTriangle
+import HigherRankKUM.BinaryRelationRelabel
 import Mathlib.Combinatorics.Matroid.Minor.Restrict
 import Mathlib.Combinatorics.Matroid.Dual
 
@@ -16,6 +17,21 @@ def middlePairRelation (M : Matroid α)
     (x₀ x₁ y₀ y₁ z₀ z₁ : α) : Relation :=
   fun x z => M.IsBase
     ({bitPick x₀ x₁ x, y₀, y₁, bitPick z₀ z₁ z} : Set α)
+
+/-- Reversing the two endpoint pairs transposes the middle-pair relation. -/
+theorem middlePairRelation_reverse
+    (M : Matroid α) (x₀ x₁ y₀ y₁ z₀ z₁ : α) :
+    middlePairRelation M z₀ z₁ y₀ y₁ x₀ x₁ =
+      transpose (middlePairRelation M x₀ x₁ y₀ y₁ z₀ z₁) := by
+  funext z x
+  apply propext
+  have hset :
+      ({bitPick z₀ z₁ z, y₀, y₁, bitPick x₀ x₁ x} : Set α) =
+        {bitPick x₀ x₁ x, y₀, y₁, bitPick z₀ z₁ z} := by
+    ext e
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  simpa [middlePairRelation, transpose, hset]
 
 /-- On six elements partitioned into three pairs `X,Y,Z`, a rank-four basis
 cell using all of the middle pair `Y` is dual to the complementary rank-two
@@ -40,10 +56,10 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
     (hYZbase : M.IsBase (({y₀, y₁} : Set α) ∪ {z₀, z₁}))
     (hXZbase : M.IsBase (({x₀, x₁} : Set α) ∪ {z₀, z₁})) :
     middlePairRelation M x₀ x₁ y₀ y₁ z₀ z₁ =
-      relabelInput true (relabelOutput true
+      doubleRelabel
         (crossBaseRelation
           ((M ↾ (({x₀, x₁} : Set α) ∪ {y₀, y₁} ∪ {z₀, z₁}))✶)
-          x₀ x₁ z₀ z₁)) := by
+          x₀ x₁ z₀ z₁) := by
   let X : Set α := {x₀, x₁}
   let Y : Set α := {y₀, y₁}
   let Z : Set α := {z₀, z₁}
@@ -110,6 +126,7 @@ theorem middlePairRelation_eq_dual_crossBaseRelation
         hxy00, hxy01, hxy10, hxy11,
         hyz00, hyz01, hyz10, hyz11,
         hxz00, hxz01, hxz10, hxz11]
+  rw [doubleRelabel_apply]
   change M.IsBase B ↔
     N.IsBase {bitPick x₀ x₁ (Bool.not x), bitPick z₀ z₁ (Bool.not z)}
   rw [← hrestrict, hdual, hcompl]
