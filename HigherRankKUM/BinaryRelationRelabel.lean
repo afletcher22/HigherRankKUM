@@ -88,6 +88,52 @@ theorem relabelOutput_bijection (b : Bool) {R : Relation}
           (by simpa [relabelOutput] using hxz)
         cases y <;> cases z <;> simp at h ⊢
 
+/-- Input relabelling preserves forcedness in both directions. -/
+theorem relabelInput_bijection_iff (b : Bool) {R : Relation} :
+    BijectionRelation (relabelInput b R) ↔ BijectionRelation R := by
+  constructor
+  · intro h
+    have h' := relabelInput_bijection b h
+    cases b <;> simpa [relabelInput] using h'
+  · exact relabelInput_bijection b
+
+/-- Output relabelling preserves forcedness in both directions. -/
+theorem relabelOutput_bijection_iff (b : Bool) {R : Relation} :
+    BijectionRelation (relabelOutput b R) ↔ BijectionRelation R := by
+  constructor
+  · intro h
+    have h' := relabelOutput_bijection b h
+    cases b <;> simpa [relabelOutput] using h'
+  · exact relabelOutput_bijection b
+
+/-- For a forced Boolean transition, swapping the input labels or swapping the
+output labels has the same effect.  This is special to the two permutations
+`id` and `flip`. -/
+theorem relabelInput_eq_relabelOutput_of_bijection
+    (b : Bool) {R : Relation} (hR : BijectionRelation R) :
+    relabelInput b R = relabelOutput b R := by
+  cases b
+  · simp [relabelInput, relabelOutput]
+  · rcases eq_idRel_or_eq_flipRel_of_bijection hR with rfl | rfl <;>
+      funext x y <;> apply propext <;>
+      cases x <;> cases y <;> simp [relabelInput, relabelOutput, idRel, flipRel]
+
+/-- Reversing the input convention on all four forced relations does not
+change four-cycle parity.  This is the algebraic wrapper needed because
+`AdmissiblePairCycle.localRelation` reverses the left pair in every h=2 local
+relation. -/
+theorem cyclicSatisfiable_four_relabelInput_true
+    {R₁ R₂ R₃ R₄ : Relation}
+    (h₁ : BijectionRelation R₁) (h₂ : BijectionRelation R₂)
+    (h₃ : BijectionRelation R₃) (h₄ : BijectionRelation R₄) :
+    CyclicSatisfiable
+        [relabelInput true R₁, relabelInput true R₂,
+          relabelInput true R₃, relabelInput true R₄] ↔
+      CyclicSatisfiable [R₁, R₂, R₃, R₄] := by
+  rw [relabelInput_eq_relabelOutput_of_bijection true h₁,
+    relabelInput_eq_relabelOutput_of_bijection true h₂]
+  exact cyclicSatisfiable_four_relabel h₁ h₂ h₃ h₄ true true
+
 /-- A forced Boolean relation is symmetric: identity and flip are both equal
 to their transpose. -/
 theorem transpose_eq_self_of_bijection {R : Relation}
