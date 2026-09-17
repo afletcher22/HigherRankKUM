@@ -1,4 +1,6 @@
 import HigherRankKUM.BinaryRelationRelabel
+import Mathlib.Data.List.FinRange
+import Mathlib.Data.List.Perm.Subperm
 
 namespace HigherRankKUM
 namespace BinaryRelationCycle
@@ -49,7 +51,7 @@ theorem flipRel_bijection : BijectionRelation flipRel := by
   · intro x y z hxy hxz
     cases x <;> cases y <;> cases z <;> simp [flipRel] at hxy hxz ⊢
 
-/-- Forced Boolean transitions commute.  This is special to the two-state
+/-- Forced Boolean transitions commute. This is special to the two-state
 identity/flip classification and is what makes obstruction parity independent
 of the order in which forced local relations are composed. -/
 theorem comp_comm_of_bijections
@@ -160,10 +162,10 @@ theorem composeList_eq_of_cyclicSatisfiable_iff_bijections
     (composeList_bijection hRs) (composeList_bijection hSs)
   simpa [CyclicSatisfiable] using hcyc
 
-/-- Global forced-replacement principle.  If the old and new global relation
+/-- Global forced-replacement principle. If the old and new global relation
 lists can each be permuted into an affected sublist followed by the same
 remainder, then equality of the affected composed transitions implies equality
-of the full composed transitions.  This removes any dependence on where the
+of the full composed transitions. This removes any dependence on where the
 affected relations occur in the successor-orbit order. -/
 theorem composeList_eq_of_perm_replacement
     {old new affectedOld affectedNew rest : List Relation}
@@ -183,6 +185,57 @@ theorem composeList_eq_of_perm_replacement
       (composeList_append affectedNew rest).symm
     _ = composeList new :=
       (composeList_eq_of_perm_bijections hnewPerm hnew).symm
+
+/-- Index-level form of the global forced-replacement principle.
+
+`I` is any noduplicated list of affected indices. If `old` and `new` are
+forced at every index, agree away from `I`, and the product of the relations
+at the affected indices is unchanged, then the full `List.ofFn` product is
+unchanged. The affected indices need not be consecutive or appear in the same
+order as `List.ofFn`; forced Boolean commutativity removes that dependence. -/
+theorem composeList_ofFn_eq_of_index_replacement
+    {n : ℕ} (old new : Fin n → Relation) (I : List (Fin n))
+    (hI : I.Nodup)
+    (hold : ∀ i, BijectionRelation (old i))
+    (hnew : ∀ i, BijectionRelation (new i))
+    (hout : ∀ i, i ∉ I → new i = old i)
+    (haffected : composeList (I.map old) = composeList (I.map new)) :
+    composeList (List.ofFn old) = composeList (List.ofFn new) := by
+  have hsubset : I ⊆ List.finRange n := by
+    intro i hi
+    simp
+  have hsubperm : I <+~ List.finRange n := hI.subperm hsubset
+  obtain ⟨l, hlperm, hIsub⟩ := List.subperm_iff.mp hsubperm
+  obtain ⟨rest, hrestperm⟩ := hIsub.exists_perm_append
+  have hindexPerm : List.finRange n ~ I ++ rest :=
+    hlperm.symm.trans hrestperm
+  have hnodupAppend : (I ++ rest).Nodup :=
+    (List.nodup_finRange n).perm hindexPerm
+  have hdis : Disjoint I rest := (List.nodup_append'.1 hnodupAppend).2.2
+  have hrestMap : rest.map new = rest.map old := by
+    apply List.map_congr_left
+    intro i hi
+    apply hout i
+    intro hiI
+    exact List.disjoint_left.1 hdis hiI hi
+  have holdPerm : (List.ofFn old).Perm (I.map old ++ rest.map old) := by
+    rw [List.ofFn_eq_map, ← List.map_append]
+    exact hindexPerm.map old
+  have hnewPerm : (List.ofFn new).Perm (I.map new ++ rest.map old) := by
+    rw [List.ofFn_eq_map, ← hrestMap, ← List.map_append]
+    exact hindexPerm.map new
+  have holdList : ∀ R ∈ List.ofFn old, BijectionRelation R := by
+    intro R hR
+    simp at hR
+    obtain ⟨i, rfl⟩ := hR
+    exact hold i
+  have hnewList : ∀ R ∈ List.ofFn new, BijectionRelation R := by
+    intro R hR
+    simp at hR
+    obtain ⟨i, rfl⟩ := hR
+    exact hnew i
+  exact composeList_eq_of_perm_replacement
+    holdPerm hnewPerm holdList hnewList haffected
 
 end BinaryRelationCycle
 end HigherRankKUM
