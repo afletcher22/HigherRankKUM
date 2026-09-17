@@ -172,17 +172,17 @@ theorem middlePairRelation_triangle_not_cyclicSatisfiable
     hXYbase.spanning_of_superset
       (by simpa [X, Y] using hXYsub) hUground
 
-  have hYXZ : Y ∪ X ∪ Z = U := by
+  have hGroundYXZ : Y ∪ X ∪ Z = U := by
     ext e
     simp only [Set.mem_union]
     change ((e ∈ Y ∨ e ∈ X) ∨ e ∈ Z) ↔ ((e ∈ X ∨ e ∈ Y) ∨ e ∈ Z)
     tauto
-  have hZXY : Z ∪ X ∪ Y = U := by
+  have hGroundZXY : Z ∪ X ∪ Y = U := by
     ext e
     simp only [Set.mem_union]
     change ((e ∈ Z ∨ e ∈ X) ∨ e ∈ Y) ↔ ((e ∈ X ∨ e ∈ Y) ∨ e ∈ Z)
     tauto
-  have hYZX : Y ∪ Z ∪ X = U := by
+  have hGroundYZX : Y ∪ Z ∪ X = U := by
     ext e
     simp only [Set.mem_union]
     change ((e ∈ Y ∨ e ∈ Z) ∨ e ∈ X) ↔ ((e ∈ X ∨ e ∈ Y) ∨ e ∈ Z)
@@ -194,19 +194,19 @@ theorem middlePairRelation_triangle_not_cyclicSatisfiable
     simpa [N, U] using h
   have hYbase : N.IsBase Y := by
     have hspan : M.Spanning (Y ∪ X ∪ Z) := by
-      rw [hYXZ]
+      rw [hGroundYXZ]
       exact hUspan
     have h := dual_restrict_pair_isBase M hXY.symm hYZ hspan
       (by simpa [X, Z] using hXZbase)
-    rw [hYXZ] at h
+    rw [hGroundYXZ] at h
     simpa [N] using h
   have hZbase : N.IsBase Z := by
     have hspan : M.Spanning (Z ∪ X ∪ Y) := by
-      rw [hZXY]
+      rw [hGroundZXY]
       exact hUspan
     have h := dual_restrict_pair_isBase M hXZ.symm hYZ.symm hspan
       (by simpa [X, Y] using hXYbase)
-    rw [hZXY] at h
+    rw [hGroundZXY] at h
     simpa [N] using h
 
   have hR₁ :
@@ -226,7 +226,7 @@ theorem middlePairRelation_triangle_not_cyclicSatisfiable
     change middlePairRelation M z₀ z₁ x₀ x₁ y₀ y₁ =
       doubleRelabel
         (crossBaseRelation ((M.restrict (Z ∪ X ∪ Y))✶) z₀ z₁ y₀ y₁) at h
-    rw [hZXY] at h
+    rw [hGroundZXY] at h
     simpa [N] using h
   have hR₃ :
       middlePairRelation M y₀ y₁ z₀ z₁ x₀ x₁ =
@@ -239,7 +239,7 @@ theorem middlePairRelation_triangle_not_cyclicSatisfiable
     change middlePairRelation M y₀ y₁ z₀ z₁ x₀ x₁ =
       doubleRelabel
         (crossBaseRelation ((M.restrict (Y ∪ Z ∪ X))✶) y₀ y₁ x₀ x₁) at h
-    rw [hYZX] at h
+    rw [hGroundYZX] at h
     simpa [N] using h
 
   have hXZbij : BijectionRelation (crossBaseRelation N x₀ x₁ z₀ z₁) := by
