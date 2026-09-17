@@ -27,13 +27,20 @@ theorem orbitVertexIndex_succ
   change ((j.val + 1) * h) % N = (((j.val * h) % N) + h) % N
   rw [Nat.add_mul]
   simp only [Nat.one_mul]
-  exact (Nat.mod_add_mod (j.val * h) h N).symm
+  exact (Nat.mod_add_mod (j.val * h) N h).symm
+
+/-- The initial successor-orbit vertex is physical pair zero. -/
+@[simp] theorem orbitVertexIndex_zero
+    (N h : ℕ) (hN : 0 < N) :
+    orbitVertexIndex N h hN (0 : Fin (N + 1)) = ⟨0, hN⟩ := by
+  apply Fin.ext
+  simp [orbitVertexIndex]
 
 /-- After `N` successor steps the orbit vertex is back at zero, independently
 of whether `h` is coprime to `N`. -/
 @[simp] theorem orbitVertexIndex_last
     (N h : ℕ) (hN : 0 < N) :
-    orbitVertexIndex N h hN (Fin.last N) = 0 := by
+    orbitVertexIndex N h hN (Fin.last N) = ⟨0, hN⟩ := by
   apply Fin.ext
   simp [orbitVertexIndex]
 
@@ -52,7 +59,7 @@ theorem pairRelationOrientable_gauge_iff
       PairRelationOrientable N h hN R := by
   let gv : Fin (N + 1) → Bool := fun k => g (orbitVertexIndex N h hN k)
   have hclose : gv (Fin.last N) = gv 0 := by
-    simp [gv, orbitVertexIndex]
+    simp [gv]
   have hcyc := cyclicSatisfiable_ofFn_gauge_of_closed
     (R := fun j : Fin N => R (stepIndex N h hN j)) gv hclose
   change
