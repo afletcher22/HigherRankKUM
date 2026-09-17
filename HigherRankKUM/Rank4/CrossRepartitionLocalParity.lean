@@ -113,10 +113,15 @@ theorem crossRepartition_localRelations_preserve_cyclicSatisfiable
          middlePairRelation M b₀ b₁ c₀ c₁ d₀ d₁,
          middlePairRelation M c₀ c₁ d₀ d₁ e₀ e₁,
          middlePairRelation M d₀ d₁ e₀ e₁ f₀ f₁] := by
-          rw [middlePairRelation_swap_left_eq_relabelInput_true,
-            middlePairRelation_swap_left_eq_relabelInput_true,
-            middlePairRelation_swap_left_eq_relabelInput_true,
-            middlePairRelation_swap_left_eq_relabelInput_true]
+          rw [
+            middlePairRelation_swap_left_eq_relabelInput_true
+              M a₀ a₁ b₀ b₁ c₀ c₁,
+            middlePairRelation_swap_left_eq_relabelInput_true
+              M b₀ b₁ c₀ c₁ d₀ d₁,
+            middlePairRelation_swap_left_eq_relabelInput_true
+              M c₀ c₁ d₀ d₁ e₀ e₁,
+            middlePairRelation_swap_left_eq_relabelInput_true
+              M d₀ d₁ e₀ e₁ f₀ f₁]
           exact cyclicSatisfiable_four_relabelInput_true
             hR₁nat hR₂nat hR₃nat hR₄nat
     _ ↔ CyclicSatisfiable
@@ -145,10 +150,22 @@ theorem crossRepartition_localRelations_preserve_cyclicSatisfiable
          middlePairRelation M
           (bitPick d₀ d₁ (Bool.not v)) (bitPick c₀ c₁ (Bool.not u))
           e₀ e₁ f₀ f₁] := by
-          rw [middlePairRelation_swap_left_eq_relabelInput_true,
-            middlePairRelation_swap_left_eq_relabelInput_true,
-            middlePairRelation_swap_left_eq_relabelInput_true,
-            middlePairRelation_swap_left_eq_relabelInput_true]
+          rw [
+            middlePairRelation_swap_left_eq_relabelInput_true
+              M a₀ a₁ b₀ b₁
+                (bitPick c₀ c₁ u) (bitPick d₀ d₁ v),
+            middlePairRelation_swap_left_eq_relabelInput_true
+              M b₀ b₁
+                (bitPick c₀ c₁ u) (bitPick d₀ d₁ v)
+                (bitPick c₀ c₁ (Bool.not u))
+                (bitPick d₀ d₁ (Bool.not v)),
+            middlePairRelation_swap_left_eq_relabelInput_true
+              M (bitPick c₀ c₁ u) (bitPick d₀ d₁ v)
+                (bitPick c₀ c₁ (Bool.not u))
+                (bitPick d₀ d₁ (Bool.not v)) e₀ e₁,
+            middlePairRelation_swap_left_eq_relabelInput_true
+              M (bitPick c₀ c₁ (Bool.not u))
+                (bitPick d₀ d₁ (Bool.not v)) e₀ e₁ f₀ f₁]
           exact (cyclicSatisfiable_four_relabelInput_true
             hS₁nat hS₂nat hS₃nat hS₄nat).symm
 
