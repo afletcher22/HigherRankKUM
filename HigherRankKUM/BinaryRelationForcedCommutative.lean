@@ -30,6 +30,25 @@ theorem comp_assoc (R S T : Relation) :
   apply propext
   cases x <;> cases y <;> simp [comp, flipRel, idRel]
 
+/-- The identity Boolean transition is forced. -/
+theorem idRel_bijection : BijectionRelation idRel := by
+  refine ⟨idRel_fullSupport, ?_⟩
+  intro x y z hxy hxz
+  change x = y at hxy
+  change x = z at hxz
+  exact hxy.symm.trans hxz
+
+/-- The flip Boolean transition is forced. -/
+theorem flipRel_bijection : BijectionRelation flipRel := by
+  constructor
+  · constructor
+    · intro x
+      exact ⟨Bool.not x, by cases x <;> simp [flipRel]⟩
+    · intro y
+      exact ⟨Bool.not y, by cases y <;> simp [flipRel]⟩
+  · intro x y z hxy hxz
+    cases x <;> cases y <;> cases z <;> simp [flipRel] at hxy hxz ⊢
+
 /-- Forced Boolean transitions commute.  This is special to the two-state
 identity/flip classification and is what makes obstruction parity independent
 of the order in which forced local relations are composed. -/
@@ -45,12 +64,10 @@ theorem comp_bijection
     BijectionRelation (comp R S) := by
   rcases eq_idRel_or_eq_flipRel_of_bijection hR with rfl | rfl <;>
     rcases eq_idRel_or_eq_flipRel_of_bijection hS with rfl | rfl
-  all_goals
-    constructor
-    · simp [FullSupport, comp, idRel, flipRel]
-    · intro x y z hxy hxz
-      cases x <;> cases y <;> cases z <;>
-        simp [comp, idRel, flipRel] at hxy hxz ⊢
+  · simpa using idRel_bijection
+  · simpa using flipRel_bijection
+  · simpa using flipRel_bijection
+  · simpa using idRel_bijection
 
 /-- A list of forced Boolean relations composes to another forced Boolean
 relation. -/
@@ -58,10 +75,7 @@ theorem composeList_bijection
     {Rs : List Relation} (hRs : ∀ R ∈ Rs, BijectionRelation R) :
     BijectionRelation (composeList Rs) := by
   induction Rs with
-  | nil =>
-      exact ⟨idRel_fullSupport, by
-        intro x y z hxy hxz
-        simpa [idRel] using hxy.trans hxz.symm⟩
+  | nil => simpa [composeList] using idRel_bijection
   | cons R Rs ih =>
       have hR : BijectionRelation R := hRs R (by simp)
       have htail : ∀ S ∈ Rs, BijectionRelation S := by
