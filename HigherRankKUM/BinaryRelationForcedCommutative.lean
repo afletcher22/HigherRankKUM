@@ -211,7 +211,7 @@ theorem composeList_ofFn_eq_of_index_replacement
     hlperm.symm.trans hrestperm
   have hnodupAppend : (I ++ rest).Nodup :=
     (List.nodup_finRange n).perm hindexPerm
-  have hdis : Disjoint I rest := (List.nodup_append'.1 hnodupAppend).2.2
+  have hdis : List.Disjoint I rest := (List.nodup_append'.1 hnodupAppend).2.2
   have hrestMap : rest.map new = rest.map old := by
     apply List.map_congr_left
     intro i hi
