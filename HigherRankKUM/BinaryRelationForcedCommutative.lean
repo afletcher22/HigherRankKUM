@@ -204,7 +204,7 @@ theorem composeList_ofFn_eq_of_index_replacement
   have hsubset : I ⊆ List.finRange n := by
     intro i hi
     simp
-  have hsubperm : I <+~ List.finRange n := hI.subperm hsubset
+  have hsubperm := hI.subperm hsubset
   obtain ⟨l, hlperm, hIsub⟩ := List.subperm_iff.mp hsubperm
   obtain ⟨rest, hrestperm⟩ := hIsub.exists_perm_append
   have hindexPerm : List.finRange n ~ I ++ rest :=
