@@ -14,7 +14,7 @@ by exactly one Boolean swap.  This is the choice-independence bridge used for
 noncomputably relabelled repaired pair blocks. -/
 theorem pair_labels_eq_bitPick_of_pair_eq
     {a₀ a₁ b₀ b₁ : α}
-    (ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁)
+    (_ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁)
     (hpair : ({b₀, b₁} : Set α) = {a₀, a₁}) :
     ∃ p : Bool,
       b₀ = bitPick a₀ a₁ p ∧
@@ -83,7 +83,11 @@ theorem middlePairRelation_relabel_middle
       ext t
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
-    simpa [middlePairRelation, bitPick, hset]
+    change M.IsBase
+        ({bitPick x₀ x₁ x, y₁, y₀, bitPick z₀ z₁ z} : Set α) ↔
+      M.IsBase
+        ({bitPick x₀ x₁ x, y₀, y₁, bitPick z₀ z₁ z} : Set α)
+    rw [hset]
 
 /-- Simultaneous arbitrary relabelling of the endpoint pairs.  The middle
 pair may be relabelled independently without changing the relation. -/
