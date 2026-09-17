@@ -67,3 +67,5 @@ import HigherRankKUM.Rank4.GcdTwoRepairParity
 import HigherRankKUM.Rank4.GcdTwoCrossRepartition
 import HigherRankKUM.Rank4.GcdTwoMiddlePairRelation
 import HigherRankKUM.Rank4.GcdTwoLabelGauge
+import HigherRankKUM.Rank4.GcdTwoAbstractLabelGauge
+import HigherRankKUM.Rank4.GcdTwoCrossRepairCanonical
