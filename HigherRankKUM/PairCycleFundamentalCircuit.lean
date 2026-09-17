@@ -33,23 +33,55 @@ theorem crossBaseRelation_iff_mem_fundCircuit
   have hb₁A : b₁ ∉ ({a₀, a₁} : Set α) := by
     intro hb
     exact Set.disjoint_left.1 hAB hb (by simp)
+  have hb₀a₀ : b₀ ≠ a₀ := by
+    intro h
+    subst b₀
+    exact hb₀A (by simp)
+  have hb₀a₁ : b₀ ≠ a₁ := by
+    intro h
+    subst b₀
+    exact hb₀A (by simp)
+  have hb₁a₀ : b₁ ≠ a₀ := by
+    intro h
+    subst b₁
+    exact hb₁A (by simp)
+  have hb₁a₁ : b₁ ≠ a₁ := by
+    intro h
+    subst b₁
+    exact hb₁A (by simp)
   cases x <;> cases y
   · have h := HigherRankKUM.Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
       hA hb₀E hb₀A (show a₁ ∈ ({a₀, a₁} : Set α) by simp)
-    rw [crossBaseRelation, bitPick]
-    simpa [ha] using h.symm
+    have hset : insert b₀ ({a₀, a₁} : Set α) \ {a₁} = {a₀, b₀} := by
+      ext z
+      simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
+      aesop
+    rw [hset] at h
+    simpa [crossBaseRelation, bitPick] using h.symm
   · have h := HigherRankKUM.Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
       hA hb₁E hb₁A (show a₁ ∈ ({a₀, a₁} : Set α) by simp)
-    rw [crossBaseRelation, bitPick]
-    simpa [ha] using h.symm
+    have hset : insert b₁ ({a₀, a₁} : Set α) \ {a₁} = {a₀, b₁} := by
+      ext z
+      simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
+      aesop
+    rw [hset] at h
+    simpa [crossBaseRelation, bitPick] using h.symm
   · have h := HigherRankKUM.Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
       hA hb₀E hb₀A (show a₀ ∈ ({a₀, a₁} : Set α) by simp)
-    rw [crossBaseRelation, bitPick]
-    simpa [ha, Set.pair_comm] using h.symm
+    have hset : insert b₀ ({a₀, a₁} : Set α) \ {a₀} = {a₁, b₀} := by
+      ext z
+      simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
+      aesop
+    rw [hset] at h
+    simpa [crossBaseRelation, bitPick] using h.symm
   · have h := HigherRankKUM.Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
       hA hb₁E hb₁A (show a₀ ∈ ({a₀, a₁} : Set α) by simp)
-    rw [crossBaseRelation, bitPick]
-    simpa [ha, Set.pair_comm] using h.symm
+    have hset : insert b₁ ({a₀, a₁} : Set α) \ {a₀} = {a₁, b₁} := by
+      ext z
+      simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
+      aesop
+    rw [hset] at h
+    simpa [crossBaseRelation, bitPick] using h.symm
 
 /-- Once the two-state cross relation is forced, its entire identity-versus-
 flip orientation is encoded by a single fundamental-circuit incidence.
