@@ -46,12 +46,12 @@ theorem exists_localRelation_gauge_of_blocks_eq
       B.element t true =
         bitPick (A.element t true) (A.element t false) (g t) := by
     have h := hgTrue t
-    cases g t <;> simpa [bitPick] using h
+    cases hgt : g t <;> simp [hgt, bitPick] at h ⊢ <;> exact h
   have hleftFalse :
       B.element t false =
         bitPick (A.element t true) (A.element t false) (Bool.not (g t)) := by
     have h := hgFalse t
-    cases g t <;> simpa [bitPick] using h
+    cases hgt : g t <;> simp [hgt, bitPick] at h ⊢ <;> exact h
   have hmidFalse :
       B.element m false =
         bitPick (A.element m false) (A.element m true) (g m) := hgFalse m
