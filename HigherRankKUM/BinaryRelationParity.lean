@@ -59,6 +59,17 @@ theorem eq_idRel_or_eq_flipRel_of_bijection
       apply propext
       cases x <;> cases z <;> simp [flipRel, hy, hn00, h10, hn11]
 
+/-- The two Boolean permutation relations are distinct. -/
+theorem idRel_ne_flipRel : idRel ≠ flipRel := by
+  intro h
+  have hff := congrFun (congrFun h false) false
+  simpa [idRel, flipRel] using hff
+
+/-- The symmetric form of `idRel_ne_flipRel`. -/
+theorem flipRel_ne_idRel : flipRel ≠ idRel := by
+  intro h
+  exact idRel_ne_flipRel h.symm
+
 /-- A Boolean bijection relation is injective in the input as well as
 functional in the output. -/
 theorem cofunctional_of_bijection {R : Relation} (hR : BijectionRelation R) :
@@ -89,14 +100,29 @@ theorem transpose_bijection {R : Relation} (hR : BijectionRelation R) :
   apply propext
   simp [transpose, flipRel, ne_comm]
 
+private theorem double_relabel_idRel :
+    relabelInput true (relabelOutput true idRel) = idRel := by
+  funext x y
+  apply propext
+  cases x <;> cases y <;> simp [relabelInput, relabelOutput, idRel]
+
+private theorem double_relabel_flipRel :
+    relabelInput true (relabelOutput true flipRel) = flipRel := by
+  funext x y
+  apply propext
+  cases x <;> cases y <;> simp [relabelInput, relabelOutput, flipRel]
+
 /-- Simultaneously swapping the two labels on both sides preserves the two
 possible forced orientations. -/
 theorem double_relabel_preserves_orientation
     {R : Relation} (hR : BijectionRelation R) :
     (relabelInput true (relabelOutput true R) = idRel ↔ R = idRel) ∧
     (relabelInput true (relabelOutput true R) = flipRel ↔ R = flipRel) := by
-  rcases eq_idRel_or_eq_flipRel_of_bijection hR with rfl | rfl <;>
-    simp [relabelInput, relabelOutput, idRel, flipRel]
+  rcases eq_idRel_or_eq_flipRel_of_bijection hR with h | h
+  · subst R
+    rw [double_relabel_idRel]
+  · subst R
+    rw [double_relabel_flipRel]
 
 /-- Two pointwise-disjoint bijection relations on `Bool` are exactly the two
 complementary perfect matchings: identity/flip in one order or the other. -/
@@ -132,7 +158,8 @@ theorem not_cyclicSatisfiable_three_bijections_iff
     subst R
     subst S
     subst T
-    simp [CyclicSatisfiable, composeList, comp, idRel, flipRel]
+    simp [CyclicSatisfiable, composeList, comp, idRel, flipRel,
+      idRel_ne_flipRel, flipRel_ne_idRel]
 
 /-- Paired input/output relabellings do not change the cyclic parity of four
 forced Boolean relations.  The same two label swaps occur twice, so the total
