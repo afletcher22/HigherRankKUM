@@ -3,10 +3,44 @@ import HigherRankKUM.Rank4.ThreePairDual
 namespace HigherRankKUM
 namespace Rank4ThreePairDual
 
+open Set
 open BinaryRelationCycle
 open PairCycle
 
 variable {α : Type*}
+
+/-- Two nondegenerate Boolean labellings of the same two-element set differ
+by exactly one Boolean swap.  This is the choice-independence bridge used for
+noncomputably relabelled repaired pair blocks. -/
+theorem pair_labels_eq_bitPick_of_pair_eq
+    {a₀ a₁ b₀ b₁ : α}
+    (ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁)
+    (hpair : ({b₀, b₁} : Set α) = {a₀, a₁}) :
+    ∃ p : Bool,
+      b₀ = bitPick a₀ a₁ p ∧
+      b₁ = bitPick a₀ a₁ (Bool.not p) := by
+  have hb₀mem : b₀ ∈ ({a₀, a₁} : Set α) := by
+    rw [← hpair]
+    simp
+  have hb₁mem : b₁ ∈ ({a₀, a₁} : Set α) := by
+    rw [← hpair]
+    simp
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hb₀mem hb₁mem
+  rcases hb₀mem with h₀ | h₀
+  · have h₁ : b₁ = a₁ := by
+      rcases hb₁mem with h | h
+      · exact (hb (h₀.trans h.symm)).elim
+      · exact h
+    subst b₀
+    subst b₁
+    exact ⟨false, by simp [bitPick]⟩
+  · have h₁ : b₁ = a₀ := by
+      rcases hb₁mem with h | h
+      · exact h
+      · exact (hb (h₀.trans h.symm)).elim
+    subst b₀
+    subst b₁
+    exact ⟨true, by simp [bitPick]⟩
 
 /-- Swapping the labels of the left endpoint pair is exactly an input
 relabelling of the middle-pair relation. -/
