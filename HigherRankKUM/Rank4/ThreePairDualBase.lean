@@ -21,16 +21,16 @@ theorem dual_restrict_pair_isBase
     (hXY : Disjoint X Y) (hXZ : Disjoint X Z)
     (hspan : M.Spanning (X ∪ Y ∪ Z))
     (hYZbase : M.IsBase (Y ∪ Z)) :
-    ((M ↾ (X ∪ Y ∪ Z))✶).IsBase X := by
+    ((M.restrict (X ∪ Y ∪ Z))✶).IsBase X := by
   let U : Set α := X ∪ Y ∪ Z
-  let R : Matroid α := M ↾ U
+  let R : Matroid α := M.restrict U
   have hYZsub : Y ∪ Z ⊆ U := by
     intro e he
     rcases he with heY | heZ
     · exact Or.inl (Or.inr heY)
     · exact Or.inr heZ
   have hRbase : R.IsBase (Y ∪ Z) := by
-    change (M ↾ U).IsBase (Y ∪ Z)
+    change (M.restrict U).IsBase (Y ∪ Z)
     exact (hspan.isBase_restrict_iff).2 ⟨hYZbase, hYZsub⟩
   have hcomp : R.E \ (Y ∪ Z) = X := by
     change U \ (Y ∪ Z) = X
@@ -49,7 +49,8 @@ theorem dual_restrict_pair_isBase
       · exact Set.disjoint_left.1 hXY heX heY
       · exact Set.disjoint_left.1 hXZ heX heZ
   have hdual := (R.base_iff_dual_isBase_compl hRbase.subset_ground).1 hRbase
-  simpa [hcomp] using hdual
+  rw [hcomp] at hdual
+  exact hdual
 
 end Rank4ThreePairDual
 end HigherRankKUM
