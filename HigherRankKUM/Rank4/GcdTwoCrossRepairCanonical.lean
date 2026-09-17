@@ -168,7 +168,9 @@ theorem crossRepairCanonicalElement_pairSet_eq_target_block
   by_cases hkj : k = j
   · subst k
     rw [commonBaseRepairTarget_right_block A h2N s hL hR]
-    simpa [i, j, bitPick] using hcomp.symm
+    rw [crossRepairCanonicalElement_right A h2N s u v false,
+      crossRepairCanonicalElement_right A h2N s u v true]
+    cases u <;> cases v <;> simpa [i, j, bitPick] using hcomp.symm
   · rw [commonBaseRepairTarget_other_block A h2N s hL hR k
       (by simpa [i] using hki) (by simpa [j] using hkj)]
     simp [crossRepairCanonicalElement, i, j, hki, hkj,
