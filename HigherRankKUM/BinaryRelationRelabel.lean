@@ -47,6 +47,21 @@ theorem doubleRelabel_bijection_iff {R : Relation} :
         (by simpa using hxy) (by simpa using hxz)
       cases y <;> cases z <;> simp at h ⊢
 
+/-- A forced Boolean relation is symmetric: identity and flip are both equal
+to their transpose. -/
+theorem transpose_eq_self_of_bijection {R : Relation}
+    (hR : BijectionRelation R) : transpose R = R := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hR with rfl | rfl <;> simp
+
+/-- One true cell determines an entire forced Boolean relation. -/
+theorem eq_of_bijections_of_shared_cell
+    {R S : Relation} (hR : BijectionRelation R) (hS : BijectionRelation S)
+    {x y : Bool} (hRxy : R x y) (hSxy : S x y) : R = S := by
+  rcases eq_idRel_or_eq_flipRel_of_bijection hR with h | h <;> subst R <;>
+  rcases eq_idRel_or_eq_flipRel_of_bijection hS with h | h <;> subst S
+  all_goals
+    cases x <;> cases y <;> simp [idRel, flipRel] at hRxy hSxy ⊢
+
 /-- Relabelling every vertex of a three-relation cycle by Boolean negation
 preserves cyclic satisfiability.  No forcedness hypothesis is needed. -/
 theorem cyclicSatisfiable_three_doubleRelabel
