@@ -368,9 +368,13 @@ theorem not_uniformlyDenseRatio_delete_iff_exists_dangerous
           M.closure_subset_ground X
         have hclFin : (M.closure X).Finite :=
           hE.subset hclSub
-        by_contra hnot
+        by_contra hnotSub
+        have hneClosure : X ≠ M.closure X := by
+          intro hEq
+          apply hnotSub
+          rw [← hEq]
         have hss : X ⊂ M.closure X :=
-          (M.subset_closure X hXE).ssubset_of_ne hnot.symm
+          (M.subset_closure X hXE).ssubset_of_ne hneClosure
         have hcardLt : X.ncard < (M.closure X).ncard :=
           Set.ncard_lt_ncard hss hclFin
         have hclNonempty : (M.closure X).Nonempty :=
