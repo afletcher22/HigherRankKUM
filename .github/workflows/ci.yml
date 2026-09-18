@@ -146,5 +146,9 @@ jobs:
           PY
       - name: Verify Sprint 5 six-block certificates
         run: python3 experiments/sprint5_verify.py
+      - name: Verify density-slack deletion certificate
+        run: |
+          python3 experiments/density_slack_deletion_certificate.py > /tmp/density-slack-deletion-result.json
+          diff -u experiments/density_slack_deletion_result.json /tmp/density-slack-deletion-result.json
       - name: Build
         run: lake build
