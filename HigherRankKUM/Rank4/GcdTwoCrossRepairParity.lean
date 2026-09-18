@@ -162,17 +162,11 @@ theorem canonicalCrossRepair_affected_preserve_cyclicSatisfiable
     crossRepartition_localRelations_preserve_cyclicSatisfiable M u v
       hR1 hR2 hR3 hR4 hS1 hS2 hS3 hS4
 
-  simp only [crossRepairAffectedStarts, List.map_cons, List.map_nil]
-  rw [localRelation_eq_middlePairRelation A h2N s,
-    localRelation_eq_middlePairRelation A h2N s1,
-    localRelation_eq_middlePairRelation A h2N s2,
-    localRelation_eq_middlePairRelation A h2N s3]
-  simp only [localRelationFromPairLabels]
-  rw [hx0 true, hx0 false, hx1 false, hx1 true, hx2 false, hx2 true,
-    hx1 true, hx1 false, hx2 false, hx2 true, hx3 false, hx3 true,
-    hx2 true, hx2 false, hx3 false, hx3 true, hx4 false, hx4 true,
-    hx3 true, hx3 false, hx4 false, hx4 true, hx5 false, hx5 true]
-  simpa [s1, s2, s3, s4, s5, cyclicIndex_add, bitPick] using hcross
+  simpa [crossRepairAffectedStarts,
+    localRelation_eq_middlePairRelation A h2N,
+    localRelationFromPairLabels,
+    s1, s2, s3, s4, s5, cyclicIndex_add,
+    hx0, hx1, hx2, hx3, hx4, hx5, bitPick] using hcross
 
 /-- A forced canonical cross repair cannot change global relation-level
 orientability in the rank-four gcd-two regime. Any cross repair that escapes a
