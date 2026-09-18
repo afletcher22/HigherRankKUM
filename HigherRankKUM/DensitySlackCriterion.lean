@@ -157,7 +157,9 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
             _ = (r : ℕ∞) := hRank
         have : j = r := by exact_mod_cast hrEq
         omega
-      obtain ⟨e, heE, heS⟩ := Set.exists_mem_not_mem_of_ne hSsub hSne
+      have hSss : (S : Set α) ⊂ M.E :=
+        hSsub.ssubset_of_ne hSne
+      obtain ⟨e, heE, heS⟩ := Set.exists_of_ssubset hSss
       have hSdel : (S : Set α) ⊆ (M ＼ ({e} : Set α)).E := by
         rw [Matroid.delete_ground]
         intro x hx
