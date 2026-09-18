@@ -45,8 +45,11 @@ theorem dual_uniformlyDense_three_of_rank_four_six
     have hranks := M.eRank_add_eRank_dual
     rw [hRank, hEcard] at hranks
     have hDualRank : M✶.eRank = (2 : ℕ∞) := by
-      exact ENat.add_right_injective_of_ne_top (n := (4 : ℕ∞)) (by simp)
-        (by simpa [add_comm] using hranks)
+      have hranks' : M✶.eRank + (4 : ℕ∞) = (2 : ℕ∞) + 4 := by
+        calc
+          M✶.eRank + (4 : ℕ∞) = 6 := by simpa [add_comm] using hranks
+          _ = (2 : ℕ∞) + 4 := by norm_num
+      exact ENat.add_right_injective_of_ne_top (n := (4 : ℕ∞)) (by simp) hranks'
     rw [← hDualRank]
     exact M✶.eRk_le_eRank X
   obtain ⟨d, hDrk, _⟩ := ENat.le_natCast_iff.mp hDrkBound
@@ -99,21 +102,27 @@ theorem sdiff_two_window_eq_four_window
       exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hx⟩)
     · rintro ⟨q, rfl⟩
       exact (σ q).property
+  have hne {a b : Fin 6} (hab : a ≠ b) :
+      (σ a : α) ≠ (σ b : α) := by
+    intro h
+    exact hab (σ.injective (Subtype.ext h))
   fin_cases i <;> ext x <;>
     simp only [cyclicIndex, Set.mem_diff, Set.mem_insert_iff,
       Set.mem_singleton_iff] <;>
     rw [hmem] <;>
-    constructor
-  all_goals
-    rintro ⟨⟨q, rfl⟩, h⟩
-    fin_cases q <;> simp at h ⊢
-  all_goals
-    intro h
-    rcases h with (rfl | rfl | rfl | rfl) <;>
-      constructor
-    all_goals
-      · exact ⟨_, rfl⟩
-      · simp
+    constructor <;>
+    · intro h
+      rcases h with ⟨⟨q, hqx⟩, hbad⟩
+      have hq : q = 0 ∨ q = 1 ∨ q = 2 ∨ q = 3 ∨ q = 4 ∨ q = 5 := by
+        fin_cases q <;> simp
+      rcases hq with (rfl | rfl | rfl | rfl | rfl | rfl) <;>
+        simp_all [hne]
+    · intro h
+      rcases h with (rfl | rfl | rfl | rfl) <;>
+        constructor
+      all_goals
+        · exact ⟨_, rfl⟩
+        · simp [hne]
 
 /-- The six-element boundary of rank-four KUM.
 
@@ -134,8 +143,11 @@ theorem exists_cyclicBasisOrder_of_rank_four_six
   have hDualRank : M✶.eRank = (2 : ℕ∞) := by
     have hranks := M.eRank_add_eRank_dual
     rw [hRank, hEcard] at hranks
-    exact ENat.add_right_injective_of_ne_top (n := (4 : ℕ∞)) (by simp)
-      (by simpa [add_comm] using hranks)
+    have hranks' : M✶.eRank + (4 : ℕ∞) = (2 : ℕ∞) + 4 := by
+      calc
+        M✶.eRank + (4 : ℕ∞) = 6 := by simpa [add_comm] using hranks
+        _ = (2 : ℕ∞) + 4 := by norm_num
+    exact ENat.add_right_injective_of_ne_top (n := (4 : ℕ∞)) (by simp) hranks'
   have hDualE : M✶.E.Finite := by simpa using hE
   have hDualCard : M✶.E.encard = ((2 * 3 : ℕ) : ℕ∞) := by
     simpa using hEcard
