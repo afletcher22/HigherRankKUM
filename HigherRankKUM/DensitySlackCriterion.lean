@@ -227,7 +227,7 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
           rw [hnEq]
           ring
         rw [hnSplit] at hm
-        exact Nat.le_of_add_le_add_right hm
+        omega
       exact_mod_cast hNat
     · have hjEq : j = r := by omega
       subst j
