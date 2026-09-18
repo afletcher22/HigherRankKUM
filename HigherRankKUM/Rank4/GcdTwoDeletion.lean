@@ -351,12 +351,13 @@ theorem not_uniformlyDenseRatio_delete_iff_exists_dangerous
       exact heX this
     have hs := hStrict X hXE hXnonempty hXproper
     rw [← hXfin.cast_ncard_eq, hj] at hs
+    rw [hj] at hfail
     have hfailNat : (4 * k + 1) * j < 4 * X.ncard := by
       exact_mod_cast hfail
     have hsNat : 4 * X.ncard < (4 * k + 2) * j := by
       exact_mod_cast hs
     have hj3 : j = 3 := by
-      interval_cases j <;> norm_num at hfailNat hsNat ⊢ <;> omega
+      interval_cases j <;> omega
     subst j
     have hXcard : X.ncard = 3 * k + 1 := by
       norm_num at hfailNat hsNat
@@ -411,7 +412,9 @@ theorem not_uniformlyDenseRatio_delete_iff_exists_dangerous
       simpa [Matroid.delete_eq_restrict] using
         M.restrict_eRk_eq hHsub
     rw [hRkDelete, hH.2.1, hH.2.2] at hdense
-    norm_num at hdense
+    have hdenseNat :
+        4 * (3 * k + 1) ≤ (4 * k + 1) * 3 := by
+      exact_mod_cast hdense
     omega
 
 /-- The finite family of dangerous hyperplanes in a fixed rank-four
