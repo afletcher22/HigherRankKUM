@@ -5,6 +5,7 @@ import HigherRankKUM.Rank4.CrossRepartitionLocalParity
 namespace HigherRankKUM
 namespace Rank4GcdTwoRepair
 
+open PairCycle
 open BinaryRelationCycle
 open PairCycleIndexing
 open Rank4ThreePairDual
