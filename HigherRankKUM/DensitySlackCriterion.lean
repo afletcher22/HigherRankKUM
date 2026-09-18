@@ -268,7 +268,9 @@ theorem all_deletions_uniformlyDenseRatio_iff_slack
   · intro hslack j hjr
     by_cases hj0 : j = 0
     · subst j
-      simp
+      have hzero :=
+        mul_maxCardAtRank_le_of_uniformlyDenseRatio M n r 0 hDense
+      simpa using hzero
     · have hjpos : 0 < j := Nat.pos_of_ne_zero hj0
       exact (le_deletionSlack_iff M n r j hDense).1
         (hslack j hjpos hjr)
