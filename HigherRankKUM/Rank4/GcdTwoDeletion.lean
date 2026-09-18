@@ -26,13 +26,13 @@ theorem DangerousHyperplane.subset_ground
 
 theorem DangerousHyperplane.finite
     {M : Matroid α} {k : ℕ} {H : Set α}
-    (hE : M.E.Finite) (hH : DangerousHyperplane M k H) :
+    (hH : DangerousHyperplane M k H) (hE : M.E.Finite) :
     H.Finite :=
   hE.subset hH.subset_ground
 
 theorem DangerousHyperplane.ncard_eq
     {M : Matroid α} {k : ℕ} {H : Set α}
-    (hE : M.E.Finite) (hH : DangerousHyperplane M k H) :
+    (hH : DangerousHyperplane M k H) (hE : M.E.Finite) :
     H.ncard = 3 * k + 1 := by
   have hHfin := hH.finite hE
   have hcard := hH.2.2
