@@ -197,5 +197,57 @@ theorem canonicalCrossRepair_preserves_pairRelationOrientable_of_forced
     (canonicalCrossRepair_affected_preserve_cyclicSatisfiable
       A h5N s u v hold hnew)
 
+/-- Forcedness-preserving genuine cross repair cannot change relation-level
+orientability even for the actual repaired admissible pair cycle, whose
+Boolean labels are chosen independently by the repair constructor. -/
+theorem commonBaseRepairTarget_preserves_pairRelationOrientable_of_cross_forced
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN) (h5N : 5 < N)
+    (hcop : Nat.gcd N 2 = 1) (s : Fin N) {Q : Set α}
+    (hcross : IsCrossCommonBase A s Q)
+    (hold : ∀ t : Fin N, BijectionRelation (A.localRelation (by omega) t))
+    (hnew : ∀ t : Fin N, BijectionRelation
+      ((commonBaseRepairTarget A (by omega) s hcross.1 hcross.2.1).localRelation
+        (by omega) t)) :
+    PairRelationOrientable N 2 hN (A.localRelation (by omega)) ↔
+      PairRelationOrientable N 2 hN
+        ((commonBaseRepairTarget A (by omega) s hcross.1 hcross.2.1).localRelation
+          (by omega)) := by
+  have h2N : 2 < N := by omega
+  obtain ⟨u, v, hQ, hcomp⟩ :=
+    crossCommonBase_bit_parameters A h2N s hcross
+  let B := commonBaseRepairTarget A h2N s hcross.1 hcross.2.1
+  let x := crossRepairCanonicalElement A s u v
+  have hpairs : ∀ i : Fin N,
+      ({x i false, x i true} : Set α) = B.block i := by
+    intro i
+    exact crossRepairCanonicalElement_pairSet_eq_target_block
+      A h2N s hcross.1 hcross.2.1 u v hQ hcomp i
+  obtain ⟨g, hg⟩ :=
+    exists_localRelation_gauge_of_pair_labels B h2N x hpairs
+  have hcanonForced : ∀ t : Fin N,
+      BijectionRelation (localRelationFromPairLabels M N hN x t) := by
+    intro t
+    have ht : BijectionRelation (B.localRelation (by omega) t) := by
+      simpa [B] using hnew t
+    rw [hg t] at ht
+    exact (gaugeRelation_bijection_iff
+      (g t) (g (cyclicIndex N hN t 2))).1 ht
+  have holdCanon :
+      PairRelationOrientable N 2 hN (A.localRelation (by omega)) ↔
+        PairRelationOrientable N 2 hN
+          (localRelationFromPairLabels M N hN x) := by
+    simpa [x] using
+      canonicalCrossRepair_preserves_pairRelationOrientable_of_forced
+        A h5N hcop s u v hold (by simpa [x] using hcanonForced)
+  have htargetCanon :
+      PairRelationOrientable N 2 hN (B.localRelation (by omega)) ↔
+        PairRelationOrientable N 2 hN
+          (localRelationFromPairLabels M N hN x) := by
+    simpa [B, x] using
+      commonBaseRepairTarget_pairRelationOrientable_iff_canonical
+        A h2N s hcross.1 hcross.2.1 u v hQ hcomp
+  simpa [B] using holdCanon.trans htargetCanon.symm
+
 end Rank4GcdTwoRepair
 end HigherRankKUM
