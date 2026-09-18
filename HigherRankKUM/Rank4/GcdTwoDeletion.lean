@@ -113,6 +113,8 @@ theorem dangerous_inter_eRk_le_two
     intro hj3
     subst j
     exact hne3 (by simpa using hj)
+  have hjleNat : j ≤ 3 := by
+    exact_mod_cast hjle
   have hjle2 : j ≤ 2 := by omega
   rw [hj]
   exact_mod_cast hjle2
