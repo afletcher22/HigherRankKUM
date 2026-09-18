@@ -12,6 +12,7 @@ import HigherRankKUM.PeriodicWindow
 import HigherRankKUM.PeriodicGluing
 import HigherRankKUM.PeriodicGluingRegression
 import HigherRankKUM.RationalDensity
+import HigherRankKUM.StrictDensity
 import HigherRankKUM.DivisibleSolver
 import HigherRankKUM.FullSolver
 import HigherRankKUM.TightFactorReduction
