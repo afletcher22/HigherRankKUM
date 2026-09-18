@@ -65,20 +65,32 @@ theorem mul_maxCardAtRank_le_of_uniformlyDenseRatio
     (M : Matroid α) [M.Finite] (n r j : ℕ)
     (hDense : UniformlyDenseRatio M n r) :
     r * maxCardAtRank M j ≤ n * j := by
-  apply (Nat.mul_le_mul_left r).2
-  -- We prove the equivalent layerwise density inequality through the supremum.
-  rw [maxCardAtRank_le_iff M j]
-  intro X hXE hRk
-  have hXfin : X.Finite := M.ground_finite.subset hXE
-  have hd := hDense X hXE
-  rw [← hXfin.cast_ncard_eq, hRk] at hd
-  have hdNat : r * X.ncard ≤ n * j := by
-    exact_mod_cast hd
-  by_cases hr0 : r = 0
-  · subst r
-    simp at hdNat ⊢
-  · exact Nat.le_of_mul_le_mul_left (by
-      simpa [Nat.mul_comm] using hdNat)
+  let layer :=
+    M.ground_finite.toFinset.powerset.filter
+      (fun S => M.eRk (S : Set α) = (j : ℕ∞))
+  by_cases hempty : layer = ∅
+  · have hmzero : maxCardAtRank M j = 0 := by
+      simp [maxCardAtRank, layer, hempty]
+    simp [hmzero]
+  · have hnonempty : layer.Nonempty :=
+      Finset.nonempty_iff_ne_empty.mpr hempty
+    obtain ⟨S, hSmem, hScard⟩ :=
+      Finset.sup_mem_of_nonempty (f := Finset.card) hnonempty
+    have hSfilter :
+        S ∈ M.ground_finite.toFinset.powerset.filter
+          (fun T => M.eRk (T : Set α) = (j : ℕ∞)) := by
+      simpa [layer] using hSmem
+    have hSsub : (S : Set α) ⊆ M.E := by
+      simpa using (Finset.mem_filter.1 hSfilter).1
+    have hSrk : M.eRk (S : Set α) = (j : ℕ∞) :=
+      (Finset.mem_filter.1 hSfilter).2
+    have hScardMax : S.card = maxCardAtRank M j := by
+      simpa [maxCardAtRank, layer] using hScard
+    have hd := hDense (S : Set α) hSsub
+    rw [hSrk] at hd
+    have hdNat : r * S.card ≤ n * j := by
+      exact_mod_cast hd
+    simpa [hScardMax] using hdNat
 
 /-- Under uniform density, the slack inequality `j ≤ s_j` is equivalent
 to the subtraction-free inequality `r*m_j + j ≤ n*j`. -/
