@@ -38,11 +38,11 @@ theorem canonicalCrossRepair_affected_preserve_cyclicSatisfiable
 
   have hx0 (b : Bool) :
       crossRepairCanonicalElement A s u v s b = A.element s b := by
-    simpa using crossRepairCanonicalElement_offset_other A s u v b
+    simpa using crossRepairCanonicalElement_offset_other A (by omega) s u v b
       (q := 0) (by omega) (by omega) (by omega)
   have hx1 (b : Bool) :
       crossRepairCanonicalElement A s u v s1 b = A.element s1 b := by
-    simpa [s1] using crossRepairCanonicalElement_offset_other A s u v b
+    simpa [s1] using crossRepairCanonicalElement_offset_other A (by omega) s u v b
       (q := 1) (by omega) (by omega) (by omega)
   have hx2 (b : Bool) :
       crossRepairCanonicalElement A s u v s2 b =
@@ -62,11 +62,11 @@ theorem canonicalCrossRepair_affected_preserve_cyclicSatisfiable
       crossRepairCanonicalElement_right A h2N s u v b
   have hx4 (b : Bool) :
       crossRepairCanonicalElement A s u v s4 b = A.element s4 b := by
-    simpa [s4] using crossRepairCanonicalElement_offset_other A s u v b
+    simpa [s4] using crossRepairCanonicalElement_offset_other A (by omega) s u v b
       (q := 4) (by omega) (by omega) (by omega)
   have hx5 (b : Bool) :
       crossRepairCanonicalElement A s u v s5 b = A.element s5 b := by
-    simpa [s5] using crossRepairCanonicalElement_offset_other A s u v b
+    simpa [s5] using crossRepairCanonicalElement_offset_other A (by omega) s u v b
       (q := 5) (by omega) (by omega) (by omega)
 
   have hR1 : BijectionRelation
