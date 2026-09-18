@@ -46,7 +46,7 @@ theorem dual_uniformlyDense_three_of_rank_four_six
     rw [hRank, hEcard] at hranks
     have hDualRank : M✶.eRank = (2 : ℕ∞) := by
       apply ENat.add_right_injective_of_ne_top (by simp)
-    simpa using hranks
+      simpa using hranks
     rw [← hDualRank]
     exact M✶.eRk_le_eRank X
   obtain ⟨d, hDrk, _⟩ := ENat.le_natCast_iff.mp hDrkBound
