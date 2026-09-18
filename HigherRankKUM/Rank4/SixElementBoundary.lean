@@ -45,8 +45,8 @@ theorem dual_uniformlyDense_three_of_rank_four_six
     have hranks := M.eRank_add_eRank_dual
     rw [hRank, hEcard] at hranks
     have hDualRank : M✶.eRank = (2 : ℕ∞) := by
-      apply ENat.add_right_injective_of_ne_top (n := (4 : ℕ∞)) (by simp)
-      convert hranks using 1 <;> norm_num
+      have h4top : (4 : ℕ∞) ≠ ⊤ := by simp
+      exact (ENat.add_left_injective h4top) (by simpa using hranks)
     rw [← hDualRank]
     exact M✶.eRk_le_eRank X
   obtain ⟨d, hDrk, _⟩ := ENat.le_natCast_iff.mp hDrkBound
@@ -104,13 +104,12 @@ theorem sdiff_two_window_eq_four_window
   all_goals
     intro h
     simp [cyclicIndex] at h ⊢
-    try
-      rcases h with ⟨hxE, hne⟩
+    · rcases h with ⟨hxE, hne⟩
       let q : Fin 6 := σ.symm ⟨x, hxE⟩
       have hqx : (σ q : α) = x := by
         simpa [q] using congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
-      fin_cases q <;> simp [cyclicIndex] at hqx hne ⊢ <;> simp_all
-    try
+      fin_cases q <;> simp [cyclicIndex] at hqx hne ⊢ <;> simp_all [hsigma_ne]
+    all_goals
       rcases h with (rfl | rfl | rfl | rfl) <;>
         constructor <;> simp [cyclicIndex, hsigma_ne]
 
@@ -133,8 +132,8 @@ theorem exists_cyclicBasisOrder_of_rank_four_six
   have hDualRank : M✶.eRank = (2 : ℕ∞) := by
     have hranks := M.eRank_add_eRank_dual
     rw [hRank, hEcard] at hranks
-    apply ENat.add_right_injective_of_ne_top (n := (4 : ℕ∞)) (by simp)
-    convert hranks using 1 <;> norm_num
+    have h4top : (4 : ℕ∞) ≠ ⊤ := by simp
+    exact (ENat.add_left_injective h4top) (by simpa using hranks)
   have hDualE : M✶.E.Finite := by simpa using hE
   have hDualCard : M✶.E.encard = ((2 * 3 : ℕ) : ℕ∞) := by
     simpa using hEcard
