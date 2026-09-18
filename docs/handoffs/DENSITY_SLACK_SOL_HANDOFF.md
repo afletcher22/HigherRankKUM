@@ -34,6 +34,31 @@ Second pinned source/workflow checkpoint:
 Second run: https://github.com/afletcher22/HigherRankKUM/actions/runs/35385259860
 Do not infer a full green build from a targeted step alone.
 
+## Sol housekeeping follow-up (2026-09-18)
+
+The continuation was reviewed independently after Astra's usage cutoff.
+
+- `31f75e8fe778ca025c2f203d3a640bf8a9d8d3d6` replaces the brittle final
+  sequential rewrites in `GcdTwoCrossRepairParity` with normalized comparison.
+- `cd446258ea82b45ccfaabf0afb2cc70403d950a2` wires
+  `density_slack_deletion_certificate.py` into CI against its committed JSON.
+- `b94923f99eff33475ca595aa98ea61e3641157ed` adds
+  `commonBaseRepairTarget_preserves_pairRelationOrientable_of_cross_forced`.
+  This lifts the canonical-label parity result to the actual repaired
+  `AdmissiblePairCycle.Data`, using the existing gauge-invariance layer.
+- Full CI run
+  https://github.com/afletcher22/HigherRankKUM/actions/runs/35387909741
+  is green at `b94923f99eff33475ca595aa98ea61e3641157ed`: targeted Lean build,
+  all old certificates, the new density-slack certificate, and full root
+  `lake build` all passed.
+
+The density-slack work contains two separate arbitrary-rank statements:
+(1) the exact universal single-deletion criterion
+`n*j - r*m_j >= j` for every `1 <= j < r`, and
+(2) its strict integral-density consequence: if `n = k*r`, `k >= 2`,
+then every single-element deletion remains uniformly dense.
+Both are still checked informal mathematics, not Lean-certified.
+
 ## New mathematics (checked informal, NOT Lean formalized)
 
 Read `docs/research-ledger/DENSITY_SLACK_DELETION.md` for full proofs.
