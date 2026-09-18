@@ -88,6 +88,14 @@ def main():
             [1, 2, 4, 8, 1, 6, 2, 8, 1, 4, 2, 12, 1, 8, 2, 4, 5, 8],
     }
     results = {name: check(v) for name, v in witnesses.items()}
+    sharp_family = []
+    for k in range(1, 5):
+        vectors = [1] * k + [2] * k + [8] * k + [4] * (k - 1) + [5, 6, 12]
+        result = check(vectors)
+        assert result['strict']
+        good = len(vectors) - len(result['failed_deletions'])
+        assert good == k - 1
+        sharp_family.append({'k': k, 'good_deletions': good})
     insertion = []
     vectors = witnesses["ten_element_pair_obstruction"]
     ranks = subset_ranks(vectors)
@@ -133,6 +141,7 @@ def main():
             counts["strict_gcd_two"] += result["strict"] and n % 4 == 2
     print(json.dumps({"scope": "two historical witnesses, one boundary example, and 160 seeded binary examples; all subsets exact",
                       "counts": counts, "witnesses": results,
+                      "sharp_family_checks": sharp_family,
                       "ten_element_insertion_audit": insertion}, indent=2, sort_keys=True))
 
 
