@@ -8,6 +8,7 @@ namespace HigherRankKUM
 namespace Rank4GcdTwoDeletion
 
 open Set
+open scoped Matroid
 
 noncomputable section
 
@@ -601,7 +602,7 @@ theorem badDeletionElements_ncard_eq
     _ = (∑ᶠ H ∈ dangerousHyperplanes M k, 1) * (k + 1) := by
           rw [finsum_mem_mul]
     _ = (dangerousHyperplanes M k).ncard * (k + 1) := by
-          rw [Set.finsum_one]
+          rw [finsum_one]
 
 /-- Good deletion elements are the ground-set complement of the bad ones. -/
 theorem goodDeletionElements_eq_sdiff_bad
