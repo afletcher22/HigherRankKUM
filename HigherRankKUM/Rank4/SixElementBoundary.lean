@@ -94,25 +94,25 @@ theorem sdiff_two_window_eq_four_window
       cyclicWindow 4 (by omega) σ i := by
   rw [cyclicWindow_two_eq_pair, cyclicWindow_four_six_eq M]
   classical
-  ext x
-  constructor
-  · rintro ⟨hxE, hbad⟩
-    let q : Fin 6 := σ.symm ⟨x, hxE⟩
-    have hqx : (σ q : α) = x := by
-      exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
-    have hqval : q.val < 6 := q.isLt
-    interval_cases hq : q.val <;>
-      simp [cyclicIndex, q, Fin.ext_iff] at hbad hqx ⊢ <;> simp_all
-  · intro hx
-    have hxE : x ∈ M.E := by
-      rcases hx with (rfl | rfl | rfl | rfl) <;> exact (σ _).property
-    refine ⟨hxE, ?_⟩
-    rcases hx with (rfl | rfl | rfl | rfl) <;>
-      simp [cyclicIndex]
-    all_goals
-      intro h
-      apply σ.injective
-      exact Subtype.ext h
+  fin_cases i <;> ext x <;>
+    simp only [cyclicIndex, Set.mem_sdiff, Set.mem_insert_iff,
+      Set.mem_singleton_iff]
+  all_goals
+    constructor
+    · rintro ⟨hxE, hbad⟩
+      let q : Fin 6 := σ.symm ⟨x, hxE⟩
+      have hqx : (σ q : α) = x := by
+        exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
+      have hq : q = 0 ∨ q = 1 ∨ q = 2 ∨ q = 3 ∨ q = 4 ∨ q = 5 := by
+        fin_cases q <;> simp
+      rcases hq with (rfl | rfl | rfl | rfl | rfl | rfl) <;>
+        simp_all
+    · intro hx
+      rcases hx with (rfl | rfl | rfl | rfl) <;>
+        constructor
+      all_goals
+        · exact (σ _).property
+        · simp
 
 /-- The six-element boundary of rank-four KUM.
 
