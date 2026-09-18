@@ -22,7 +22,8 @@ theorem compose_relationCycleList_eq_compose_ofFn_of_bijections
   let σ := stepEquiv N h hN hcop
   have hperm : List.Perm (relationCycleList N h hN R) (List.ofFn R) := by
     have hp := Equiv.Perm.ofFn_comp_perm σ R
-    simpa [relationCycleList, σ, stepEquiv, Function.comp_def] using hp
+    change List.Perm (List.ofFn (R ∘ σ)) (List.ofFn R)
+    exact hp
   apply composeList_eq_of_perm_bijections hperm
   intro S hS
   simp [relationCycleList] at hS
