@@ -1,5 +1,6 @@
 import HigherRankKUM.StrictDensity
 import Mathlib.Data.Set.Card
+import Mathlib.Data.Set.Finite.Powerset
 
 namespace HigherRankKUM
 namespace Rank4GcdTwoDeletion
@@ -292,6 +293,124 @@ theorem dangerous_inter_ncard_eq_two_mul
   intro X hX hRk
   exact ncard_le_two_mul_of_strict_of_eRk_le_two
     hE hRank hStrict hX hRk
+
+
+/-- The finite family of dangerous hyperplanes in a fixed rank-four
+`4k+2` instance. -/
+def dangerousHyperplanes (M : Matroid α) (k : ℕ) : Set (Set α) :=
+  {H | DangerousHyperplane M k H}
+
+@[simp] theorem mem_dangerousHyperplanes
+    {M : Matroid α} {k : ℕ} {H : Set α} :
+    H ∈ dangerousHyperplanes M k ↔ DangerousHyperplane M k H :=
+  Iff.rfl
+
+theorem dangerousHyperplanes_finite
+    {M : Matroid α} {k : ℕ}
+    (hE : M.E.Finite) :
+    (dangerousHyperplanes M k).Finite := by
+  apply hE.finite_subsets.subset
+  intro H hH
+  exact hH.subset_ground
+
+/-- There are at most three dangerous hyperplanes in a strict rank-four
+`4k+2` instance. Four of their pairwise disjoint `(k+1)`-element
+complements would already require `4k+4` ground elements. -/
+theorem dangerousHyperplanes_ncard_le_three
+    {M : Matroid α} {k : ℕ}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4) :
+    (dangerousHyperplanes M k).ncard ≤ 3 := by
+  have hDfin : (dangerousHyperplanes M k).Finite :=
+    dangerousHyperplanes_finite hE
+  by_contra hle
+  have hgt : 3 < (dangerousHyperplanes M k).ncard := by omega
+  obtain ⟨H₀, H₁, H₂, H₃,
+      hH₀mem, hH₁mem, hH₂mem, hH₃mem,
+      h01, h02, h03, h12, h13, h23⟩ :=
+    (Set.three_lt_ncard_iff hDfin).1 hgt
+  have hH₀ : DangerousHyperplane M k H₀ := hH₀mem
+  have hH₁ : DangerousHyperplane M k H₁ := hH₁mem
+  have hH₂ : DangerousHyperplane M k H₂ := hH₂mem
+  have hH₃ : DangerousHyperplane M k H₃ := hH₃mem
+  let C₀ := M.E \ H₀
+  let C₁ := M.E \ H₁
+  let C₂ := M.E \ H₂
+  let C₃ := M.E \ H₃
+  have hC₀fin : C₀.Finite := hE.sdiff
+  have hC₁fin : C₁.Finite := hE.sdiff
+  have hC₂fin : C₂.Finite := hE.sdiff
+  have hC₃fin : C₃.Finite := hE.sdiff
+  have hC₀card : C₀.ncard = k + 1 := by
+    simpa [C₀] using dangerous_complement_ncard_eq hE hEcard hH₀
+  have hC₁card : C₁.ncard = k + 1 := by
+    simpa [C₁] using dangerous_complement_ncard_eq hE hEcard hH₁
+  have hC₂card : C₂.ncard = k + 1 := by
+    simpa [C₂] using dangerous_complement_ncard_eq hE hEcard hH₂
+  have hC₃card : C₃.ncard = k + 1 := by
+    simpa [C₃] using dangerous_complement_ncard_eq hE hEcard hH₃
+  have hd01 : Disjoint C₀ C₁ := by
+    simpa [C₀, C₁] using
+      dangerous_complements_disjoint hE hRank hEcard hStrict hH₀ hH₁ h01
+  have hd02 : Disjoint C₀ C₂ := by
+    simpa [C₀, C₂] using
+      dangerous_complements_disjoint hE hRank hEcard hStrict hH₀ hH₂ h02
+  have hd03 : Disjoint C₀ C₃ := by
+    simpa [C₀, C₃] using
+      dangerous_complements_disjoint hE hRank hEcard hStrict hH₀ hH₃ h03
+  have hd12 : Disjoint C₁ C₂ := by
+    simpa [C₁, C₂] using
+      dangerous_complements_disjoint hE hRank hEcard hStrict hH₁ hH₂ h12
+  have hd13 : Disjoint C₁ C₃ := by
+    simpa [C₁, C₃] using
+      dangerous_complements_disjoint hE hRank hEcard hStrict hH₁ hH₃ h13
+  have hd23 : Disjoint C₂ C₃ := by
+    simpa [C₂, C₃] using
+      dangerous_complements_disjoint hE hRank hEcard hStrict hH₂ hH₃ h23
+  have hd012 : Disjoint (C₀ ∪ C₁) C₂ := by
+    rw [Set.disjoint_left]
+    intro x hx hx2
+    rcases hx with hx0 | hx1
+    · exact (Set.disjoint_left.1 hd02) hx0 hx2
+    · exact (Set.disjoint_left.1 hd12) hx1 hx2
+  have hd0123 : Disjoint ((C₀ ∪ C₁) ∪ C₂) C₃ := by
+    rw [Set.disjoint_left]
+    intro x hx hx3
+    rcases hx with hx01 | hx2
+    · rcases hx01 with hx0 | hx1
+      · exact (Set.disjoint_left.1 hd03) hx0 hx3
+      · exact (Set.disjoint_left.1 hd13) hx1 hx3
+    · exact (Set.disjoint_left.1 hd23) hx2 hx3
+  have hC01card : (C₀ ∪ C₁).ncard = 2 * (k + 1) := by
+    rw [Set.ncard_union_eq hd01 hC₀fin hC₁fin, hC₀card, hC₁card]
+    omega
+  have hC012card : ((C₀ ∪ C₁) ∪ C₂).ncard = 3 * (k + 1) := by
+    rw [Set.ncard_union_eq hd012 (hC₀fin.union hC₁fin) hC₂fin,
+      hC01card, hC₂card]
+    omega
+  have hC0123card : (((C₀ ∪ C₁) ∪ C₂) ∪ C₃).ncard = 4 * (k + 1) := by
+    rw [Set.ncard_union_eq hd0123
+      ((hC₀fin.union hC₁fin).union hC₂fin) hC₃fin,
+      hC012card, hC₃card]
+    omega
+  have hAllSub : ((C₀ ∪ C₁) ∪ C₂) ∪ C₃ ⊆ M.E := by
+    dsimp [C₀, C₁, C₂, C₃]
+    exact Set.union_subset
+      (Set.union_subset
+        (Set.union_subset Set.sdiff_subset Set.sdiff_subset)
+        Set.sdiff_subset)
+      Set.sdiff_subset
+  have hUpper :
+      (((C₀ ∪ C₁) ∪ C₂) ∪ C₃).ncard ≤ M.E.ncard :=
+    Set.ncard_le_ncard hAllSub hE
+  have hEn : M.E.ncard = 4 * k + 2 := by
+    have h := hEcard
+    rw [← hE.cast_ncard_eq] at h
+    exact_mod_cast h
+  rw [hC0123card, hEn] at hUpper
+  omega
 
 end
 
