@@ -36,7 +36,7 @@ theorem dual_uniformlyDense_three_of_rank_four_six
     rw [← hEn]
     exact Set.ncard_le_ncard hXE hE
   have hCcard : (M.E \ X).ncard = 6 - X.ncard := by
-    rw [Set.ncard_sdiff hE hXfin, hEn]
+    rw [Set.ncard_sdiff hXE hE, hEn]
   have hCrkBound : M.eRk (M.E \ X) ≤ (4 : ℕ∞) := by
     rw [← hRank]
     exact M.eRk_le_eRank _
@@ -45,13 +45,15 @@ theorem dual_uniformlyDense_three_of_rank_four_six
     have hranks := M.eRank_add_eRank_dual
     rw [hRank, hEcard] at hranks
     have hDualRank : M✶.eRank = (2 : ℕ∞) := by
-      exact ENat.eq_of_add_eq_add_left (by simp) (by simpa [add_comm] using hranks)
+      omega
     rw [← hDualRank]
     exact M✶.eRk_le_eRank X
   obtain ⟨d, hDrk, _⟩ := ENat.le_natCast_iff.mp hDrkBound
-  have hdNat : 4 * (6 - X.ncard) ≤ 6 * c := by
+  have hdNat' : 4 * (M.E \ X).ncard ≤ 6 * c := by
     rw [← hCfin.cast_ncard_eq, hCrk] at hd
     exact_mod_cast hd
+  have hdNat : 4 * (6 - X.ncard) ≤ 6 * c := by
+    simpa [hCcard] using hdNat'
   have hdualNat : d + 4 = c + X.ncard := by
     rw [hDrk, hRank, hCrk, ← hXfin.cast_ncard_eq] at hdual
     exact_mod_cast hdual
@@ -87,9 +89,22 @@ theorem sdiff_two_window_eq_four_window
         (cyclicIndex 6 (by omega) i 4) =
       cyclicWindow 4 (by omega) σ i := by
   rw [cyclicWindow_two_eq_pair, cyclicWindow_four_six_eq M]
-  fin_cases i <;>
-    ext x <;>
-    simp [cyclicIndex]
+  classical
+  fin_cases i <;> ext x <;>
+    simp only [cyclicIndex, Set.mem_diff, Set.mem_insert_iff,
+      Set.mem_singleton_iff] <;>
+    constructor
+  all_goals
+    intro h
+    try
+      rcases h with ⟨hxE, hne⟩
+      let q : Fin 6 := σ.symm ⟨x, hxE⟩
+      have hqx : (σ q : α) = x := by
+        simpa [q] using congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
+      fin_cases q <;> simp_all
+    try
+      rcases h with (rfl | rfl | rfl | rfl) <;>
+        constructor <;> simp
 
 /-- The six-element boundary of rank-four KUM.
 
@@ -110,7 +125,7 @@ theorem exists_cyclicBasisOrder_of_rank_four_six
   have hDualRank : M✶.eRank = (2 : ℕ∞) := by
     have hranks := M.eRank_add_eRank_dual
     rw [hRank, hEcard] at hranks
-    exact ENat.eq_of_add_eq_add_left (by simp) (by simpa [add_comm] using hranks)
+    omega
   have hDualE : M✶.E.Finite := by simpa using hE
   have hDualCard : M✶.E.encard = ((2 * 3 : ℕ) : ℕ∞) := by
     simpa using hEcard
