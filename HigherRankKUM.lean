@@ -14,6 +14,7 @@ import HigherRankKUM.PeriodicGluingRegression
 import HigherRankKUM.RationalDensity
 import HigherRankKUM.StrictDensity
 import HigherRankKUM.DensitySlackDeletion
+import HigherRankKUM.DensitySlackCriterion
 import HigherRankKUM.DivisibleSolver
 import HigherRankKUM.FullSolver
 import HigherRankKUM.TightFactorReduction
