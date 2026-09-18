@@ -7,6 +7,24 @@
     "uniformly_dense": 110
   },
   "scope": "two historical witnesses, one boundary example, and 160 seeded binary examples; all subsets exact",
+  "sharp_family_checks": [
+    {
+      "good_deletions": 0,
+      "k": 1
+    },
+    {
+      "good_deletions": 1,
+      "k": 2
+    },
+    {
+      "good_deletions": 2,
+      "k": 3
+    },
+    {
+      "good_deletions": 3,
+      "k": 4
+    }
+  ],
   "ten_element_insertion_audit": [
     {
       "deleted_label": 0,
