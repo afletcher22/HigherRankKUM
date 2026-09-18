@@ -1,0 +1,177 @@
+{
+  "counts": {
+    "strict": 70,
+    "strict_gcd_two": 45,
+    "strict_integral": 25,
+    "tested": 160,
+    "uniformly_dense": 110
+  },
+  "scope": "two historical witnesses, one boundary example, and 160 seeded binary examples; all subsets exact",
+  "ten_element_insertion_audit": [
+    {
+      "deleted_label": 0,
+      "deletion_cbos_mod_rotation": 368,
+      "extendable_cbos": 56,
+      "first_nonextendable_order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        7,
+        9
+      ],
+      "successful_gap_histogram": {
+        "0": 312,
+        "1": 32,
+        "3": 24
+      }
+    },
+    {
+      "deleted_label": 4,
+      "deletion_cbos_mod_rotation": 368,
+      "extendable_cbos": 56,
+      "first_nonextendable_order": [
+        0,
+        1,
+        2,
+        3,
+        7,
+        5,
+        6,
+        8,
+        9
+      ],
+      "successful_gap_histogram": {
+        "0": 312,
+        "1": 32,
+        "3": 24
+      }
+    },
+    {
+      "deleted_label": 7,
+      "deletion_cbos_mod_rotation": 224,
+      "extendable_cbos": 88,
+      "first_nonextendable_order": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9
+      ],
+      "successful_gap_histogram": {
+        "0": 136,
+        "1": 56,
+        "2": 16,
+        "5": 16
+      }
+    },
+    {
+      "deleted_label": 8,
+      "deletion_cbos_mod_rotation": 336,
+      "extendable_cbos": 56,
+      "first_nonextendable_order": [
+        0,
+        1,
+        2,
+        3,
+        7,
+        4,
+        6,
+        5,
+        9
+      ],
+      "successful_gap_histogram": {
+        "0": 280,
+        "1": 24,
+        "2": 32
+      }
+    }
+  ],
+  "witnesses": {
+    "eighteen_element_repair_witness": {
+      "dangerous_hyperplanes": 3,
+      "failed_deletions": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11,
+        12,
+        13,
+        14,
+        16,
+        17
+      ],
+      "integer_slacks": [
+        2,
+        4,
+        2
+      ],
+      "max_flat_sizes": [
+        4,
+        8,
+        13
+      ],
+      "n": 18,
+      "strict": true
+    },
+    "six_element_boundary_no_good_deletion": {
+      "dangerous_hyperplanes": 3,
+      "failed_deletions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "integer_slacks": [
+        2,
+        4,
+        2
+      ],
+      "max_flat_sizes": [
+        1,
+        2,
+        4
+      ],
+      "n": 6,
+      "strict": true
+    },
+    "ten_element_pair_obstruction": {
+      "dangerous_hyperplanes": 2,
+      "failed_deletions": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        9
+      ],
+      "integer_slacks": [
+        2,
+        4,
+        2
+      ],
+      "max_flat_sizes": [
+        2,
+        4,
+        7
+      ],
+      "n": 10,
+      "strict": true
+    }
+  }
+}
