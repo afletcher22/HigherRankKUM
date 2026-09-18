@@ -1,4 +1,5 @@
 import HigherRankKUM.LowRank.RankTwo
+import HigherRankKUM.RationalDensity
 import Mathlib.Combinatorics.Matroid.Dual
 
 namespace HigherRankKUM
@@ -60,7 +61,7 @@ theorem dual_uniformlyDense_three_of_rank_four_six
 
 /-- Four cyclic positions on six elements, expanded as an explicit set. -/
 theorem cyclicWindow_four_six_eq
-    (σ : Fin 6 ≃ M.E) (i : Fin 6) :
+    (M : Matroid α) (σ : Fin 6 ≃ M.E) (i : Fin 6) :
     cyclicWindow 4 (by omega) σ i =
       ({(σ i : α),
         (σ (cyclicIndex 6 (by omega) i 1) : α),
@@ -81,11 +82,11 @@ theorem cyclicWindow_four_six_eq
 /-- On a six-cycle, the complement of the two positions starting four steps
 after `i` is exactly the four-position window starting at `i`. -/
 theorem sdiff_two_window_eq_four_window
-    (σ : Fin 6 ≃ M.E) (i : Fin 6) :
+    (M : Matroid α) (σ : Fin 6 ≃ M.E) (i : Fin 6) :
     M.E \ cyclicWindow 2 (by omega) σ
         (cyclicIndex 6 (by omega) i 4) =
       cyclicWindow 4 (by omega) σ i := by
-  rw [cyclicWindow_two_eq_pair, cyclicWindow_four_six_eq]
+  rw [cyclicWindow_two_eq_pair, cyclicWindow_four_six_eq M]
   fin_cases i <;>
     ext x <;>
     simp [cyclicIndex]
