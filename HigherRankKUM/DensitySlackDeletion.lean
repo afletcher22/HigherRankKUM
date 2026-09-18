@@ -149,14 +149,19 @@ theorem StrictlyUniformlyDenseRatio.not_isColoop_of_integral
   have hsNat :
       r * (k * r - 1) < (k * r) * j := by
     exact_mod_cast hs
-  have hUpper :
-      (k * r) * j ≤ (k * r) * (r - 1) := by
-    apply Nat.mul_le_mul_left
+  have hjSucc : j + 1 ≤ r := by
     omega
-  have hbad :
-      r * (k * r - 1) < (k * r) * (r - 1) :=
-    hsNat.trans_le hUpper
-  nlinarith
+  have hkstep : k * (j + 1) ≤ k * r :=
+    Nat.mul_le_mul_left k hjSucc
+  have hkstep' : k * j + k ≤ k * r := by
+    simpa [Nat.mul_add] using hkstep
+  have hkj : k * j ≤ k * r - 1 := by
+    omega
+  have hUpper : (k * r) * j ≤ r * (k * r - 1) := by
+    calc
+      (k * r) * j = r * (k * j) := by ring
+      _ ≤ r * (k * r - 1) := Nat.mul_le_mul_left r hkj
+  exact (not_lt_of_ge hUpper) hsNat
 
 /-- KUM-facing arbitrary-rank deletion package for strict integral density.
 
