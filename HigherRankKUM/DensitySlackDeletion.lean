@@ -90,6 +90,117 @@ theorem StrictlyUniformlyDenseRatio.delete_integral
   rw [hDeleteRank, ← hXfin.cast_ncard_eq, hj]
   exact_mod_cast htargetNat
 
+
+/-- In the strict integral setting with `k ≥ 2` and `|E| = kr`, no ground
+element is a coloop. Equivalently, every single deletion preserves rank.
+
+The proof is the density contradiction on `E \ {e}`: a coloop would make
+that set nonspanning, hence rank at most `r-1`, but it still has `kr-1`
+elements, which violates strict density. -/
+theorem StrictlyUniformlyDenseRatio.not_isColoop_of_integral
+    (M : Matroid α) (k r : ℕ)
+    (hk : 2 ≤ k)
+    (hr : 0 < r)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (r : ℕ∞))
+    (hEcard : M.E.encard = ((k * r : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (k * r) r)
+    {e : α} (he : e ∈ M.E) :
+    ¬ M.IsColoop e := by
+  intro hcol
+  let X := M.E \ ({e} : Set α)
+  have hXsub : X ⊆ M.E := by
+    exact Set.sdiff_subset
+  have hXfin : X.Finite :=
+    hE.subset hXsub
+  have hEn : M.E.ncard = k * r := by
+    have h := hEcard
+    rw [← hE.cast_ncard_eq] at h
+    exact_mod_cast h
+  have hXcard : X.ncard = k * r - 1 := by
+    dsimp [X]
+    rw [Set.ncard_sdiff_singleton_of_mem he hE, hEn]
+  have hXnonempty : X.Nonempty := by
+    rw [← Set.ncard_pos hXfin, hXcard]
+    have hkr : 1 < k * r := by
+      nlinarith
+    omega
+  have hXproper : X ≠ M.E := by
+    intro hEq
+    have heX : e ∈ X := by
+      rw [hEq]
+      exact he
+    exact heX.2 (by simp)
+  letI : M.Finite := ⟨hE⟩
+  have hNotSpan : ¬ M.Spanning X := by
+    simpa [X] using hcol.sdiff_not_spanning
+  have hRankLt : M.eRk X < M.eRank := by
+    have hnotle : ¬ M.eRank ≤ M.eRk X := by
+      intro hle
+      exact hNotSpan ((M.spanning_iff_eRk_le hXsub).2 hle)
+    exact lt_of_not_ge hnotle
+  rw [hRank] at hRankLt
+  obtain ⟨j, hj, hjlt⟩ := ENat.lt_natCast_iff.mp hRankLt
+  have hjltNat : j < r := by
+    exact_mod_cast hjlt
+  have hs := hStrict X hXsub hXnonempty hXproper
+  rw [← hXfin.cast_ncard_eq, hj, hXcard] at hs
+  have hsNat :
+      r * (k * r - 1) < (k * r) * j := by
+    exact_mod_cast hs
+  have hUpper :
+      (k * r) * j ≤ (k * r) * (r - 1) := by
+    apply Nat.mul_le_mul_left
+    omega
+  have hbad :
+      r * (k * r - 1) < (k * r) * (r - 1) :=
+    hsNat.trans_le hUpper
+  nlinarith
+
+/-- KUM-facing arbitrary-rank deletion package for strict integral density.
+
+For `k ≥ 2`, rank `r>0`, and `|E|=kr`, every ground-element deletion:
+* has ground-set size `kr-1`,
+* has the same rank `r`, and
+* is uniformly dense at ratio `(kr-1)/r`.
+
+Thus its size is automatically coprime to `r`; applying the external
+van den Heuvel--Thomassé theorem is a separate literature step. -/
+theorem StrictlyUniformlyDenseRatio.delete_integral_package
+    (M : Matroid α) (k r : ℕ)
+    (hk : 2 ≤ k)
+    (hr : 0 < r)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (r : ℕ∞))
+    (hEcard : M.E.encard = ((k * r : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (k * r) r)
+    {e : α} (he : e ∈ M.E) :
+    (M ＼ ({e} : Set α)).E.encard = ((k * r - 1 : ℕ) : ℕ∞) ∧
+    (M ＼ ({e} : Set α)).eRank = (r : ℕ∞) ∧
+    UniformlyDenseRatio (M ＼ ({e} : Set α)) (k * r - 1) r := by
+  have hnotcol :=
+    hStrict.not_isColoop_of_integral M k r hk hr hE hRank hEcard he
+  have hspan : M.Spanning (M.E \ ({e} : Set α)) := by
+    rw [← Matroid.not_isColoop_iff_sdiff_spanning]
+    exact hnotcol
+  have hdelRank :
+      (M ＼ ({e} : Set α)).eRank = M.eRank := by
+    simpa [Matroid.delete_eq_restrict] using hspan.eRank_restrict
+  have hdelCard : (M ＼ ({e} : Set α)).E.encard =
+      ((k * r - 1 : ℕ) : ℕ∞) := by
+    rw [Matroid.delete_ground]
+    have hEn : M.E.ncard = k * r := by
+      have h := hEcard
+      rw [← hE.cast_ncard_eq] at h
+      exact_mod_cast h
+    have hdiff :
+        (M.E \ ({e} : Set α)).ncard = k * r - 1 := by
+      rw [Set.ncard_sdiff_singleton_of_mem he hE, hEn]
+    rw [← (hE.sdiff).cast_ncard_eq, hdiff]
+  refine ⟨hdelCard, ?_, ?_⟩
+  · simpa [hRank] using hdelRank
+  · exact hStrict.delete_integral M k r hr hE hRank he
+
 end
 
 end HigherRankKUM
