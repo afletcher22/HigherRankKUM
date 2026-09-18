@@ -184,7 +184,12 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
       have hdNat :
           r * maxCardAtRank M j ≤ (n - 1) * j := by
         exact_mod_cast hd
-      omega
+      have hnSplit : n * j = (n - 1) * j + j := by
+        have hnEq : n = (n - 1) + 1 := by omega
+        rw [hnEq]
+        ring
+      rw [hnSplit]
+      exact Nat.add_le_add_right hdNat j
   · intro hprof e heE X hXdel
     have hXsub : X ⊆ M.E \ ({e} : Set α) := by
       simpa [Matroid.delete_ground] using hXdel
@@ -217,7 +222,12 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
                 r * maxCardAtRank M j + j := by
               gcongr
             _ ≤ n * j := hp
-        omega
+        have hnSplit : n * j = (n - 1) * j + j := by
+          have hnEq : n = (n - 1) + 1 := by omega
+          rw [hnEq]
+          ring
+        rw [hnSplit] at hm
+        exact Nat.le_of_add_le_add_right hm
       exact_mod_cast hNat
     · have hjEq : j = r := by omega
       subst j
