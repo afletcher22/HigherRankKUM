@@ -58,7 +58,7 @@ theorem crossRepairAffectedStarts_nodup
 are exactly the original pair labels. -/
 theorem crossRepairCanonicalElement_offset_other
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
-    (A : AdmissiblePairCycle.Data M N 2 hN) (s : Fin N)
+    (A : AdmissiblePairCycle.Data M N 2 hN) (h3N : 3 < N) (s : Fin N)
     (u v b : Bool) {q : ℕ} (hqN : q < N)
     (hq2 : q ≠ 2) (hq3 : q ≠ 3) :
     crossRepairCanonicalElement A s u v (cyclicIndex N hN s q) b =
