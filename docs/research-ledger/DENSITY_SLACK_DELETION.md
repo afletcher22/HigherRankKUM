@@ -64,6 +64,25 @@ deletion preserves uniform density is EXACTLY
 In particular it is at least k-1. For k>=2 there is always a good deletion.
 For k=1 this bound is zero, so the argument makes no existence claim.
 
+### Sharpness for every k>=1
+
+Over GF(2), choose independent vectors a,b,c,d. Take k labelled copies each
+of a,b,d, k-1 copies of c, and one copy each of a+c,b+c,d+c. This has 4k+2
+elements and rank four. It is strictly uniformly dense:
+
+- In a vector subspace W of dimension j<4 containing c, let s be the number
+  of a,b,d in W. Exactly the corresponding s shifted vectors are in W.
+  Since s<=j-1, the labelled size is ks+(k-1)+s <= (k+1)j-2 < (k+1/2)j.
+- If c is not in W, W cannot contain both x and x+c. The chosen vectors
+  from the three pairs have independent images modulo c, so at most j are
+  present. Each has multiplicity at most k; the size is <=kj<(k+1/2)j.
+
+Apply these bounds to the span of each subset; proper full-rank subsets
+also satisfy strictness. The three hyperplanes spanned by c and two of
+a,b,d are dangerous and cover the maximum permitted three. Their common
+labelled intersection is exactly the k-1 copies of c. Hence precisely k-1
+deletions are good. The bound is sharp for every k, not only at n=18.
+
 Combined with Section 2, every strict rank-four matroid of EVEN size n>=8
 has a uniformly dense single-element deletion. That deletion has odd size,
 so its CBO exists by coprimality. This reduces the remaining strict even
