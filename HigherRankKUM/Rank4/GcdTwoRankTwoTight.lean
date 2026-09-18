@@ -17,8 +17,7 @@ theorem eRk_closure_block_eq_two
   have hInd : M.Indep (A.block i) :=
     (A.alignedBase i).indep.subset (A.block_subset_window (by omega) i)
   have hcard : (A.block i).encard = 2 := by
-    simp [AdmissiblePairCycle.Data.block, AdmissiblePairCycle.pairSet,
-      A.element_ne i]
+    exact Set.encard_pair (A.element_ne i)
   rw [M.eRk_closure_eq, hInd.eRk_eq_encard, hcard]
 
 /-- If the rank-two flat spanned by one pair block reaches `N` elements, it is
@@ -58,7 +57,9 @@ theorem closure_block_is_nonempty_proper_tight_of_encard_eq_card
   refine ⟨tightRatio_closure_block_of_encard_eq_card A i hcard, ?_,
     closure_block_ne_ground A i⟩
   exact ⟨A.element i false,
-    M.subset_closure (A.block i) (A.block_subset_ground i) (by simp)⟩
+    M.subset_closure (A.block i) (A.block_subset_ground i) (by
+      change A.element i false ∈ ({A.element i false, A.element i true} : Set α)
+      exact Set.mem_insert _ _)⟩
 
 end Rank4GcdTwoRepair
 end HigherRankKUM
