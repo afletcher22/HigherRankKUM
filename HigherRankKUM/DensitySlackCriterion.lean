@@ -64,7 +64,7 @@ theorem maxCardAtRank_le_iff
     simp only [Finset.mem_filter, Finset.mem_powerset] at hS
     have hSE : (S : Set α) ⊆ M.E := by
       simpa using hS.1
-    exact h (S : Set α) hSE hS.2
+    simpa [Set.ncard_coe_finset] using h (S : Set α) hSE hS.2
 
 /-- The deletion-slack profile of a uniformly dense finite matroid never
 underflows: `r*m_j ≤ n*j` in every rank layer. -/
