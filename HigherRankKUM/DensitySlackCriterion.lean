@@ -178,7 +178,7 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
       have hScardMax : S.card = maxCardAtRank M j := by
         simpa [maxCardAtRank, layer] using hScard
       have hSNcard : (S : Set α).ncard = maxCardAtRank M j := by
-        simp [Set.ncard_coe_Finset, hScardMax]
+        simp [Set.ncard_coe_finset, hScardMax]
       rw [hSrkDel, hSrk, ← (M.ground_finite.subset hSsub).cast_ncard_eq,
         hSNcard] at hd
       have hdNat :
