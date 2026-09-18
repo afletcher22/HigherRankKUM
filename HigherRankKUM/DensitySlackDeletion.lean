@@ -181,8 +181,8 @@ theorem StrictlyUniformlyDenseRatio.delete_integral_package
   have hnotcol :=
     hStrict.not_isColoop_of_integral M k r hk hr hE hRank hEcard he
   have hspan : M.Spanning (M.E \ ({e} : Set α)) := by
-    rw [← Matroid.not_isColoop_iff_sdiff_spanning]
-    exact hnotcol
+    by_contra hnotspan
+    exact hnotcol ((M.isColoop_iff_sdiff_not_spanning).2 hnotspan)
   have hdelRank :
       (M ＼ ({e} : Set α)).eRank = M.eRank := by
     simpa [Matroid.delete_eq_restrict] using hspan.eRank_restrict
