@@ -35,9 +35,14 @@ theorem ncard_le_maxCardAtRank
       hXfin.toFinset ∈
         M.ground_finite.toFinset.powerset.filter
           (fun S : Finset α => M.eRk (S : Set α) = (j : ℕ∞)) := by
-    simp only [Finset.mem_filter, Finset.mem_powerset,
-      Set.Finite.coe_toFinset, Set.Finite.mem_toFinset]
-    exact ⟨hX, hRk⟩
+    rw [Finset.mem_filter]
+    constructor
+    · rw [Finset.mem_powerset]
+      intro x hx
+      have hxX : x ∈ X := by simpa using hx
+      have hxE : x ∈ M.E := hX hxX
+      simpa using hxE
+    · simpa using hRk
   have hle :=
     Finset.le_sup (f := Finset.card) hmem
   simpa [maxCardAtRank, Set.ncard_eq_toFinset_card X hXfin] using hle
@@ -57,7 +62,9 @@ theorem maxCardAtRank_le_iff
     rw [Finset.sup_le_iff]
     intro S hS
     simp only [Finset.mem_filter, Finset.mem_powerset] at hS
-    exact h (S : Set α) hS.1 hS.2
+    have hSE : (S : Set α) ⊆ M.E := by
+      simpa using hS.1
+    exact h (S : Set α) hSE hS.2
 
 /-- The deletion-slack profile of a uniformly dense finite matroid never
 underflows: `r*m_j ≤ n*j` in every rank layer. -/
@@ -187,7 +194,8 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
       have hnSplit : n * j = (n - 1) * j + j := by
         have hnEq : n = (n - 1) + 1 := by omega
         calc
-          n * j = ((n - 1) + 1) * j := by rw [hnEq]
+          n * j = ((n - 1) + 1) * j :=
+            congrArg (fun q : ℕ => q * j) hnEq
           _ = (n - 1) * j + j := by simp [Nat.add_mul]
       rw [hnSplit]
       exact Nat.add_le_add_right hdNat j
@@ -225,8 +233,10 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
             _ ≤ n * j := hp
         have hnSplit : n * j = (n - 1) * j + j := by
           have hnEq : n = (n - 1) + 1 := by omega
-          rw [hnEq]
-          ring
+          calc
+            n * j = ((n - 1) + 1) * j :=
+              congrArg (fun q : ℕ => q * j) hnEq
+            _ = (n - 1) * j + j := by simp [Nat.add_mul]
         rw [hnSplit] at hm
         omega
       exact_mod_cast hNat
