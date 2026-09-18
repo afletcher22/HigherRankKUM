@@ -45,10 +45,10 @@ theorem dual_uniformlyDense_three_of_rank_four_six
     have hranks := M.eRank_add_eRank_dual
     rw [hRank, hEcard] at hranks
     have hDualRank : M✶.eRank = (2 : ℕ∞) := by
-      have hranks' : M✶.eRank + (4 : ℕ∞) = (2 : ℕ∞) + 4 := by
+      have hranks' : (4 : ℕ∞) + M✶.eRank = 4 + (2 : ℕ∞) := by
         calc
-          M✶.eRank + (4 : ℕ∞) = 6 := by simpa [add_comm] using hranks
-          _ = (2 : ℕ∞) + 4 := by norm_num
+          (4 : ℕ∞) + M✶.eRank = 6 := hranks
+          _ = 4 + (2 : ℕ∞) := by norm_num
       exact ENat.add_right_injective_of_ne_top (n := (4 : ℕ∞)) (by simp) hranks'
     rw [← hDualRank]
     exact M✶.eRk_le_eRank X
@@ -94,35 +94,31 @@ theorem sdiff_two_window_eq_four_window
       cyclicWindow 4 (by omega) σ i := by
   rw [cyclicWindow_two_eq_pair, cyclicWindow_four_six_eq M]
   classical
-  have hmem (x : α) :
-      x ∈ M.E ↔ ∃ q : Fin 6, (σ q : α) = x := by
-    constructor
-    · intro hx
-      refine ⟨σ.symm ⟨x, hx⟩, ?_⟩
+  have hcover (x : α) (hx : x ∈ M.E) :
+      x = (σ 0 : α) ∨ x = (σ 1 : α) ∨ x = (σ 2 : α) ∨
+      x = (σ 3 : α) ∨ x = (σ 4 : α) ∨ x = (σ 5 : α) := by
+    let q : Fin 6 := σ.symm ⟨x, hx⟩
+    have hqx : (σ q : α) = x := by
       exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hx⟩)
-    · rintro ⟨q, rfl⟩
-      exact (σ q).property
+    have hq : q = 0 ∨ q = 1 ∨ q = 2 ∨ q = 3 ∨ q = 4 ∨ q = 5 := by
+      omega
+    rcases hq with (rfl | rfl | rfl | rfl | rfl | rfl) <;>
+      simp_all
   have hne {a b : Fin 6} (hab : a ≠ b) :
       (σ a : α) ≠ (σ b : α) := by
     intro h
     exact hab (σ.injective (Subtype.ext h))
   fin_cases i <;> ext x <;>
-    simp only [cyclicIndex, Set.mem_diff, Set.mem_insert_iff,
+    simp only [cyclicIndex, Set.mem_sdiff, Set.mem_insert_iff,
       Set.mem_singleton_iff] <;>
-    rw [hmem] <;>
-    constructor <;>
-    · intro h
-      rcases h with ⟨⟨q, hqx⟩, hbad⟩
-      have hq : q = 0 ∨ q = 1 ∨ q = 2 ∨ q = 3 ∨ q = 4 ∨ q = 5 := by
-        fin_cases q <;> simp
-      rcases hq with (rfl | rfl | rfl | rfl | rfl | rfl) <;>
+    constructor
+  all_goals
+    · rintro ⟨hxE, hbad⟩
+      rcases hcover x hxE with (rfl | rfl | rfl | rfl | rfl | rfl) <;>
         simp_all [hne]
     · intro h
       rcases h with (rfl | rfl | rfl | rfl) <;>
-        constructor
-      all_goals
-        · exact ⟨_, rfl⟩
-        · simp [hne]
+        constructor <;> simp [hne]
 
 /-- The six-element boundary of rank-four KUM.
 
@@ -143,10 +139,10 @@ theorem exists_cyclicBasisOrder_of_rank_four_six
   have hDualRank : M✶.eRank = (2 : ℕ∞) := by
     have hranks := M.eRank_add_eRank_dual
     rw [hRank, hEcard] at hranks
-    have hranks' : M✶.eRank + (4 : ℕ∞) = (2 : ℕ∞) + 4 := by
+    have hranks' : (4 : ℕ∞) + M✶.eRank = 4 + (2 : ℕ∞) := by
       calc
-        M✶.eRank + (4 : ℕ∞) = 6 := by simpa [add_comm] using hranks
-        _ = (2 : ℕ∞) + 4 := by norm_num
+        (4 : ℕ∞) + M✶.eRank = 6 := hranks
+        _ = 4 + (2 : ℕ∞) := by norm_num
     exact ENat.add_right_injective_of_ne_top (n := (4 : ℕ∞)) (by simp) hranks'
   have hDualE : M✶.E.Finite := by simpa using hE
   have hDualCard : M✶.E.encard = ((2 * 3 : ℕ) : ℕ∞) := by
