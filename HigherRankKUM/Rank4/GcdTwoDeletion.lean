@@ -1,6 +1,7 @@
 import HigherRankKUM.StrictDensity
 import Mathlib.Data.Set.Card
 import Mathlib.Data.Set.Finite.Powerset
+import Mathlib.Combinatorics.Matroid.Minor.Delete
 
 namespace HigherRankKUM
 namespace Rank4GcdTwoDeletion
@@ -294,6 +295,118 @@ theorem dangerous_inter_ncard_eq_two_mul
   exact ncard_le_two_mul_of_strict_of_eRk_le_two
     hE hRank hStrict hX hRk
 
+
+/-- A single-element deletion of a strict rank-four `4k+2` instance
+fails the `(4k+1)/4` density inequality exactly when the deleted element is
+avoided by a dangerous hyperplane.
+
+This is the formal obstruction characterization behind the good-deletion
+count: the only possible failure after deletion is a rank-three set of
+cardinality `3k+1`, and strict density forces such a set to be a flat. -/
+theorem not_uniformlyDenseRatio_delete_iff_exists_dangerous
+    {M : Matroid α} {k : ℕ} {e : α}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (he : e ∈ M.E) :
+    (¬ UniformlyDenseRatio (M ＼ ({e} : Set α)) (4 * k + 1) 4) ↔
+      ∃ H : Set α, DangerousHyperplane M k H ∧ e ∉ H := by
+  constructor
+  · intro hbad
+    rw [UniformlyDenseRatio] at hbad
+    push_neg at hbad
+    obtain ⟨X, hXdel, hfail⟩ := hbad
+    have hXsub : X ⊆ M.E \ ({e} : Set α) := by
+      simpa [Matroid.delete_ground] using hXdel
+    have hXE : X ⊆ M.E :=
+      hXsub.trans Set.sdiff_subset
+    have heX : e ∉ X := by
+      intro heMem
+      exact (hXsub heMem).2 (by simp)
+    have hXfin : X.Finite := hE.subset hXE
+    have hRkDelete :
+        (M ＼ ({e} : Set α)).eRk X = M.eRk X := by
+      simpa [Matroid.delete_eq_restrict] using
+        M.restrict_eRk_eq hXsub
+    rw [hRkDelete, ← hXfin.cast_ncard_eq] at hfail
+    have hRk4 : M.eRk X ≤ (4 : ℕ∞) := by
+      rw [← hRank]
+      exact M.eRk_le_eRank X
+    obtain ⟨j, hj, hjle⟩ := ENat.le_natCast_iff.mp hRk4
+    have hjleNat : j ≤ 4 := by
+      exact_mod_cast hjle
+    have hXne : X ≠ ∅ := by
+      intro hzero
+      subst X
+      simp at hfail
+    have hXnonempty : X.Nonempty :=
+      Set.nonempty_iff_ne_empty.mpr hXne
+    have hXproper : X ≠ M.E := by
+      intro hEq
+      have : e ∈ X := by
+        rw [hEq]
+        exact he
+      exact heX this
+    have hs := hStrict X hXE hXnonempty hXproper
+    rw [← hXfin.cast_ncard_eq, hj] at hs
+    have hfailNat : (4 * k + 1) * j < 4 * X.ncard := by
+      exact_mod_cast hfail
+    have hsNat : 4 * X.ncard < (4 * k + 2) * j := by
+      exact_mod_cast hs
+    have hj3 : j = 3 := by
+      interval_cases j <;> norm_num at hfailNat hsNat ⊢ <;> omega
+    subst j
+    have hXcard : X.ncard = 3 * k + 1 := by
+      norm_num at hfailNat hsNat
+      omega
+    have hXrank : M.eRk X = (3 : ℕ∞) := by
+      simpa using hj
+    have hXflat : M.IsFlat X := by
+      rw [Matroid.isFlat_iff_closure_eq]
+      apply Set.Subset.antisymm
+      · have hclSub : M.closure X ⊆ M.E :=
+          M.closure_subset_ground X
+        have hclFin : (M.closure X).Finite :=
+          hE.subset hclSub
+        by_contra hnot
+        have hss : X ⊂ M.closure X :=
+          (M.subset_closure X hXE).ssubset_of_ne hnot.symm
+        have hcardLt : X.ncard < (M.closure X).ncard :=
+          Set.ncard_lt_ncard hss hclFin
+        have hclNonempty : (M.closure X).Nonempty :=
+          hXnonempty.mono (M.subset_closure X hXE)
+        have hclProper : M.closure X ≠ M.E := by
+          intro hEq
+          have hr := M.eRk_closure_eq X
+          rw [hEq, M.eRk_ground, hRank, hXrank] at hr
+          norm_num at hr
+        have hscl := hStrict (M.closure X) hclSub hclNonempty hclProper
+        rw [← hclFin.cast_ncard_eq, M.eRk_closure_eq, hXrank] at hscl
+        have hsclNat :
+            4 * (M.closure X).ncard < (4 * k + 2) * 3 := by
+          exact_mod_cast hscl
+        omega
+      · exact M.subset_closure X hXE
+    have hXencard : X.encard = ((3 * k + 1 : ℕ) : ℕ∞) := by
+      rw [← hXfin.cast_ncard_eq, hXcard]
+    exact ⟨X, ⟨hXflat, hXrank, hXencard⟩, heX⟩
+  · rintro ⟨H, hH, heH⟩ hDenseDelete
+    have hHdel : H ⊆ (M ＼ ({e} : Set α)).E := by
+      rw [Matroid.delete_ground]
+      intro x hx
+      refine ⟨hH.subset_ground hx, ?_⟩
+      simpa only [Set.mem_singleton_iff] using
+        (fun hxe : x = e => heH (hxe ▸ hx))
+    have hdense := hDenseDelete H hHdel
+    have hRkDelete :
+        (M ＼ ({e} : Set α)).eRk H = M.eRk H := by
+      have hHsub : H ⊆ M.E \ ({e} : Set α) := by
+        simpa [Matroid.delete_ground] using hHdel
+      simpa [Matroid.delete_eq_restrict] using
+        M.restrict_eRk_eq hHsub
+    rw [hRkDelete, hH.2.1, hH.2.2] at hdense
+    norm_num at hdense
+    omega
 
 /-- The finite family of dangerous hyperplanes in a fixed rank-four
 `4k+2` instance. -/
