@@ -119,7 +119,7 @@ theorem StrictlyUniformlyDenseRatio.not_isColoop_of_integral
     exact_mod_cast h
   have hXcard : X.ncard = k * r - 1 := by
     dsimp [X]
-    rw [Set.ncard_sdiff_singleton_of_mem he hE, hEn]
+    rw [Set.ncard_sdiff_singleton_of_mem he, hEn]
   have hXnonempty : X.Nonempty := by
     rw [← Set.ncard_pos hXfin, hXcard]
     have hkr : 1 < k * r := by
@@ -140,9 +140,10 @@ theorem StrictlyUniformlyDenseRatio.not_isColoop_of_integral
       exact hNotSpan ((M.spanning_iff_eRk_le hXsub).2 hle)
     exact lt_of_not_ge hnotle
   rw [hRank] at hRankLt
-  obtain ⟨j, hj, hjlt⟩ := ENat.lt_natCast_iff.mp hRankLt
+  obtain ⟨j, hj, _hjle⟩ := ENat.le_natCast_iff.mp hRankLt.le
   have hjltNat : j < r := by
-    exact_mod_cast hjlt
+    rw [hj] at hRankLt
+    exact_mod_cast hRankLt
   have hs := hStrict X hXsub hXnonempty hXproper
   rw [← hXfin.cast_ncard_eq, hj, hXcard] at hs
   have hsNat :
@@ -195,7 +196,7 @@ theorem StrictlyUniformlyDenseRatio.delete_integral_package
       exact_mod_cast h
     have hdiff :
         (M.E \ ({e} : Set α)).ncard = k * r - 1 := by
-      rw [Set.ncard_sdiff_singleton_of_mem he hE, hEn]
+      rw [Set.ncard_sdiff_singleton_of_mem he, hEn]
     rw [← (hE.sdiff).cast_ncard_eq, hdiff]
   refine ⟨hdelCard, ?_, ?_⟩
   · simpa [hRank] using hdelRank
