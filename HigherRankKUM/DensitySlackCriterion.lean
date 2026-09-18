@@ -17,7 +17,7 @@ If the rank layer is empty, the value is zero.
 This is the `m_j` profile used in the density-slack deletion criterion. -/
 def maxCardAtRank (M : Matroid α) [M.Finite] (j : ℕ) : ℕ :=
   ((M.ground_finite.toFinset.powerset.filter
-      (fun S => M.eRk (S : Set α) = (j : ℕ∞))).sup Finset.card)
+      (fun S : Finset α => M.eRk (S : Set α) = (j : ℕ∞))).sup Finset.card)
 
 /-- Integer density slack
 `s_j = n*j - r*m_j`, where `m_j` is the largest size of a rank-`j`
@@ -34,7 +34,7 @@ theorem ncard_le_maxCardAtRank
   have hmem :
       hXfin.toFinset ∈
         M.ground_finite.toFinset.powerset.filter
-          (fun S => M.eRk (S : Set α) = (j : ℕ∞)) := by
+          (fun S : Finset α => M.eRk (S : Set α) = (j : ℕ∞)) := by
     simp only [Finset.mem_filter, Finset.mem_powerset,
       Set.Finite.coe_toFinset, Set.Finite.mem_toFinset]
     exact ⟨hX, hRk⟩
@@ -67,7 +67,7 @@ theorem mul_maxCardAtRank_le_of_uniformlyDenseRatio
     r * maxCardAtRank M j ≤ n * j := by
   let layer :=
     M.ground_finite.toFinset.powerset.filter
-      (fun S => M.eRk (S : Set α) = (j : ℕ∞))
+      (fun S : Finset α => M.eRk (S : Set α) = (j : ℕ∞))
   by_cases hempty : layer = ∅
   · have hmzero : maxCardAtRank M j = 0 := by
       simp [maxCardAtRank, layer, hempty]
@@ -78,7 +78,7 @@ theorem mul_maxCardAtRank_le_of_uniformlyDenseRatio
       Finset.sup_mem_of_nonempty (f := Finset.card) hnonempty
     have hSfilter :
         S ∈ M.ground_finite.toFinset.powerset.filter
-          (fun T => M.eRk (T : Set α) = (j : ℕ∞)) := by
+          (fun T : Finset α => M.eRk (T : Set α) = (j : ℕ∞)) := by
       simpa [layer] using hSmem
     have hSsub : (S : Set α) ⊆ M.E := by
       simpa using (Finset.mem_filter.1 hSfilter).1
@@ -127,7 +127,7 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
   · intro hdel j hjr
     let layer :=
       M.ground_finite.toFinset.powerset.filter
-        (fun S => M.eRk (S : Set α) = (j : ℕ∞))
+        (fun S : Finset α => M.eRk (S : Set α) = (j : ℕ∞))
     by_cases hempty : layer = ∅
     · have hmzero : maxCardAtRank M j = 0 := by
         simp [maxCardAtRank, layer, hempty]
@@ -141,7 +141,7 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
         Finset.sup_mem_of_nonempty (f := Finset.card) hnonempty
       have hSfilter :
           S ∈ M.ground_finite.toFinset.powerset.filter
-            (fun T => M.eRk (T : Set α) = (j : ℕ∞)) := by
+            (fun T : Finset α => M.eRk (T : Set α) = (j : ℕ∞)) := by
         simpa [layer] using hSmem
       have hSsub : (S : Set α) ⊆ M.E := by
         simpa using (Finset.mem_filter.1 hSfilter).1
@@ -186,8 +186,9 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
         exact_mod_cast hd
       have hnSplit : n * j = (n - 1) * j + j := by
         have hnEq : n = (n - 1) + 1 := by omega
-        rw [hnEq]
-        ring
+        calc
+          n * j = ((n - 1) + 1) * j := by rw [hnEq]
+          _ = (n - 1) * j + j := by simp [Nat.add_mul]
       rw [hnSplit]
       exact Nat.add_le_add_right hdNat j
   · intro hprof e heE X hXdel
@@ -236,8 +237,8 @@ theorem all_deletions_uniformlyDenseRatio_iff_profile
           X.ncard ≤ (M.E \ ({e} : Set α)).ncard :=
             Set.ncard_le_ncard hXsub M.ground_finite.sdiff
           _ = n - 1 := hDelCard
-      have hNat : r * X.ncard ≤ (n - 1) * r :=
-        Nat.mul_le_mul_left r hXcard
+      have hNat : r * X.ncard ≤ (n - 1) * r := by
+        simpa [Nat.mul_comm] using (Nat.mul_le_mul_left r hXcard)
       exact_mod_cast hNat
 
 /-- Exact arbitrary-rank deletion-slack criterion in the form used in the
