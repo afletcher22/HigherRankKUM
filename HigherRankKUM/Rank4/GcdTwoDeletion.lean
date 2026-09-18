@@ -1,5 +1,6 @@
 import HigherRankKUM.StrictDensity
 import Mathlib.Data.Set.Card
+import Mathlib.Data.Set.Card.Arithmetic
 import Mathlib.Data.Set.Finite.Powerset
 import Mathlib.Combinatorics.Matroid.Minor.Delete
 
@@ -528,6 +529,157 @@ theorem dangerousHyperplanes_ncard_le_three
     exact_mod_cast h
   rw [hC0123card, hEn] at hUpper
   omega
+
+
+/-- Ground elements whose deletion fails the `(4k+1)/4` density inequality. -/
+def badDeletionElements (M : Matroid α) (k : ℕ) : Set α :=
+  {e | e ∈ M.E ∧
+    ¬ UniformlyDenseRatio (M ＼ ({e} : Set α)) (4 * k + 1) 4}
+
+/-- Ground elements whose deletion preserves the `(4k+1)/4` density
+inequality. -/
+def goodDeletionElements (M : Matroid α) (k : ℕ) : Set α :=
+  {e | e ∈ M.E ∧
+    UniformlyDenseRatio (M ＼ ({e} : Set α)) (4 * k + 1) 4}
+
+/-- The bad deletion elements are exactly the union of the dangerous
+hyperplane complements. -/
+theorem badDeletionElements_eq_biUnion_dangerous
+    {M : Matroid α} {k : ℕ}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4) :
+    badDeletionElements M k =
+      ⋃ H ∈ dangerousHyperplanes M k, M.E \ H := by
+  ext e
+  constructor
+  · rintro ⟨heE, hbad⟩
+    obtain ⟨H, hH, heH⟩ :=
+      (not_uniformlyDenseRatio_delete_iff_exists_dangerous
+        hE hRank hStrict heE).1 hbad
+    exact Set.mem_iUnion.2 ⟨H,
+      Set.mem_iUnion.2 ⟨hH, ⟨heE, heH⟩⟩⟩
+  · intro heUnion
+    obtain ⟨H, heUnion⟩ := Set.mem_iUnion.1 heUnion
+    obtain ⟨hH, heComp⟩ := Set.mem_iUnion.1 heUnion
+    refine ⟨heComp.1, ?_⟩
+    exact
+      (not_uniformlyDenseRatio_delete_iff_exists_dangerous
+        hE hRank hStrict heComp.1).2 ⟨H, hH, heComp.2⟩
+
+/-- The number of bad deletion elements is exactly
+`t(k+1)`, where `t` is the number of dangerous hyperplanes. -/
+theorem badDeletionElements_ncard_eq
+    {M : Matroid α} {k : ℕ}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4) :
+    (badDeletionElements M k).ncard =
+      (dangerousHyperplanes M k).ncard * (k + 1) := by
+  rw [badDeletionElements_eq_biUnion_dangerous hE hRank hStrict]
+  have hDfin : (dangerousHyperplanes M k).Finite :=
+    dangerousHyperplanes_finite hE
+  have hCompFin :
+      ∀ H ∈ dangerousHyperplanes M k, (M.E \ H).Finite := by
+    intro H hH
+    exact hE.sdiff
+  have hPair :
+      (dangerousHyperplanes M k).PairwiseDisjoint
+        (fun H => M.E \ H) := by
+    intro H hH K hK hne
+    exact dangerous_complements_disjoint
+      hE hRank hEcard hStrict hH hK hne
+  rw [hDfin.ncard_biUnion hCompFin hPair]
+  calc
+    (∑ᶠ H ∈ dangerousHyperplanes M k, (M.E \ H).ncard)
+        = ∑ᶠ H ∈ dangerousHyperplanes M k, 1 * (k + 1) := by
+            apply finsum_mem_congr rfl
+            intro H hH
+            rw [dangerous_complement_ncard_eq hE hEcard hH]
+            simp
+    _ = (∑ᶠ H ∈ dangerousHyperplanes M k, 1) * (k + 1) := by
+          rw [finsum_mem_mul]
+    _ = (dangerousHyperplanes M k).ncard * (k + 1) := by
+          rw [Set.finsum_one]
+
+/-- Good deletion elements are the ground-set complement of the bad ones. -/
+theorem goodDeletionElements_eq_sdiff_bad
+    (M : Matroid α) (k : ℕ) :
+    goodDeletionElements M k = M.E \ badDeletionElements M k := by
+  classical
+  ext e
+  simp [goodDeletionElements, badDeletionElements]
+
+/-- Exact good-deletion count in the strict rank-four `4k+2` case. -/
+theorem goodDeletionElements_ncard_eq
+    {M : Matroid α} {k : ℕ}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4) :
+    (goodDeletionElements M k).ncard =
+      (4 * k + 2) -
+        (dangerousHyperplanes M k).ncard * (k + 1) := by
+  rw [goodDeletionElements_eq_sdiff_bad]
+  have hBadSub : badDeletionElements M k ⊆ M.E := by
+    intro e he
+    exact he.1
+  have hEn : M.E.ncard = 4 * k + 2 := by
+    have h := hEcard
+    rw [← hE.cast_ncard_eq] at h
+    exact_mod_cast h
+  rw [Set.ncard_sdiff' hBadSub hE, hEn,
+    badDeletionElements_ncard_eq hE hRank hEcard hStrict]
+
+/-- Quantitative deletion theorem: at least `k-1` ground elements have a
+uniformly dense deletion. The bound is sharp in the binary family recorded in
+the research ledger. -/
+theorem goodDeletionElements_ncard_ge_k_sub_one
+    {M : Matroid α} {k : ℕ}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4) :
+    k - 1 ≤ (goodDeletionElements M k).ncard := by
+  rw [goodDeletionElements_ncard_eq hE hRank hEcard hStrict]
+  have ht :
+      (dangerousHyperplanes M k).ncard ≤ 3 :=
+    dangerousHyperplanes_ncard_le_three hE hRank hEcard hStrict
+  have hmul :
+      (dangerousHyperplanes M k).ncard * (k + 1) ≤
+        3 * (k + 1) :=
+    Nat.mul_le_mul_right (k + 1) ht
+  have hmono :=
+    Nat.sub_le_sub_left hmul (4 * k + 2)
+  have hcalc : (4 * k + 2) - 3 * (k + 1) = k - 1 := by
+    omega
+  rw [hcalc] at hmono
+  exact hmono
+
+/-- For `k ≥ 2`, a strict rank-four matroid on `4k+2` elements has at
+least one deletion preserving uniform density at the new ratio
+`(4k+1)/4`. -/
+theorem exists_good_deletion_of_two_le
+    {M : Matroid α} {k : ℕ}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hk : 2 ≤ k) :
+    ∃ e ∈ M.E,
+      UniformlyDenseRatio (M ＼ ({e} : Set α)) (4 * k + 1) 4 := by
+  have hGoodFin : (goodDeletionElements M k).Finite := by
+    apply hE.subset
+    intro e he
+    exact he.1
+  have hlower :=
+    goodDeletionElements_ncard_ge_k_sub_one hE hRank hEcard hStrict
+  have hpos : 0 < (goodDeletionElements M k).ncard := by
+    omega
+  obtain ⟨e, heGood⟩ :=
+    (Set.ncard_pos hGoodFin).1 hpos
+  exact ⟨e, heGood.1, heGood.2⟩
 
 end
 
