@@ -86,6 +86,133 @@ theorem exists_center_with_two_basis_partners
       exact hvw.isBase_of_eRk_ge (by simp) (by rw [hRank, hRk])
 
 
+
+/-- Two loopless rank-two matroids on the same ground set have a common base.
+
+The proof is the parallel-class argument used informally in the `t=1`
+dangerous-hyperplane route, stated representation-free. -/
+theorem exists_common_base
+    (N₁ N₂ : Matroid α)
+    (hGround : N₁.E = N₂.E)
+    (hRank₁ : N₁.eRank = (2 : ℕ∞))
+    (hRank₂ : N₂.eRank = (2 : ℕ∞))
+    (hLoopless₁ : N₁.Loopless)
+    (hLoopless₂ : N₂.Loopless) :
+    ∃ B : Set α, N₁.IsBase B ∧ N₂.IsBase B := by
+  letI : N₁.Loopless := hLoopless₁
+  letI : N₂.Loopless := hLoopless₂
+  by_contra hcommon
+  push_neg at hcommon
+  obtain ⟨B, hB₁⟩ := N₁.exists_isBase
+  have hBcard : B.encard = (2 : ℕ∞) := by
+    rw [hB₁.encard_eq_eRank, hRank₁]
+  obtain ⟨a, b, hab, hBpair⟩ := Set.encard_eq_two.mp hBcard
+  have hAB₁ : N₁.IsBase ({a, b} : Set α) := by
+    rwa [← hBpair]
+  have haE₁ : a ∈ N₁.E := hAB₁.subset_ground (by simp)
+  have hbE₁ : b ∈ N₁.E := hAB₁.subset_ground (by simp)
+  have haE₂ : a ∈ N₂.E := by simpa [← hGround] using haE₁
+  have hbE₂ : b ∈ N₂.E := by simpa [← hGround] using hbE₁
+  have ha₁ : N₁.IsNonloop a := Matroid.isNonloop_of_loopless haE₁
+  have hb₁ : N₁.IsNonloop b := Matroid.isNonloop_of_loopless hbE₁
+  have ha₂ : N₂.IsNonloop a := Matroid.isNonloop_of_loopless haE₂
+  have hb₂ : N₂.IsNonloop b := Matroid.isNonloop_of_loopless hbE₂
+  have hAB₂not : ¬ N₂.IsBase ({a, b} : Set α) :=
+    hcommon ({a, b} : Set α) hAB₁
+  have hAB₂dep : ¬ N₂.Indep ({a, b} : Set α) := by
+    intro hI
+    apply hAB₂not
+    exact hI.isBase_of_eRk_ge (by simp) (by
+      rw [hRank₂, hI.eRk_eq_encard, Set.encard_pair hab])
+  have hABcl₂ :
+      N₂.closure ({a} : Set α) = N₂.closure ({b} : Set α) :=
+    (ha₂.closure_eq_closure_iff_eq_or_dep hb₂).2 (Or.inr hAB₂dep)
+  have hAll : N₂.E ⊆ N₂.closure ({a} : Set α) := by
+    intro x hxE₂
+    have hxE₁ : x ∈ N₁.E := by simpa [hGround] using hxE₂
+    have hx₁ : N₁.IsNonloop x := Matroid.isNonloop_of_loopless hxE₁
+    have hx₂ : N₂.IsNonloop x := Matroid.isNonloop_of_loopless hxE₂
+    by_cases hxa : x = a
+    · subst x
+      exact N₂.mem_closure_self a
+    have haxPairNe : a ≠ x := hxa.symm
+    by_cases hax₁ : N₁.Indep ({a, x} : Set α)
+    · have haxBase₁ : N₁.IsBase ({a, x} : Set α) :=
+        hax₁.isBase_of_eRk_ge (by simp) (by
+          rw [hRank₁, hax₁.eRk_eq_encard, Set.encard_pair haxPairNe])
+      have haxBase₂not : ¬ N₂.IsBase ({a, x} : Set α) :=
+        hcommon ({a, x} : Set α) haxBase₁
+      have hax₂ : ¬ N₂.Indep ({a, x} : Set α) := by
+        intro hI
+        apply haxBase₂not
+        exact hI.isBase_of_eRk_ge (by simp) (by
+          rw [hRank₂, hI.eRk_eq_encard, Set.encard_pair haxPairNe])
+      have hcl :
+          N₂.closure ({a} : Set α) = N₂.closure ({x} : Set α) :=
+        (ha₂.closure_eq_closure_iff_eq_or_dep hx₂).2 (Or.inr hax₂)
+      rw [hcl]
+      exact N₂.mem_closure_self x
+    · have hAXcl₁ :
+          N₁.closure ({a} : Set α) = N₁.closure ({x} : Set α) :=
+        (ha₁.closure_eq_closure_iff_eq_or_dep hx₁).2 (Or.inr hax₁)
+      have hbx₁ : N₁.Indep ({b, x} : Set α) := by
+        by_contra hbx₁
+        have hBXcl₁ :
+            N₁.closure ({b} : Set α) = N₁.closure ({x} : Set α) :=
+          (hb₁.closure_eq_closure_iff_eq_or_dep hx₁).2 (Or.inr hbx₁)
+        have hABcl₁ :
+            N₁.closure ({a} : Set α) = N₁.closure ({b} : Set α) :=
+          hAXcl₁.trans hBXcl₁.symm
+        rcases (ha₁.closure_eq_closure_iff_eq_or_dep hb₁).1 hABcl₁ with
+          habEq | hdep
+        · exact hab habEq
+        · exact hdep hAB₁.indep
+      have hbxNe : b ≠ x := by
+        intro h
+        subst x
+        exact hax₁ (by simpa [Set.pair_comm] using hAB₁.indep)
+      have hbxBase₁ : N₁.IsBase ({b, x} : Set α) :=
+        hbx₁.isBase_of_eRk_ge (by simp) (by
+          rw [hRank₁, hbx₁.eRk_eq_encard, Set.encard_pair hbxNe])
+      have hbxBase₂not : ¬ N₂.IsBase ({b, x} : Set α) :=
+        hcommon ({b, x} : Set α) hbxBase₁
+      have hbx₂ : ¬ N₂.Indep ({b, x} : Set α) := by
+        intro hI
+        apply hbxBase₂not
+        exact hI.isBase_of_eRk_ge (by simp) (by
+          rw [hRank₂, hI.eRk_eq_encard, Set.encard_pair hbxNe])
+      have hBXcl₂ :
+          N₂.closure ({b} : Set α) = N₂.closure ({x} : Set α) :=
+        (hb₂.closure_eq_closure_iff_eq_or_dep hx₂).2 (Or.inr hbx₂)
+      have hAXcl₂ :
+          N₂.closure ({a} : Set α) = N₂.closure ({x} : Set α) :=
+        hABcl₂.trans hBXcl₂
+      rw [hAXcl₂]
+      exact N₂.mem_closure_self x
+  have hClosure : N₂.closure ({a} : Set α) = N₂.E :=
+    Set.Subset.antisymm (N₂.closure_subset_ground {a}) hAll
+  have hr := N₂.eRk_closure_eq ({a} : Set α)
+  rw [hClosure, N₂.eRk_ground, hRank₂, ha₂.eRk_eq] at hr
+  norm_num at hr
+
+/-- Pair-valued form of `exists_common_base`. -/
+theorem exists_common_pair_base
+    (N₁ N₂ : Matroid α)
+    (hGround : N₁.E = N₂.E)
+    (hRank₁ : N₁.eRank = (2 : ℕ∞))
+    (hRank₂ : N₂.eRank = (2 : ℕ∞))
+    (hLoopless₁ : N₁.Loopless)
+    (hLoopless₂ : N₂.Loopless) :
+    ∃ a b : α, a ≠ b ∧
+      N₁.IsBase ({a, b} : Set α) ∧
+      N₂.IsBase ({a, b} : Set α) := by
+  obtain ⟨B, hB₁, hB₂⟩ :=
+    exists_common_base N₁ N₂ hGround hRank₁ hRank₂ hLoopless₁ hLoopless₂
+  have hBcard : B.encard = (2 : ℕ∞) := by
+    rw [hB₁.encard_eq_eRank, hRank₁]
+  obtain ⟨a, b, hab, rfl⟩ := Set.encard_eq_two.mp hBcard
+  exact ⟨a, b, hab, hB₁, hB₂⟩
+
 /-- Two loopless rank-two matroids on the same finite ground set of size at
 least three admit a three-element path: the first edge is a basis of `N₁`
 and the second edge is a basis of `N₂`.
