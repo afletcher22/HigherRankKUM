@@ -224,15 +224,23 @@ def audit(n):
         t = dangerous_count(state)
         counts[f'dangerous_{t}'] += 1
         score = phi(state)
-        zero_boundaries = {i for i in range(n)
-                           if EDGE[state[i]][state[(i+2) % n]] == 0}
+        distance_two_scores = [
+            EDGE[state[i]][state[(i+2) % n]] for i in range(n)
+        ]
+        # A repair modifying blocks i,i+1 is closure-free exactly when both
+        # distance-two closure contributions meeting that repair vanish:
+        # EDGE[i-1] (blocks i-1,i+1) and EDGE[i] (blocks i,i+2).
+        closure_free_boundaries = {
+            i for i in range(n)
+            if distance_two_scores[(i-1) % n] == 0 and distance_two_scores[i] == 0
+        }
         if t == 0:
             counts['t0_states'] += 1
-            counts[f't0_zero_boundaries_{len(zero_boundaries)}'] += 1
-            if not zero_boundaries:
-                counts['t0_without_zero_boundary'] += 1
+            counts[f't0_closure_free_boundaries_{len(closure_free_boundaries)}'] += 1
+            if not closure_free_boundaries:
+                counts['t0_without_closure_free_boundary'] += 1
         direct = ascent = cross_productive = False
-        zero_cross_escape = False
+        closure_free_cross_escape = False
         first_cross_escape = None
         for i, target in moves(state):
             escape = not bad(target)
@@ -245,7 +253,9 @@ def audit(n):
             ascent |= gain
             cross = target[i] != state[(i+1) % n]
             cross_productive |= ((escape or gain) and cross)
-            zero_cross_escape |= (escape and cross and i in zero_boundaries)
+            closure_free_cross_escape |= (
+                escape and cross and i in closure_free_boundaries
+            )
             if escape:
                 has_slack = any(relation(target[j], target[(j+1) % n], target[(j+2) % n])
                                 not in (6, 9) for j in range(n))
@@ -259,8 +269,8 @@ def audit(n):
         counts[kind] += 1
         if not cross_productive:
             counts['no_productive_cross'] += 1
-        if t == 0 and not zero_cross_escape:
-            counts['t0_without_zero_cross_escape'] += 1
+        if t == 0 and not closure_free_cross_escape:
+            counts['t0_without_closure_free_cross_escape'] += 1
         if first_cross_escape is not None:
             i, target = first_cross_escape
             order = verify_positive_repair(state, i, target)
@@ -283,20 +293,26 @@ def audit(n):
     assert counts['no_productive_cross'] == 0
     assert counts['independently_checked_cross_escape_CBOs'] == expected[0]
     assert {t: counts[f'dangerous_{t}'] for t in range(4)} == expected_dangerous
-    assert counts['t0_without_zero_boundary'] == 0
-    assert counts['t0_without_zero_cross_escape'] == 0
+    if n == 5:
+        assert counts['t0_states'] == 0
+    if n == 7:
+        assert counts['t0_states'] == 10760
+        assert counts['t0_without_closure_free_boundary'] == 224
+        assert counts['t0_without_closure_free_cross_escape'] == 448
     return {'complete': True, 'N': n,
             'dangerous_hyperplane_count_histogram': {
                 str(t): counts[f'dangerous_{t}'] for t in range(4)
                 if counts[f'dangerous_{t}']
             },
-            't0_zero_boundary_count_histogram': {
-                key.removeprefix('t0_zero_boundaries_'): value
+            't0_closure_free_boundary_count_histogram': {
+                key.removeprefix('t0_closure_free_boundaries_'): value
                 for key, value in sorted(counts.items())
-                if key.startswith('t0_zero_boundaries_') and value
+                if key.startswith('t0_closure_free_boundaries_') and value
             },
-            't0_without_zero_boundary': counts['t0_without_zero_boundary'],
-            't0_without_zero_cross_escape': counts['t0_without_zero_cross_escape'],
+            't0_without_closure_free_boundary':
+                counts['t0_without_closure_free_boundary'],
+            't0_without_closure_free_cross_escape':
+                counts['t0_without_closure_free_cross_escape'],
             'counts': {key: counts[key] for key in
                        ('unorientable', 'strict', 'not_strict', 'both', 'escape_only',
                         'ascent_only', 'FAIL', 'no_productive_cross',
