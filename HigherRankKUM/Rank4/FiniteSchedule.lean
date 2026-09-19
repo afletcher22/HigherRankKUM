@@ -41,7 +41,7 @@ theorem exists_fin_equiv_with_three_prescribed
   have hval : Function.Injective val := by
     intro i j hij
     fin_cases i <;> fin_cases j <;>
-      simp [val, hqp, hqd, hpd] at hij ⊢
+      simp_all [val]
   let target : Fin 3 → Fin (k + 1) := fun i => e₀.symm (val i)
   have htarget : Function.Injective target :=
     e₀.symm.injective.comp hval
@@ -131,7 +131,6 @@ def t3RegroupEquiv (k : ℕ) (hk : 2 ≤ k) :
     · refine ⟨Sum.inl (g, 3), ?_⟩
       simp [f, t3PrefixSlot]
   · simp [T3Slots]
-    omega
 
 /-- The canonical index decomposition of the t=3 schedule into ordinary
 ABCG blocks followed by six tail positions. -/
