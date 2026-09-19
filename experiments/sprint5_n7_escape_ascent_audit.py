@@ -178,6 +178,15 @@ FLATS = tuple((s, r) for r in (1, 2, 3)
                                if rank(v) == r}, key=lambda s: tuple(sorted(s))))
 
 
+def dangerous_count(state):
+    """Number of rank-three flats at the sharp 4k+2 deletion threshold."""
+    n = len(state)
+    k = (n - 1) // 2
+    counts = Counter(x for p in state for x in PAIRS[p])
+    return sum(1 for space, r in FLATS
+               if r == 3 and sum(counts[x] for x in space) == 3*k + 1)
+
+
 def forced_cycles(n):
     """No randomized sampling: each normalized ordered pair cycle once."""
     assert n >= 5 and n % 2 == 1
@@ -212,8 +221,18 @@ def audit(n):
             counts['not_strict'] += 1
             continue
         counts['strict'] += 1
+        t = dangerous_count(state)
+        counts[f'dangerous_{t}'] += 1
         score = phi(state)
+        zero_boundaries = {i for i in range(n)
+                           if EDGE[state[i]][state[(i+2) % n]] == 0}
+        if t == 0:
+            counts['t0_states'] += 1
+            counts[f't0_zero_boundaries_{len(zero_boundaries)}'] += 1
+            if not zero_boundaries:
+                counts['t0_without_zero_boundary'] += 1
         direct = ascent = cross_productive = False
+        zero_cross_escape = False
         first_cross_escape = None
         for i, target in moves(state):
             escape = not bad(target)
@@ -226,6 +245,7 @@ def audit(n):
             ascent |= gain
             cross = target[i] != state[(i+1) % n]
             cross_productive |= ((escape or gain) and cross)
+            zero_cross_escape |= (escape and cross and i in zero_boundaries)
             if escape:
                 has_slack = any(relation(target[j], target[(j+1) % n], target[(j+2) % n])
                                 not in (6, 9) for j in range(n))
@@ -239,6 +259,8 @@ def audit(n):
         counts[kind] += 1
         if not cross_productive:
             counts['no_productive_cross'] += 1
+        if t == 0 and not zero_cross_escape:
+            counts['t0_without_zero_cross_escape'] += 1
         if first_cross_escape is not None:
             i, target = first_cross_escape
             order = verify_positive_repair(state, i, target)
@@ -250,13 +272,31 @@ def audit(n):
         if kind == 'FAIL':
             raise AssertionError(('escape-or-ascent counterexample', state))
     expected = {5: (80, 80, 0), 7: (25152, 24424, 728)}[n]
+    expected_dangerous = {
+        5: {0: 0, 1: 40, 2: 40, 3: 0},
+        7: {0: 10760, 1: 12488, 2: 1848, 3: 56},
+    }[n]
     assert counts['unorientable'] == counts['strict'] == expected[0]
     assert counts['both'] == expected[1]
     assert counts['escape_only'] == expected[2]
     assert counts['ascent_only'] == counts['FAIL'] == counts['not_strict'] == 0
     assert counts['no_productive_cross'] == 0
     assert counts['independently_checked_cross_escape_CBOs'] == expected[0]
+    assert {t: counts[f'dangerous_{t}'] for t in range(4)} == expected_dangerous
+    assert counts['t0_without_zero_boundary'] == 0
+    assert counts['t0_without_zero_cross_escape'] == 0
     return {'complete': True, 'N': n,
+            'dangerous_hyperplane_count_histogram': {
+                str(t): counts[f'dangerous_{t}'] for t in range(4)
+                if counts[f'dangerous_{t}']
+            },
+            't0_zero_boundary_count_histogram': {
+                key.removeprefix('t0_zero_boundaries_'): value
+                for key, value in sorted(counts.items())
+                if key.startswith('t0_zero_boundaries_') and value
+            },
+            't0_without_zero_boundary': counts['t0_without_zero_boundary'],
+            't0_without_zero_cross_escape': counts['t0_without_zero_cross_escape'],
             'counts': {key: counts[key] for key in
                        ('unorientable', 'strict', 'not_strict', 'both', 'escape_only',
                         'ascent_only', 'FAIL', 'no_productive_cross',
