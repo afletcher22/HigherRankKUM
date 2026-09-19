@@ -131,6 +131,7 @@ def t3RegroupEquiv (k : ℕ) (hk : 2 ≤ k) :
     · refine ⟨Sum.inl (g, 3), ?_⟩
       simp [f, t3PrefixSlot]
   · simp [T3Slots]
+    omega
 
 /-- The canonical index decomposition of the t=3 schedule into ordinary
 ABCG blocks followed by six tail positions. -/
@@ -155,7 +156,6 @@ def t3IndexEquiv (k : ℕ) (hk : 2 ≤ k) :
       ⟨r.val + 4 * j.val, by omega⟩ := by
   apply Fin.ext
   simp [t3BlockTailEquiv, finProdFinEquiv]
-  omega
 
 @[simp] theorem t3BlockTailEquiv_symm_tail
     (k : ℕ) (hk : 2 ≤ k) (r : Fin 6) :
