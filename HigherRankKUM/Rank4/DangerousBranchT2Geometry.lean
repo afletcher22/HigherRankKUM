@@ -30,7 +30,10 @@ theorem isBase_of_rankThree_basis_and_outside
     rwa [hclI]
   have hInd : M.Indep (insert e I) :=
     (hI.indep.insert_indep_iff_of_notMem heI).2 ⟨heE, hecl⟩
-  have hIfin : I.Finite := hI.indep.finite
+  have hHrkfin : M.IsRkFinite H := by
+    rw [← M.eRk_ne_top_iff, hHrank]
+    simp
+  have hIfin : I.Finite := hI.finite_of_isRkFinite hHrkfin
   have hIrank : M.eRk I = (3 : ℕ∞) := by
     rw [hI.eRk_eq_eRk, hHrank]
   have hRankInsert : M.eRk (insert e I) = (4 : ℕ∞) := by
@@ -70,7 +73,9 @@ theorem dangerous_two_core_pair_sides_isBase
     intro x hx
     rcases hx with rfl | hx
     · exact hg₀
-    · simpa using hg₁
+    · have hxg₁ : x = g₁ := by simpa using hx
+      subst x
+      exact hg₁
   have hpairRank : M.eRk ({g₀, g₁} : Set α) = (2 : ℕ∞) := by
     rw [hpair.eRk_eq_encard, Set.encard_pair hgne]
   have haH₁ : a ∈ H₁ :=
