@@ -362,7 +362,12 @@ theorem cyclicBasisOrder_of_pair_orientation
   change M.IsBase
     (cyclicWindow 4 (Nat.mul_pos (by omega) hN) (orientedPairOrder A o)
       (blockPosition 2 N i d))
-  fin_cases d
+  have hd : d = (0 : Fin 2) ∨ d = (1 : Fin 2) := by
+    have hv : d.val = 0 ∨ d.val = 1 := by omega
+    rcases hv with h | h
+    · exact Or.inl (Fin.ext h)
+    · exact Or.inr (Fin.ext h)
+  rcases hd with rfl | rfl
   · rw [cyclicWindow_orientedPairOrder_aligned A h2N o i]
     exact A.alignedBase i
   · rw [cyclicWindow_orientedPairOrder_shifted A h2N o i]
