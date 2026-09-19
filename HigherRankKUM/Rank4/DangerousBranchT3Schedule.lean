@@ -13,6 +13,114 @@ noncomputable section
 
 variable {α : Type*}
 
+/-- Every window beginning before the six-element tail of the t=3 pattern
+is ordinary, provided the prefix follows the repeating A,B,C,G class pattern.
+
+The hypothesis is deliberately stated as a residue-class invariant.  It
+covers all complete ABCG blocks and the first three tail entries pA,pB,pC,
+which continue residues 0,1,2 after the final G. -/
+theorem dangerous_triple_ordinary_prefix_windows
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂)
+    (σ : Fin (4 * k + 2) ≃ M.E)
+    (hA : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 0 →
+      (σ t : α) ∈ M.E \ H₀)
+    (hB : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 1 →
+      (σ t : α) ∈ M.E \ H₁)
+    (hC : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 2 →
+      (σ t : α) ∈ M.E \ H₂)
+    (hG : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 3 →
+      (σ t : α) ∈ (H₀ ∩ H₁) ∩ H₂) :
+    let hn : 0 < 4 * k + 2 := by omega
+    ∀ i : Fin (4 * k + 2), i.val < 4 * (k - 1) →
+      M.IsBase (cyclicWindow 4 hn σ i) := by
+  let hn : 0 < 4 * k + 2 := by omega
+  intro i hi
+  have hi3 : i.val + 3 < 4 * k + 2 := by omega
+  let i1 : Fin (4 * k + 2) := ⟨i.val + 1, by omega⟩
+  let i2 : Fin (4 * k + 2) := ⟨i.val + 2, by omega⟩
+  let i3 : Fin (4 * k + 2) := ⟨i.val + 3, by omega⟩
+  have hcy1 :
+      cyclicIndex (4 * k + 2) hn i 1 = i1 := by
+    simpa [i1] using
+      cyclicIndex_eq_mk_add_of_lt (4 * k + 2) hn i 1 (by omega)
+  have hcy2 :
+      cyclicIndex (4 * k + 2) hn i 2 = i2 := by
+    simpa [i2] using
+      cyclicIndex_eq_mk_add_of_lt (4 * k + 2) hn i 2 (by omega)
+  have hcy3 :
+      cyclicIndex (4 * k + 2) hn i 3 = i3 := by
+    simpa [i3] using
+      cyclicIndex_eq_mk_add_of_lt (4 * k + 2) hn i 3 hi3
+  rw [cyclicWindow_four_eq, hcy1, hcy2, hcy3]
+
+  have hrem : i.val % 4 < 4 := Nat.mod_lt _ (by omega)
+  interval_cases hr : i.val % 4
+  · have ha : (σ i : α) ∈ M.E \ H₀ :=
+      hA i (by omega) hr
+    have hb : (σ i1 : α) ∈ M.E \ H₁ :=
+      hB i1 (by simp [i1]; omega) (by simp [i1]; omega)
+    have hc : (σ i2 : α) ∈ M.E \ H₂ :=
+      hC i2 (by simp [i2]; omega) (by simp [i2]; omega)
+    have hg : (σ i3 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
+      hG i3 (by simp [i3]; omega) (by simp [i3]; omega)
+    have hbase := dangerous_triple_one_each_isBase
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      hg ha hb hc
+    convert hbase using 1 <;> ext x <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+  · have hb : (σ i : α) ∈ M.E \ H₁ :=
+      hB i (by omega) hr
+    have hc : (σ i1 : α) ∈ M.E \ H₂ :=
+      hC i1 (by simp [i1]; omega) (by simp [i1]; omega)
+    have hg : (σ i2 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
+      hG i2 (by simp [i2]; omega) (by simp [i2]; omega)
+    have ha : (σ i3 : α) ∈ M.E \ H₀ :=
+      hA i3 (by simp [i3]; omega) (by simp [i3]; omega)
+    have hbase := dangerous_triple_one_each_isBase
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      hg ha hb hc
+    convert hbase using 1 <;> ext x <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+  · have hc : (σ i : α) ∈ M.E \ H₂ :=
+      hC i (by omega) hr
+    have hg : (σ i1 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
+      hG i1 (by simp [i1]; omega) (by simp [i1]; omega)
+    have ha : (σ i2 : α) ∈ M.E \ H₀ :=
+      hA i2 (by simp [i2]; omega) (by simp [i2]; omega)
+    have hb : (σ i3 : α) ∈ M.E \ H₁ :=
+      hB i3 (by simp [i3]; omega) (by simp [i3]; omega)
+    have hbase := dangerous_triple_one_each_isBase
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      hg ha hb hc
+    convert hbase using 1 <;> ext x <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+  · have hg : (σ i : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
+      hG i (by omega) hr
+    have ha : (σ i1 : α) ∈ M.E \ H₀ :=
+      hA i1 (by simp [i1]; omega) (by simp [i1]; omega)
+    have hb : (σ i2 : α) ∈ M.E \ H₁ :=
+      hB i2 (by simp [i2]; omega) (by simp [i2]; omega)
+    have hc : (σ i3 : α) ∈ M.E \ H₂ :=
+      hC i3 (by simp [i3]; omega) (by simp [i3]; omega)
+    have hbase := dangerous_triple_one_each_isBase
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      hg ha hb hc
+    convert hbase using 1 <;> ext x <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
 /-- The six exceptional windows of the explicit t=3 schedule are bases.
 
 The schedule is normalized so the first ordinary ABC entries are
