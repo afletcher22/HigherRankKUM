@@ -169,6 +169,167 @@ theorem dangerous_two_core_inter_complement_closure_ncard_le
   dsimp [B, G, A] at hSubCard ⊢
   omega
 
+
+/-- In a rank-two side, any core element outside the side closure has a
+two-element side witness that joins it to a basis of the containing dangerous
+hyperplane. -/
+theorem dangerous_two_rankTwo_side_good_of_not_mem_closure
+    {M : Matroid α} {k : ℕ} {H K : Set α} {g : α}
+    (hk : 1 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (hK : DangerousHyperplane M k K)
+    (hne : H ≠ K)
+    (hg : g ∈ H ∩ K)
+    (hArank : M.eRk (M.E \ H) = (2 : ℕ∞))
+    (hgcl : g ∉ M.closure (M.E \ H)) :
+    ∃ x y : α, x ∈ M.E \ H ∧ y ∈ M.E \ H ∧ x ≠ y ∧
+      M.IsBasis ({g, x, y} : Set α) K := by
+  let A : Set α := M.E \ H
+  obtain ⟨J, hJ⟩ := M.exists_isBasis A
+  have hJcard : J.encard = (2 : ℕ∞) := by
+    rw [hJ.encard_eq_eRk, hArank]
+  obtain ⟨x, y, hxy, hJpair⟩ := Set.encard_eq_two.mp hJcard
+  have hxA : x ∈ A := hJ.subset (by rw [hJpair]; simp)
+  have hyA : y ∈ A := hJ.subset (by rw [hJpair]; simp)
+  have hJK : J ⊆ K := by
+    exact hJ.subset.trans
+      (dangerous_complement_subset_other
+        hE hRank hEcard hStrict hH hK hne)
+  have hgE : g ∈ M.E := hH.subset_ground hg.1
+  have hgJ : g ∉ J := by
+    intro hgJ
+    exact (hJ.subset hgJ).2 hg.1
+  have hclJ : M.closure J = M.closure A := hJ.closure_eq_closure
+  have hgclJ : g ∉ M.closure J := by
+    rwa [hclJ]
+  have hInd : M.Indep (insert g J) :=
+    (hJ.indep.insert_indep_iff_of_notMem hgJ).2 ⟨hgE, hgclJ⟩
+  have hSubK : insert g J ⊆ K := by
+    intro z hz
+    rcases hz with rfl | hz
+    · exact hg.2
+    · exact hJK hz
+  have hIfin : (insert g J).Finite := by
+    exact (hE.subset (hInd.subset_ground)).insert g |>.subset (by simp)
+  have hRankInsert : M.eRk (insert g J) = (3 : ℕ∞) := by
+    rw [M.eRk_insert_eq_add_one ⟨hgE, hgclJ⟩]
+    rw [hJ.eRk_eq_eRk, hArank]
+    norm_num
+  have hBasisK : M.IsBasis (insert g J) K :=
+    hInd.isBasis_of_eRk_ge (hE.subset hInd.subset_ground)
+      hSubK (by rw [hK.2.1, hRankInsert])
+  refine ⟨x, y, ?_, ?_, hxy, ?_⟩
+  · simpa [A] using hxA
+  · simpa [A] using hyA
+  · simpa [hJpair] using hBasisK
+
+/-- If the side itself has rank three, every core element is good. -/
+theorem dangerous_two_rankThree_side_good
+    {M : Matroid α} {k : ℕ} {H K : Set α} {g : α}
+    (hk : 1 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (hK : DangerousHyperplane M k K)
+    (hne : H ≠ K)
+    (hg : g ∈ H ∩ K)
+    (hArank : M.eRk (M.E \ H) = (3 : ℕ∞)) :
+    ∃ x y : α, x ∈ M.E \ H ∧ y ∈ M.E \ H ∧ x ≠ y ∧
+      M.IsBasis ({g, x, y} : Set α) K := by
+  let A : Set α := M.E \ H
+  have hAK : A ⊆ K :=
+    dangerous_complement_subset_other
+      hE hRank hEcard hStrict hH hK hne
+  obtain ⟨J, hJA⟩ := M.exists_isBasis A
+  have hJfin : J.Finite := hE.subset hJA.indep.subset_ground
+  have hJK : J ⊆ K := hJA.subset.trans hAK
+  have hJrank : M.eRk J = (3 : ℕ∞) := by
+    rw [hJA.eRk_eq_eRk, hArank]
+  have hJBasisK : M.IsBasis J K :=
+    hJA.indep.isBasis_of_eRk_ge hJfin hJK
+      (by rw [hK.2.1, hJrank])
+  have hgNonloop : M.IsNonloop g :=
+    isNonloop_of_strict_rankFour hRank hStrict
+      (hH.subset_ground hg.1)
+  have hgK : ({g} : Set α) ⊆ K := by simpa using hg.2
+  obtain ⟨I, hIK, hgI, hIJ⟩ :=
+    hgNonloop.indep.exists_isBasis_subset_union_isBasis hgK hJBasisK
+  have hIfin : I.Finite := hE.subset hIK.indep.subset_ground
+  have hIncard : I.ncard = 3 := by
+    have henc : I.encard = (3 : ℕ∞) := by
+      rw [hIK.encard_eq_eRk, hK.2.1]
+    rw [← hIfin.cast_ncard_eq] at henc
+    exact_mod_cast henc
+  have hgmem : g ∈ I := hgI (by simp)
+  let R : Set α := I \ {g}
+  have hRfin : R.Finite := hIfin.sdiff
+  have hRcard : R.ncard = 2 := by
+    have h := Set.ncard_sdiff_singleton_add_one hgmem hIfin
+    dsimp [R]
+    rw [hIncard] at h
+    omega
+  obtain ⟨x, y, hxy, hRpair⟩ := Set.ncard_eq_two.mp hRcard
+  have hxR : x ∈ R := by rw [hRpair]; simp
+  have hyR : y ∈ R := by rw [hRpair]; simp
+  have hRsubJ : R ⊆ J := by
+    intro z hz
+    have hzI : z ∈ I := hz.1
+    have hzne : z ≠ g := by simpa using hz.2
+    have hzU := hIJ hzI
+    rcases hzU with hzg | hzJ
+    · exact (hzne (by simpa using hzg)).elim
+    · exact hzJ
+  have hxA : x ∈ A := hJA.subset (hRsubJ hxR)
+  have hyA : y ∈ A := hJA.subset (hRsubJ hyR)
+  have hIeq : I = insert g R := by
+    rw [Set.insert_sdiff_self_of_mem hgmem]
+  refine ⟨x, y, ?_, ?_, hxy, ?_⟩
+  · simpa [A] using hxA
+  · simpa [A] using hyA
+  · rw [hIeq, hRpair] at hIK
+    simpa [Set.pair_comm] using hIK
+
+/-- For either possible side rank, there is a bad subset of the rank-two core
+of size at most k-1 outside of which every core element has a side witness. -/
+theorem dangerous_two_exists_small_bad_set
+    {M : Matroid α} {k : ℕ} {H K : Set α}
+    (hk : 1 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (hK : DangerousHyperplane M k K)
+    (hne : H ≠ K) :
+    ∃ Bad : Set α,
+      Bad ⊆ H ∩ K ∧ Bad.ncard ≤ k - 1 ∧
+      ∀ g ∈ H ∩ K, g ∉ Bad →
+        ∃ x y : α, x ∈ M.E \ H ∧ y ∈ M.E \ H ∧ x ≠ y ∧
+          M.IsBasis ({g, x, y} : Set α) K := by
+  rcases dangerous_two_complement_rank_two_or_three
+      hk hE hRank hEcard hStrict hH hK hne with hA2 | hA3
+  · let Bad : Set α := (H ∩ K) ∩ M.closure (M.E \ H)
+    refine ⟨Bad, Set.inter_subset_left, ?_, ?_⟩
+    · dsimp [Bad]
+      exact dangerous_two_core_inter_complement_closure_ncard_le
+        hk hE hRank hEcard hStrict hH hK hne hA2
+    · intro g hg hgbad
+      have hgcl : g ∉ M.closure (M.E \ H) := by
+        intro h
+        exact hgbad ⟨hg, h⟩
+      exact dangerous_two_rankTwo_side_good_of_not_mem_closure
+        hk hE hRank hEcard hStrict hH hK hne hg hA2 hgcl
+  · refine ⟨∅, by simp, by simp, ?_⟩
+    intro g hg hgbad
+    exact dangerous_two_rankThree_side_good
+      hk hE hRank hEcard hStrict hH hK hne hg hA3
+
 end
 
 end Rank4DangerousBranches
