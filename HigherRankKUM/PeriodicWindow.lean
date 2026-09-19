@@ -8,15 +8,6 @@ noncomputable section
 
 variable {α : Type*}
 
-/-- Successive cyclic shifts compose by adding their offsets. -/
-theorem cyclicIndex_add
-    (n : ℕ) (hn : 0 < n) (i : Fin n) (a b : ℕ) :
-    cyclicIndex n hn (cyclicIndex n hn i a) b =
-      cyclicIndex n hn i (a + b) := by
-  apply Fin.ext
-  simp only [cyclicIndex_val]
-  rw [Nat.mod_add_mod, Nat.add_assoc]
-
 /-- The order of two successive cyclic shifts is immaterial. -/
 theorem cyclicIndex_add_commute
     (n : ℕ) (hn : 0 < n) (i : Fin n) (a b : ℕ) :
