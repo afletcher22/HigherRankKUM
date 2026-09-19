@@ -34,65 +34,33 @@ theorem exists_fin_equiv_with_three_prescribed
     simpa [Nat.card_coe_set_eq] using hcard
   let e₀ : Fin (k + 1) ≃ S :=
     (Finite.equivFinOfCardEq hNatCard).symm
-
-  let f : Fin 3 → Fin (k + 1) := fun i =>
-    Fin.cases ⟨0, by omega⟩
-      (fun j => Fin.cases ⟨k - 1, by omega⟩
-        (fun _ => ⟨k, by omega⟩) j) i
-  let g : Fin 3 → Fin (k + 1) := fun i =>
-    Fin.cases (e₀.symm ⟨q, hq⟩)
-      (fun j => Fin.cases (e₀.symm ⟨p, hp⟩)
-        (fun _ => e₀.symm ⟨d, hd⟩) j) i
-
+  let f : Fin 3 → S := fun i =>
+    Fin.cases (e₀ ⟨0, by omega⟩)
+      (fun j => Fin.cases (e₀ ⟨k - 1, by omega⟩)
+        (fun _ => e₀ ⟨k, by omega⟩) j) i
+  let g : Fin 3 → S := fun i =>
+    Fin.cases ⟨q, hq⟩
+      (fun j => Fin.cases ⟨p, hp⟩ (fun _ => ⟨d, hd⟩) j) i
   have hf : Function.Injective f := by
     intro i j hij
     fin_cases i <;> fin_cases j <;>
       simp [f, Fin.ext_iff] at hij ⊢ <;> omega
-
   have hg : Function.Injective g := by
     intro i j hij
     fin_cases i <;> fin_cases j <;>
-      simp [g] at hij ⊢
-    · exact Subtype.ext (e₀.symm.injective hij)
-    · exfalso
-      have := congrArg e₀ hij
-      simp only [e₀, Equiv.apply_symm_apply] at this
-      exact hqp (Subtype.ext_iff.mp this)
-    · exfalso
-      have := congrArg e₀ hij
-      simp only [e₀, Equiv.apply_symm_apply] at this
-      exact hqd (Subtype.ext_iff.mp this)
-    · exfalso
-      have := congrArg e₀ hij
-      simp only [e₀, Equiv.apply_symm_apply] at this
-      exact hqp (Subtype.ext_iff.mp this).symm
-    · exact Subtype.ext (e₀.symm.injective hij)
-    · exfalso
-      have := congrArg e₀ hij
-      simp only [e₀, Equiv.apply_symm_apply] at this
-      exact hpd (Subtype.ext_iff.mp this)
-    · exfalso
-      have := congrArg e₀ hij
-      simp only [e₀, Equiv.apply_symm_apply] at this
-      exact hqd (Subtype.ext_iff.mp this).symm
-    · exfalso
-      have := congrArg e₀ hij
-      simp only [e₀, Equiv.apply_symm_apply] at this
-      exact hpd (Subtype.ext_iff.mp this).symm
-    · exact Subtype.ext (e₀.symm.injective hij)
-
-  obtain ⟨π, hπ⟩ := Equiv.Perm.exists_extending_pair f g hf hg
-  let e : Fin (k + 1) ≃ S := π.trans e₀
+      simp [g, hqp, hqd, hpd] at hij ⊢
+  obtain ⟨ρ, hρ⟩ := Equiv.Perm.exists_extending_pair f g hf hg
+  let e : Fin (k + 1) ≃ S := e₀.trans ρ
   refine ⟨e, ?_, ?_, ?_⟩
-  · have h := hπ (0 : Fin 3)
-    change (e₀ (π ⟨0, by omega⟩) : α) = q
-    simpa [f, g] using congrArg (fun x => (e₀ x : α)) h
-  · have h := hπ (1 : Fin 3)
-    change (e₀ (π ⟨k - 1, by omega⟩) : α) = p
-    simpa [f, g] using congrArg (fun x => (e₀ x : α)) h
-  · have h := hπ (2 : Fin 3)
-    change (e₀ (π ⟨k, by omega⟩) : α) = d
-    simpa [f, g] using congrArg (fun x => (e₀ x : α)) h
+  · have h := hρ (0 : Fin 3)
+    change (ρ (e₀ ⟨0, by omega⟩) : α) = q
+    simpa [f, g] using congrArg Subtype.val h
+  · have h := hρ (1 : Fin 3)
+    change (ρ (e₀ ⟨k - 1, by omega⟩) : α) = p
+    simpa [f, g] using congrArg Subtype.val h
+  · have h := hρ (2 : Fin 3)
+    change (ρ (e₀ ⟨k, by omega⟩) : α) = d
+    simpa [f, g] using congrArg Subtype.val h
 
 
 /-- Slot type for the t=3 schedule: A-slots, B-slots, C-slots, and G-slots. -/
@@ -127,7 +95,8 @@ def t3RegroupEquiv (k : ℕ) (hk : 2 ≤ k) :
     | Sum.inl x => t3PrefixSlot x.1 x.2
     | Sum.inr r => t3TailSlot hk r
   apply Equiv.ofBijective f
-  constructor
+  apply (Fintype.bijective_iff_injective_and_card f).2
+  refine ⟨?_, ?_⟩
   · intro x y hxy
     rcases x with x | x <;> rcases y with y | y
     · rcases x with ⟨i, r⟩
@@ -142,43 +111,8 @@ def t3RegroupEquiv (k : ℕ) (hk : 2 ≤ k) :
         simp [f, t3PrefixSlot, t3TailSlot, Fin.ext_iff] at hxy
     · fin_cases x <;> fin_cases y <;>
         simp [f, t3TailSlot, Fin.ext_iff] at hxy ⊢ <;> omega
-  · intro y
-    rcases y with (a | b) | (c | g)
-    · by_cases hlt : a.val < k - 1
-      · refine ⟨Sum.inl (⟨a.val, hlt⟩, 0), ?_⟩
-        simp [f, t3PrefixSlot, Fin.ext_iff]
-      · have ha : a.val = k - 1 ∨ a.val = k := by omega
-        rcases ha with ha | ha
-        · refine ⟨Sum.inr 0, ?_⟩
-          subst a
-          simp [f, t3TailSlot, Fin.ext_iff]
-        · refine ⟨Sum.inr 3, ?_⟩
-          subst a
-          simp [f, t3TailSlot, Fin.ext_iff]
-    · by_cases hlt : b.val < k - 1
-      · refine ⟨Sum.inl (⟨b.val, hlt⟩, 1), ?_⟩
-        simp [f, t3PrefixSlot, Fin.ext_iff]
-      · have hb : b.val = k - 1 ∨ b.val = k := by omega
-        rcases hb with hb | hb
-        · refine ⟨Sum.inr 1, ?_⟩
-          subst b
-          simp [f, t3TailSlot, Fin.ext_iff]
-        · refine ⟨Sum.inr 4, ?_⟩
-          subst b
-          simp [f, t3TailSlot, Fin.ext_iff]
-    · by_cases hlt : c.val < k - 1
-      · refine ⟨Sum.inl (⟨c.val, hlt⟩, 2), ?_⟩
-        simp [f, t3PrefixSlot, Fin.ext_iff]
-      · have hc : c.val = k - 1 ∨ c.val = k := by omega
-        rcases hc with hc | hc
-        · refine ⟨Sum.inr 2, ?_⟩
-          subst c
-          simp [f, t3TailSlot, Fin.ext_iff]
-        · refine ⟨Sum.inr 5, ?_⟩
-          subst c
-          simp [f, t3TailSlot, Fin.ext_iff]
-    · refine ⟨Sum.inl (g, 3), ?_⟩
-      simp [f, t3PrefixSlot, Fin.ext_iff]
+  · simp [T3Slots]
+    omega
 
 /-- The canonical index decomposition of the t=3 schedule into ordinary
 ABCG blocks followed by six tail positions. -/
