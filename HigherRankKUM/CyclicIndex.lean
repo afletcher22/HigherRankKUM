@@ -37,11 +37,10 @@ theorem exists_cyclicIndex_offset
   apply Fin.ext
   simp only [cyclicIndex_val]
   dsimp [t]
-  rw [Nat.add_mod]
-  have hi : i.val % n = i.val := Nat.mod_eq_of_lt i.isLt
-  have hq : q.val % n = q.val := Nat.mod_eq_of_lt q.isLt
-  rw [hq]
-  omega
+  simp only [Nat.mod_mod, Nat.mod_eq_of_lt i.isLt]
+  have hsum : i.val + (q.val + n - i.val) = q.val + n := by omega
+  rw [← Nat.add_mod, hsum, Nat.add_mod]
+  simp [Nat.mod_eq_of_lt q.isLt]
 
 end
 
