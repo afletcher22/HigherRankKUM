@@ -102,6 +102,80 @@ theorem dangerous_two_hyperplane_triple_plus_other_isBase
   isBase_of_rankThree_basis_and_outside
     hRank hI hH₀.1 hH₀.2.1 ha.1 ha.2
 
+
+/-- Two distinct dangerous hyperplanes partition the ground into the two
+complementary side classes and their rank-two core. -/
+theorem dangerous_two_ground_partition
+    {M : Matroid α} {k : ℕ} {H K : Set α}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (hK : DangerousHyperplane M k K)
+    (hne : H ≠ K) :
+    M.E = (M.E \ H) ∪ ((M.E \ K) ∪ (H ∩ K)) ∧
+      Disjoint (M.E \ H) (M.E \ K) ∧
+      Disjoint (M.E \ H) (H ∩ K) ∧
+      Disjoint (M.E \ K) (H ∩ K) := by
+  have hAB :=
+    dangerous_complements_disjoint hE hRank hEcard hStrict hH hK hne
+  have hAG : Disjoint (M.E \ H) (H ∩ K) := by
+    rw [Set.disjoint_left]
+    intro x hxA hxG
+    exact hxA.2 hxG.1
+  have hBG : Disjoint (M.E \ K) (H ∩ K) := by
+    rw [Set.disjoint_left]
+    intro x hxB hxG
+    exact hxB.2 hxG.2
+  refine ⟨?_, hAB, hAG, hBG⟩
+  ext x
+  constructor
+  · intro hxE
+    by_cases hxH : x ∈ H
+    · by_cases hxK : x ∈ K
+      · exact Or.inr (Or.inr ⟨hxH, hxK⟩)
+      · exact Or.inr (Or.inl ⟨hxE, hxK⟩)
+    · exact Or.inl ⟨hxE, hxH⟩
+  · rintro (hxA | hxB | hxG)
+    · exact hxA.1
+    · exact hxB.1
+    · exact hH.subset_ground hxG.1
+
+/-- Canonical equivalence from the disjoint sum of the two side classes and
+rank-two core to the ambient ground set. -/
+theorem dangerous_two_parts_equiv_ground
+    {M : Matroid α} {k : ℕ} {H K : Set α}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (hK : DangerousHyperplane M k K)
+    (hne : H ≠ K) :
+    ((M.E \ H) ⊕ (M.E \ K)) ⊕ (H ∩ K) ≃ M.E := by
+  classical
+  let A := M.E \ H
+  let B := M.E \ K
+  let G := H ∩ K
+  have hpart :=
+    dangerous_two_ground_partition hE hRank hEcard hStrict hH hK hne
+  have hAB : Disjoint A B := by simpa [A, B, G] using hpart.2.1
+  have hAG : Disjoint A G := by simpa [A, B, G] using hpart.2.2.1
+  have hBG : Disjoint B G := by simpa [A, B, G] using hpart.2.2.2
+  have hABG : Disjoint (A ∪ B) G := by
+    rw [Set.disjoint_left]
+    intro x hxAB hxG
+    rcases hxAB with hxA | hxB
+    · exact (Set.disjoint_left.1 hAG) hxA hxG
+    · exact (Set.disjoint_left.1 hBG) hxB hxG
+  let eAB : A ⊕ B ≃ (A ∪ B : Set α) := (Equiv.Set.union hAB).symm
+  let eU : (A ⊕ B) ⊕ G ≃ ((A ∪ B) ∪ G : Set α) :=
+    (Equiv.sumCongr eAB (Equiv.refl G)).trans (Equiv.Set.union hABG).symm
+  have hEq : ((A ∪ B) ∪ G : Set α) = M.E := by
+    simpa [A, B, G, Set.union_assoc] using hpart.1.symm
+  exact eU.trans (Set.equivOfEq hEq)
+
 end
 
 end Rank4DangerousBranches
