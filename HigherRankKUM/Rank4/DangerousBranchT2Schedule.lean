@@ -2,6 +2,7 @@ import HigherRankKUM.Rank4.DangerousBranchFactors
 import HigherRankKUM.Rank4.DangerousBranchT2Good
 import HigherRankKUM.Rank4.CyclicPigeonhole
 import HigherRankKUM.CyclicRotation
+import HigherRankKUM.Rank4.CyclicWindowFour
 
 namespace HigherRankKUM
 namespace Rank4DangerousBranches
@@ -114,6 +115,22 @@ theorem dangerous_two_exists_oriented_good_core_edge
   · simpa [f] using hbBasis
   · simpa [f] using haBasis
 
+
+
+/-- Consecutive entries of a rank-two core CBO are independent in the
+ambient matroid. -/
+theorem dangerous_two_core_order_adjacent_indep
+    {M : Matroid α} {k : ℕ} {H K : Set α}
+    (hk : 1 ≤ k)
+    (order : Fin (2 * k) ≃ (M.restrict (H ∩ K)).E)
+    (hOrder : CyclicBasisOrder (M.restrict (H ∩ K)) 2 (by omega) order)
+    (j : Fin (2 * k)) :
+    M.Indep
+      ({(order j : α),
+        (order (cyclicIndex (2 * k) (by omega) j 1) : α)} : Set α) := by
+  have hB := hOrder j
+  rw [cyclicWindow_two_eq] at hB
+  exact hB.indep.of_restrict
 
 /-- Rotate a cyclic order so a chosen oriented adjacent edge occupies the last
 two positions. -/
