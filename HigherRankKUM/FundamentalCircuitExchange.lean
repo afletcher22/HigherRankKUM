@@ -1,5 +1,6 @@
 import Mathlib.Combinatorics.Matroid.Loop
 import Mathlib.Combinatorics.Matroid.Minor.Contract
+import Mathlib.Combinatorics.Matroid.Rank.ENat
 
 namespace HigherRankKUM
 
@@ -42,7 +43,7 @@ theorem Matroid.mem_closure_insert_of_contract_pair_not_isBase
   have hpair_not_indep : ¬ (M.contract C).Indep ({a, c} : Set α) := by
     intro hpair
     apply hnot
-    exact hpair.isBase_of_eRk_ge (by simp) (by
+    exact Matroid.Indep.isBase_of_eRk_ge hpair (by simp) (by
       rw [← hA.encard_eq_eRank, hpair.eRk_eq_encard]
       rw [Set.encard_pair haa', Set.encard_pair hca])
   have hccl : c ∈ (M.contract C).closure ({a} : Set α) := by
