@@ -143,6 +143,107 @@ theorem dangerous_triple_side_core_flat
       hk hE hRank hEcard hStrict hH₁ hH₂ h12⟩
 
 
+
+/-- In the three-dangerous-hyperplane branch, the ground set is the disjoint
+union of the three dangerous complements and the triple core. -/
+theorem dangerous_triple_ground_partition
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂) :
+    let A := M.E \ H₀
+    let B := M.E \ H₁
+    let C := M.E \ H₂
+    let G := (H₀ ∩ H₁) ∩ H₂
+    M.E = (A ∪ B) ∪ (C ∪ G) ∧
+      Disjoint A B ∧ Disjoint A C ∧ Disjoint B C ∧
+      Disjoint A G ∧ Disjoint B G ∧ Disjoint C G := by
+  dsimp
+  have hAB :=
+    dangerous_complements_disjoint
+      hE hRank hEcard hStrict hH₀ hH₁ h01
+  have hAC :=
+    dangerous_complements_disjoint
+      hE hRank hEcard hStrict hH₀ hH₂ h02
+  have hBC :=
+    dangerous_complements_disjoint
+      hE hRank hEcard hStrict hH₁ hH₂ h12
+  have hAG : Disjoint (M.E \ H₀) ((H₀ ∩ H₁) ∩ H₂) := by
+    rw [Set.disjoint_left]
+    intro x hxA hxG
+    exact hxA.2 hxG.1.1
+  have hBG : Disjoint (M.E \ H₁) ((H₀ ∩ H₁) ∩ H₂) := by
+    rw [Set.disjoint_left]
+    intro x hxB hxG
+    exact hxB.2 hxG.1.2
+  have hCG : Disjoint (M.E \ H₂) ((H₀ ∩ H₁) ∩ H₂) := by
+    rw [Set.disjoint_left]
+    intro x hxC hxG
+    exact hxC.2 hxG.2
+  refine ⟨?_, hAB, hAC, hBC, hAG, hBG, hCG⟩
+  ext x
+  constructor
+  · intro hxE
+    by_cases hx0 : x ∈ H₀
+    · by_cases hx1 : x ∈ H₁
+      · by_cases hx2 : x ∈ H₂
+        · exact Or.inr (Or.inr ⟨⟨hx0, hx1⟩, hx2⟩)
+        · exact Or.inr (Or.inl ⟨hxE, hx2⟩)
+      · exact Or.inl (Or.inr ⟨hxE, hx1⟩)
+    · exact Or.inl (Or.inl ⟨hxE, hx0⟩)
+  · rintro ((hxA | hxB) | (hxC | hxG))
+    · exact hxA.1
+    · exact hxB.1
+    · exact hxC.1
+    · exact hH₀.subset_ground hxG.1.1
+
+/-- Canonical equivalence from the disjoint sum of the three side classes and
+triple core to the ambient ground set. -/
+theorem dangerous_triple_parts_equiv_ground
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂) :
+    ((M.E \ H₀) ⊕ (M.E \ H₁)) ⊕
+        ((M.E \ H₂) ⊕ ((H₀ ∩ H₁) ∩ H₂)) ≃ M.E := by
+  classical
+  let A := M.E \ H₀
+  let B := M.E \ H₁
+  let C := M.E \ H₂
+  let G := (H₀ ∩ H₁) ∩ H₂
+  have hpart := dangerous_triple_ground_partition
+    hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+  have hAB : Disjoint A B := by simpa [A, B, C, G] using hpart.2.1
+  have hCG : Disjoint C G := by simpa [A, B, C, G] using hpart.2.2.2.2.2.2
+  have hABCG : Disjoint (A ∪ B) (C ∪ G) := by
+    rw [Set.disjoint_left]
+    intro x hxAB hxCG
+    rcases hxAB with hxA | hxB
+    · rcases hxCG with hxC | hxG
+      · exact (Set.disjoint_left.1 (by simpa [A, B, C, G] using hpart.2.2.1)) hxA hxC
+      · exact (Set.disjoint_left.1 (by simpa [A, B, C, G] using hpart.2.2.2.2.1)) hxA hxG
+    · rcases hxCG with hxC | hxG
+      · exact (Set.disjoint_left.1 (by simpa [A, B, C, G] using hpart.2.2.2.1)) hxB hxC
+      · exact (Set.disjoint_left.1 (by simpa [A, B, C, G] using hpart.2.2.2.2.2.1)) hxB hxG
+  let eAB : A ⊕ B ≃ (A ∪ B : Set α) := (Equiv.Set.union hAB).symm
+  let eCG : C ⊕ G ≃ (C ∪ G : Set α) := (Equiv.Set.union hCG).symm
+  let eU : (A ⊕ B) ⊕ (C ⊕ G) ≃ ((A ∪ B) ∪ (C ∪ G) : Set α) :=
+    (Equiv.sumCongr eAB eCG).trans (Equiv.Set.union hABCG).symm
+  have hEq : ((A ∪ B) ∪ (C ∪ G) : Set α) = M.E := by
+    simpa [A, B, C, G] using hpart.1.symm
+  exact eU.trans (Set.equivOfEq hEq)
+
+
 /-- Generic rank-four nested-flat extension lemma used by all three dangerous
 branches.  A rank-two basis inside a rank-two flat, one new element in a
 containing rank-three flat, and one element outside that hyperplane form an
