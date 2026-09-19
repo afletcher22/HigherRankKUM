@@ -204,70 +204,71 @@ theorem cyclicWindow_four_no_wrap
     · exact ⟨2, by simpa [hidx2] using h.symm⟩
     · exact ⟨3, by simpa [hidx3] using h.symm⟩
 
-/-- For a non-boundary pair block, its union with the next block in the
-front-inserted order is exactly a four-window of the deletion order. -/
+/-- For predecessor index t, pair block t+1 and the following block form
+exactly the deletion four-window beginning at position 2t+1.  This
+predecessor-coordinate form avoids truncated subtraction in dependent Fin
+indices. -/
 theorem interior_pair_union_eq_deletion_window
     {N : ℕ} (hN : 0 < N)
     (M : Matroid α) (e : α) (he : e ∈ M.E)
     (sigma : Fin (2 * N - 1) ≃ ↥(M.E \ ({e} : Set α)))
-    (i : Fin N) (hi0 : 0 < i.val) (hinext : i.val + 1 < N) :
+    (t : ℕ) (ht : t + 2 < N) :
     ({((frontInsertPairOrder hN M e he sigma)
-          (blockPosition 2 N i (0 : Fin 2)) : M.E).1,
+          (blockPosition 2 N
+            (⟨t + 1, by omega⟩ : Fin N) (0 : Fin 2)) : M.E).1,
       ((frontInsertPairOrder hN M e he sigma)
-          (blockPosition 2 N i (1 : Fin 2)) : M.E).1,
+          (blockPosition 2 N
+            (⟨t + 1, by omega⟩ : Fin N) (1 : Fin 2)) : M.E).1,
       ((frontInsertPairOrder hN M e he sigma)
-          (blockPosition 2 N (cyclicIndex N hN i 1)
+          (blockPosition 2 N
+            (cyclicIndex N hN (⟨t + 1, by omega⟩ : Fin N) 1)
             (0 : Fin 2)) : M.E).1,
       ((frontInsertPairOrder hN M e he sigma)
-          (blockPosition 2 N (cyclicIndex N hN i 1)
+          (blockPosition 2 N
+            (cyclicIndex N hN (⟨t + 1, by omega⟩ : Fin N) 1)
             (1 : Fin 2)) : M.E).1} : Set α) =
       cyclicWindow 4 (by omega : 0 < 2 * N - 1) sigma
-        ⟨2 * i.val - 1, by omega⟩ := by
+        ⟨2 * t + 1, by omega⟩ := by
   have hnext :
-      cyclicIndex N hN i 1 = ⟨i.val + 1, hinext⟩ := by
+      cyclicIndex N hN (⟨t + 1, by omega⟩ : Fin N) 1 =
+        (⟨t + 2, by omega⟩ : Fin N) := by
     apply Fin.ext
     simp only [cyclicIndex_val]
-    rw [Nat.mod_eq_of_lt hinext]
+    rw [Nat.mod_eq_of_lt (by omega : t + 1 + 1 < N)]
   rw [hnext]
-  rw [frontInsertPairOrder_block_zero_of_pos hN M e he sigma i hi0]
-  rw [frontInsertPairOrder_block_one hN M e he sigma i]
-  have hnextPos : 0 < (⟨i.val + 1, hinext⟩ : Fin N).val := by
-    exact Nat.zero_lt_succ i.val
   rw [frontInsertPairOrder_block_zero_of_pos hN M e he sigma
-    ⟨i.val + 1, hinext⟩ hnextPos]
+    (⟨t + 1, by omega⟩ : Fin N) (by omega)]
   rw [frontInsertPairOrder_block_one hN M e he sigma
-    ⟨i.val + 1, hinext⟩]
-  let t : ℕ := i.val - 1
-  have hit : i.val = t + 1 := by
-    dsimp [t]
-    omega
-  rw [hit]
+    (⟨t + 1, by omega⟩ : Fin N)]
+  rw [frontInsertPairOrder_block_zero_of_pos hN M e he sigma
+    (⟨t + 2, by omega⟩ : Fin N) (by omega)]
+  rw [frontInsertPairOrder_block_one hN M e he sigma
+    (⟨t + 2, by omega⟩ : Fin N)]
   have hs : (2 * t + 1) + 3 < 2 * N - 1 := by
     omega
-  have hstart :
+  rw [cyclicWindow_four_no_wrap
+    (by omega : 0 < 2 * N - 1) sigma (2 * t + 1) hs]
+  have hidx0 :
       (⟨2 * (t + 1) - 1, by omega⟩ : Fin (2 * N - 1)) =
         ⟨2 * t + 1, by omega⟩ := by
     apply Fin.ext
     omega
-  rw [hstart]
-  rw [cyclicWindow_four_no_wrap
-    (by omega : 0 < 2 * N - 1) sigma (2 * t + 1) hs]
   have hidx1 :
       (⟨2 * (t + 1), by omega⟩ : Fin (2 * N - 1)) =
         ⟨2 * t + 2, by omega⟩ := by
     apply Fin.ext
     omega
   have hidx2 :
-      (⟨2 * (t + 1 + 1) - 1, by omega⟩ : Fin (2 * N - 1)) =
+      (⟨2 * (t + 2) - 1, by omega⟩ : Fin (2 * N - 1)) =
         ⟨2 * t + 3, by omega⟩ := by
     apply Fin.ext
     omega
   have hidx3 :
-      (⟨2 * (t + 1 + 1), by omega⟩ : Fin (2 * N - 1)) =
+      (⟨2 * (t + 2), by omega⟩ : Fin (2 * N - 1)) =
         ⟨2 * t + 4, by omega⟩ := by
     apply Fin.ext
     omega
-  rw [hidx1, hidx2, hidx3]
+  rw [hidx0, hidx1, hidx2, hidx3]
 
 /-- Interior aligned pair windows of a front-inserted deletion CBO remain
 bases of the original matroid whenever the deleted singleton is coindependent. -/
@@ -278,21 +279,25 @@ theorem interior_pair_union_isBase
     (sigma : Fin (2 * N - 1) ≃ ↥(M.E \ ({e} : Set α)))
     (hCBO : CyclicBasisOrder (M ＼ ({e} : Set α)) 4
       (by omega : 0 < 2 * N - 1) sigma)
-    (i : Fin N) (hi0 : 0 < i.val) (hinext : i.val + 1 < N) :
+    (t : ℕ) (ht : t + 2 < N) :
     M.IsBase
       ({((frontInsertPairOrder hN M e he sigma)
-          (blockPosition 2 N i (0 : Fin 2)) : M.E).1,
+          (blockPosition 2 N
+            (⟨t + 1, by omega⟩ : Fin N) (0 : Fin 2)) : M.E).1,
         ((frontInsertPairOrder hN M e he sigma)
-          (blockPosition 2 N i (1 : Fin 2)) : M.E).1,
+          (blockPosition 2 N
+            (⟨t + 1, by omega⟩ : Fin N) (1 : Fin 2)) : M.E).1,
         ((frontInsertPairOrder hN M e he sigma)
-          (blockPosition 2 N (cyclicIndex N hN i 1)
+          (blockPosition 2 N
+            (cyclicIndex N hN (⟨t + 1, by omega⟩ : Fin N) 1)
             (0 : Fin 2)) : M.E).1,
         ((frontInsertPairOrder hN M e he sigma)
-          (blockPosition 2 N (cyclicIndex N hN i 1)
+          (blockPosition 2 N
+            (cyclicIndex N hN (⟨t + 1, by omega⟩ : Fin N) 1)
             (1 : Fin 2)) : M.E).1} : Set α) := by
-  rw [interior_pair_union_eq_deletion_window hN M e he sigma i hi0 hinext]
+  rw [interior_pair_union_eq_deletion_window hN M e he sigma t ht]
   exact (hco.delete_isBase_iff.mp
-    (hCBO ⟨2 * i.val - 1, by omega⟩)).1
+    (hCBO ⟨2 * t + 1, by omega⟩)).1
 
 end
 
