@@ -213,8 +213,6 @@ theorem dangerous_two_rankTwo_side_good_of_not_mem_closure
     rcases hz with rfl | hz
     · exact hg.2
     · exact hJK hz
-  have hIfin : (insert g J).Finite := by
-    exact (hE.subset (hInd.subset_ground)).insert g |>.subset (by simp)
   have hRankInsert : M.eRk (insert g J) = (3 : ℕ∞) := by
     rw [M.eRk_insert_eq_add_one ⟨hgE, hgclJ⟩]
     rw [hJ.eRk_eq_eRk, hArank]
