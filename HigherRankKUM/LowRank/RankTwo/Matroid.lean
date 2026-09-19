@@ -156,6 +156,157 @@ theorem exists_cyclic_adjacent_base_order_of_uniformlyDense_direct
     pair_isBase_of_indep_of_eRank_eq_two M hRank hne hindep
   simpa [order, woven, a, b] using hbase
 
+
+/-- Two loopless rank-two matroids on the same ground set have a common
+independent two-element set. This is the rank-two "common pair" lemma used by
+the direct rank-four dangerous-core construction. -/
+theorem exists_common_indep_pair
+    (M N : Matroid α)
+    (hground : M.E = N.E)
+    (hMloopless : M.Loopless)
+    (hNloopless : N.Loopless)
+    (hMrank : M.eRank = 2)
+    (hNrank : N.eRank = 2) :
+    ∃ e f : α, e ≠ f ∧ e ∈ M.E ∧ f ∈ M.E ∧
+      M.Indep ({e, f} : Set α) ∧ N.Indep ({e, f} : Set α) := by
+  obtain ⟨BM, hBM⟩ := M.exists_isBase
+  have hBMcard : BM.encard = 2 := by
+    simpa [hMrank] using hBM.encard_eq_eRank
+  obtain ⟨a, b, hab, hBMpair⟩ := Set.encard_eq_two.mp hBMcard
+  have haM : a ∈ M.E := hBM.subset_ground (by rw [hBMpair]; simp)
+  have hbM : b ∈ M.E := hBM.subset_ground (by rw [hBMpair]; simp)
+  have hMab : M.Indep ({a, b} : Set α) := by
+    rw [← hBMpair]
+    exact hBM.indep
+  have haN : a ∈ N.E := by
+    rw [← hground]
+    exact haM
+  have hbN : b ∈ N.E := by
+    rw [← hground]
+    exact hbM
+  by_cases hNab : N.Indep ({a, b} : Set α)
+  · exact ⟨a, b, hab, haM, hbM, hMab, hNab⟩
+  have haMnonloop : M.IsNonloop a := by
+    let : M.Loopless := hMloopless
+    exact Matroid.isNonloop_of_loopless haM
+  have hbMnonloop : M.IsNonloop b := by
+    let : M.Loopless := hMloopless
+    exact Matroid.isNonloop_of_loopless hbM
+  have haNnonloop : N.IsNonloop a := by
+    let : N.Loopless := hNloopless
+    exact Matroid.isNonloop_of_loopless haN
+  have hbNnonloop : N.IsNonloop b := by
+    let : N.Loopless := hNloopless
+    exact Matroid.isNonloop_of_loopless hbN
+  have hMclab :
+      M.closure ({a} : Set α) ≠ M.closure ({b} : Set α) := by
+    intro hcl
+    rcases (haMnonloop.closure_eq_closure_iff_eq_or_dep hbMnonloop).1 hcl with
+      hab' | hdep
+    · exact hab hab'
+    · exact hdep hMab
+  have hNclab :
+      N.closure ({a} : Set α) = N.closure ({b} : Set α) :=
+    (haNnonloop.closure_eq_closure_iff_eq_or_dep hbNnonloop).2 (Or.inr hNab)
+
+  obtain ⟨BN, hBN⟩ := N.exists_isBase
+  have hBNcard : BN.encard = 2 := by
+    simpa [hNrank] using hBN.encard_eq_eRank
+  obtain ⟨c, d, hcd, hBNpair⟩ := Set.encard_eq_two.mp hBNcard
+  have hcN : c ∈ N.E := hBN.subset_ground (by rw [hBNpair]; simp)
+  have hdN : d ∈ N.E := hBN.subset_ground (by rw [hBNpair]; simp)
+  have hNcd : N.Indep ({c, d} : Set α) := by
+    rw [← hBNpair]
+    exact hBN.indep
+  have hcM : c ∈ M.E := by
+    rw [hground]
+    exact hcN
+  have hdM : d ∈ M.E := by
+    rw [hground]
+    exact hdN
+  have hcNnonloop : N.IsNonloop c := by
+    let : N.Loopless := hNloopless
+    exact Matroid.isNonloop_of_loopless hcN
+  have hdNnonloop : N.IsNonloop d := by
+    let : N.Loopless := hNloopless
+    exact Matroid.isNonloop_of_loopless hdN
+  have hNclcd :
+      N.closure ({c} : Set α) ≠ N.closure ({d} : Set α) := by
+    intro hcl
+    rcases (hcNnonloop.closure_eq_closure_iff_eq_or_dep hdNnonloop).1 hcl with
+      hcd' | hdep
+    · exact hcd hcd'
+    · exact hdep hNcd
+
+  by_cases hac :
+      N.closure ({a} : Set α) = N.closure ({c} : Set α)
+  · have had :
+        N.closure ({a} : Set α) ≠ N.closure ({d} : Set α) := by
+      intro had'
+      exact hNclcd (hac.symm.trans had')
+    have hNad : N.Indep ({a, d} : Set α) :=
+      pair_indep_of_closure_ne N hNloopless haN hdN had
+    have hadne : a ≠ d := by
+      intro h
+      subst d
+      exact had rfl
+    by_cases hMad : M.Indep ({a, d} : Set α)
+    · exact ⟨a, d, hadne, haM, hdM, hMad, hNad⟩
+    · have hdMnonloop : M.IsNonloop d := by
+        let : M.Loopless := hMloopless
+        exact Matroid.isNonloop_of_loopless hdM
+      have hMclad :
+          M.closure ({a} : Set α) = M.closure ({d} : Set α) :=
+        (haMnonloop.closure_eq_closure_iff_eq_or_dep hdMnonloop).2 (Or.inr hMad)
+      have hMclbd :
+          M.closure ({b} : Set α) ≠ M.closure ({d} : Set α) := by
+        intro hbd
+        exact hMclab (hMclad.trans hbd.symm)
+      have hNclbd :
+          N.closure ({b} : Set α) ≠ N.closure ({d} : Set α) := by
+        intro hbd
+        exact had (hNclab.trans hbd)
+      have hMbd : M.Indep ({b, d} : Set α) :=
+        pair_indep_of_closure_ne M hMloopless hbM hdM hMclbd
+      have hNbd : N.Indep ({b, d} : Set α) :=
+        pair_indep_of_closure_ne N hNloopless hbN hdN hNclbd
+      have hbdne : b ≠ d := by
+        intro h
+        subst d
+        exact hNclbd rfl
+      exact ⟨b, d, hbdne, hbM, hdM, hMbd, hNbd⟩
+  · have hNac : N.Indep ({a, c} : Set α) :=
+      pair_indep_of_closure_ne N hNloopless haN hcN hac
+    have hacne : a ≠ c := by
+      intro h
+      subst c
+      exact hac rfl
+    by_cases hMac : M.Indep ({a, c} : Set α)
+    · exact ⟨a, c, hacne, haM, hcM, hMac, hNac⟩
+    · have hcMnonloop : M.IsNonloop c := by
+        let : M.Loopless := hMloopless
+        exact Matroid.isNonloop_of_loopless hcM
+      have hMclac :
+          M.closure ({a} : Set α) = M.closure ({c} : Set α) :=
+        (haMnonloop.closure_eq_closure_iff_eq_or_dep hcMnonloop).2 (Or.inr hMac)
+      have hMclbc :
+          M.closure ({b} : Set α) ≠ M.closure ({c} : Set α) := by
+        intro hbc
+        exact hMclab (hMclac.trans hbc.symm)
+      have hNclbc :
+          N.closure ({b} : Set α) ≠ N.closure ({c} : Set α) := by
+        intro hbc
+        exact hac (hNclab.trans hbc)
+      have hMbc : M.Indep ({b, c} : Set α) :=
+        pair_indep_of_closure_ne M hMloopless hbM hcM hMclbc
+      have hNbc : N.Indep ({b, c} : Set α) :=
+        pair_indep_of_closure_ne N hNloopless hbN hcN hNclbc
+      have hbcne : b ≠ c := by
+        intro h
+        subst c
+        exact hNclbc rfl
+      exact ⟨b, c, hbcne, hbM, hcM, hMbc, hNbc⟩
+
 end
 
 end HigherRankKUM.RankTwo
