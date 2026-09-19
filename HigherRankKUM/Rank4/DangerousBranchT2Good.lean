@@ -63,6 +63,10 @@ theorem dangerous_two_complement_rank_two_or_three
   rw [← hAfin.cast_ncard_eq, hAcard, hj] at hs
   have hsNat : 4 * (k + 1) < (4 * k + 2) * j := by
     exact_mod_cast hs
+  have hjge : 2 ≤ j := by
+    by_contra h
+    have hjle1 : j ≤ 1 := by omega
+    interval_cases j <;> omega
   have hjCases : j = 2 ∨ j = 3 := by omega
   rcases hjCases with rfl | rfl
   · left
@@ -115,8 +119,13 @@ theorem dangerous_two_complement_closure_ncard_le
   rw [← hFfin.cast_ncard_eq, hFrank] at hs
   have hsNat : 4 * F.ncard < (4 * k + 2) * 2 := by
     exact_mod_cast hs
-  dsimp [F] at hsNat ⊢
-  omega
+  have hbound : F.ncard ≤ 2 * k := by
+    by_contra h
+    have hge : 2 * k + 1 ≤ F.ncard := by omega
+    have hmul : 4 * (2 * k + 1) ≤ 4 * F.ncard :=
+      Nat.mul_le_mul_left 4 hge
+    omega
+  simpa [F] using hbound
 
 /-- In the rank-two side case, at most k-1 core elements lie in the closure
 of that side. -/
@@ -151,12 +160,12 @@ theorem dangerous_two_core_inter_complement_closure_ncard_le
     rw [Set.disjoint_left]
     intro x hxA hxB
     exact hxA.2 hxB.1.1
-  have hBfin : B.Finite := by
-    exact (hE.subset (by
-      intro x hx
-      exact hH.subset_ground hx.1.1)).inter_of_left _
+  have hBsubE : B ⊆ M.E := by
+    intro x hx
+    exact hH.subset_ground hx.1.1
+  have hBfin : B.Finite := hE.subset hBsubE
   have hUnionCard : (A ∪ B).ncard = A.ncard + B.ncard :=
-    Set.ncard_union_eq hAfin hBfin hABdisj
+    Set.ncard_union_eq hABdisj hAfin hBfin
   have hClosureFin : (M.closure A).Finite :=
     hE.subset (M.closure_subset_ground A)
   have hSubCard : (A ∪ B).ncard ≤ (M.closure A).ncard :=
