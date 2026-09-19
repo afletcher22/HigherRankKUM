@@ -39,12 +39,10 @@ theorem cyclicWindow_shift
   constructor
   · rintro ⟨j, rfl⟩
     refine ⟨j, ?_⟩
-    congr 1
-    exact cyclicShiftEquiv_cyclicIndex n hn a j.val i
+    exact congrArg σ (cyclicShiftEquiv_cyclicIndex n hn a j.val i).symm
   · rintro ⟨j, rfl⟩
     refine ⟨j, ?_⟩
-    congr 1
-    exact (cyclicShiftEquiv_cyclicIndex n hn a j.val i).symm
+    exact congrArg σ (cyclicShiftEquiv_cyclicIndex n hn a j.val i)
 
 /-- A cyclic basis ordering remains one after a cyclic rotation. -/
 theorem CyclicBasisOrder.shift
