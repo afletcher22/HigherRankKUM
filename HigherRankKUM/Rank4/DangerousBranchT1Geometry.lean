@@ -1,5 +1,6 @@
 import HigherRankKUM.Rank4.DangerousBranchT2Geometry
 import Mathlib.Combinatorics.Matroid.Minor.Contract
+import HigherRankKUM.TightContraction
 
 namespace HigherRankKUM
 namespace Rank4DangerousBranches
@@ -74,6 +75,62 @@ theorem dangerous_complement_rank_trichotomy
     simpa [C] using hj
   · right; right
     simpa [C] using hj
+
+
+/-- A good independent core pair inside the unique dangerous hyperplane
+produces a loopless rank-two matroid on the complement after contraction.
+
+This is the common input for both t=1 selection subcases: common pairs for
+adjacent good edges and the three-element path when good edges are separated. -/
+theorem dangerous_one_good_pair_contract_complement_rank_two_loopless
+    {M : Matroid α} {k : ℕ} {H P : Set α}
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hH : DangerousHyperplane M k H)
+    (hP : M.Indep P)
+    (hPsub : P ⊆ H)
+    (hPrank : M.eRk P = (2 : ℕ∞))
+    (hGood : M.eRk (P ∪ (M.E \ H)) = (4 : ℕ∞)) :
+    let C : Set α := M.E \ H
+    let N : Matroid α := (M.contract P).restrict C
+    N.eRank = (2 : ℕ∞) ∧ N.Loopless := by
+  let C : Set α := M.E \ H
+  let Q : Matroid α := M.contract P
+  let N : Matroid α := Q.restrict C
+  have hPE : P ⊆ M.E := hP.subset_ground
+  have hCQ : C ⊆ Q.E := by
+    intro e heC
+    change e ∈ M.E \ P
+    refine ⟨heC.1, ?_⟩
+    intro heP
+    exact heC.2 (hPsub heP)
+  have hrankEq :=
+    eRk_union_eq_contract_eRk_add M hPE hCQ
+  have hQrank : Q.eRk C = (2 : ℕ∞) := by
+    have hadd : Q.eRk C + (2 : ℕ∞) = (2 : ℕ∞) + 2 := by
+      calc
+        Q.eRk C + (2 : ℕ∞) = M.eRk (C ∪ P) := by
+          simpa [Q, hPrank] using hrankEq.symm
+        _ = (4 : ℕ∞) := by simpa [C, Set.union_comm] using hGood
+        _ = (2 : ℕ∞) + 2 := by norm_num
+    exact ENat.add_right_injective_of_ne_top
+      (n := (2 : ℕ∞)) (by simp) hadd
+  have hNrank : N.eRank = (2 : ℕ∞) := by
+    dsimp [N]
+    simpa [Q] using hQrank
+  have hLoopless : N.Loopless := by
+    rw [Matroid.loopless_iff_forall_isNonloop]
+    intro e heN
+    have heC : e ∈ C := by
+      simpa [N, Q] using heN
+    have hclPH : M.closure P ⊆ H := by
+      intro x hx
+      exact (M.mem_closure_iff_forall_mem_isFlat P hPE).1 hx
+        H hH.1 hPsub
+    rw [Matroid.restrict_isNonloop_iff]
+    refine ⟨?_, heC⟩
+    rw [Matroid.contract_isNonloop_iff]
+    exact ⟨heC.1, fun hecl => heC.2 (hclPH hecl)⟩
+  exact ⟨hNrank, hLoopless⟩
 
 /-- Ordinary `t=1` window certificate: a basis of the unique dangerous
 hyperplane plus any complementary element is an ambient basis. -/
