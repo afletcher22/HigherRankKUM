@@ -1,5 +1,6 @@
 import HigherRankKUM.RankTwoSelection
 import HigherRankKUM.Rank4.DangerousBranchFactors
+import Mathlib.Logic.Equiv.Set
 
 namespace HigherRankKUM
 namespace Rank4DangerousBranches
@@ -214,8 +215,8 @@ theorem dangerous_triple_parts_equiv_ground
     (hH₁ : DangerousHyperplane M k H₁)
     (hH₂ : DangerousHyperplane M k H₂)
     (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂) :
-    ((M.E \ H₀) ⊕ (M.E \ H₁)) ⊕
-        ((M.E \ H₂) ⊕ ((H₀ ∩ H₁) ∩ H₂)) ≃ M.E := by
+    ((M.E \ H₀ : Set α) ⊕ (M.E \ H₁ : Set α)) ⊕
+        ((M.E \ H₂ : Set α) ⊕ (((H₀ ∩ H₁) ∩ H₂ : Set α))) ≃ M.E := by
   classical
   let A := M.E \ H₀
   let B := M.E \ H₁
@@ -310,7 +311,10 @@ theorem isNonloop_of_strict_rankFour
   have hsingleProper : ({e} : Set α) ≠ M.E := by
     intro hEq
     have hr := M.eRk_le_encard ({e} : Set α)
-    rw [hEq, M.eRk_ground, hRank, Set.encard_singleton] at hr
+    rw [hEq, M.eRk_ground, hRank] at hr
+    have hEone : M.E.encard = (1 : ℕ∞) := by
+      rw [← hEq, Set.encard_singleton]
+    rw [hEone] at hr
     norm_num at hr
   have hs := hStrict ({e} : Set α) hsingleSub (by simp) hsingleProper
   have hne0 : M.eRk ({e} : Set α) ≠ 0 := by
@@ -324,7 +328,7 @@ theorem isNonloop_of_strict_rankFour
     by_contra hjne
     have hj0 : j = 0 := by omega
     exact hne0 (by simpa [hj0] using hj)
-  rw [Matroid.eRk_singleton_eq_one_iff]
+  apply Matroid.eRk_singleton_eq_one_iff.mp
   simpa [hj1] using hj
 
 /-- A triple-core element and an element of one complementary side form an
@@ -366,9 +370,11 @@ theorem dangerous_triple_core_side_pair_indep
     intro h
     subst a
     exact haG hgG
-  rw [← Set.insert_singleton_eq]
-  exact (hgNonloop.indep.insert_indep_iff_of_notMem (by simpa [hag])).2
-    ⟨ha.1, by rwa [hclg]⟩
+  have ha_not_mem : a ∉ ({g} : Set α) := by simpa using hag
+  have hIns :=
+    (hgNonloop.indep.insert_indep_iff_of_notMem ha_not_mem).2
+      ⟨ha.1, by rwa [hclg]⟩
+  simpa [Set.pair_comm] using hIns
 
 /-- Ordinary `t=3` window certificate: one triple-core element and one
 element from each of the three complementary side classes form an ambient
@@ -413,9 +419,12 @@ theorem dangerous_triple_one_each_isBase
     · have hxa : x = a := by simpa using hx
       subst x
       exact Or.inr ha
+  have hF_eq : F = H₁ ∩ H₂ := by
+    dsimp [F]
+    exact dangerous_triple_core_union_complement
+      hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
   have hFH₂ : F ⊆ H₂ := by
-    rw [dangerous_triple_core_union_complement
-      hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12]
+    rw [hF_eq]
     exact Set.inter_subset_right
   have hbH₂ : b ∈ H₂ :=
     dangerous_complement_subset_other
@@ -423,8 +432,7 @@ theorem dangerous_triple_one_each_isBase
   have hbF : b ∉ F := by
     intro hbF
     have hbH₁ : b ∈ H₁ := by
-      rw [dangerous_triple_core_union_complement
-        hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12] at hbF
+      rw [hF_eq] at hbF
       exact hbF.1
     exact hb.2 hbH₁
   have hraw := isBase_of_rankTwo_basis_nested_rankThree
@@ -432,7 +440,8 @@ theorem dangerous_triple_one_each_isBase
     (b := b) (c := c)
     hRank hpair (by simp) hpairRank hIF hFflat hFrank hFH₂
     hH₂.1 hH₂.2.1 hbH₂ hbF hc.1 hc.2
-  simpa [F, Set.pair_comm] using hraw
+  convert hraw using 1 <;> ext z <;>
+    simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
 /-- The basic `t=3` window certificate: two distinct independent elements
 from one side class, together with one element from each of the other two
@@ -489,7 +498,8 @@ theorem dangerous_triple_side_pair_isBase
     hRank hpair (by simp) hIRank hIF hFflat hFrank
     Set.inter_subset_right hH₂.1 hH₂.2.1
     hbH₂ hbF hc.1 hc.2
-  simpa [F, Set.pair_comm] using hraw
+  convert hraw using 1 <;> ext z <;>
+    simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
 
 
