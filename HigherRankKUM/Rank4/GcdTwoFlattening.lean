@@ -74,7 +74,7 @@ def orientedPairOrder
     (((orientedPairOrder A o)
       (blockPosition 2 N i (0 : Fin 2)) : M.E) : α) =
       A.element i (o i) := by
-  rfl
+  simp [orientedPairOrder, blockPosition, orientationEquiv]
 
 @[simp] theorem orientedPairOrder_block_one
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
@@ -83,7 +83,8 @@ def orientedPairOrder
     (((orientedPairOrder A o)
       (blockPosition 2 N i (1 : Fin 2)) : M.E) : α) =
       A.element i (Bool.not (o i)) := by
-  cases hoi : o i <;> rfl
+  cases hoi : o i <;>
+    simp [orientedPairOrder, blockPosition, orientationEquiv, hoi]
 
 private theorem pair_zero_add_one
     {N : ℕ} (hN : 0 < N) (i : Fin N) :
@@ -188,7 +189,7 @@ private theorem pair_one_add_three
         (cyclicIndex N hN (cyclicIndex N hN i 1) 1) (0 : Fin 2) :=
       pair_one_add_one hN (cyclicIndex N hN i 1)
     _ = blockPosition 2 N (cyclicIndex N hN i 2) (0 : Fin 2) := by
-      simpa using cyclicIndex_add N hN i 1 1
+      rw [cyclicIndex_add]
 
 private theorem left_bitPick_eq_last
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
@@ -317,9 +318,15 @@ theorem cyclicBasisOrder_of_pair_orientation
   obtain ⟨z, rfl⟩ := (blockPositionEquiv 2 N).surjective p
   rcases z with ⟨i, d⟩
   fin_cases d
-  · rw [cyclicWindow_orientedPairOrder_aligned A h2N o i]
+  · change M.IsBase
+      (cyclicWindow 4 (Nat.mul_pos (by omega) hN) (orientedPairOrder A o)
+        (blockPosition 2 N i (0 : Fin 2)))
+    rw [cyclicWindow_orientedPairOrder_aligned A h2N o i]
     exact A.alignedBase i
-  · rw [cyclicWindow_orientedPairOrder_shifted A h2N o i]
+  · change M.IsBase
+      (cyclicWindow 4 (Nat.mul_pos (by omega) hN) (orientedPairOrder A o)
+        (blockPosition 2 N i (1 : Fin 2)))
+    rw [cyclicWindow_orientedPairOrder_shifted A h2N o i]
     exact (A.shifted_window_iff_localRelation
       (by omega) h2N i (o i) (o (cyclicIndex N hN i 2))).2 (ho i)
 
