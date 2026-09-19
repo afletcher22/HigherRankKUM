@@ -26,6 +26,25 @@ def orientBit (x slot : Bool) : Bool :=
     orientBit x (orientBit x b) = b := by
   cases x <;> cases b <;> rfl
 
+/-- A transparent equivalence between the two positions of a pair and Bool.
+Unlike mathlib's general `finTwoEquiv`, this reduces directly on the two
+numeral positions used throughout the flattening proof. -/
+def finTwoBoolEquiv : Fin 2 ≃ Bool where
+  toFun
+    | ⟨0, _⟩ => false
+    | ⟨1, _⟩ => true
+  invFun
+    | false => 0
+    | true => 1
+  left_inv i := by fin_cases i <;> rfl
+  right_inv b := by cases b <;> rfl
+
+@[simp] theorem finTwoBoolEquiv_zero :
+    finTwoBoolEquiv (0 : Fin 2) = false := rfl
+
+@[simp] theorem finTwoBoolEquiv_one :
+    finTwoBoolEquiv (1 : Fin 2) = true := rfl
+
 /-- Relabel every pair by its chosen orientation. -/
 def orientationEquiv {N : ℕ} (o : Fin N → Bool) :
     Fin N × Bool ≃ Fin N × Bool where
@@ -45,7 +64,7 @@ def orientedPairOrder
     (o : Fin N → Bool) :
     Fin (2 * N) ≃ M.E :=
   (blockPositionEquiv 2 N).symm |>.trans
-    ((Equiv.prodCongr (Equiv.refl (Fin N)) finTwoEquiv).trans
+    ((Equiv.prodCongr (Equiv.refl (Fin N)) finTwoBoolEquiv).trans
       ((orientationEquiv o).trans A.pairEquiv))
 
 @[simp] theorem orientedPairOrder_block_zero
@@ -55,8 +74,7 @@ def orientedPairOrder
     (((orientedPairOrder A o)
       (blockPosition 2 N i (0 : Fin 2)) : M.E) : α) =
       A.element i (o i) := by
-  simp [orientedPairOrder, orientationEquiv, orientBit,
-    blockPosition, blockPositionEquiv]
+  rfl
 
 @[simp] theorem orientedPairOrder_block_one
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
@@ -65,9 +83,7 @@ def orientedPairOrder
     (((orientedPairOrder A o)
       (blockPosition 2 N i (1 : Fin 2)) : M.E) : α) =
       A.element i (Bool.not (o i)) := by
-  cases hoi : o i <;>
-    simp [orientedPairOrder, orientationEquiv, orientBit,
-      blockPosition, blockPositionEquiv, hoi]
+  cases hoi : o i <;> rfl
 
 private theorem pair_zero_add_one
     {N : ℕ} (hN : 0 < N) (i : Fin N) :
@@ -172,8 +188,7 @@ private theorem pair_one_add_three
         (cyclicIndex N hN (cyclicIndex N hN i 1) 1) (0 : Fin 2) :=
       pair_one_add_one hN (cyclicIndex N hN i 1)
     _ = blockPosition 2 N (cyclicIndex N hN i 2) (0 : Fin 2) := by
-      rw [cyclicIndex_add]
-      rfl
+      simpa using cyclicIndex_add N hN i 1 1
 
 private theorem left_bitPick_eq_last
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
@@ -209,18 +224,18 @@ theorem cyclicWindow_orientedPairOrder_aligned
   constructor
   · rintro ⟨j, rfl⟩
     fin_cases j
-    · left
-      left
-      simp
-    · left
-      right
-      simp [pair_zero_add_one hN i]
-    · right
-      left
-      simp [pair_zero_add_two hN i]
-    · right
-      right
-      simp [pair_zero_add_three hN i]
+    · cases hoi : o i
+      · exact Or.inl (Or.inl (by simp [hoi]))
+      · exact Or.inl (Or.inr (by simp [hoi]))
+    · cases hoi : o i
+      · exact Or.inl (Or.inr (by simp [pair_zero_add_one hN i, hoi]))
+      · exact Or.inl (Or.inl (by simp [pair_zero_add_one hN i, hoi]))
+    · cases hoj : o (cyclicIndex N hN i 1)
+      · exact Or.inr (Or.inl (by simp [pair_zero_add_two hN i, hoj]))
+      · exact Or.inr (Or.inr (by simp [pair_zero_add_two hN i, hoj]))
+    · cases hoj : o (cyclicIndex N hN i 1)
+      · exact Or.inr (Or.inr (by simp [pair_zero_add_three hN i, hoj]))
+      · exact Or.inr (Or.inl (by simp [pair_zero_add_three hN i, hoj]))
   · intro hx
     rcases hx with ((hx | hx) | (hx | hx))
     · subst x
@@ -263,18 +278,14 @@ theorem cyclicWindow_orientedPairOrder_shifted
   constructor
   · rintro ⟨j, rfl⟩
     fin_cases j
-    · left
-      left
-      simp
-    · right
-      left
-      simp [pair_one_add_one hN i]
-    · right
-      right
-      simp [pair_one_add_two hN i]
-    · left
-      right
-      simp [pair_one_add_three hN i]
+    · exact Or.inl (Or.inl (by simp))
+    · cases hoj : o (cyclicIndex N hN i 1)
+      · exact Or.inr (Or.inl (by simp [pair_one_add_one hN i, hoj]))
+      · exact Or.inr (Or.inr (by simp [pair_one_add_one hN i, hoj]))
+    · cases hoj : o (cyclicIndex N hN i 1)
+      · exact Or.inr (Or.inr (by simp [pair_one_add_two hN i, hoj]))
+      · exact Or.inr (Or.inl (by simp [pair_one_add_two hN i, hoj]))
+    · exact Or.inl (Or.inr (by simp [pair_one_add_three hN i]))
   · intro hx
     rcases hx with ((hx | hx) | (hx | hx))
     · subst x
@@ -303,15 +314,12 @@ theorem cyclicBasisOrder_of_pair_orientation
     CyclicBasisOrder M 4 (Nat.mul_pos (by omega) hN)
       (orientedPairOrder A o) := by
   intro p
-  let z : Fin N × Fin 2 := (blockPositionEquiv 2 N).symm p
-  have hp : blockPosition 2 N z.1 z.2 = p := by
-    change blockPositionEquiv 2 N z = p
-    simpa [z] using (blockPositionEquiv 2 N).apply_symm_apply p
+  obtain ⟨z, rfl⟩ := (blockPositionEquiv 2 N).surjective p
   rcases z with ⟨i, d⟩
   fin_cases d
-  · rw [← hp, cyclicWindow_orientedPairOrder_aligned A h2N o i]
+  · rw [cyclicWindow_orientedPairOrder_aligned A h2N o i]
     exact A.alignedBase i
-  · rw [← hp, cyclicWindow_orientedPairOrder_shifted A h2N o i]
+  · rw [cyclicWindow_orientedPairOrder_shifted A h2N o i]
     exact (A.shifted_window_iff_localRelation
       (by omega) h2N i (o i) (o (cyclicIndex N hN i 2))).2 (ho i)
 
