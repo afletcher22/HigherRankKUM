@@ -45,7 +45,7 @@ theorem Matroid.mem_closure_insert_of_contract_pair_not_isBase
     apply hnot
     exact Matroid.Indep.isBase_of_eRk_ge hpair (by simp) (by
       rw [← hA.encard_eq_eRank, hpair.eRk_eq_encard]
-      rw [Set.encard_pair haa', Set.encard_pair hca])
+      rw [Set.encard_pair haa', Set.encard_pair hca.symm])
   have hccl : c ∈ (M.contract C).closure ({a} : Set α) := by
     by_contra hcnot
     have hci : (M.contract C).Indep (insert c ({a} : Set α)) :=
