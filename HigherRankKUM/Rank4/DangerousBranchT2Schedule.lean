@@ -1,6 +1,7 @@
 import HigherRankKUM.Rank4.DangerousBranchFactors
 import HigherRankKUM.Rank4.DangerousBranchT2Good
 import HigherRankKUM.Rank4.CyclicPigeonhole
+import HigherRankKUM.CyclicRotation
 
 namespace HigherRankKUM
 namespace Rank4DangerousBranches
@@ -112,6 +113,81 @@ theorem dangerous_two_exists_oriented_good_core_edge
   refine ⟨j, b₀, b₁, a₀, a₁, hb₀, hb₁, hbne, ha₀, ha₁, hane, ?_, ?_⟩
   · simpa [f] using hbBasis
   · simpa [f] using haBasis
+
+
+/-- Rotate a cyclic order so a chosen oriented adjacent edge occupies the last
+two positions. -/
+theorem exists_shifted_order_with_edge_at_end
+    {E : Set α} {k : ℕ}
+    (hk : 1 ≤ k)
+    (order : Fin (2 * k) ≃ E)
+    (j : Fin (2 * k)) :
+    ∃ order' : Fin (2 * k) ≃ E,
+      (order' ⟨2 * k - 2, by omega⟩ : α) = (order j : α) ∧
+      (order' ⟨2 * k - 1, by omega⟩ : α) =
+        (order (cyclicIndex (2 * k) (by omega) j 1) : α) := by
+  let hn : 0 < 2 * k := by omega
+  let i0 : Fin (2 * k) := ⟨2 * k - 2, by omega⟩
+  let i1 : Fin (2 * k) := ⟨2 * k - 1, by omega⟩
+  obtain ⟨t, ht, _⟩ :=
+    existsUnique_cyclicIndex_offset (2 * k) hn i0 j
+  let order' : Fin (2 * k) ≃ E :=
+    (cyclicShiftEquiv (2 * k) hn t.val).trans order
+  refine ⟨order', ?_, ?_⟩
+  · change
+      (order
+        (cyclicShiftEquiv (2 * k) hn t.val i0) : α) =
+        (order j : α)
+    rw [cyclicShiftEquiv_apply, ← ht]
+  · have hi1 :
+        i1 = cyclicIndex (2 * k) hn i0 1 := by
+      apply Fin.ext
+      simp [i0, i1, cyclicIndex]
+      omega
+    change
+      (order
+        (cyclicShiftEquiv (2 * k) hn t.val i1) : α) =
+        (order (cyclicIndex (2 * k) hn j 1) : α)
+    rw [hi1, cyclicShiftEquiv_cyclicIndex, cyclicShiftEquiv_apply, ← ht]
+
+/-- The same rotation preserves a core cyclic basis ordering. -/
+theorem exists_shifted_core_cbo_with_edge_at_end
+    {M : Matroid α} {k : ℕ} {H K : Set α}
+    (hk : 1 ≤ k)
+    (order : Fin (2 * k) ≃ (M.restrict (H ∩ K)).E)
+    (hOrder : CyclicBasisOrder (M.restrict (H ∩ K)) 2 (by omega) order)
+    (j : Fin (2 * k)) :
+    ∃ order' : Fin (2 * k) ≃ (M.restrict (H ∩ K)).E,
+      CyclicBasisOrder (M.restrict (H ∩ K)) 2 (by omega) order' ∧
+      (order' ⟨2 * k - 2, by omega⟩ : α) = (order j : α) ∧
+      (order' ⟨2 * k - 1, by omega⟩ : α) =
+        (order (cyclicIndex (2 * k) (by omega) j 1) : α) := by
+  let hn : 0 < 2 * k := by omega
+  let i0 : Fin (2 * k) := ⟨2 * k - 2, by omega⟩
+  obtain ⟨t, ht, _⟩ :=
+    existsUnique_cyclicIndex_offset (2 * k) hn i0 j
+  let order' : Fin (2 * k) ≃ (M.restrict (H ∩ K)).E :=
+    (cyclicShiftEquiv (2 * k) hn t.val).trans order
+  have hCBO :
+      CyclicBasisOrder (M.restrict (H ∩ K)) 2 hn order' := by
+    exact hOrder.shift hn order t.val
+  refine ⟨order', hCBO, ?_, ?_⟩
+  · change
+      (order
+        (cyclicShiftEquiv (2 * k) hn t.val i0) : α) =
+        (order j : α)
+    rw [cyclicShiftEquiv_apply, ← ht]
+  · let i1 : Fin (2 * k) := ⟨2 * k - 1, by omega⟩
+    have hi1 :
+        i1 = cyclicIndex (2 * k) hn i0 1 := by
+      apply Fin.ext
+      simp [i0, i1, cyclicIndex]
+      omega
+    change
+      (order
+        (cyclicShiftEquiv (2 * k) hn t.val i1) : α) =
+        (order (cyclicIndex (2 * k) hn j 1) : α)
+    rw [hi1, cyclicShiftEquiv_cyclicIndex, cyclicShiftEquiv_apply, ← ht]
 
 end
 
