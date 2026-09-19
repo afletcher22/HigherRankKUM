@@ -23,6 +23,7 @@ import HigherRankKUM.RationalTightFactorReduction
 import HigherRankKUM.RationalTightInduction
 import HigherRankKUM.LowRank.RankOne
 import HigherRankKUM.LowRank.RankTwo
+import HigherRankKUM.RankTwoSelection
 import HigherRankKUM.LowRank.RankThree
 import HigherRankKUM.Rank4.TightReduction
 import HigherRankKUM.Rank4.RationalTightReduction
