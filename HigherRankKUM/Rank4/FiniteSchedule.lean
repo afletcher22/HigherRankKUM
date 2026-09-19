@@ -196,6 +196,46 @@ def t3IndexEquiv (k : ℕ) (hk : 2 ≤ k) :
     Fin (4 * k + 2) ≃ T3Slots k :=
   (t3BlockTailEquiv k hk).trans (t3RegroupEquiv k hk)
 
+
+@[simp] theorem t3BlockTailEquiv_symm_prefix
+    (k : ℕ) (hk : 2 ≤ k) (j : Fin (k - 1)) (r : Fin 4) :
+    (t3BlockTailEquiv k hk).symm (Sum.inl (j, r)) =
+      ⟨r.val + 4 * j.val, by omega⟩ := by
+  apply Fin.ext
+  simp [t3BlockTailEquiv, finProdFinEquiv]
+  omega
+
+@[simp] theorem t3BlockTailEquiv_symm_tail
+    (k : ℕ) (hk : 2 ≤ k) (r : Fin 6) :
+    (t3BlockTailEquiv k hk).symm (Sum.inr r) =
+      ⟨4 * (k - 1) + r.val, by omega⟩ := by
+  apply Fin.ext
+  simp [t3BlockTailEquiv]
+  omega
+
+@[simp] theorem t3IndexEquiv_prefix
+    (k : ℕ) (hk : 2 ≤ k) (j : Fin (k - 1)) (r : Fin 4) :
+    t3IndexEquiv k hk ⟨r.val + 4 * j.val, by omega⟩ =
+      t3PrefixSlot j r := by
+  have hbt :
+      t3BlockTailEquiv k hk ⟨r.val + 4 * j.val, by omega⟩ =
+        Sum.inl (j, r) := by
+    apply (t3BlockTailEquiv k hk).symm.injective
+    simp
+  simp [t3IndexEquiv, hbt, t3RegroupEquiv]
+
+@[simp] theorem t3IndexEquiv_tail
+    (k : ℕ) (hk : 2 ≤ k) (r : Fin 6) :
+    t3IndexEquiv k hk ⟨4 * (k - 1) + r.val, by omega⟩ =
+      t3TailSlot hk r := by
+  have hbt :
+      t3BlockTailEquiv k hk ⟨4 * (k - 1) + r.val, by omega⟩ =
+        Sum.inr r := by
+    apply (t3BlockTailEquiv k hk).symm.injective
+    simp
+  simp [t3IndexEquiv, hbt, t3RegroupEquiv]
+
+
 end
 
 end FiniteSchedule
