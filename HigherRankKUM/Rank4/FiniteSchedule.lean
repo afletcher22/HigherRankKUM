@@ -99,7 +99,7 @@ theorem exists_fin_equiv_with_three_prescribed
 abbrev T3Slots (k : ℕ) :=
   (Fin (k + 1) ⊕ Fin (k + 1)) ⊕ (Fin (k + 1) ⊕ Fin (k - 1))
 
-private def t3PrefixSlot {k : ℕ} (j : Fin (k - 1)) : Fin 4 → T3Slots k :=
+def t3PrefixSlot {k : ℕ} (j : Fin (k - 1)) : Fin 4 → T3Slots k :=
   Fin.cases (Sum.inl (Sum.inl ⟨j.val, by omega⟩))
     (fun r =>
       Fin.cases (Sum.inl (Sum.inr ⟨j.val, by omega⟩))
@@ -107,7 +107,7 @@ private def t3PrefixSlot {k : ℕ} (j : Fin (k - 1)) : Fin 4 → T3Slots k :=
           Fin.cases (Sum.inr (Sum.inl ⟨j.val, by omega⟩))
             (fun _ => Sum.inr (Sum.inr j)) s) r)
 
-private def t3TailSlot {k : ℕ} (hk : 2 ≤ k) : Fin 6 → T3Slots k :=
+def t3TailSlot {k : ℕ} (hk : 2 ≤ k) : Fin 6 → T3Slots k :=
   Fin.cases (Sum.inl (Sum.inl ⟨k - 1, by omega⟩))
     (fun r =>
       Fin.cases (Sum.inl (Sum.inr ⟨k - 1, by omega⟩))
