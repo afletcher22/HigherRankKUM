@@ -57,15 +57,46 @@ def orientationEquiv {N : ℕ} (o : Fin N → Bool) :
     rcases z with ⟨i, b⟩
     simp
 
+/-- Direct pair-coordinate equivalence after choosing an orientation in each
+pair.  Keeping this separate from the global block-position equivalence gives
+transparent application lemmas for the two slots. -/
+def orientedPairEquiv
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN)
+    (o : Fin N → Bool) :
+    Fin N × Fin 2 ≃ M.E :=
+  (Equiv.prodCongr (Equiv.refl (Fin N)) finTwoBoolEquiv).trans
+    ((orientationEquiv o).trans A.pairEquiv)
+
+@[simp] theorem orientedPairEquiv_zero
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN)
+    (o : Fin N → Bool) (i : Fin N) :
+    (((orientedPairEquiv A o) (i, (0 : Fin 2)) : M.E) : α) =
+      A.element i (o i) := by
+  change
+    (A.pairEquiv (i, orientBit (o i) false) : M.E).1 =
+      (A.pairEquiv (i, o i) : M.E).1
+  rw [orientBit_false]
+
+@[simp] theorem orientedPairEquiv_one
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN)
+    (o : Fin N → Bool) (i : Fin N) :
+    (((orientedPairEquiv A o) (i, (1 : Fin 2)) : M.E) : α) =
+      A.element i (Bool.not (o i)) := by
+  change
+    (A.pairEquiv (i, orientBit (o i) true) : M.E).1 =
+      (A.pairEquiv (i, Bool.not (o i)) : M.E).1
+  rw [orientBit_true]
+
 /-- Flatten an oriented cycle of pairs into an element order. -/
 def orientedPairOrder
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
     (A : AdmissiblePairCycle.Data M N 2 hN)
     (o : Fin N → Bool) :
     Fin (2 * N) ≃ M.E :=
-  (blockPositionEquiv 2 N).symm |>.trans
-    ((Equiv.prodCongr (Equiv.refl (Fin N)) finTwoBoolEquiv).trans
-      ((orientationEquiv o).trans A.pairEquiv))
+  (blockPositionEquiv 2 N).symm |>.trans (orientedPairEquiv A o)
 
 @[simp] theorem orientedPairOrder_block_zero
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
@@ -74,7 +105,13 @@ def orientedPairOrder
     (((orientedPairOrder A o)
       (blockPosition 2 N i (0 : Fin 2)) : M.E) : α) =
       A.element i (o i) := by
-  simp [orientedPairOrder, blockPosition, orientationEquiv]
+  change
+    (((orientedPairEquiv A o)
+      ((blockPositionEquiv 2 N).symm
+        (blockPositionEquiv 2 N (i, (0 : Fin 2)))) : M.E) : α) =
+      A.element i (o i)
+  rw [Equiv.symm_apply_apply]
+  exact orientedPairEquiv_zero A o i
 
 @[simp] theorem orientedPairOrder_block_one
     {M : Matroid α} {N : ℕ} {hN : 0 < N}
@@ -83,8 +120,13 @@ def orientedPairOrder
     (((orientedPairOrder A o)
       (blockPosition 2 N i (1 : Fin 2)) : M.E) : α) =
       A.element i (Bool.not (o i)) := by
-  cases hoi : o i <;>
-    simp [orientedPairOrder, blockPosition, orientationEquiv, hoi]
+  change
+    (((orientedPairEquiv A o)
+      ((blockPositionEquiv 2 N).symm
+        (blockPositionEquiv 2 N (i, (1 : Fin 2)))) : M.E) : α) =
+      A.element i (Bool.not (o i))
+  rw [Equiv.symm_apply_apply]
+  exact orientedPairEquiv_one A o i
 
 private theorem pair_zero_add_one
     {N : ℕ} (hN : 0 < N) (i : Fin N) :
@@ -315,18 +357,15 @@ theorem cyclicBasisOrder_of_pair_orientation
     CyclicBasisOrder M 4 (Nat.mul_pos (by omega) hN)
       (orientedPairOrder A o) := by
   intro p
-  obtain ⟨z, rfl⟩ := (blockPositionEquiv 2 N).surjective p
-  rcases z with ⟨i, d⟩
+  obtain ⟨⟨i, d⟩, hp⟩ := (blockPositionEquiv 2 N).surjective p
+  rw [← hp]
+  change M.IsBase
+    (cyclicWindow 4 (Nat.mul_pos (by omega) hN) (orientedPairOrder A o)
+      (blockPosition 2 N i d))
   fin_cases d
-  · change M.IsBase
-      (cyclicWindow 4 (Nat.mul_pos (by omega) hN) (orientedPairOrder A o)
-        (blockPosition 2 N i (0 : Fin 2)))
-    rw [cyclicWindow_orientedPairOrder_aligned A h2N o i]
+  · rw [cyclicWindow_orientedPairOrder_aligned A h2N o i]
     exact A.alignedBase i
-  · change M.IsBase
-      (cyclicWindow 4 (Nat.mul_pos (by omega) hN) (orientedPairOrder A o)
-        (blockPosition 2 N i (1 : Fin 2)))
-    rw [cyclicWindow_orientedPairOrder_shifted A h2N o i]
+  · rw [cyclicWindow_orientedPairOrder_shifted A h2N o i]
     exact (A.shifted_window_iff_localRelation
       (by omega) h2N i (o i) (o (cyclicIndex N hN i 2))).2 (ho i)
 
