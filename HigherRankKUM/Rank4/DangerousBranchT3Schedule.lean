@@ -586,6 +586,86 @@ theorem dangerous_triple_cbo_of_local_orders
     hpdA hdqA hpdB hdqB hpdC hdqC
     hσ0 hσ1 hσ2 hσpA hσpB hσpC hσdA hσdB hσdC
 
+
+/-- Three distinct dangerous hyperplanes directly yield a rank-four cyclic
+basis ordering.  This is the complete formal t=3 branch. -/
+theorem exists_cyclicBasisOrder_of_three_dangerous
+    {M : Matroid α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    {H₀ H₁ H₂ : Set α}
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂) :
+    ∃ σ : Fin (4 * k + 2) ≃ M.E,
+      CyclicBasisOrder M 4 (by omega) σ := by
+  obtain ⟨qA, pA, dA, hqA, hpA, hdA,
+      hqpA, hqdA, hpdAne, hdqA, hdpA⟩ :=
+    dangerous_triple_side_exists_tail_triple
+      (M := M) (k := k) (H₀ := H₀) (H₁ := H₁) (H₂ := H₂)
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+
+  obtain ⟨qB, pB, dB, hqB, hpB, hdB,
+      hqpB, hqdB, hpdBne, hdqB, hdpB⟩ :=
+    dangerous_triple_side_exists_tail_triple
+      (M := M) (k := k) (H₀ := H₁) (H₁ := H₀) (H₂ := H₂)
+      hk hE hRank hEcard hStrict hH₁ hH₀ hH₂
+      h01.symm h12 h02
+
+  obtain ⟨qC, pC, dC, hqC, hpC, hdC,
+      hqpC, hqdC, hpdCne, hdqC, hdpC⟩ :=
+    dangerous_triple_side_exists_tail_triple
+      (M := M) (k := k) (H₀ := H₂) (H₁ := H₀) (H₂ := H₁)
+      hk hE hRank hEcard hStrict hH₂ hH₀ hH₁
+      h02.symm h12.symm h01
+
+  have hAfin : (M.E \ H₀).Finite := hE.sdiff
+  have hBfin : (M.E \ H₁).Finite := hE.sdiff
+  have hCfin : (M.E \ H₂).Finite := hE.sdiff
+  have hAcard : (M.E \ H₀).ncard = k + 1 :=
+    dangerous_complement_ncard_eq hE hEcard hH₀
+  have hBcard : (M.E \ H₁).ncard = k + 1 :=
+    dangerous_complement_ncard_eq hE hEcard hH₁
+  have hCcard : (M.E \ H₂).ncard = k + 1 :=
+    dangerous_complement_ncard_eq hE hEcard hH₂
+
+  obtain ⟨eA, heA0, heAp, heAd⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_three_prescribed
+      hk hAfin hAcard hqA hpA hdA hqpA hqdA hpdAne
+  obtain ⟨eB, heB0, heBp, heBd⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_three_prescribed
+      hk hBfin hBcard hqB hpB hdB hqpB hqdB hpdBne
+  obtain ⟨eC, heC0, heCp, heCd⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_three_prescribed
+      hk hCfin hCcard hqC hpC hdC hqpC hqdC hpdCne
+
+  have hGdata := dangerous_triple_core
+    hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+  have hGfin : ((H₀ ∩ H₁) ∩ H₂).Finite :=
+    hE.subset hGdata.1.subset_ground
+  have hGnatCard : Nat.card ((H₀ ∩ H₁) ∩ H₂) = k - 1 := by
+    simpa [Nat.card_coe_set_eq] using hGdata.2.2
+  let eG : Fin (k - 1) ≃ ((H₀ ∩ H₁) ∩ H₂) :=
+    (Finite.equivFinOfCardEq hGnatCard).symm
+
+  have hpdA : M.Indep ({pA, dA} : Set α) := by
+    simpa [Set.pair_comm] using hdpA
+  have hpdB : M.Indep ({pB, dB} : Set α) := by
+    simpa [Set.pair_comm] using hdpB
+  have hpdC : M.Indep ({pC, dC} : Set α) := by
+    simpa [Set.pair_comm] using hdpC
+
+  exact dangerous_triple_cbo_of_local_orders
+    hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+    eA eB eC eG
+    heA0 heAp heAd heB0 heBp heBd heC0 heCp heCd
+    hpdAne hqdA.symm hpdBne hqdB.symm hpdCne hqdC.symm
+    hpdA hdqA hpdB hdqB hpdC hdqC
+
 end
 
 end Rank4DangerousBranches
