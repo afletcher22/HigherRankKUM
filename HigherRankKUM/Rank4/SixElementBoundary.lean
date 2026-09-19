@@ -94,31 +94,42 @@ theorem sdiff_two_window_eq_four_window
       cyclicWindow 4 (by omega) σ i := by
   rw [cyclicWindow_two_eq_pair, cyclicWindow_four_six_eq M]
   classical
-  fin_cases i <;> ext x <;>
-    simp only [cyclicIndex, Set.mem_sdiff, Set.mem_insert_iff,
-      Set.mem_singleton_iff]
-  all_goals
-    constructor
-    · rintro ⟨hxE, hbad⟩
-      have hxcover :
-          x = (σ 0 : α) ∨ x = (σ 1 : α) ∨ x = (σ 2 : α) ∨
-          x = (σ 3 : α) ∨ x = (σ 4 : α) ∨ x = (σ 5 : α) := by
-        let q : Fin 6 := σ.symm ⟨x, hxE⟩
-        have hqx : (σ q : α) = x := by
-          exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
-        have hqval : q.val = 0 ∨ q.val = 1 ∨ q.val = 2 ∨
-            q.val = 3 ∨ q.val = 4 ∨ q.val = 5 := by omega
-        rcases hqval with (hq | hq | hq | hq | hq | hq) <;>
-          have hq' : q = ⟨_, by omega⟩ := Fin.ext hq <;>
-          rw [hq'] at hqx <;> simp_all
-      rcases hxcover with (rfl | rfl | rfl | rfl | rfl | rfl) <;>
-        simp_all only [Equiv.apply_eq_iff_eq, Fin.mk.injEq, OfNat.ofNat_ne_ofNat,
-          not_false_eq_true, true_and, or_false, or_true, true_or]
-    · rintro (rfl | rfl | rfl | rfl) <;>
-        refine ⟨(σ _).property, ?_⟩ <;>
-        constructor <;> intro h <;>
-        have hs : (_ : Fin 6) = _ := σ.injective (Subtype.ext h) <;>
-        omega
+  ext x
+  constructor
+  · rintro ⟨hxE, hbad⟩
+    let q : Fin 6 := σ.symm ⟨x, hxE⟩
+    have hqx : (σ q : α) = x := by
+      exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
+    have hqi : q = i ∨
+        q = cyclicIndex 6 (by omega) i 1 ∨
+        q = cyclicIndex 6 (by omega) i 2 ∨
+        q = cyclicIndex 6 (by omega) i 3 ∨
+        q = cyclicIndex 6 (by omega) i 4 ∨
+        q = cyclicIndex 6 (by omega) i 5 := by
+      apply Fin.eq_or_eq_add_one_or_eq_add_two_or_eq_add_three_or_eq_add_four_or_eq_add_five
+    rcases hqi with (hq | hq | hq | hq | hq | hq)
+    · exact Or.inl (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm))
+    · exact Or.inr (Or.inl (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm)))
+    · exact Or.inr (Or.inr (Or.inl (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm))))
+    · exact Or.inr (Or.inr (Or.inr (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm))))
+    · exfalso
+      exact hbad (Or.inl (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm)))
+    · exfalso
+      exact hbad (Or.inr (by
+        rw [cyclicIndex_succ]
+        exact hqx ▸ congrArg Subtype.val (congrArg σ hq.symm)))
+  · intro hx
+    refine ⟨?_, ?_⟩
+    · rcases hx with (rfl | rfl | rfl | rfl) <;> exact (σ _).property
+    · rcases hx with (rfl | rfl | rfl | rfl)
+      all_goals
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+        intro h
+        rcases h with h | h
+        · have := σ.injective (Subtype.ext h)
+          simp [cyclicIndex, Fin.ext_iff] at this
+        · have := σ.injective (Subtype.ext h)
+          simp [cyclicIndex, Fin.ext_iff] at this
 
 /-- The six-element boundary of rank-four KUM.
 
