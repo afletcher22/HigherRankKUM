@@ -461,7 +461,6 @@ theorem dangerous_two_six_exceptional_windows
       cyclicIndex n hnpos ⟨m + r, by omega⟩ s =
         ⟨m + r + s, by omega⟩ := by
     apply cyclicIndex_eq_mk_add_of_lt
-    omega
 
   have hwrap (r s : ℕ) (hr : r < 6) (hge : 6 ≤ r + s)
       (hlt : r + s < 12) :
@@ -469,8 +468,10 @@ theorem dangerous_two_six_exceptional_windows
         ⟨r + s - 6, by omega⟩ := by
     have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
       n hnpos ⟨m + r, by omega⟩ s (by omega) (by omega)
+    rw [h]
     apply Fin.ext
-    simpa [hmn] using congrArg Fin.val h
+    dsimp [m, n]
+    omega
 
   have hbase0 : M.IsBase ({pA, pB, gB, dB} : Set α) := by
     have h := dangerous_two_hyperplane_triple_plus_other_isBase
@@ -528,36 +529,42 @@ theorem dangerous_two_six_exceptional_windows
     have h0 := hidx 0 1 (by omega)
     have h1 := hidx 0 2 (by omega)
     have h2 := hidx 0 3 (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσpA, hσpB, hσgB, hσdB] using hbase0
+    rw [h0, h1, h2, hσpA, hσpB, hσgB, hσdB]
+    exact hbase0
   constructor
   · rw [cyclicWindow_four_eq]
     have h0 := hidx 1 1 (by omega)
     have h1 := hidx 1 2 (by omega)
     have h2 := hidx 1 3 (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσpB, hσgB, hσdB, hσdA] using hbase1
+    rw [h0, h1, h2, hσpB, hσgB, hσdB, hσdA]
+    exact hbase1
   constructor
   · rw [cyclicWindow_four_eq]
     have h0 := hidx 2 1 (by omega)
     have h1 := hidx 2 2 (by omega)
     have h2 := hidx 2 3 (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσgB, hσdB, hσdA, hσgA] using hbase2
+    rw [h0, h1, h2, hσgB, hσdB, hσdA, hσgA]
+    exact hbase2
   constructor
   · rw [cyclicWindow_four_eq]
     have h0 := hidx 3 1 (by omega)
     have h1 := hidx 3 2 (by omega)
     have h2 := hwrap 3 3 (by omega) (by omega) (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσdB, hσdA, hσgA, hσ0] using hbase3
+    rw [h0, h1, h2, hσdB, hσdA, hσgA, hσ0]
+    exact hbase3
   constructor
   · rw [cyclicWindow_four_eq]
     have h0 := hidx 4 1 (by omega)
     have h1 := hwrap 4 2 (by omega) (by omega) (by omega)
     have h2 := hwrap 4 3 (by omega) (by omega) (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσdA, hσgA, hσ0, hσ1] using hbase4
+    rw [h0, h1, h2, hσdA, hσgA, hσ0, hσ1]
+    exact hbase4
   · rw [cyclicWindow_four_eq]
     have h0 := hwrap 5 1 (by omega) (by omega) (by omega)
     have h1 := hwrap 5 2 (by omega) (by omega) (by omega)
     have h2 := hwrap 5 3 (by omega) (by omega) (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσgA, hσ0, hσ1, hσ2] using hbase5
+    rw [h0, h1, h2, hσgA, hσ0, hσ1, hσ2]
+    exact hbase5
 
 
 /-- Two distinct dangerous hyperplanes directly yield a rank-four cyclic
