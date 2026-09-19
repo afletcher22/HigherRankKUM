@@ -18,6 +18,7 @@ theorem isBase_of_rankThree_basis_and_outside
     (hRank : M.eRank = (4 : ℕ∞))
     (hI : M.IsBasis I H)
     (hHflat : M.IsFlat H)
+    (hHrank : M.eRk H = (3 : ℕ∞))
     (heE : e ∈ M.E) (heH : e ∉ H) :
     M.IsBase (insert e I) := by
   have hclI : M.closure I = H := by
@@ -31,10 +32,7 @@ theorem isBase_of_rankThree_basis_and_outside
     (hI.indep.insert_indep_iff_of_notMem heI).2 ⟨heE, hecl⟩
   have hIfin : I.Finite := hI.indep.finite
   have hIrank : M.eRk I = (3 : ℕ∞) := by
-    rw [hI.eRk_eq_eRk]
-    -- the basis spans the rank-three flat
-    have := hHflat
-    exact_mod_cast (show (3 : ℕ) = 3 from rfl)
+    rw [hI.eRk_eq_eRk, hHrank]
   have hRankInsert : M.eRk (insert e I) = (4 : ℕ∞) := by
     rw [M.eRk_insert_eq_add_one ⟨heE, hecl⟩, hIrank]
     norm_num
@@ -102,7 +100,7 @@ theorem dangerous_two_hyperplane_triple_plus_other_isBase
     (ha : a ∈ M.E \ H₀) :
     M.IsBase (insert a I) :=
   isBase_of_rankThree_basis_and_outside
-    hRank hI hH₀.1 ha.1 ha.2
+    hRank hI hH₀.1 hH₀.2.1 ha.1 ha.2
 
 end
 
