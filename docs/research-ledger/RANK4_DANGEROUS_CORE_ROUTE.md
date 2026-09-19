@@ -155,41 +155,101 @@ insertion theorem, and no repair graph.
 
 The same quotient/core viewpoint gives promising direct patterns.
 
-### t=2
+### t=2 — direct construction (checked informal)
 
-Here G is a uniformly dense rank-2 flat of size 2k, and A,B are the two
-(k+1)-element complement classes.  Let a cyclic rank-2 basis ordering of G
-supply the G positions.
+Here G is a rank-2 flat of size 2k, while A and B are the two disjoint
+dangerous-hyperplane complements, each of size k+1.  The two dangerous
+hyperplanes are
 
-The type pattern
+    G∪A,   G∪B.
 
-    (A B G G)^(k-1) A B G B A G
+The restriction to G is uniformly dense of rank 2 at integral density k:
+rank-1 subsets have size at most k by strict rank-4 density, and the
+rank-0/rank-2 cases are automatic.  Hence the internal rank-2 theorem supplies
+a cyclic basis order
 
-has only four nonstandard windows, all with composition 2+1+1:
+    g_0,...,g_{2k-1}
 
-    ABGB, BGBA, BAGA, AGAB.
+of G.
 
-These split into two local conditions:
+#### Good core elements for a side class
 
-- one independent B-pair together with one chosen G element must span the
-  rank-3 flat G∪B;
-- one independent A-pair together with another chosen G element must span
-  G∪A.
+For X=A or B, call g∈G X-good if there are x_1,x_2∈X such that
 
-Every other 4-window is automatically one A, one B, and a consecutive basis
-pair of G.
+    {g,x_1,x_2}
 
-A second pattern
+is a basis of the rank-3 hyperplane G∪X.
 
-    (A B G G)^(k-1) A B A B G G
+The X-bad set has size at most k-1.
 
-has only three exceptional windows but introduces a coupled ABAB basis test;
-the ABGBAG tail is currently preferable because it decouples the A and B
-defects.
+Indeed strict density rules out r(X)=1 because |X|=k+1.
 
-The remaining issue is choosing the two distinguished G elements to be
-consecutive/nonparallel while avoiding the rank-1 intersections determined by
-the chosen A and B pairs.
+- If r(X)=3, X spans G∪X.  Any nonloop g∈G extends to a basis using two
+  elements of X, so every g is X-good.
+- If r(X)=2, an element g is bad exactly when
+
+      g ∈ G ∩ cl(X).
+
+  The rank-2 flat cl(X) contains the k+1 elements of X as well as this bad
+  subset of G.  Strict rank-4 density bounds every rank-2 flat by 2k
+  elements, so
+
+      |Bad_X| ≤ 2k-(k+1)=k-1.
+
+#### An oriented adjacent core basis good for both sides
+
+Orient the 2k adjacency edges of the cyclic rank-2 order.  We need an edge
+
+    g_j -> g_{j+1}
+
+whose tail is B-good and whose head is A-good.
+
+If no such edge existed, every oriented edge would be covered either by a
+B-bad tail or by an A-bad head.  The number of edges with B-bad tail is
+exactly |Bad_B|, and cyclic successor is a permutation, so the number with
+A-bad head is exactly |Bad_A|.  Thus all 2k edges would be covered by at most
+
+    (k-1)+(k-1)=2k-2
+
+edges, impossible.
+
+Choose such an edge and rotate the core CBO so that
+
+    g_B=g_{2k-2},   g_A=g_{2k-1}.
+
+Choose b_1,b_2∈B with {g_B,b_1,b_2} a basis of G∪B, and choose
+a_1,a_2∈A with {g_A,a_1,a_2} a basis of G∪A.
+
+#### Full cyclic order
+
+Use the type pattern
+
+    (A B G G)^(k-1) A B G B A G.
+
+Place b_1,b_2 in the two exceptional B positions.  Place a_1,a_2 in the
+exceptional A position and the wraparound first A position.  Fill all remaining
+A/B positions arbitrarily with the remaining elements, and place the rotated
+core CBO in the G positions.
+
+Every ordinary 4-window contains one A, one B, and two consecutive G elements.
+The G pair spans the rank-2 flat G; adding A spans G∪A, and adding B raises
+rank to four.  Hence every ordinary window is a basis.
+
+The only exceptional windows are
+
+    A B G B,
+    B G B A,
+    B A G A,
+    A G A B.
+
+The first two contain {g_B,b_1,b_2}, a basis of G∪B, plus an A element
+outside that hyperplane.  The last two contain {g_A,a_1,a_2}, a basis of
+G∪A, plus a B element outside that hyperplane.  Hence they are bases as well.
+
+Therefore every strict rank-4 instance with exactly two dangerous hyperplanes
+has an explicit cyclic basis ordering.  No deletion/lifting theorem is needed.
+
+This proof is checked informal mathematics and is not yet Lean-certified.
 
 ### t=1
 
@@ -245,10 +305,9 @@ These are experiments, not proofs.
 1. Formalize the dangerous-core rank/cardinality structure, especially the
    t=3 rank-1 core theorem.
 2. Formalize the explicit t=3 CBO construction.
-3. Prove the small local selection lemma needed by the t=2 ABGBAG defect.
+3. Formalize the now-complete direct t=2 construction and its bad-core-edge counting lemma.
 4. Prove the two-contraction common-pair lemma needed by the t=1 CG tail.
-5. Return to deletion-CBO lifting primarily for t=0, and possibly as a backup
-   for t=1/t=2.
+5. Return to deletion-CBO lifting primarily for t=0, and only as a backup for t=1.
 
 This route is attractive because t=3 is exactly the case where direct
 insertion fails most systematically, yet it becomes the easiest case after
