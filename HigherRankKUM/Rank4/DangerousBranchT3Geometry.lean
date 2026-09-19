@@ -269,6 +269,70 @@ theorem dangerous_triple_core_side_pair_indep
   exact (hgNonloop.indep.insert_indep_iff_of_notMem (by simpa [hag])).2
     ⟨ha.1, by rwa [hclg]⟩
 
+/-- Ordinary `t=3` window certificate: one triple-core element and one
+element from each of the three complementary side classes form an ambient
+basis. -/
+theorem dangerous_triple_one_each_isBase
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    {g a b c : α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂)
+    (hg : g ∈ (H₀ ∩ H₁) ∩ H₂)
+    (ha : a ∈ M.E \ H₀)
+    (hb : b ∈ M.E \ H₁)
+    (hc : c ∈ M.E \ H₂) :
+    M.IsBase ({g, a, b, c} : Set α) := by
+  let F : Set α := ((H₀ ∩ H₁) ∩ H₂) ∪ (M.E \ H₀)
+  have hFdata := dangerous_triple_side_core_flat
+    (M := M) (k := k) (H₀ := H₀) (H₁ := H₁) (H₂ := H₂)
+    (by omega : 1 ≤ k) hE hRank hEcard hStrict
+    hH₀ hH₁ hH₂ h01 h02 h12
+  have hFflat : M.IsFlat F := by simpa [F] using hFdata.1
+  have hFrank : M.eRk F = (2 : ℕ∞) := by simpa [F] using hFdata.2
+  have hpair : M.Indep ({g, a} : Set α) :=
+    dangerous_triple_core_side_pair_indep
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12 hg ha
+  have hga : g ≠ a := by
+    intro h
+    subst a
+    exact ha.2 hg.1.1
+  have hpairRank : M.eRk ({g, a} : Set α) = (2 : ℕ∞) := by
+    rw [hpair.eRk_eq_encard, Set.encard_pair hga]
+  have hIF : ({g, a} : Set α) ⊆ F := by
+    intro x hx
+    rcases hx with rfl | hx
+    · exact Or.inl hg
+    · have hxa : x = a := by simpa using hx
+      subst x
+      exact Or.inr ha
+  have hFH₂ : F ⊆ H₂ := by
+    rw [dangerous_triple_core_union_complement
+      hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12]
+    exact Set.inter_subset_right
+  have hbH₂ : b ∈ H₂ :=
+    dangerous_complement_subset_other
+      hE hRank hEcard hStrict hH₁ hH₂ h12 hb
+  have hbF : b ∉ F := by
+    intro hbF
+    have hbH₁ : b ∈ H₁ := by
+      rw [dangerous_triple_core_union_complement
+        hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12] at hbF
+      exact hbF.1
+    exact hb.2 hbH₁
+  have hraw := isBase_of_rankTwo_basis_nested_rankThree
+    (M := M) (I := ({g, a} : Set α)) (F := F) (H := H₂)
+    (b := b) (c := c)
+    hRank hpair (by simp) hpairRank hIF hFflat hFrank hFH₂
+    hH₂.1 hH₂.2.1 hbH₂ hbF hc.1 hc.2
+  simpa [F, Set.pair_comm] using hraw
+
 /-- The basic `t=3` window certificate: two distinct independent elements
 from one side class, together with one element from each of the other two
 side classes, form a basis. -/
