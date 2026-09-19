@@ -1,5 +1,6 @@
 import HigherRankKUM.BalancedInterleave
 import HigherRankKUM.Rank4.GcdTwoRepairGeometry
+import HigherRankKUM.PairRelationAssignment
 
 namespace HigherRankKUM
 namespace Rank4GcdTwoFlattening
@@ -373,6 +374,23 @@ theorem cyclicBasisOrder_of_pair_orientation
   · rw [cyclicWindow_orientedPairOrder_shifted A h2N o i]
     exact (A.shifted_window_iff_localRelation
       (by omega) h2N i (o i) (o (cyclicIndex N hN i 2))).2 (ho i)
+
+
+/-- Relation-level orientability of an admissible rank-four pair cycle is
+already enough to produce a genuine cyclic basis ordering. -/
+theorem exists_cyclicBasisOrder_of_pairRelationOrientable
+    {M : Matroid α} {N : ℕ} {hN : 0 < N}
+    (A : AdmissiblePairCycle.Data M N 2 hN)
+    (h2N : 2 < N) (hcop : Nat.gcd N 2 = 1)
+    (hor : PairCycleObstruction.PairRelationOrientable
+      N 2 hN (A.localRelation (by omega))) :
+    ∃ order : Fin (2 * N) ≃ M.E,
+      CyclicBasisOrder M 4 (Nat.mul_pos (by omega) hN) order := by
+  obtain ⟨o, ho⟩ :=
+    PairCycleObstruction.exists_orientation_of_pairRelationOrientable
+      hN hcop hor
+  exact ⟨orientedPairOrder A o,
+    cyclicBasisOrder_of_pair_orientation A h2N o ho⟩
 
 end
 
