@@ -236,6 +236,158 @@ def t3IndexEquiv (k : ℕ) (hk : 2 ≤ k) :
   simp [t3IndexEquiv, hbt, t3RegroupEquiv]
 
 
+
+/-- Enumerate a finite set while prescribing two distinct slots. -/
+theorem exists_fin_equiv_with_two_prescribed
+    {S : Set α} {n : ℕ}
+    (hS : S.Finite) (hcard : S.ncard = n)
+    (i j : Fin n) (hij : i ≠ j)
+    {x y : α} (hx : x ∈ S) (hy : y ∈ S) (hxy : x ≠ y) :
+    ∃ e : Fin n ≃ S, (e i : α) = x ∧ (e j : α) = y := by
+  letI : Fintype S := hS.fintype
+  have hNatCard : Nat.card S = n := by
+    simpa [Nat.card_coe_set_eq] using hcard
+  let e₀ : Fin n ≃ S := (Finite.equivFinOfCardEq hNatCard).symm
+  let f : Fin 2 → Fin n := fun r => Fin.cases i (fun _ => j) r
+  let g : Fin 2 → Fin n := fun r =>
+    Fin.cases (e₀.symm ⟨x, hx⟩) (fun _ => e₀.symm ⟨y, hy⟩) r
+  have hf : Function.Injective f := by
+    intro a b hab
+    fin_cases a <;> fin_cases b <;> simp [f] at hab ⊢
+    · exact (hij hab).elim
+    · exact (hij hab.symm).elim
+  have hg : Function.Injective g := by
+    intro a b hab
+    fin_cases a <;> fin_cases b <;> simp [g] at hab ⊢
+    · have h := congrArg e₀ hab
+      simp only [Equiv.apply_symm_apply] at h
+      exact (hxy (Subtype.ext_iff.mp h)).elim
+    · have h := congrArg e₀ hab
+      simp only [Equiv.apply_symm_apply] at h
+      exact (hxy (Subtype.ext_iff.mp h).symm).elim
+  obtain ⟨π, hπ⟩ := Equiv.Perm.exists_extending_pair f g hf hg
+  let e : Fin n ≃ S := π.trans e₀
+  refine ⟨e, ?_, ?_⟩
+  · have h := hπ (0 : Fin 2)
+    change (e₀ (π i) : α) = x
+    simpa [f, g] using congrArg (fun z => (e₀ z : α)) h
+  · have h := hπ (1 : Fin 2)
+    change (e₀ (π j) : α) = y
+    simpa [f, g] using congrArg (fun z => (e₀ z : α)) h
+
+/-- Slot type for the t=2 schedule: A-slots, B-slots, and the 2k core slots. -/
+abbrev T2Slots (k : ℕ) :=
+  (Fin (k + 1) ⊕ Fin (k + 1)) ⊕ Fin (2 * k)
+
+def t2PrefixSlot {k : ℕ} (j : Fin (k - 1)) : Fin 4 → T2Slots k :=
+  Fin.cases (Sum.inl (Sum.inl ⟨j.val, by omega⟩))
+    (fun r =>
+      Fin.cases (Sum.inl (Sum.inr ⟨j.val, by omega⟩))
+        (fun s =>
+          Fin.cases (Sum.inr ⟨2 * j.val, by omega⟩)
+            (fun _ => Sum.inr ⟨2 * j.val + 1, by omega⟩) s) r)
+
+def t2TailSlot {k : ℕ} (hk : 2 ≤ k) : Fin 6 → T2Slots k :=
+  Fin.cases (Sum.inl (Sum.inl ⟨k - 1, by omega⟩))
+    (fun r =>
+      Fin.cases (Sum.inl (Sum.inr ⟨k - 1, by omega⟩))
+        (fun s =>
+          Fin.cases (Sum.inr ⟨2 * k - 2, by omega⟩)
+            (fun t =>
+              Fin.cases (Sum.inl (Sum.inr ⟨k, by omega⟩))
+                (fun u =>
+                  Fin.cases (Sum.inl (Sum.inl ⟨k, by omega⟩))
+                    (fun _ => Sum.inr ⟨2 * k - 1, by omega⟩) u) t) s) r)
+
+/-- Regroup the t=2 block-plus-tail positions into A,B,G local slots. -/
+def t2RegroupEquiv (k : ℕ) (hk : 2 ≤ k) :
+    (Fin (k - 1) × Fin 4) ⊕ Fin 6 ≃ T2Slots k := by
+  let f : (Fin (k - 1) × Fin 4) ⊕ Fin 6 → T2Slots k
+    | Sum.inl x => t2PrefixSlot x.1 x.2
+    | Sum.inr r => t2TailSlot hk r
+  apply Equiv.ofBijective f
+  constructor
+  · intro x y hxy
+    rcases x with x | x <;> rcases y with y | y
+    · rcases x with ⟨i, r⟩
+      rcases y with ⟨j, s⟩
+      fin_cases r <;> fin_cases s <;>
+        simp [f, t2PrefixSlot, Fin.ext_iff] at hxy ⊢ <;> omega
+    · rcases x with ⟨i, r⟩
+      fin_cases r <;> fin_cases y <;>
+        simp [f, t2PrefixSlot, t2TailSlot, Fin.ext_iff] at hxy
+    · rcases y with ⟨j, s⟩
+      fin_cases x <;> fin_cases s <;>
+        simp [f, t2PrefixSlot, t2TailSlot, Fin.ext_iff] at hxy
+    · fin_cases x <;> fin_cases y <;>
+        simp [f, t2TailSlot, Fin.ext_iff] at hxy ⊢ <;> omega
+  · intro y
+    rcases y with (a | b) | g
+    · by_cases hlt : a.val < k - 1
+      · refine ⟨Sum.inl (⟨a.val, hlt⟩, 0), ?_⟩
+        simp [f, t2PrefixSlot, Fin.ext_iff]
+      · have ha : a.val = k - 1 ∨ a.val = k := by omega
+        rcases ha with ha | ha
+        · refine ⟨Sum.inr 0, ?_⟩
+          subst a
+          simp [f, t2TailSlot, Fin.ext_iff]
+        · refine ⟨Sum.inr 4, ?_⟩
+          subst a
+          simp [f, t2TailSlot, Fin.ext_iff]
+    · by_cases hlt : b.val < k - 1
+      · refine ⟨Sum.inl (⟨b.val, hlt⟩, 1), ?_⟩
+        simp [f, t2PrefixSlot, Fin.ext_iff]
+      · have hb : b.val = k - 1 ∨ b.val = k := by omega
+        rcases hb with hb | hb
+        · refine ⟨Sum.inr 1, ?_⟩
+          subst b
+          simp [f, t2TailSlot, Fin.ext_iff]
+        · refine ⟨Sum.inr 3, ?_⟩
+          subst b
+          simp [f, t2TailSlot, Fin.ext_iff]
+    · by_cases hlt : g.val < 2 * (k - 1)
+      · let j : Fin (k - 1) := ⟨g.val / 2, by omega⟩
+        by_cases heven : g.val % 2 = 0
+        · refine ⟨Sum.inl (j, 2), ?_⟩
+          have hm := Nat.mod_add_div g.val 2
+          simp [f, t2PrefixSlot, j, Fin.ext_iff]
+          omega
+        · have hodd : g.val % 2 = 1 := by
+            have hm : g.val % 2 < 2 := Nat.mod_lt _ (by omega)
+            omega
+          refine ⟨Sum.inl (j, 3), ?_⟩
+          have hm := Nat.mod_add_div g.val 2
+          simp [f, t2PrefixSlot, j, Fin.ext_iff]
+          omega
+      · have hg : g.val = 2 * k - 2 ∨ g.val = 2 * k - 1 := by omega
+        rcases hg with hg | hg
+        · refine ⟨Sum.inr 2, ?_⟩
+          subst g
+          simp [f, t2TailSlot, Fin.ext_iff]
+        · refine ⟨Sum.inr 5, ?_⟩
+          subst g
+          simp [f, t2TailSlot, Fin.ext_iff]
+
+/-- Canonical pure-index equivalence for the t=2 schedule. -/
+def t2IndexEquiv (k : ℕ) (hk : 2 ≤ k) :
+    Fin (4 * k + 2) ≃ T2Slots k :=
+  (t3BlockTailEquiv k hk).trans (t2RegroupEquiv k hk)
+
+@[simp] theorem t2IndexEquiv_prefix
+    (k : ℕ) (hk : 2 ≤ k) (j : Fin (k - 1)) (r : Fin 4) :
+    t2IndexEquiv k hk ⟨r.val + 4 * j.val, by omega⟩ =
+      t2PrefixSlot j r := by
+  simp [t2IndexEquiv, t3BlockTailEquiv, t2RegroupEquiv,
+    finProdFinEquiv]
+  omega
+
+@[simp] theorem t2IndexEquiv_tail
+    (k : ℕ) (hk : 2 ≤ k) (r : Fin 6) :
+    t2IndexEquiv k hk ⟨4 * (k - 1) + r.val, by omega⟩ =
+      t2TailSlot hk r := by
+  simp [t2IndexEquiv, t3BlockTailEquiv, t2RegroupEquiv]
+  omega
+
 end
 
 end FiniteSchedule
