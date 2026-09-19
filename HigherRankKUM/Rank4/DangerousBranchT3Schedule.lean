@@ -182,7 +182,6 @@ theorem dangerous_triple_six_exceptional_windows
       cyclicIndex n hnpos ⟨m + r, by omega⟩ s =
         ⟨m + r + s, by omega⟩ := by
     apply cyclicIndex_eq_mk_add_of_lt
-    omega
 
   have hwrap (r s : ℕ) (hr : r < 6) (hge : 6 ≤ r + s)
       (hlt : r + s < 12) :
@@ -259,36 +258,42 @@ theorem dangerous_triple_six_exceptional_windows
     have h0 := hidx 0 1 (by omega)
     have h1 := hidx 0 2 (by omega)
     have h2 := hidx 0 3 (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσpA, hσpB, hσpC, hσdA] using hbaseA_pd
+    rw [h0, h1, h2, hσpA, hσpB, hσpC, hσdA]
+    exact hbaseA_pd
   constructor
   · rw [cyclicWindow_four_eq]
     have h0 := hidx 1 1 (by omega)
     have h1 := hidx 1 2 (by omega)
     have h2 := hidx 1 3 (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσpB, hσpC, hσdA, hσdB] using hbaseB_pd
+    rw [h0, h1, h2, hσpB, hσpC, hσdA, hσdB]
+    exact hbaseB_pd
   constructor
   · rw [cyclicWindow_four_eq]
     have h0 := hidx 2 1 (by omega)
     have h1 := hidx 2 2 (by omega)
     have h2 := hidx 2 3 (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσpC, hσdA, hσdB, hσdC] using hbaseC_pd
+    rw [h0, h1, h2, hσpC, hσdA, hσdB, hσdC]
+    exact hbaseC_pd
   constructor
   · rw [cyclicWindow_four_eq]
     have h0 := hidx 3 1 (by omega)
     have h1 := hidx 3 2 (by omega)
     have h2 := hwrap 3 3 (by omega) (by omega) (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσdA, hσdB, hσdC, hσ0] using hbaseA_dq
+    rw [h0, h1, h2, hσdA, hσdB, hσdC, hσ0]
+    exact hbaseA_dq
   constructor
   · rw [cyclicWindow_four_eq]
     have h0 := hidx 4 1 (by omega)
     have h1 := hwrap 4 2 (by omega) (by omega) (by omega)
     have h2 := hwrap 4 3 (by omega) (by omega) (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσdB, hσdC, hσ0, hσ1] using hbaseB_dq
+    rw [h0, h1, h2, hσdB, hσdC, hσ0, hσ1]
+    exact hbaseB_dq
   · rw [cyclicWindow_four_eq]
     have h0 := hwrap 5 1 (by omega) (by omega) (by omega)
     have h1 := hwrap 5 2 (by omega) (by omega) (by omega)
     have h2 := hwrap 5 3 (by omega) (by omega) (by omega)
-    simpa [n, m, hn, h0, h1, h2, hσdC, hσ0, hσ1, hσ2] using hbaseC_dq
+    rw [h0, h1, h2, hσdC, hσ0, hσ1, hσ2]
+    exact hbaseC_dq
 
 
 /-- A normalized t=3 schedule is a cyclic basis ordering.
