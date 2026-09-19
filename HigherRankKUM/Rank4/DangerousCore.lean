@@ -48,7 +48,7 @@ theorem dangerous_inter_eRk_eq_two
   have hsNat : 4 * (2 * k) < (4 * k + 2) * j := by
     exact_mod_cast hs
   have hj2 : j = 2 := by
-    omega
+    interval_cases j <;> omega
   simpa [hj2] using hj
 
 /-- Three distinct dangerous hyperplanes have a rank-one triple core of
@@ -81,7 +81,7 @@ theorem dangerous_triple_core
     dsimp [I]
     exact dangerous_inter_eRk_eq_two
       (k := k) (H := H₀) (K := H₁)
-      hk.le hE hRank hEcard hStrict hH₀ hH₁ h01
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict hH₀ hH₁ h01
   have hIcard : I.ncard = 2 * k := by
     dsimp [I]
     exact dangerous_inter_ncard_eq_two_mul
@@ -130,12 +130,12 @@ theorem dangerous_triple_core
     intro hEq
     apply hIproper
     apply Set.Subset.antisymm
-    · intro x hx
+    · exact hIsub
+    · intro x hxE
       have hxG : x ∈ G := by
         rw [hEq]
-        exact hIsub hx
+        exact hxE
       exact hGsubI hxG
-    · exact hIsub
 
   have hDiff : I \ C₂ = G := by
     ext x
