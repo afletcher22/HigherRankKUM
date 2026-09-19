@@ -82,3 +82,4 @@ import HigherRankKUM.Rank4.GcdTwoRankTwoTight
 import HigherRankKUM.Rank4.SixElementBoundary
 import HigherRankKUM.Rank4.DangerousCore
 import HigherRankKUM.Rank4.DangerousBranchFactors
+import HigherRankKUM.Rank4.DangerousBranchT3Geometry
