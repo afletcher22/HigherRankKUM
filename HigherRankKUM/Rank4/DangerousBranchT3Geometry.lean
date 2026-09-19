@@ -1,3 +1,4 @@
+import HigherRankKUM.RankTwoSelection
 import HigherRankKUM.Rank4.DangerousBranchFactors
 
 namespace HigherRankKUM
@@ -325,6 +326,68 @@ theorem dangerous_triple_side_pair_isBase
     hbH₂ hbF hc.1 hc.2
   simpa [F, Set.pair_comm] using hraw
 
+
+
+/-- Each side class in the `t=3` branch contains a three-element tail
+configuration `q,p,d` with the two pairs through `d` independent. -/
+theorem dangerous_triple_side_exists_tail_triple
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂) :
+    ∃ q p d : α,
+      q ∈ M.E \ H₀ ∧ p ∈ M.E \ H₀ ∧ d ∈ M.E \ H₀ ∧
+      q ≠ p ∧ q ≠ d ∧ p ≠ d ∧
+      M.Indep ({d, q} : Set α) ∧
+      M.Indep ({d, p} : Set α) := by
+  let A : Set α := M.E \ H₀
+  let N : Matroid α := M.restrict A
+  have hAsub : A ⊆ M.E := by
+    dsimp [A]
+    exact Set.sdiff_subset
+  have hAfin : A.Finite := hE.subset hAsub
+  have hAcard : A.ncard = k + 1 := by
+    dsimp [A]
+    exact dangerous_complement_ncard_eq hE hEcard hH₀
+  have hNfinite : N.E.Finite := by
+    simpa [N] using hAfin
+  have hNcard : 3 ≤ N.E.ncard := by
+    simpa [N, hAcard] using (show 3 ≤ k + 1 by omega)
+  have hNrank : N.eRank = (2 : ℕ∞) := by
+    dsimp [N]
+    simpa using dangerous_triple_complement_eRk_eq_two
+      (M := M) (k := k) (H₀ := H₀) (H₁ := H₁) (H₂ := H₂)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict
+      hH₀ hH₁ hH₂ h01 h02 h12
+  have hLooplessM : M.Loopless := by
+    rw [Matroid.loopless_iff_forall_not_isLoop]
+    intro e heE heLoop
+    exact (isNonloop_of_strict_rankFour hRank hStrict heE).not_isLoop heLoop
+  letI : M.Loopless := hLooplessM
+  have hNloopless : N.Loopless := by
+    dsimp [N]
+    exact (Matroid.restrict_isRestriction M A hAsub).loopless
+  obtain ⟨d, p, q, hdp, hdq, hpq, hdpBase, hdqBase⟩ :=
+    RankTwoSelection.exists_center_with_two_basis_partners
+      N hNfinite hNrank hNcard hNloopless
+  have hdA : d ∈ A := by
+    simpa [N] using hdpBase.subset_ground (by simp)
+  have hpA : p ∈ A := by
+    simpa [N] using hdpBase.subset_ground (by simp)
+  have hqA : q ∈ A := by
+    simpa [N] using hdqBase.subset_ground (by simp)
+  refine ⟨q, p, d, ?_, ?_, ?_, hpq.symm, hdq.symm, hdp.symm, ?_, ?_⟩
+  · simpa [A] using hqA
+  · simpa [A] using hpA
+  · simpa [A] using hdA
+  · exact hdqBase.indep.of_restrict
+  · exact hdpBase.indep.of_restrict
 
 end
 
