@@ -12,6 +12,7 @@ CASES = (
     ('sprint5_six_block_parity_audit.py', 'sprint5_six_block_parity_result.json'),
     ('sprint5_center_cross_dichotomy_audit.py', 'sprint5_center_cross_dichotomy_result.json'),
     ('sprint5_finite_field_parity_audit.py', 'sprint5_finite_field_parity_result.json'),
+    ('rank4_t0_two_step_repair_certificate.py', 'rank4_t0_two_step_repair_result.json'),
 )
 
 
