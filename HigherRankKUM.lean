@@ -80,3 +80,4 @@ import HigherRankKUM.Rank4.GcdTwoCrossRepairParity
 import HigherRankKUM.Rank4.GcdTwoClosurePropagation
 import HigherRankKUM.Rank4.GcdTwoRankTwoTight
 import HigherRankKUM.Rank4.SixElementBoundary
+import HigherRankKUM.Rank4.DangerousCore
