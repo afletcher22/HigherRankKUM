@@ -231,43 +231,43 @@ theorem interior_pair_union_eq_deletion_window
   rw [hnext]
   rw [frontInsertPairOrder_block_zero_of_pos hN M e he sigma i hi0]
   rw [frontInsertPairOrder_block_one hN M e he sigma i]
+  have hnextPos : 0 < (⟨i.val + 1, hinext⟩ : Fin N).val := by
+    exact Nat.zero_lt_succ i.val
   rw [frontInsertPairOrder_block_zero_of_pos hN M e he sigma
-    ⟨i.val + 1, hinext⟩ (by omega)]
+    ⟨i.val + 1, hinext⟩ hnextPos]
   rw [frontInsertPairOrder_block_one hN M e he sigma
     ⟨i.val + 1, hinext⟩]
   let t : ℕ := i.val - 1
   have hit : i.val = t + 1 := by
     dsimp [t]
     omega
+  rw [hit]
   have hs : (2 * t + 1) + 3 < 2 * N - 1 := by
     omega
   have hstart :
-      (⟨2 * i.val - 1, by omega⟩ : Fin (2 * N - 1)) =
+      (⟨2 * (t + 1) - 1, by omega⟩ : Fin (2 * N - 1)) =
         ⟨2 * t + 1, by omega⟩ := by
     apply Fin.ext
     omega
   rw [hstart]
   rw [cyclicWindow_four_no_wrap
     (by omega : 0 < 2 * N - 1) sigma (2 * t + 1) hs]
-  have hidx0 :
-      (⟨2 * i.val - 1, by omega⟩ : Fin (2 * N - 1)) =
-        ⟨2 * t + 1, by omega⟩ := hstart
   have hidx1 :
-      (⟨2 * i.val, by omega⟩ : Fin (2 * N - 1)) =
+      (⟨2 * (t + 1), by omega⟩ : Fin (2 * N - 1)) =
         ⟨2 * t + 2, by omega⟩ := by
     apply Fin.ext
     omega
   have hidx2 :
-      (⟨2 * (i.val + 1) - 1, by omega⟩ : Fin (2 * N - 1)) =
+      (⟨2 * (t + 1 + 1) - 1, by omega⟩ : Fin (2 * N - 1)) =
         ⟨2 * t + 3, by omega⟩ := by
     apply Fin.ext
     omega
   have hidx3 :
-      (⟨2 * (i.val + 1), by omega⟩ : Fin (2 * N - 1)) =
+      (⟨2 * (t + 1 + 1), by omega⟩ : Fin (2 * N - 1)) =
         ⟨2 * t + 4, by omega⟩ := by
     apply Fin.ext
     omega
-  rw [hidx0, hidx1, hidx2, hidx3]
+  rw [hidx1, hidx2, hidx3]
 
 /-- Interior aligned pair windows of a front-inserted deletion CBO remain
 bases of the original matroid whenever the deleted singleton is coindependent. -/
