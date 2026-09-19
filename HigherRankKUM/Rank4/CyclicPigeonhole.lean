@@ -43,6 +43,10 @@ theorem exists_cyclic_edge_avoiding_two_small_sets
   have hunion :
       (Bbad ∪ Apre).ncard ≤ Bbad.ncard + Apre.ncard :=
     Set.ncard_union_le _ _
+  have huniv :
+      (Set.univ : Set (Fin (2 * k))).ncard = 2 * k := by
+    simp
+  rw [huniv] at hcardCover
   rw [hApreCard] at hunion
   omega
 
