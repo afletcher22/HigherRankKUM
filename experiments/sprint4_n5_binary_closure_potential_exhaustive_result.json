@@ -78,5 +78,10 @@
       ]
     ]
   },
-  "status": "exact exhaustive normalized binary N=5 evidence; not a universal closure-potential theorem"
+  "status": "exact exhaustive normalized binary N=5 evidence; not a universal closure-potential theorem",
+  "dangerous_hyperplane_count_histogram_strict_unorientable": {
+    "1": 40,
+    "2": 40
+  },
+  "strict_unorientable_with_zero_dangerous_hyperplanes": 0
 }
