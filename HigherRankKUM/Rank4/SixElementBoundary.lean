@@ -100,12 +100,25 @@ theorem sdiff_two_window_eq_four_window
   all_goals
     constructor
     · rintro ⟨hxE, hbad⟩
-      let q : Fin 6 := σ.symm ⟨x, hxE⟩
-      have hqx : (σ q : α) = x := by
-        exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
-      fin_cases q <;> simp_all
+      have hxcover :
+          x = (σ 0 : α) ∨ x = (σ 1 : α) ∨ x = (σ 2 : α) ∨
+          x = (σ 3 : α) ∨ x = (σ 4 : α) ∨ x = (σ 5 : α) := by
+        let q : Fin 6 := σ.symm ⟨x, hxE⟩
+        have hqx : (σ q : α) = x := by
+          exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
+        have hqval : q.val = 0 ∨ q.val = 1 ∨ q.val = 2 ∨
+            q.val = 3 ∨ q.val = 4 ∨ q.val = 5 := by omega
+        rcases hqval with (hq | hq | hq | hq | hq | hq) <;>
+          have hq' : q = ⟨_, by omega⟩ := Fin.ext hq <;>
+          rw [hq'] at hqx <;> simp_all
+      rcases hxcover with (rfl | rfl | rfl | rfl | rfl | rfl) <;>
+        simp_all only [Equiv.apply_eq_iff_eq, Fin.mk.injEq, OfNat.ofNat_ne_ofNat,
+          not_false_eq_true, true_and, or_false, or_true, true_or]
     · rintro (rfl | rfl | rfl | rfl) <;>
-        exact ⟨(σ _).property, by simp⟩
+        refine ⟨(σ _).property, ?_⟩ <;>
+        constructor <;> intro h <;>
+        have hs : (_ : Fin 6) = _ := σ.injective (Subtype.ext h) <;>
+        omega
 
 /-- The six-element boundary of rank-four KUM.
 
