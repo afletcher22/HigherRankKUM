@@ -103,16 +103,9 @@ theorem sdiff_two_window_eq_four_window
       let q : Fin 6 := σ.symm ⟨x, hxE⟩
       have hqx : (σ q : α) = x := by
         exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
-      have hq : q = 0 ∨ q = 1 ∨ q = 2 ∨ q = 3 ∨ q = 4 ∨ q = 5 := by
-        fin_cases q <;> simp
-      rcases hq with (rfl | rfl | rfl | rfl | rfl | rfl) <;>
-        simp_all
-    · intro hx
-      rcases hx with (rfl | rfl | rfl | rfl) <;>
-        constructor
-      all_goals
-        · exact (σ _).property
-        · simp
+      fin_cases q <;> simp_all
+    · rintro (rfl | rfl | rfl | rfl) <;>
+        exact ⟨(σ _).property, by simp⟩
 
 /-- The six-element boundary of rank-four KUM.
 
