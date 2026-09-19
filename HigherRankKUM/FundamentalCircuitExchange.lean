@@ -37,21 +37,19 @@ theorem Matroid.mem_closure_insert_of_contract_pair_not_isBase
     (hcE : c ∈ (M.contract C).E)
     (hnot : ¬ (M.contract C).IsBase ({a, c} : Set α)) :
     c ∈ M.closure (insert a C) := by
-  let N := M.contract C
-  have haI : N.Indep ({a} : Set α) :=
+  have haI : (M.contract C).Indep ({a} : Set α) :=
     hA.indep.subset (by simp)
-  have hpair_not_indep : ¬ N.Indep ({a, c} : Set α) := by
+  have hpair_not_indep : ¬ (M.contract C).Indep ({a, c} : Set α) := by
     intro hpair
     apply hnot
-    apply hpair.isBase_of_eRk_ge
-    rw [← hA.encard_eq_eRank, hpair.eRk_eq_encard]
-    rw [Set.encard_pair haa', Set.encard_pair hca]
-  have hccl : c ∈ N.closure ({a} : Set α) := by
+    exact hpair.isBase_of_eRk_ge (by simp) (by
+      rw [← hA.encard_eq_eRank, hpair.eRk_eq_encard]
+      rw [Set.encard_pair haa', Set.encard_pair hca])
+  have hccl : c ∈ (M.contract C).closure ({a} : Set α) := by
     by_contra hcnot
-    have hci : N.Indep (insert c ({a} : Set α)) :=
+    have hci : (M.contract C).Indep (insert c ({a} : Set α)) :=
       (haI.insert_indep_iff_of_notMem (by simpa [hca])).2 ⟨hcE, hcnot⟩
     exact hpair_not_indep (by simpa [Set.pair_comm] using hci)
-  change c ∈ (M.contract C).closure ({a} : Set α) at hccl
   rw [Matroid.contract_closure_eq] at hccl
   exact hccl.1
 
@@ -149,7 +147,7 @@ theorem Matroid.isCircuit_pair_of_endpoint_closure_and_failed_contract_pair
     subst c
     exact hcI (Or.inl (by simp))
   have hcMiddle : c ∈ M.closure (insert a C) :=
-    M.mem_closure_insert_of_contract_pair_not_isBase hA haa' hca hcE hnot
+    Matroid.mem_closure_insert_of_contract_pair_not_isBase hA haa' hca hcE hnot
   have hpairI : ({a, a'} : Set α) ⊆ (({a, a'} : Set α) ∪ C) :=
     Set.subset_union_left
   have hmiddleI : insert a C ⊆ (({a, a'} : Set α) ∪ C) := by
@@ -169,7 +167,7 @@ theorem Matroid.isCircuit_pair_of_endpoint_closure_and_failed_contract_pair
     have ha'C : a' ∈ C := by simpa [hxa'] using hxC
     exact (Set.disjoint_left.1 hAC (by simp) ha'C).elim
   simpa [Set.pair_comm] using
-    hI.isCircuit_pair_of_mem_closure_inter_singleton
+    Matroid.Indep.isCircuit_pair_of_mem_closure_inter_singleton hI
       hpairI hmiddleI hcEndpoint hcMiddle hcI hcNonloop hinter
 
 
