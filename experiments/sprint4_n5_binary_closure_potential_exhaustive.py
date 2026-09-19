@@ -174,6 +174,7 @@ def main():
     score_histogram = Counter()
     edge_pattern_histogram = Counter()
     max_gain_histogram = Counter()
+    dangerous_count_histogram = Counter()
     without_increase = 0
     without_direct_orientable_increase = 0
     examples = {}
@@ -198,6 +199,12 @@ def main():
                     continue
 
                 strict_bad_count += 1
+                multiplicity = Counter(x for pair in state for x in pair)
+                dangerous_count = sum(
+                    sum(multiplicity[x] for x in flat) == 7
+                    for flat in RANK3_FLATS
+                )
+                dangerous_count_histogram[dangerous_count] += 1
                 score = closure_score(state)
                 score_histogram[score] += 1
                 edge_pattern_histogram[
@@ -232,6 +239,8 @@ def main():
         (0, 0, 0, 2, 2): 40,
     })
     assert max_gain_histogram == Counter({1: 40, 2: 40})
+    assert dangerous_count_histogram == Counter({1: 40, 2: 40})
+    assert dangerous_count_histogram[0] == 0
     assert without_increase == 0
     assert without_direct_orientable_increase == 0
 
@@ -258,6 +267,11 @@ def main():
         "maximum_score_gain_histogram": {
             str(k): v for k, v in sorted(max_gain_histogram.items())
         },
+        "dangerous_hyperplane_count_histogram_strict_unorientable": {
+            str(k): v for k, v in sorted(dangerous_count_histogram.items())
+        },
+        "strict_unorientable_with_zero_dangerous_hyperplanes":
+            dangerous_count_histogram[0],
         "strict_unorientable_without_score_increasing_repartition": without_increase,
         "strict_unorientable_without_direct_score_increasing_orientable_repartition": without_direct_orientable_increase,
         "examples_by_closure_score": {
