@@ -48,6 +48,7 @@ theorem dangerous_triple_ordinary_prefix_windows
     ∀ i : Fin (4 * k + 2), i.val < 4 * (k - 1) →
       M.IsBase (cyclicWindow 4 hn σ i) := by
   let hn : 0 < 4 * k + 2 := by omega
+  dsimp only
   intro i hi
   have hi3 : i.val + 3 < 4 * k + 2 := by omega
   let i1 : Fin (4 * k + 2) := ⟨i.val + 1, by omega⟩
@@ -189,8 +190,10 @@ theorem dangerous_triple_six_exceptional_windows
         ⟨r + s - 6, by omega⟩ := by
     have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
       n hnpos ⟨m + r, by omega⟩ s (by omega) (by omega)
+    rw [h]
     apply Fin.ext
-    simpa [hmn] using congrArg Fin.val h
+    dsimp [m, n]
+    omega
 
   have hbaseA_pd : M.IsBase ({pA, pB, pC, dA} : Set α) := by
     have h := dangerous_triple_side_pair_isBase
@@ -198,7 +201,8 @@ theorem dangerous_triple_six_exceptional_windows
       (x := pA) (y := dA) (b := pB) (c := pC)
       (by omega : 1 ≤ k) hE hRank hEcard hStrict
       hH₀ hH₁ hH₂ h01 h02 h12 hpA hdA hpAdA hpdA hpB hpC
-    simpa [Set.pair_comm] using h
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
   have hbaseB_pd : M.IsBase ({pB, pC, dA, dB} : Set α) := by
     have h := dangerous_triple_side_pair_isBase
@@ -207,7 +211,8 @@ theorem dangerous_triple_six_exceptional_windows
       (by omega : 1 ≤ k) hE hRank hEcard hStrict
       hH₁ hH₂ hH₀ h12 h01.symm h02.symm
       hpB hdB hpBdB hpdB hpC hdA
-    simpa [Set.pair_comm] using h
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
   have hbaseC_pd : M.IsBase ({pC, dA, dB, dC} : Set α) := by
     have h := dangerous_triple_side_pair_isBase
@@ -216,7 +221,8 @@ theorem dangerous_triple_six_exceptional_windows
       (by omega : 1 ≤ k) hE hRank hEcard hStrict
       hH₂ hH₀ hH₁ h02.symm h12.symm h01
       hpC hdC hpCdC hpdC hdA hdB
-    simpa [Set.pair_comm] using h
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
   have hbaseA_dq : M.IsBase ({dA, dB, dC, qA} : Set α) := by
     have h := dangerous_triple_side_pair_isBase
@@ -224,7 +230,8 @@ theorem dangerous_triple_six_exceptional_windows
       (x := dA) (y := qA) (b := dB) (c := dC)
       (by omega : 1 ≤ k) hE hRank hEcard hStrict
       hH₀ hH₁ hH₂ h01 h02 h12 hdA hqA hdAqA hdqA hdB hdC
-    simpa [Set.pair_comm] using h
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
   have hbaseB_dq : M.IsBase ({dB, dC, qA, qB} : Set α) := by
     have h := dangerous_triple_side_pair_isBase
@@ -233,7 +240,8 @@ theorem dangerous_triple_six_exceptional_windows
       (by omega : 1 ≤ k) hE hRank hEcard hStrict
       hH₁ hH₂ hH₀ h12 h01.symm h02.symm
       hdB hqB hdBqB hdqB hdC hqA
-    simpa [Set.pair_comm] using h
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
   have hbaseC_dq : M.IsBase ({dC, qA, qB, qC} : Set α) := by
     have h := dangerous_triple_side_pair_isBase
@@ -242,7 +250,8 @@ theorem dangerous_triple_six_exceptional_windows
       (by omega : 1 ≤ k) hE hRank hEcard hStrict
       hH₂ hH₀ hH₁ h02.symm h12.symm h01
       hdC hqC hdCqC hdqC hqA hqB
-    simpa [Set.pair_comm] using h
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
   dsimp only
   constructor
