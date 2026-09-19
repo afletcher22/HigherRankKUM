@@ -9,6 +9,24 @@ noncomputable section
 
 variable {α : Type*}
 
+/-- A length-two cyclic window is exactly its two successive entries. -/
+theorem cyclicWindow_two_eq
+    {E : Set α} {n : ℕ}
+    (hn : 0 < n) (σ : Fin n ≃ E) (i : Fin n) :
+    cyclicWindow 2 hn σ i =
+      ({(σ i : α), (σ (cyclicIndex n hn i 1) : α)} : Set α) := by
+  ext x
+  constructor
+  · rintro ⟨j, rfl⟩
+    fin_cases j <;> simp [cyclicWindow, cyclicIndex_zero]
+  · intro hx
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+    rcases hx with hx | hx
+    · subst x
+      exact ⟨0, by simp [cyclicIndex_zero]⟩
+    · subst x
+      exact ⟨1, rfl⟩
+
 /-- A length-four cyclic window is exactly the set of the four explicit
 successive entries.  This packages the `Fin 4` range bookkeeping used
 throughout the direct rank-four constructions. -/
