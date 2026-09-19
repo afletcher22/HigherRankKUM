@@ -85,6 +85,63 @@ theorem exists_center_with_two_basis_partners
         rw [hvw.eRk_eq_encard, Set.encard_pair hwv.symm]
       exact hvw.isBase_of_eRk_ge (by simp) (by rw [hRank, hRk])
 
+
+/-- Two loopless rank-two matroids on the same finite ground set of size at
+least three admit a three-element path: the first edge is a basis of `N₁`
+and the second edge is a basis of `N₂`.
+
+This is the exact selection statement used in the non-adjacent-good-edge
+subcase of the `t=1` dangerous-hyperplane construction. -/
+theorem exists_two_matroid_basis_path
+    (N₁ N₂ : Matroid α)
+    (hGround : N₁.E = N₂.E)
+    (hE : N₁.E.Finite)
+    (hCard : 3 ≤ N₁.E.ncard)
+    (hRank₁ : N₁.eRank = (2 : ℕ∞))
+    (hRank₂ : N₂.eRank = (2 : ℕ∞))
+    (hLoopless₁ : N₁.Loopless)
+    (hLoopless₂ : N₂.Loopless) :
+    ∃ c₀ c₁ c₂ : α,
+      c₀ ≠ c₁ ∧ c₁ ≠ c₂ ∧ c₀ ≠ c₂ ∧
+      N₁.IsBase ({c₀, c₁} : Set α) ∧
+      N₂.IsBase ({c₁, c₂} : Set α) := by
+  obtain ⟨d, p, q, hdp, hdq, hpq, hdpBase, hdqBase⟩ :=
+    exists_center_with_two_basis_partners
+      N₁ hE hRank₁ hCard hLoopless₁
+  have hdE₁ : d ∈ N₁.E := hdpBase.subset_ground (by simp)
+  have hdE₂ : d ∈ N₂.E := by simpa [← hGround] using hdE₁
+  letI : N₂.Loopless := hLoopless₂
+  have hdNonloop₂ : N₂.IsNonloop d := Matroid.isNonloop_of_loopless hdE₂
+  obtain ⟨B, hB, hdB⟩ := hdNonloop₂.exists_mem_isBase
+  have hBcard : B.encard = (2 : ℕ∞) := by
+    rw [hB.encard_eq_eRank, hRank₂]
+  obtain ⟨u, v, huv, hBpair⟩ := Set.encard_eq_two.mp hBcard
+  have hdPair : d ∈ ({u, v} : Set α) := by
+    rw [← hBpair]
+    exact hdB
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hdPair
+  rcases hdPair with hdu | hdv
+  · subst u
+    have hdv' : d ≠ v := huv
+    by_cases hpv : p = v
+    · subst p
+      refine ⟨q, d, v, hdq.symm, hdv', hpq.symm, ?_, ?_⟩
+      · simpa [Set.pair_comm] using hdqBase
+      · simpa [hBpair] using hB
+    · refine ⟨p, d, v, hdp.symm, hdv', hpv, ?_, ?_⟩
+      · simpa [Set.pair_comm] using hdpBase
+      · simpa [hBpair] using hB
+  · subst v
+    have hdu' : d ≠ u := huv.symm
+    by_cases hpu : p = u
+    · subst p
+      refine ⟨q, d, u, hdq.symm, hdu', hpq.symm, ?_, ?_⟩
+      · simpa [Set.pair_comm] using hdqBase
+      · simpa [Set.pair_comm, hBpair] using hB
+    · refine ⟨p, d, u, hdp.symm, hdu', hpu, ?_, ?_⟩
+      · simpa [Set.pair_comm] using hdpBase
+      · simpa [Set.pair_comm, hBpair] using hB
+
 end
 
 end RankTwoSelection
