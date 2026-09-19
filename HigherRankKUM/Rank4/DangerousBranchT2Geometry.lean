@@ -85,7 +85,8 @@ theorem dangerous_two_core_pair_sides_isBase
     hRank hpair (by simp) hpairRank hpairG hGflat hGrank
     Set.inter_subset_right hH₁.1 hH₁.2.1
     haH₁ haG hb.1 hb.2
-  simpa [G, Set.pair_comm] using hraw
+  convert hraw using 1 <;> ext z <;>
+    simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
 /-- Exceptional `t=2` window certificate.  If a core element and two
 elements from one side form a basis of the corresponding dangerous
@@ -153,7 +154,7 @@ theorem dangerous_two_parts_equiv_ground
     (hH : DangerousHyperplane M k H)
     (hK : DangerousHyperplane M k K)
     (hne : H ≠ K) :
-    ((M.E \ H) ⊕ (M.E \ K)) ⊕ (H ∩ K) ≃ M.E := by
+    ((M.E \ H : Set α) ⊕ (M.E \ K : Set α)) ⊕ ((H ∩ K : Set α)) ≃ M.E := by
   classical
   let A := M.E \ H
   let B := M.E \ K
