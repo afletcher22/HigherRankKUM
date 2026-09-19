@@ -42,6 +42,7 @@ import HigherRankKUM.PairCycleIndexing
 import HigherRankKUM.AdmissiblePairCycle
 import HigherRankKUM.PairCycleCardinality
 import HigherRankKUM.PairCycleFromOrder
+import HigherRankKUM.Rank4.DeletionPairCycle
 import HigherRankKUM.PairCycleObstruction
 import HigherRankKUM.PairRelationOrbitGauge
 import HigherRankKUM.PairRelationAssignment
