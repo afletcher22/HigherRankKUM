@@ -23,6 +23,37 @@ theorem Matroid.IsBase.mem_fundCircuit_iff_exchange_isBase
   · exact fun hBase => hBase.indep
 
 
+
+/-- In a rank-two contraction witnessed by a two-element base, a distinct
+outside ground element that fails to form a base with one endpoint is spanned
+by that endpoint after contraction.  Undoing the contraction says that it is
+spanned in the ambient matroid by the contracted set together with the
+endpoint. -/
+theorem Matroid.mem_closure_insert_of_contract_pair_not_isBase
+    {C : Set α} {a a' c : α}
+    (hA : (M.contract C).IsBase ({a, a'} : Set α))
+    (haa' : a ≠ a') (hca : c ≠ a)
+    (hcE : c ∈ (M.contract C).E)
+    (hnot : ¬ (M.contract C).IsBase ({a, c} : Set α)) :
+    c ∈ M.closure (insert a C) := by
+  let N := M.contract C
+  have haI : N.Indep ({a} : Set α) :=
+    hA.indep.subset (by simp)
+  have hpair_not_indep : ¬ N.Indep ({a, c} : Set α) := by
+    intro hpair
+    apply hnot
+    apply hpair.isBase_of_eRk_ge
+    rw [← hA.encard_eq_eRank, hpair.eRk_eq_encard]
+    rw [Set.encard_pair haa', Set.encard_pair hca]
+  have hccl : c ∈ N.closure ({a} : Set α) := by
+    by_contra hcnot
+    have hci : N.Indep (insert c ({a} : Set α)) :=
+      (haI.insert_indep_iff_of_notMem (by simpa [hca])).2 ⟨hcE, hcnot⟩
+    exact hpair_not_indep (by simpa [Set.pair_comm] using hci)
+  change c ∈ (M.contract C).closure ({a} : Set α) at hccl
+  rw [Matroid.contract_closure_eq] at hccl
+  exact hccl.1
+
 /-- If two subsets of one independent set both span the same nonloop `e`,
 then the fundamental circuit of `e` is supported on their intersection.
 In particular, when the intersection is contained in a singleton `{f}`,
