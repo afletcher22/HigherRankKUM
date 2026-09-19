@@ -65,17 +65,16 @@ theorem cyclicIndex_ne_self_of_pos_of_lt
 theorem existsUnique_cyclicIndex_offset
     (n : ℕ) (hn : 0 < n) (i q : Fin n) :
     ∃! t : Fin n, q = cyclicIndex n hn i t.val := by
-  have hbij : Function.Bijective (fun t : Fin n => cyclicIndex n hn i t.val) := by
-    exact (Finite.bijective_iff_injective_and_card _ _).2
-      ⟨by
-        intro a b h
-        apply Fin.ext
-        exact cyclicIndex_injective_offsets n hn i a.isLt b.isLt h,
-       by simp⟩
-  obtain ⟨t, ht⟩ := hbij.2 q
+  have hinj : Function.Injective (fun t : Fin n => cyclicIndex n hn i t.val) := by
+    intro a b h
+    apply Fin.ext
+    exact cyclicIndex_injective_offsets n hn i a.isLt b.isLt h
+  have hsurj : Function.Surjective (fun t : Fin n => cyclicIndex n hn i t.val) :=
+    Finite.surjective_of_injective hinj
+  obtain ⟨t, ht⟩ := hsurj q
   refine ⟨t, ht.symm, ?_⟩
   intro u hu
-  exact hbij.1 (hu.symm.trans ht)
+  exact hinj (hu.symm.trans ht.symm)
 
 end
 
