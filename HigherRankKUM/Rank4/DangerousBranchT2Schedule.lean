@@ -4,6 +4,7 @@ import HigherRankKUM.Rank4.CyclicPigeonhole
 import HigherRankKUM.CyclicRotation
 import HigherRankKUM.Rank4.CyclicWindowFour
 import HigherRankKUM.Rank4.CyclicIndexArithmetic
+import HigherRankKUM.Rank4.FiniteSchedule
 
 namespace HigherRankKUM
 namespace Rank4DangerousBranches
@@ -557,6 +558,302 @@ theorem dangerous_two_six_exceptional_windows
     have h1 := hwrap 5 2 (by omega) (by omega) (by omega)
     have h2 := hwrap 5 3 (by omega) (by omega) (by omega)
     simpa [n, m, hn, h0, h1, h2, hσgA, hσ0, hσ1, hσ2] using hbase5
+
+
+/-- Two distinct dangerous hyperplanes directly yield a rank-four cyclic
+basis ordering for k >= 2. The six-element case k=1 is handled separately by
+the rank-four six-element boundary theorem. -/
+theorem exists_cyclicBasisOrder_of_two_dangerous
+    {M : Matroid α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    {H K : Set α}
+    (hH : DangerousHyperplane M k H)
+    (hK : DangerousHyperplane M k K)
+    (hne : H ≠ K) :
+    ∃ σ : Fin (4 * k + 2) ≃ M.E,
+      CyclicBasisOrder M 4 (by omega) σ := by
+  obtain ⟨order, hOrder⟩ :=
+    exists_core_cbo_of_two_dangerous
+      (M := M) (k := k) (H := H) (K := K)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
+
+  obtain ⟨j, b₀, b₁, a₀, a₁,
+      hb₀, hb₁, hbne, ha₀, ha₁, hane, hbBasis, haBasis⟩ :=
+    dangerous_two_exists_oriented_good_core_edge
+      (M := M) (k := k) (H := H) (K := K)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne order hOrder
+
+  obtain ⟨order', hOrder', hlastB, hlastA⟩ :=
+    exists_shifted_core_cbo_with_edge_at_end
+      (M := M) (k := k) (H := H) (K := K)
+      (by omega : 1 ≤ k) order hOrder j
+
+  have hAfin : (M.E \ H).Finite := hE.sdiff
+  have hBfin : (M.E \ K).Finite := hE.sdiff
+  have hAcard : (M.E \ H).ncard = k + 1 :=
+    dangerous_complement_ncard_eq hE hEcard hH
+  have hBcard : (M.E \ K).ncard = k + 1 :=
+    dangerous_complement_ncard_eq hE hEcard hK
+
+  let iAk : Fin (k + 1) := ⟨k, by omega⟩
+  let iA0 : Fin (k + 1) := ⟨0, by omega⟩
+  have hiA : iAk ≠ iA0 := by
+    intro h
+    have := congrArg Fin.val h
+    simp [iAk, iA0] at this
+    omega
+  obtain ⟨eA, heAk, heA0⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_two_prescribed
+      hAfin hAcard iAk iA0 hiA ha₀ ha₁ hane
+
+  let iBp : Fin (k + 1) := ⟨k - 1, by omega⟩
+  let iBd : Fin (k + 1) := ⟨k, by omega⟩
+  have hiB : iBp ≠ iBd := by
+    intro h
+    have := congrArg Fin.val h
+    simp [iBp, iBd] at this
+    omega
+  obtain ⟨eB, heBp, heBd⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_two_prescribed
+      hBfin hBcard iBp iBd hiB hb₀ hb₁ hbne
+
+  let eG : Fin (2 * k) ≃ (H ∩ K : Set α) :=
+    order'.trans (Equiv.setCongr (by simp))
+
+  let eSlots :
+      FiniteSchedule.T2Slots k ≃
+        ((M.E \ H) ⊕ (M.E \ K)) ⊕ (H ∩ K) :=
+    Equiv.sumCongr (Equiv.sumCongr eA eB) eG
+  let eGround :=
+    dangerous_two_parts_equiv_ground
+      hE hRank hEcard hStrict hH hK hne
+  let σ : Fin (4 * k + 2) ≃ M.E :=
+    (FiniteSchedule.t2IndexEquiv k hk).trans (eSlots.trans eGround)
+
+  have hslotA (a : Fin (k + 1)) :
+      (eGround (Sum.inl (Sum.inl (eA a))) : α) = (eA a : α) := by
+    simp [eGround, dangerous_two_parts_equiv_ground]
+  have hslotB (b : Fin (k + 1)) :
+      (eGround (Sum.inl (Sum.inr (eB b))) : α) = (eB b : α) := by
+    simp [eGround, dangerous_two_parts_equiv_ground]
+  have hslotG (g : Fin (2 * k)) :
+      (eGround (Sum.inr (eG g)) : α) = (eG g : α) := by
+    simp [eGround, dangerous_two_parts_equiv_ground]
+
+  have hprefix_eval (q : Fin (k - 1)) (r : Fin 4) :
+      (σ ⟨r.val + 4 * q.val, by omega⟩ : α) =
+        match r.val with
+        | 0 => (eA ⟨q.val, by omega⟩ : α)
+        | 1 => (eB ⟨q.val, by omega⟩ : α)
+        | 2 => (order' ⟨2 * q.val, by omega⟩ : α)
+        | _ => (order' ⟨2 * q.val + 1, by omega⟩ : α) := by
+    fin_cases r <;>
+      simp [σ, eSlots, eG, FiniteSchedule.t2IndexEquiv_prefix,
+        FiniteSchedule.t2PrefixSlot, hslotA, hslotB, hslotG]
+
+  have htail_eval (r : Fin 6) :
+      (σ ⟨4 * (k - 1) + r.val, by omega⟩ : α) =
+        match r.val with
+        | 0 => (eA ⟨k - 1, by omega⟩ : α)
+        | 1 => (eB ⟨k - 1, by omega⟩ : α)
+        | 2 => (order' ⟨2 * k - 2, by omega⟩ : α)
+        | 3 => (eB ⟨k, by omega⟩ : α)
+        | 4 => (eA ⟨k, by omega⟩ : α)
+        | _ => (order' ⟨2 * k - 1, by omega⟩ : α) := by
+    fin_cases r <;>
+      simp [σ, eSlots, eG, FiniteSchedule.t2IndexEquiv_tail,
+        FiniteSchedule.t2TailSlot, hslotA, hslotB, hslotG]
+
+  have hApos : ∀ q : Fin k,
+      (σ ⟨4 * q.val, by omega⟩ : α) ∈ M.E \ H := by
+    intro q
+    by_cases hq : q.val < k - 1
+    · let j' : Fin (k - 1) := ⟨q.val, hq⟩
+      have h := hprefix_eval j' 0
+      rw [show (⟨4 * q.val, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨0 + 4 * j'.val, by omega⟩ by apply Fin.ext; simp [j']]
+      rw [h]
+      exact (eA ⟨j'.val, by omega⟩).property
+    · have hqeq : q.val = k - 1 := by omega
+      have h := htail_eval 0
+      rw [show (⟨4 * q.val, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨4 * (k - 1), by omega⟩ by apply Fin.ext; omega]
+      rw [h]
+      exact (eA ⟨k - 1, by omega⟩).property
+
+  have hBpos : ∀ q : Fin k,
+      (σ ⟨4 * q.val + 1, by omega⟩ : α) ∈ M.E \ K := by
+    intro q
+    by_cases hq : q.val < k - 1
+    · let j' : Fin (k - 1) := ⟨q.val, hq⟩
+      have h := hprefix_eval j' 1
+      rw [show (⟨4 * q.val + 1, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨1 + 4 * j'.val, by omega⟩ by apply Fin.ext; simp [j']; omega]
+      rw [h]
+      exact (eB ⟨j'.val, by omega⟩).property
+    · have hqeq : q.val = k - 1 := by omega
+      have h := htail_eval 1
+      rw [show (⟨4 * q.val + 1, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨4 * (k - 1) + 1, by omega⟩ by apply Fin.ext; omega]
+      rw [h]
+      exact (eB ⟨k - 1, by omega⟩).property
+
+  have hG0pos : ∀ q : Fin k,
+      (σ ⟨4 * q.val + 2, by omega⟩ : α) =
+        (order' ⟨2 * q.val, by omega⟩ : α) := by
+    intro q
+    by_cases hq : q.val < k - 1
+    · let j' : Fin (k - 1) := ⟨q.val, hq⟩
+      have h := hprefix_eval j' 2
+      rw [show (⟨4 * q.val + 2, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨2 + 4 * j'.val, by omega⟩ by apply Fin.ext; simp [j']; omega]
+      simpa [j'] using h
+    · have hqeq : q.val = k - 1 := by omega
+      have h := htail_eval 2
+      rw [show (⟨4 * q.val + 2, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨4 * (k - 1) + 2, by omega⟩ by apply Fin.ext; omega]
+      simpa [hqeq] using h
+
+  have hG1pos : ∀ q : Fin (k - 1),
+      (σ ⟨4 * q.val + 3, by omega⟩ : α) =
+        (order' ⟨2 * q.val + 1, by omega⟩ : α) := by
+    intro q
+    have h := hprefix_eval q 3
+    simpa using h
+
+  have hOrd :=
+    dangerous_two_ordinary_prefix_windows
+      hk hE hRank hEcard hStrict hH hK hne
+      σ order' hOrder' hApos hBpos hG0pos hG1pos
+
+  have hbBasis' :
+      M.IsBasis
+        ({(order' ⟨2 * k - 2, by omega⟩ : α), b₀, b₁} : Set α) H := by
+    simpa [hlastB] using hbBasis
+  have haBasis' :
+      M.IsBasis
+        ({(order' ⟨2 * k - 1, by omega⟩ : α), a₀, a₁} : Set α) K := by
+    simpa [hlastA] using haBasis
+
+  have hpairBA := dangerous_two_core_order_adjacent_indep
+    (M := M) (k := k) (H := H) (K := K)
+    (by omega : 1 ≤ k) order' hOrder'
+    (⟨2 * k - 2, by omega⟩ : Fin (2 * k))
+  have hnextBA :
+      cyclicIndex (2 * k) (by omega)
+        (⟨2 * k - 2, by omega⟩ : Fin (2 * k)) 1 =
+        ⟨2 * k - 1, by omega⟩ := by
+    apply cyclicIndex_eq_mk_add_of_lt
+    omega
+  rw [hnextBA] at hpairBA
+
+  have hpairA0 := dangerous_two_core_order_adjacent_indep
+    (M := M) (k := k) (H := H) (K := K)
+    (by omega : 1 ≤ k) order' hOrder'
+    (⟨2 * k - 1, by omega⟩ : Fin (2 * k))
+  have hnextA0 :
+      cyclicIndex (2 * k) (by omega)
+        (⟨2 * k - 1, by omega⟩ : Fin (2 * k)) 1 =
+        ⟨0, by omega⟩ := by
+    apply Fin.ext
+    simp [cyclicIndex]
+    omega
+  rw [hnextA0] at hpairA0
+
+  have hgBneA :
+      (order' ⟨2 * k - 2, by omega⟩ : α) ≠
+        (order' ⟨2 * k - 1, by omega⟩ : α) := by
+    intro h
+    apply order'.injective
+    apply Subtype.ext
+    exact h
+  have hgAne0 :
+      (order' ⟨2 * k - 1, by omega⟩ : α) ≠
+        (order' ⟨0, by omega⟩ : α) := by
+    intro h
+    apply order'.injective
+    apply Subtype.ext
+    exact h
+
+  have hσ0 : (σ ⟨0, by omega⟩ : α) = a₁ := by
+    have h := hprefix_eval ⟨0, by omega⟩ 0
+    simpa [iA0, heA0] using h
+  have hσ1 :
+      (σ ⟨1, by omega⟩ : α) = (eB ⟨0, by omega⟩ : α) := by
+    have h := hprefix_eval ⟨0, by omega⟩ 1
+    simpa using h
+  have hσ2 :
+      (σ ⟨2, by omega⟩ : α) = (order' ⟨0, by omega⟩ : α) := by
+    have h := hprefix_eval ⟨0, by omega⟩ 2
+    simpa using h
+  have hσpA :
+      (σ ⟨4 * (k - 1), by omega⟩ : α) =
+        (eA ⟨k - 1, by omega⟩ : α) := by
+    have h := htail_eval 0
+    simpa using h
+  have hσpB :
+      (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = b₀ := by
+    have h := htail_eval 1
+    simpa [iBp, heBp] using h
+  have hσgB :
+      (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) =
+        (order' ⟨2 * k - 2, by omega⟩ : α) := by
+    have h := htail_eval 2
+    simpa using h
+  have hσdB :
+      (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = b₁ := by
+    have h := htail_eval 3
+    simpa [iBd, heBd] using h
+  have hσdA :
+      (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = a₀ := by
+    have h := htail_eval 4
+    simpa [iAk, heAk] using h
+  have hσgA :
+      (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) =
+        (order' ⟨2 * k - 1, by omega⟩ : α) := by
+    have h := htail_eval 5
+    simpa using h
+
+  have hExc :=
+    dangerous_two_six_exceptional_windows
+      hk hE hRank hEcard hStrict hH hK hne σ
+      ha₁ (eA ⟨k - 1, by omega⟩).property ha₀
+      (eB ⟨0, by omega⟩).property hb₀ hb₁
+      (by simpa using (order' ⟨0, by omega⟩).property)
+      (by simpa using (order' ⟨2 * k - 2, by omega⟩).property)
+      (by simpa using (order' ⟨2 * k - 1, by omega⟩).property)
+      hgBneA hgAne0 hpairBA hpairA0 hbBasis' haBasis'
+      hσ0 hσ1 hσ2 hσpA hσpB hσgB hσdB hσdA hσgA
+
+  refine ⟨σ, ?_⟩
+  intro i
+  by_cases hi : i.val < 4 * (k - 1)
+  · simpa using hOrd i hi
+  have hilow : 4 * (k - 1) ≤ i.val := Nat.le_of_not_gt hi
+  have hiup : i.val < 4 * (k - 1) + 6 := by
+    have := i.isLt
+    omega
+  let r := i.val - 4 * (k - 1)
+  have hr : r < 6 := by
+    dsimp [r]
+    omega
+  have hiEq (s : ℕ) (hs : r = s) :
+      i = ⟨4 * (k - 1) + s, by omega⟩ := by
+    apply Fin.ext
+    dsimp [r] at hs
+    omega
+  rcases hExc with ⟨h0, h1, h2, h3, h4, h5⟩
+  interval_cases r
+  · simpa [hiEq 0 rfl] using h0
+  · simpa [hiEq 1 rfl] using h1
+  · simpa [hiEq 2 rfl] using h2
+  · simpa [hiEq 3 rfl] using h3
+  · simpa [hiEq 4 rfl] using h4
+  · simpa [hiEq 5 rfl] using h5
 
 end
 
