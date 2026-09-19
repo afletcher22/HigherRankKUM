@@ -30,7 +30,7 @@ theorem exists_center_with_two_basis_partners
   have hBcardE : B.encard = (2 : ℕ∞) := by
     rw [hB.encard_eq_eRank, hRank]
   obtain ⟨u, v, huv, hBpair⟩ := Set.encard_eq_two.mp hBcardE
-  have hBfin : B.Finite := hB.indep.finite
+  have hBfin : B.Finite := hE.subset hB.subset_ground
   have hBncard : B.ncard = 2 := by
     have h := hBcardE
     rw [← hBfin.cast_ncard_eq] at h
@@ -135,7 +135,7 @@ theorem exists_common_base
     by_cases hxa : x = a
     · subst x
       exact N₂.mem_closure_self a
-    have haxPairNe : a ≠ x := hxa.symm
+    have haxPairNe : a ≠ x := fun h => hxa h.symm
     by_cases hax₁ : N₁.Indep ({a, x} : Set α)
     · have haxBase₁ : N₁.IsBase ({a, x} : Set α) :=
         hax₁.isBase_of_eRk_ge (by simp) (by
