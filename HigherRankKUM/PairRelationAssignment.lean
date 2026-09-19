@@ -1,5 +1,6 @@
 import HigherRankKUM.PairCycleObstruction
 import Mathlib.Data.List.OfFn
+import Mathlib.Data.Fin.Tuple.Basic
 
 namespace HigherRankKUM
 
@@ -14,7 +15,7 @@ theorem exists_chain_of_composeList_ofFn
       v 0 = x ∧
       v (Fin.last n) = z ∧
       ∀ j : Fin n, R j (v j.castSucc) (v j.succ) := by
-  induction n generalizing R x z with
+  induction n generalizing x z with
   | zero =>
       have hxz : x = z := by
         simpa [composeList, idRel] using h
@@ -30,14 +31,19 @@ theorem exists_chain_of_composeList_ofFn
       obtain ⟨y, hxy, hyz⟩ := hcomp
       obtain ⟨w, hw0, hwlast, hwrel⟩ :=
         ih (R := fun j : Fin n => R j.succ) (x := y) (z := z) hyz
-      let v : Fin (n + 2) → Bool := Fin.cases x w
+      let v : Fin (n + 2) → Bool := Fin.cons x w
       refine ⟨v, ?_, ?_, ?_⟩
       · simp [v]
       · simpa [v] using hwlast
       · intro j
         refine Fin.cases ?_ (fun k => ?_) j
         · simpa [v, hw0] using hxy
-        · simpa [v] using hwrel k
+        · have hcast :
+              (k.succ.castSucc : Fin (n + 2)) = k.castSucc.succ := by
+            apply Fin.ext
+            rfl
+          rw [hcast]
+          simpa [v] using hwrel k
 
 /-- A cyclically satisfiable List.ofFn relation cycle has a Boolean state at
 every cyclic vertex satisfying every local relation. -/
@@ -134,11 +140,15 @@ theorem exists_orientation_of_pairRelationOrientable
   have hnext :
       E.symm (cyclicIndex N hN i h) =
         cyclicIndex N hN j 1 := by
+    have hE :
+        E (cyclicIndex N hN j 1) =
+          cyclicIndex N hN i h := by
+      change stepIndex N h hN (cyclicIndex N hN j 1) =
+        cyclicIndex N hN i h
+      rw [stepIndex_cyclicIndex_one hN j, hstep]
     apply E.injective
     rw [E.apply_symm_apply]
-    change stepIndex N h hN (cyclicIndex N hN j 1) =
-      cyclicIndex N hN i h
-    rw [stepIndex_cyclicIndex_one hN j, hstep]
+    exact hE.symm
   have hj := hs j
   rw [hstep] at hj
   have hi : o i = s j := by
