@@ -86,5 +86,6 @@ import HigherRankKUM.Rank4.CyclicWindowFour
 import HigherRankKUM.Rank4.CyclicIndexArithmetic
 import HigherRankKUM.Rank4.DangerousBranchFactors
 import HigherRankKUM.Rank4.DangerousBranchT3Geometry
+import HigherRankKUM.Rank4.DangerousBranchT3Schedule
 import HigherRankKUM.Rank4.DangerousBranchT2Geometry
 import HigherRankKUM.Rank4.DangerousBranchT1Geometry
