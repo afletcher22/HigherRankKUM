@@ -46,7 +46,7 @@ def insertGroundEquiv
 
 @[simp] theorem insertGroundEquiv_some
     (M : Matroid α) (e : α) (he : e ∈ M.E)
-    (x : M.E \ ({e} : Set α)) :
+    (x : ↥(M.E \ ({e} : Set α))) :
     (((insertGroundEquiv M e he) (some x) : M.E) : α) = x.1 := by
   classical
   simp [insertGroundEquiv]
@@ -84,7 +84,7 @@ def frontInsertPairOrder
     {N : ℕ} (hN : 0 < N)
     (M : Matroid α) (e : α) (he : e ∈ M.E)
     (sigma : Fin (2 * N - 1) ≃ ↥(M.E \ ({e} : Set α))) :
-    (((frontInsertPairOrder hN M e he sigma) (0 : Fin (2 * N)) : M.E) : α) = e := by
+    (((frontInsertPairOrder hN M e he sigma) (⟨0, by omega⟩ : Fin (2 * N)) : M.E) : α) = e := by
   simp [frontInsertPairOrder]
 
 /-- Any positive full-order position is the corresponding deletion position
@@ -109,9 +109,9 @@ theorem frontInsertPairOrder_of_pos
     (M : Matroid α) (e : α) (he : e ∈ M.E)
     (sigma : Fin (2 * N - 1) ≃ ↥(M.E \ ({e} : Set α))) :
     (((frontInsertPairOrder hN M e he sigma)
-      (blockPosition 2 N (0 : Fin N) (0 : Fin 2)) : M.E) : α) = e := by
+      (blockPosition 2 N (⟨0, hN⟩ : Fin N) (0 : Fin 2)) : M.E) : α) = e := by
   have hpos :
-      blockPosition 2 N (0 : Fin N) (0 : Fin 2) = (0 : Fin (2 * N)) := by
+      blockPosition 2 N (⟨0, hN⟩ : Fin N) (0 : Fin 2) = (⟨0, by omega⟩ : Fin (2 * N)) := by
     apply Fin.ext
     simp
   rw [hpos]
