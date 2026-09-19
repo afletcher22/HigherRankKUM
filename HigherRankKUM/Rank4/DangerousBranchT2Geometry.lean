@@ -145,7 +145,7 @@ theorem dangerous_two_ground_partition
 
 /-- Canonical equivalence from the disjoint sum of the two side classes and
 rank-two core to the ambient ground set. -/
-theorem dangerous_two_parts_equiv_ground
+def dangerous_two_parts_equiv_ground
     {M : Matroid α} {k : ℕ} {H K : Set α}
     (hE : M.E.Finite)
     (hRank : M.eRank = (4 : ℕ∞))
@@ -175,7 +175,7 @@ theorem dangerous_two_parts_equiv_ground
     (Equiv.sumCongr eAB (Equiv.refl G)).trans (Equiv.Set.union hABG).symm
   have hEq : ((A ∪ B) ∪ G : Set α) = M.E := by
     simpa [A, B, G, Set.union_assoc] using hpart.1.symm
-  exact eU.trans (Set.equivOfEq hEq)
+  exact eU.trans (Equiv.setCongr hEq)
 
 end
 
