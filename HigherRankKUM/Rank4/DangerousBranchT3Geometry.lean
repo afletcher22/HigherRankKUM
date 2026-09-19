@@ -205,7 +205,7 @@ theorem dangerous_triple_ground_partition
 
 /-- Canonical equivalence from the disjoint sum of the three side classes and
 triple core to the ambient ground set. -/
-theorem dangerous_triple_parts_equiv_ground
+def dangerous_triple_parts_equiv_ground
     {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
     (hE : M.E.Finite)
     (hRank : M.eRank = (4 : ℕ∞))
@@ -242,7 +242,7 @@ theorem dangerous_triple_parts_equiv_ground
     (Equiv.sumCongr eAB eCG).trans (Equiv.Set.union hABCG).symm
   have hEq : ((A ∪ B) ∪ (C ∪ G) : Set α) = M.E := by
     simpa [A, B, C, G] using hpart.1.symm
-  exact eU.trans (Set.equivOfEq hEq)
+  exact eU.trans (Equiv.setCongr hEq)
 
 
 /-- Generic rank-four nested-flat extension lemma used by all three dangerous
