@@ -3,6 +3,7 @@ import HigherRankKUM.Rank4.DangerousBranchT2Good
 import HigherRankKUM.Rank4.CyclicPigeonhole
 import HigherRankKUM.CyclicRotation
 import HigherRankKUM.Rank4.CyclicWindowFour
+import HigherRankKUM.Rank4.CyclicIndexArithmetic
 
 namespace HigherRankKUM
 namespace Rank4DangerousBranches
@@ -205,6 +206,161 @@ theorem exists_shifted_core_cbo_with_edge_at_end
         (cyclicShiftEquiv (2 * k) hn t.val i1) : α) =
         (order (cyclicIndex (2 * k) hn j 1) : α)
     rw [hi1, cyclicShiftEquiv_cyclicIndex, cyclicShiftEquiv_apply, ← ht]
+
+
+/-- The six exceptional windows of the normalized t=2 schedule are bases.
+
+The tail is
+  pA, pB, gB, dB, dA, gA
+and the wrapped prefix begins
+  qA, qB, g0.
+The B-good triple is {gB,pB,dB}; the A-good triple is
+{gA,dA,qA}. The remaining two exceptional windows use adjacent core pairs. -/
+theorem dangerous_two_six_exceptional_windows
+    {M : Matroid α} {k : ℕ} {H K : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (hK : DangerousHyperplane M k K)
+    (hne : H ≠ K)
+    (σ : Fin (4 * k + 2) ≃ M.E)
+    {qA pA dA qB pB dB g0 gB gA : α}
+    (hqA : qA ∈ M.E \ H) (hpA : pA ∈ M.E \ H) (hdA : dA ∈ M.E \ H)
+    (hqB : qB ∈ M.E \ K) (hpB : pB ∈ M.E \ K) (hdB : dB ∈ M.E \ K)
+    (hg0 : g0 ∈ H ∩ K) (hgB : gB ∈ H ∩ K) (hgA : gA ∈ H ∩ K)
+    (hgBneA : gB ≠ gA) (hgAne0 : gA ≠ g0)
+    (hpairBA : M.Indep ({gB, gA} : Set α))
+    (hpairA0 : M.Indep ({gA, g0} : Set α))
+    (hbBasis : M.IsBasis ({gB, pB, dB} : Set α) H)
+    (haBasis : M.IsBasis ({gA, dA, qA} : Set α) K)
+    (hσ0 : (σ ⟨0, by omega⟩ : α) = qA)
+    (hσ1 : (σ ⟨1, by omega⟩ : α) = qB)
+    (hσ2 : (σ ⟨2, by omega⟩ : α) = g0)
+    (hσpA : (σ ⟨4 * (k - 1), by omega⟩ : α) = pA)
+    (hσpB : (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = pB)
+    (hσgB : (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = gB)
+    (hσdB : (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = dB)
+    (hσdA : (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = dA)
+    (hσgA : (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = gA) :
+    let hn : 0 < 4 * k + 2 := by omega
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1), by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 1, by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 2, by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 3, by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 4, by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 5, by omega⟩) := by
+  let hn : 0 < 4 * k + 2 := by omega
+  let n := 4 * k + 2
+  let m := 4 * (k - 1)
+  have hmn : m + 6 = n := by
+    dsimp [m, n]
+    omega
+  have hnpos : 0 < n := by simpa [n] using hn
+
+  have hidx (r s : ℕ) (hrs : r + s < 6) :
+      cyclicIndex n hnpos ⟨m + r, by omega⟩ s =
+        ⟨m + r + s, by omega⟩ := by
+    apply cyclicIndex_eq_mk_add_of_lt
+    omega
+
+  have hwrap (r s : ℕ) (hr : r < 6) (hge : 6 ≤ r + s)
+      (hlt : r + s < 12) :
+      cyclicIndex n hnpos ⟨m + r, by omega⟩ s =
+        ⟨r + s - 6, by omega⟩ := by
+    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      n hnpos ⟨m + r, by omega⟩ s (by omega) (by omega)
+    apply Fin.ext
+    simpa [hmn] using congrArg Fin.val h
+
+  have hbase0 : M.IsBase ({pA, pB, gB, dB} : Set α) := by
+    have h := dangerous_two_hyperplane_triple_plus_other_isBase
+      (M := M) (k := k) (H₀ := H) (H₁ := K)
+      (I := ({gB, pB, dB} : Set α)) (a := pA)
+      hRank hH hbBasis hpA
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbase1 : M.IsBase ({pB, gB, dB, dA} : Set α) := by
+    have h := dangerous_two_hyperplane_triple_plus_other_isBase
+      (M := M) (k := k) (H₀ := H) (H₁ := K)
+      (I := ({gB, pB, dB} : Set α)) (a := dA)
+      hRank hH hbBasis hdA
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbase2 : M.IsBase ({gB, dB, dA, gA} : Set α) := by
+    have h := dangerous_two_core_pair_sides_isBase
+      (M := M) (k := k) (H₀ := H) (H₁ := K)
+      (g₀ := gB) (g₁ := gA) (a := dA) (b := dB)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
+      hgB hgA hgBneA hpairBA hdA hdB
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbase3 : M.IsBase ({dB, dA, gA, qA} : Set α) := by
+    have h := dangerous_two_hyperplane_triple_plus_other_isBase
+      (M := M) (k := k) (H₀ := K) (H₁ := H)
+      (I := ({gA, dA, qA} : Set α)) (a := dB)
+      hRank hK haBasis hdB
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbase4 : M.IsBase ({dA, gA, qA, qB} : Set α) := by
+    have h := dangerous_two_hyperplane_triple_plus_other_isBase
+      (M := M) (k := k) (H₀ := K) (H₁ := H)
+      (I := ({gA, dA, qA} : Set α)) (a := qB)
+      hRank hK haBasis hqB
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbase5 : M.IsBase ({gA, qA, qB, g0} : Set α) := by
+    have h := dangerous_two_core_pair_sides_isBase
+      (M := M) (k := k) (H₀ := H) (H₁ := K)
+      (g₀ := gA) (g₁ := g0) (a := qA) (b := qB)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
+      hgA hg0 hgAne0 hpairA0 hqA hqB
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  dsimp only
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 0 1 (by omega)
+    have h1 := hidx 0 2 (by omega)
+    have h2 := hidx 0 3 (by omega)
+    simpa [n, m, hn, h0, h1, h2, hσpA, hσpB, hσgB, hσdB] using hbase0
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 1 1 (by omega)
+    have h1 := hidx 1 2 (by omega)
+    have h2 := hidx 1 3 (by omega)
+    simpa [n, m, hn, h0, h1, h2, hσpB, hσgB, hσdB, hσdA] using hbase1
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 2 1 (by omega)
+    have h1 := hidx 2 2 (by omega)
+    have h2 := hidx 2 3 (by omega)
+    simpa [n, m, hn, h0, h1, h2, hσgB, hσdB, hσdA, hσgA] using hbase2
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 3 1 (by omega)
+    have h1 := hidx 3 2 (by omega)
+    have h2 := hwrap 3 3 (by omega) (by omega) (by omega)
+    simpa [n, m, hn, h0, h1, h2, hσdB, hσdA, hσgA, hσ0] using hbase3
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 4 1 (by omega)
+    have h1 := hwrap 4 2 (by omega) (by omega) (by omega)
+    have h2 := hwrap 4 3 (by omega) (by omega) (by omega)
+    simpa [n, m, hn, h0, h1, h2, hσdA, hσgA, hσ0, hσ1] using hbase4
+  · rw [cyclicWindow_four_eq]
+    have h0 := hwrap 5 1 (by omega) (by omega) (by omega)
+    have h1 := hwrap 5 2 (by omega) (by omega) (by omega)
+    have h2 := hwrap 5 3 (by omega) (by omega) (by omega)
+    simpa [n, m, hn, h0, h1, h2, hσgA, hσ0, hσ1, hσ2] using hbase5
 
 end
 
