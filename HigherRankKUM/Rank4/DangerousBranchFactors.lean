@@ -98,8 +98,8 @@ theorem dangerous_inter_restrict_uniformlyDense
     intro hEq
     apply hGproper
     apply Set.Subset.antisymm hGsub
-    intro x hxG
-    have hxX : x ∈ X := by simpa [hEq] using hGsub hxG
+    intro x hxE
+    have hxX : x ∈ X := by simpa [hEq] using hxE
     exact hXG hxX
   have hXfin : X.Finite := hE.subset hXE
   have hRkLe : M.eRk X ≤ (2 : ℕ∞) := by
