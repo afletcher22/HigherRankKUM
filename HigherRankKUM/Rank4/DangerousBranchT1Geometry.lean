@@ -112,8 +112,7 @@ theorem dangerous_one_good_pair_contract_complement_rank_two_loopless
           simpa [Q, hPrank] using hrankEq.symm
         _ = (4 : ℕ∞) := by simpa [C, Set.union_comm] using hGood
         _ = (2 : ℕ∞) + 2 := by norm_num
-    exact ENat.add_right_injective_of_ne_top
-      (n := (2 : ℕ∞)) (by simp) hadd
+    exact ENat.add_left_injective_of_ne_top (by simp) hadd
   have hNrank : N.eRank = (2 : ℕ∞) := by
     dsimp [N]
     simpa [Q] using hQrank
