@@ -69,22 +69,22 @@ theorem alignedWindow_pairEquivOfOrder
   constructor
   · rintro ⟨⟨q, b⟩, rfl⟩
     fin_cases q <;> cases b <;>
-      simp [AdmissiblePairCycle.elem, pairEquivOfOrder]
+      simp [AdmissiblePairCycle.elem, pairEquivOfOrder, blockPosition]
   · intro hx
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
     rcases hx with h | h | h | h
     · subst x
       exact ⟨((0 : Fin 2), false), by
-        simp [AdmissiblePairCycle.elem, pairEquivOfOrder]⟩
+        simp [AdmissiblePairCycle.elem, pairEquivOfOrder, blockPosition]⟩
     · subst x
       exact ⟨((0 : Fin 2), true), by
-        simp [AdmissiblePairCycle.elem, pairEquivOfOrder]⟩
+        simp [AdmissiblePairCycle.elem, pairEquivOfOrder, blockPosition]⟩
     · subst x
       exact ⟨((1 : Fin 2), false), by
-        simp [AdmissiblePairCycle.elem, pairEquivOfOrder]⟩
+        simp [AdmissiblePairCycle.elem, pairEquivOfOrder, blockPosition]⟩
     · subst x
       exact ⟨((1 : Fin 2), true), by
-        simp [AdmissiblePairCycle.elem, pairEquivOfOrder]⟩
+        simp [AdmissiblePairCycle.elem, pairEquivOfOrder, blockPosition]⟩
 
 /-- A full order on 2N elements whose unions of adjacent consecutive pair
 blocks are bases canonically determines an admissible rank-four pair cycle. -/
