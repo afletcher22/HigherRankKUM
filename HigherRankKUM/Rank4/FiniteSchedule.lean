@@ -188,6 +188,117 @@ def t3IndexEquiv (k : ℕ) (hk : 2 ≤ k) :
   simp [t3IndexEquiv, hbt, t3RegroupEquiv]
 
 
+/-- Enumerate a finite set while prescribing two distinct slots. -/
+theorem exists_fin_equiv_with_two_prescribed
+    {S : Set α} {n : ℕ}
+    (hS : S.Finite) (hcard : S.ncard = n)
+    (i j : Fin n) (hij : i ≠ j)
+    {x y : α} (hx : x ∈ S) (hy : y ∈ S) (hxy : x ≠ y) :
+    ∃ e : Fin n ≃ S, (e i : α) = x ∧ (e j : α) = y := by
+  letI : Fintype S := hS.fintype
+  have hNatCard : Nat.card S = n := by
+    simpa [Nat.card_coe_set_eq] using hcard
+  let e₀ : Fin n ≃ S := (Finite.equivFinOfCardEq hNatCard).symm
+  let pos : Fin 2 → Fin n := ![i, j]
+  let val : Fin 2 → S := ![⟨x, hx⟩, ⟨y, hy⟩]
+  have hpos : Function.Injective pos := by
+    intro a b hab
+    fin_cases a <;> fin_cases b <;> simp [pos] at hab ⊢
+    · exact (hij hab).elim
+    · exact (hij hab.symm).elim
+  have hval : Function.Injective val := by
+    intro a b hab
+    fin_cases a <;> fin_cases b <;> simp_all [val]
+  let target : Fin 2 → Fin n := fun r => e₀.symm (val r)
+  have htarget : Function.Injective target :=
+    e₀.symm.injective.comp hval
+  obtain ⟨π, hπ⟩ :=
+    Equiv.Perm.exists_extending_pair pos target hpos htarget
+  let e : Fin n ≃ S := π.trans e₀
+  refine ⟨e, ?_, ?_⟩
+  · have h0 : π i = e₀.symm ⟨x, hx⟩ := by
+      simpa [pos, target, val] using hπ (0 : Fin 2)
+    change (e₀ (π i) : α) = x
+    rw [h0]
+    simp
+  · have h1 : π j = e₀.symm ⟨y, hy⟩ := by
+      simpa [pos, target, val] using hπ (1 : Fin 2)
+    change (e₀ (π j) : α) = y
+    rw [h1]
+    simp
+
+/-- Slot type for the t=2 schedule: A-slots, B-slots, and 2k core slots. -/
+abbrev T2Slots (k : ℕ) :=
+  (Fin (k + 1) ⊕ Fin (k + 1)) ⊕ Fin (2 * k)
+
+def t2PrefixSlot {k : ℕ} (j : Fin (k - 1)) : Fin 4 → T2Slots k :=
+  ![Sum.inl (Sum.inl ⟨j.val, by omega⟩),
+    Sum.inl (Sum.inr ⟨j.val, by omega⟩),
+    Sum.inr ⟨2 * j.val, by omega⟩,
+    Sum.inr ⟨2 * j.val + 1, by omega⟩]
+
+def t2TailSlot {k : ℕ} (hk : 2 ≤ k) : Fin 6 → T2Slots k :=
+  ![Sum.inl (Sum.inl ⟨k - 1, by omega⟩),
+    Sum.inl (Sum.inr ⟨k - 1, by omega⟩),
+    Sum.inr ⟨2 * k - 2, by omega⟩,
+    Sum.inl (Sum.inr ⟨k, by omega⟩),
+    Sum.inl (Sum.inl ⟨k, by omega⟩),
+    Sum.inr ⟨2 * k - 1, by omega⟩]
+
+/-- Regroup the t=2 block-plus-tail positions into A,B,G local slots. -/
+def t2RegroupEquiv (k : ℕ) (hk : 2 ≤ k) :
+    (Fin (k - 1) × Fin 4) ⊕ Fin 6 ≃ T2Slots k := by
+  let f : (Fin (k - 1) × Fin 4) ⊕ Fin 6 → T2Slots k
+    | Sum.inl x => t2PrefixSlot x.1 x.2
+    | Sum.inr r => t2TailSlot hk r
+  apply Equiv.ofBijective f
+  apply (Fintype.bijective_iff_injective_and_card f).2
+  refine ⟨?_, ?_⟩
+  · intro x y hxy
+    rcases x with x | x <;> rcases y with y | y
+    · rcases x with ⟨i, r⟩
+      rcases y with ⟨j, s⟩
+      fin_cases r <;> fin_cases s <;>
+        simp [f, t2PrefixSlot, Fin.ext_iff] at hxy ⊢ <;> omega
+    · rcases x with ⟨i, r⟩
+      fin_cases r <;> fin_cases y <;>
+        simp [f, t2PrefixSlot, t2TailSlot, Fin.ext_iff] at hxy <;> omega
+    · rcases y with ⟨j, s⟩
+      fin_cases x <;> fin_cases s <;>
+        simp [f, t2PrefixSlot, t2TailSlot, Fin.ext_iff] at hxy <;> omega
+    · fin_cases x <;> fin_cases y <;>
+        simp [f, t2TailSlot, Fin.ext_iff] at hxy ⊢ <;> omega
+  · simp [T2Slots]
+    omega
+
+/-- Canonical pure-index equivalence for the t=2 schedule. -/
+def t2IndexEquiv (k : ℕ) (hk : 2 ≤ k) :
+    Fin (4 * k + 2) ≃ T2Slots k :=
+  (t3BlockTailEquiv k hk).trans (t2RegroupEquiv k hk)
+
+@[simp] theorem t2IndexEquiv_prefix
+    (k : ℕ) (hk : 2 ≤ k) (j : Fin (k - 1)) (r : Fin 4) :
+    t2IndexEquiv k hk ⟨r.val + 4 * j.val, by omega⟩ =
+      t2PrefixSlot j r := by
+  have hbt :
+      t3BlockTailEquiv k hk ⟨r.val + 4 * j.val, by omega⟩ =
+        Sum.inl (j, r) := by
+    apply (t3BlockTailEquiv k hk).symm.injective
+    simp
+  simp [t2IndexEquiv, hbt, t2RegroupEquiv]
+
+@[simp] theorem t2IndexEquiv_tail
+    (k : ℕ) (hk : 2 ≤ k) (r : Fin 6) :
+    t2IndexEquiv k hk ⟨4 * (k - 1) + r.val, by omega⟩ =
+      t2TailSlot hk r := by
+  have hbt :
+      t3BlockTailEquiv k hk ⟨4 * (k - 1) + r.val, by omega⟩ =
+        Sum.inr r := by
+    apply (t3BlockTailEquiv k hk).symm.injective
+    simp
+  simp [t2IndexEquiv, hbt, t2RegroupEquiv]
+
+
 
 
 end
