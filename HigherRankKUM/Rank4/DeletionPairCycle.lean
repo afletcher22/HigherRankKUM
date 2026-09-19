@@ -97,12 +97,17 @@ theorem frontInsertPairOrder_of_pos
     (((frontInsertPairOrder hN M e he sigma) q : M.E) : α) =
       (sigma ⟨q.val - 1, by omega⟩ : α) := by
   let j : Fin (2 * N - 1) := ⟨q.val - 1, by omega⟩
-  have hqj : q = j.succ := by
+  have hcast :
+      (finCongr (by omega : 2 * N = (2 * N - 1) + 1)) q = j.succ := by
     apply Fin.ext
     dsimp [j]
     omega
-  subst q
-  simp [frontInsertPairOrder, j]
+  change
+    (((frontInsertOrder M e he sigma)
+      ((finCongr (by omega : 2 * N = (2 * N - 1) + 1)) q) : M.E) : α) =
+      (sigma ⟨q.val - 1, by omega⟩ : α)
+  rw [hcast]
+  simpa [j] using frontInsertOrder_succ M e he sigma j
 
 @[simp] theorem frontInsertPairOrder_block_zero_zero
     {N : ℕ} (hN : 0 < N)
@@ -154,7 +159,6 @@ theorem frontInsertPairOrder_block_zero_of_pos
         Fin (2 * N - 1)) = ⟨2 * i.val - 1, by omega⟩ := by
     apply Fin.ext
     simp [blockPosition_val]
-    omega
   rw [hidx]
 
 /-- A nonwrapping four-window is the explicit four-element set at offsets
@@ -231,19 +235,26 @@ theorem interior_pair_union_eq_deletion_window
     ⟨i.val + 1, hinext⟩ (by omega)]
   rw [frontInsertPairOrder_block_one hN M e he sigma
     ⟨i.val + 1, hinext⟩]
+  have hs : (2 * i.val - 1) + 3 < 2 * N - 1 := by
+    omega
   rw [cyclicWindow_four_no_wrap
-    (by omega : 0 < 2 * N - 1) sigma (2 * i.val - 1) (by omega)]
-  ext x
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-  constructor <;> intro hx <;> rcases hx with h | h | h | h
-  · exact Or.inl h
-  · exact Or.inr (Or.inl h)
-  · exact Or.inr (Or.inr (Or.inl (by simpa using h)))
-  · exact Or.inr (Or.inr (Or.inr (by simpa using h)))
-  · exact Or.inl h
-  · exact Or.inr (Or.inl h)
-  · exact Or.inr (Or.inr (Or.inl (by simpa using h)))
-  · exact Or.inr (Or.inr (Or.inr (by simpa using h)))
+    (by omega : 0 < 2 * N - 1) sigma (2 * i.val - 1) hs]
+  have hidx1 :
+      (⟨2 * i.val, by omega⟩ : Fin (2 * N - 1)) =
+        ⟨(2 * i.val - 1) + 1, by omega⟩ := by
+    apply Fin.ext
+    omega
+  have hidx2 :
+      (⟨2 * (i.val + 1) - 1, by omega⟩ : Fin (2 * N - 1)) =
+        ⟨(2 * i.val - 1) + 2, by omega⟩ := by
+    apply Fin.ext
+    omega
+  have hidx3 :
+      (⟨2 * (i.val + 1), by omega⟩ : Fin (2 * N - 1)) =
+        ⟨(2 * i.val - 1) + 3, by omega⟩ := by
+    apply Fin.ext
+    omega
+  rw [hidx1, hidx2, hidx3]
 
 /-- Interior aligned pair windows of a front-inserted deletion CBO remain
 bases of the original matroid whenever the deleted singleton is coindependent. -/
