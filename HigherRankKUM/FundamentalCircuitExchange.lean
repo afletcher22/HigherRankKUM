@@ -56,56 +56,6 @@ theorem Matroid.mem_closure_insert_of_contract_pair_not_isBase
   exact hccl.1
 
 
-/-- A failed cross pair in a rank-two contraction becomes an ambient parallel
-pair as soon as the outside element is already spanned by the original
-two-element endpoint pair.
-
-The hypotheses are intentionally local.  The union of the endpoint pair with
-the contracted core is independent, the endpoint pair is a base after
-contraction, and the outside element is a nonloop outside that independent
-union. -/
-theorem Matroid.isCircuit_pair_of_endpoint_closure_and_failed_contract_pair
-    {C : Set α} {a a' c : α}
-    (hI : M.Indep (({a, a'} : Set α) ∪ C))
-    (hAC : Disjoint ({a, a'} : Set α) C)
-    (haa' : a ≠ a')
-    (hcI : c ∉ (({a, a'} : Set α) ∪ C))
-    (hcNonloop : M.IsNonloop c)
-    (hcEndpoint : c ∈ M.closure ({a, a'} : Set α))
-    (hA : (M.contract C).IsBase ({a, a'} : Set α))
-    (hnot : ¬ (M.contract C).IsBase ({a, c} : Set α)) :
-    M.IsCircuit ({c, a} : Set α) := by
-  have hcE : c ∈ (M.contract C).E := by
-    rw [Matroid.contract_ground]
-    exact ⟨hcNonloop.mem_ground, fun hcC => hcI (Or.inr hcC)⟩
-  have hca : c ≠ a := by
-    intro hca
-    subst c
-    exact hcI (Or.inl (by simp))
-  have hcMiddle : c ∈ M.closure (insert a C) :=
-    M.mem_closure_insert_of_contract_pair_not_isBase hA haa' hca hcE hnot
-  have hpairI : ({a, a'} : Set α) ⊆ (({a, a'} : Set α) ∪ C) :=
-    Set.subset_union_left
-  have hmiddleI : insert a C ⊆ (({a, a'} : Set α) ∪ C) := by
-    intro x hx
-    simp only [Set.mem_insert_iff] at hx
-    rcases hx with rfl | hx
-    · exact Or.inl (by simp)
-    · exact Or.inr hx
-  have hinter : ({a, a'} : Set α) ∩ insert a C ⊆ ({a} : Set α) := by
-    intro x hx
-    rcases hx with ⟨hxPair, hxMid⟩
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxPair hxMid ⊢
-    rcases hxPair with hxa | hxa'
-    · exact hxa
-    rcases hxMid with hxa | hxC
-    · exact hxa
-    have ha'C : a' ∈ C := by simpa [hxa'] using hxC
-    exact (Set.disjoint_left.1 hAC (by simp) ha'C).elim
-  simpa [Set.pair_comm] using
-    hI.isCircuit_pair_of_mem_closure_inter_singleton
-      hpairI hmiddleI hcEndpoint hcMiddle hcI hcNonloop hinter
-
 /-- If two subsets of one independent set both span the same nonloop `e`,
 then the fundamental circuit of `e` is supported on their intersection.
 In particular, when the intersection is contained in a singleton `{f}`,
@@ -170,5 +120,57 @@ theorem Matroid.Indep.isCircuit_pair_of_mem_closure_inter_singleton
   have hEq : M.fundCircuit e I = ({e, f} : Set α) :=
     Set.Subset.antisymm hCpair hpairC
   rwa [hEq] at hC
+
+
+/-- A failed cross pair in a rank-two contraction becomes an ambient parallel
+pair as soon as the outside element is already spanned by the original
+two-element endpoint pair.
+
+The hypotheses are intentionally local.  The union of the endpoint pair with
+the contracted core is independent, the endpoint pair is a base after
+contraction, and the outside element is a nonloop outside that independent
+union. -/
+theorem Matroid.isCircuit_pair_of_endpoint_closure_and_failed_contract_pair
+    {C : Set α} {a a' c : α}
+    (hI : M.Indep (({a, a'} : Set α) ∪ C))
+    (hAC : Disjoint ({a, a'} : Set α) C)
+    (haa' : a ≠ a')
+    (hcI : c ∉ (({a, a'} : Set α) ∪ C))
+    (hcNonloop : M.IsNonloop c)
+    (hcEndpoint : c ∈ M.closure ({a, a'} : Set α))
+    (hA : (M.contract C).IsBase ({a, a'} : Set α))
+    (hnot : ¬ (M.contract C).IsBase ({a, c} : Set α)) :
+    M.IsCircuit ({c, a} : Set α) := by
+  have hcE : c ∈ (M.contract C).E := by
+    rw [Matroid.contract_ground]
+    exact ⟨hcNonloop.mem_ground, fun hcC => hcI (Or.inr hcC)⟩
+  have hca : c ≠ a := by
+    intro hca
+    subst c
+    exact hcI (Or.inl (by simp))
+  have hcMiddle : c ∈ M.closure (insert a C) :=
+    M.mem_closure_insert_of_contract_pair_not_isBase hA haa' hca hcE hnot
+  have hpairI : ({a, a'} : Set α) ⊆ (({a, a'} : Set α) ∪ C) :=
+    Set.subset_union_left
+  have hmiddleI : insert a C ⊆ (({a, a'} : Set α) ∪ C) := by
+    intro x hx
+    simp only [Set.mem_insert_iff] at hx
+    rcases hx with rfl | hx
+    · exact Or.inl (by simp)
+    · exact Or.inr hx
+  have hinter : ({a, a'} : Set α) ∩ insert a C ⊆ ({a} : Set α) := by
+    intro x hx
+    rcases hx with ⟨hxPair, hxMid⟩
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxPair hxMid ⊢
+    rcases hxPair with hxa | hxa'
+    · exact hxa
+    rcases hxMid with hxa | hxC
+    · exact hxa
+    have ha'C : a' ∈ C := by simpa [hxa'] using hxC
+    exact (Set.disjoint_left.1 hAC (by simp) ha'C).elim
+  simpa [Set.pair_comm] using
+    hI.isCircuit_pair_of_mem_closure_inter_singleton
+      hpairI hmiddleI hcEndpoint hcMiddle hcI hcNonloop hinter
+
 
 end HigherRankKUM
