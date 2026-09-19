@@ -84,7 +84,14 @@
       },
       "orientable_move_kinds": {
         "cross_slack": 480
-      }
+      },
+      "dangerous_hyperplane_count_histogram": {
+        "1": 40,
+        "2": 40
+      },
+      "t0_closure_free_boundary_count_histogram": {},
+      "t0_without_closure_free_boundary": 0,
+      "t0_without_closure_free_cross_escape": 0
     },
     {
       "N": 7,
@@ -277,7 +284,24 @@
       "orientable_move_kinds": {
         "cross_slack": 173824,
         "swap_slack": 15456
-      }
+      },
+      "dangerous_hyperplane_count_histogram": {
+        "0": 10760,
+        "1": 12488,
+        "2": 1848,
+        "3": 56
+      },
+      "t0_closure_free_boundary_count_histogram": {
+        "0": 224,
+        "1": 840,
+        "2": 3360,
+        "3": 3192,
+        "4": 952,
+        "5": 1848,
+        "7": 344
+      },
+      "t0_without_closure_free_boundary": 224,
+      "t0_without_closure_free_cross_escape": 448
     }
   ],
   "scope": "normalized represented binary rank-four pair cycles only"
