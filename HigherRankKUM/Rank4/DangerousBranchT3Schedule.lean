@@ -280,6 +280,97 @@ theorem dangerous_triple_six_exceptional_windows
     have h2 := hwrap 5 3 (by omega) (by omega) (by omega)
     simpa [n, m, hn, h0, h1, h2, hσdC, hσ0, hσ1, hσ2] using hbaseC_dq
 
+
+/-- A normalized t=3 schedule is a cyclic basis ordering.
+
+The prefix follows A,B,C,G by residue mod four through the first pA,pB,pC
+tail entries; the last six entries are pA,pB,pC,dA,dB,dC and the first three
+entries are qA,qB,qC.  The two selected pairs through dX certify all six
+exceptional windows. -/
+theorem dangerous_triple_cbo_of_normalized_schedule
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂)
+    (σ : Fin (4 * k + 2) ≃ M.E)
+    (hA : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 0 →
+      (σ t : α) ∈ M.E \ H₀)
+    (hB : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 1 →
+      (σ t : α) ∈ M.E \ H₁)
+    (hC : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 2 →
+      (σ t : α) ∈ M.E \ H₂)
+    (hG : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 3 →
+      (σ t : α) ∈ (H₀ ∩ H₁) ∩ H₂)
+    {qA pA dA qB pB dB qC pC dC : α}
+    (hqA : qA ∈ M.E \ H₀) (hpA : pA ∈ M.E \ H₀) (hdA : dA ∈ M.E \ H₀)
+    (hqB : qB ∈ M.E \ H₁) (hpB : pB ∈ M.E \ H₁) (hdB : dB ∈ M.E \ H₁)
+    (hqC : qC ∈ M.E \ H₂) (hpC : pC ∈ M.E \ H₂) (hdC : dC ∈ M.E \ H₂)
+    (hpAdA : pA ≠ dA) (hdAqA : dA ≠ qA)
+    (hpBdB : pB ≠ dB) (hdBqB : dB ≠ qB)
+    (hpCdC : pC ≠ dC) (hdCqC : dC ≠ qC)
+    (hpdA : M.Indep ({pA, dA} : Set α))
+    (hdqA : M.Indep ({dA, qA} : Set α))
+    (hpdB : M.Indep ({pB, dB} : Set α))
+    (hdqB : M.Indep ({dB, qB} : Set α))
+    (hpdC : M.Indep ({pC, dC} : Set α))
+    (hdqC : M.Indep ({dC, qC} : Set α))
+    (hσ0 : (σ ⟨0, by omega⟩ : α) = qA)
+    (hσ1 : (σ ⟨1, by omega⟩ : α) = qB)
+    (hσ2 : (σ ⟨2, by omega⟩ : α) = qC)
+    (hσpA : (σ ⟨4 * (k - 1), by omega⟩ : α) = pA)
+    (hσpB : (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = pB)
+    (hσpC : (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = pC)
+    (hσdA : (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = dA)
+    (hσdB : (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = dB)
+    (hσdC : (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = dC) :
+    CyclicBasisOrder M 4 (by omega) σ := by
+  let hn : 0 < 4 * k + 2 := by omega
+  have hOrd :=
+    dangerous_triple_ordinary_prefix_windows
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      σ hA hB hC hG
+  have hExc :=
+    dangerous_triple_six_exceptional_windows
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      σ hqA hpA hdA hqB hpB hdB hqC hpC hdC
+      hpAdA hdAqA hpBdB hdBqB hpCdC hdCqC
+      hpdA hdqA hpdB hdqB hpdC hdqC
+      hσ0 hσ1 hσ2 hσpA hσpB hσpC hσdA hσdB hσdC
+  intro i
+  by_cases hi : i.val < 4 * (k - 1)
+  · simpa [hn] using hOrd i hi
+  have hilow : 4 * (k - 1) ≤ i.val := Nat.le_of_not_gt hi
+  have hiup : i.val < 4 * (k - 1) + 6 := by
+    have := i.isLt
+    omega
+  let r := i.val - 4 * (k - 1)
+  have hr : r < 6 := by
+    dsimp [r]
+    omega
+  have hiEq (s : ℕ) (hs : r = s) :
+      i = ⟨4 * (k - 1) + s, by omega⟩ := by
+    apply Fin.ext
+    dsimp [r] at hs
+    omega
+  rcases hExc with ⟨h0, h1, h2, h3, h4, h5⟩
+  interval_cases r
+  · simpa [hiEq 0 rfl, hn] using h0
+  · simpa [hiEq 1 rfl, hn] using h1
+  · simpa [hiEq 2 rfl, hn] using h2
+  · simpa [hiEq 3 rfl, hn] using h3
+  · simpa [hiEq 4 rfl, hn] using h4
+  · simpa [hiEq 5 rfl, hn] using h5
+
 end
 
 end Rank4DangerousBranches
