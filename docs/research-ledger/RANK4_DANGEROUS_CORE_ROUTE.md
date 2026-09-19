@@ -251,23 +251,199 @@ has an explicit cyclic basis ordering.  No deletion/lifting theorem is needed.
 
 This proof is checked informal mathematics and is not yet Lean-certified.
 
-### t=1
+### t=1 — direct construction (new closure)
 
-Here G is a uniformly dense rank-3 flat of size 3k+1 and C is the
-(k+1)-element complement.
+Here G is the unique dangerous hyperplane, so
 
-Using a rank-3 CBO of G, the type pattern
+    |G| = 3k+1,      r(G)=3,
 
-    (C G G G)^k C G
+and its complement C has |C|=k+1.
 
-has only two exceptional windows:
+The restriction M|G is uniformly dense of rank 3.  For rank-1 and rank-2
+subsets this follows from the integer consequences of strict rank-4 density,
+and the whole set has size 3k+1.  Hence the rank-3 theorem supplies a cyclic
+basis order
+
+    g_0,...,g_{3k}.
+
+Call the cyclic edge
+
+    P_i={g_i,g_{i+1}}
+
+C-good when
+
+    r(P_i ∪ C)=4.
+
+Equivalently, C has rank 2 in M/P_i.  Since P_i lies in the flat G while
+every c∈C lies outside G, every element of C is a nonloop in M/P_i.
+
+The t=1 construction splits according to the cyclic pattern of good edges.
+
+#### Two elementary rank-2 selection lemmas
+
+1. **Common pair.**  Two loopless rank-2 matroids on the same ground set have
+   a common two-element basis.
+
+   Proof: take a basis {a,b} of the first matroid.  If there is no common
+   basis, a and b are parallel in the second.  For arbitrary x, either
+   {a,x} is a basis of the first, forcing x parallel to a in the second, or
+   x is parallel to a in the first, in which case {b,x} is a basis of the
+   first and again x is parallel to a in the second.  Thus the second matroid
+   would have rank at most 1, contradiction.
+
+2. **Two-matroid path.**  If the common ground set has at least three
+   elements, then for two loopless rank-2 matroids N_1,N_2 there are distinct
+
+       c_0,c_1,c_2
+
+   such that {c_0,c_1} is a basis of N_1 and {c_1,c_2} is a basis of N_2.
+
+   In a loopless rank-2 matroid on at least three elements, some element has
+   at least two possible basis partners: if there are two parallel classes,
+   choose an element in a smallest class; with at least three classes this is
+   immediate.  Choose c_1 with two N_1-partners, choose any N_2-partner c_2,
+   and then choose an N_1-partner c_0 distinct from c_2.
+
+#### How many C-good core edges are forced?
+
+The only delicate case is r(C)=2.
+
+- r(C)=0 or 1 is impossible by strict density because |C|=k+1.
+- If r(C)=4, every edge is C-good.
+- If r(C)=3, a bad edge has both endpoints in
+
+      G ∩ cl(C).
+
+  This intersection has rank at most 2 because G and cl(C) are distinct
+  rank-3 flats.  Hence three consecutive elements of the core CBO cannot all
+  lie in it.  In particular two bad edges cannot be consecutive.
+
+Now suppose r(C)=2 and put
+
+    K=(M/C)|G.
+
+Then K has rank 2.  Every three consecutive g_i have rank 2 in K.  Indeed if
+such a triple had K-rank at most 1, then C together with that triple would
+have rank at most 3.  But the triple is a rank-3 basis of the flat G, so its
+ambient closure is G; adding C outside G must raise rank to 4.
+
+Thus an edge P_i is bad exactly when its two endpoints have K-rank at most 1.
+Moreover two consecutive bad edges
+
+    P_{i-1}, P_i
+
+occur exactly when their shared vertex g_i is a loop of K.  If g_i were a
+nonloop, both neighboring elements would lie in the same rank-1 flat as g_i,
+contradicting rank 2 of the consecutive triple.
+
+Let l be the number of loops of K.  These loops are exactly
+
+    G ∩ cl_M(C).
+
+Since cl_M(C) is a rank-2 flat containing the k+1 elements of C, strict
+density gives
+
+    |cl_M(C)| ≤ 2k,
+
+hence
+
+    l ≤ k-1.
+
+Assume now that no two C-good edges are consecutive.  Write a cyclic binary
+word on the 3k+1 core edges, with 1=good and 0=bad.  There are no adjacent
+1s.  In the r(C)=2 case, the number of adjacent 00 pairs is exactly l, by the
+loop characterization above.
+
+If g and b are the numbers of good and bad edges, cyclic transition counting
+gives
+
+    b = g + l,
+
+hence
+
+    3k+1 = 2g+l
+
+and therefore
+
+    g = (3k+1-l)/2 ≥ k+1.
+
+For r(C)=3, bad edges are themselves nonadjacent; combined with the assumption
+that good edges are nonadjacent this gives at least k+1 good edges as well.
+The r(C)=4 case cannot occur under the no-adjacent-good assumption.
+
+So in every no-adjacent-good case there are at least k+1 good edge starts on
+a cycle of length 3k+1.  Their cyclic gaps sum to 3k+1.  Since no gap is 1
+and
+
+    (3k+1)/(k+1) < 3,
+
+some gap is exactly 2.  Therefore there are C-good edges
+
+    P_i={g_i,g_{i+1}},
+    P_{i+2}={g_{i+2},g_{i+3}}.
+
+#### Case A: adjacent C-good edges
+
+Suppose P_{3k-1} and P_{3k} are C-good after rotating the core order.  The
+two restrictions
+
+    (M/P_{3k-1})|C,
+    (M/P_{3k})|C
+
+are loopless rank-2 matroids.  By the common-pair lemma choose
+c_*,c_0∈C forming a basis in both.
+
+Use the type pattern
+
+    (C G G G)^k C G.
+
+Place c_*,c_0 in the two C positions that occur in the two exceptional
+windows; fill the remaining C positions arbitrarily.
+
+Every ordinary four-window is one C element plus three consecutive G elements,
+hence a basis.  The only exceptional windows are
 
     G C G C,
-    C G C G.
+    C G C G,
 
-Thus the problem reduces to finding a two-element set Q⊂C that is a base in
-two rank-2 contractions determined by two adjacent G-pairs.  This is a
-constant-size/common-base defect rather than a global lifting problem.
+and both are bases because the same C-pair is a basis in the two contractions.
+
+#### Case B: no adjacent C-good edges
+
+By the counting argument choose good edges P_0 and P_2 after rotation.  The
+matroids
+
+    (M/P_0)|C,
+    (M/P_2)|C
+
+are loopless rank 2.  Since k≥2, |C|=k+1≥3, so the two-matroid path lemma gives
+distinct c_0,c_1,c_2∈C such that
+
+    {c_0,c_1} is a basis in (M/P_0)|C,
+    {c_1,c_2} is a basis in (M/P_2)|C.
+
+Use the type pattern
+
+    C G G C G G (C G G G)^(k-1).
+
+Put c_0,c_1,c_2 in the first three C positions and fill the remaining C
+positions arbitrarily.
+
+There are exactly two windows containing two C elements:
+
+    c_0 g_0 g_1 c_1,
+    c_1 g_2 g_3 c_2.
+
+They are bases by the two chosen contraction bases.  Every other four-window
+contains exactly one C element and three consecutive elements of the core CBO,
+so it is automatically a basis.
+
+Hence every strict rank-4 instance with exactly one dangerous hyperplane also
+has an explicit cyclic basis ordering.  No deletion/lifting theorem is needed.
+
+This closes the t=1 case informally, subject only to routine formalization of
+the two elementary rank-2 selection lemmas and the cyclic edge-counting
+argument.
 
 ## 5. Empirical checks
 
@@ -305,9 +481,10 @@ These are experiments, not proofs.
 1. Formalize the dangerous-core rank/cardinality structure, especially the
    t=3 rank-1 core theorem.
 2. Formalize the explicit t=3 CBO construction.
-3. Formalize the now-complete direct t=2 construction and its bad-core-edge counting lemma.
-4. Prove the two-contraction common-pair lemma needed by the t=1 CG tail.
-5. Return to deletion-CBO lifting primarily for t=0, and only as a backup for t=1.
+3. Formalize the direct t=2 construction and its bad-core-edge counting lemma.
+4. Formalize the now-complete t=1 good-edge counting argument and the two
+   elementary rank-2 selection lemmas.
+5. Return to deletion-CBO lifting only for t=0.
 
 This route is attractive because t=3 is exactly the case where direct
 insertion fails most systematically, yet it becomes the easiest case after
