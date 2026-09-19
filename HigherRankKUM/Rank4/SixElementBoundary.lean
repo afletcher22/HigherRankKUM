@@ -65,72 +65,6 @@ theorem dual_uniformlyDense_three_of_rank_four_six
   rw [← hXfin.cast_ncard_eq, hDrk]
   exact_mod_cast hgoal
 
-/-- Four cyclic positions on six elements, expanded as an explicit set. -/
-theorem cyclicWindow_four_six_eq
-    (M : Matroid α) (σ : Fin 6 ≃ M.E) (i : Fin 6) :
-    cyclicWindow 4 (by omega) σ i =
-      ({(σ i : α),
-        (σ (cyclicIndex 6 (by omega) i 1) : α),
-        (σ (cyclicIndex 6 (by omega) i 2) : α),
-        (σ (cyclicIndex 6 (by omega) i 3) : α)} : Set α) := by
-  ext x
-  simp only [cyclicWindow, Set.mem_range,
-    Set.mem_insert_iff, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨j, rfl⟩
-    fin_cases j <;> simp [cyclicIndex_zero]
-  · rintro (hx | hx | hx | hx)
-    · subst x; exact ⟨0, by simp [cyclicIndex_zero]⟩
-    · subst x; exact ⟨1, rfl⟩
-    · subst x; exact ⟨2, rfl⟩
-    · subst x; exact ⟨3, rfl⟩
-
-/-- On a six-cycle, the complement of the two positions starting four steps
-after `i` is exactly the four-position window starting at `i`. -/
-theorem sdiff_two_window_eq_four_window
-    (M : Matroid α) (σ : Fin 6 ≃ M.E) (i : Fin 6) :
-    M.E \ cyclicWindow 2 (by omega) σ
-        (cyclicIndex 6 (by omega) i 4) =
-      cyclicWindow 4 (by omega) σ i := by
-  rw [cyclicWindow_two_eq_pair, cyclicWindow_four_six_eq M]
-  classical
-  ext x
-  constructor
-  · rintro ⟨hxE, hbad⟩
-    let q : Fin 6 := σ.symm ⟨x, hxE⟩
-    have hqx : (σ q : α) = x := by
-      exact congrArg Subtype.val (σ.apply_symm_apply ⟨x, hxE⟩)
-    have hqi : q = i ∨
-        q = cyclicIndex 6 (by omega) i 1 ∨
-        q = cyclicIndex 6 (by omega) i 2 ∨
-        q = cyclicIndex 6 (by omega) i 3 ∨
-        q = cyclicIndex 6 (by omega) i 4 ∨
-        q = cyclicIndex 6 (by omega) i 5 := by
-      apply Fin.eq_or_eq_add_one_or_eq_add_two_or_eq_add_three_or_eq_add_four_or_eq_add_five
-    rcases hqi with (hq | hq | hq | hq | hq | hq)
-    · exact Or.inl (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm))
-    · exact Or.inr (Or.inl (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm)))
-    · exact Or.inr (Or.inr (Or.inl (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm))))
-    · exact Or.inr (Or.inr (Or.inr (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm))))
-    · exfalso
-      exact hbad (Or.inl (hqx ▸ congrArg Subtype.val (congrArg σ hq.symm)))
-    · exfalso
-      exact hbad (Or.inr (by
-        rw [cyclicIndex_succ]
-        exact hqx ▸ congrArg Subtype.val (congrArg σ hq.symm)))
-  · intro hx
-    refine ⟨?_, ?_⟩
-    · rcases hx with (rfl | rfl | rfl | rfl) <;> exact (σ _).property
-    · rcases hx with (rfl | rfl | rfl | rfl)
-      all_goals
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-        intro h
-        rcases h with h | h
-        · have := σ.injective (Subtype.ext h)
-          simp [cyclicIndex, Fin.ext_iff] at this
-        · have := σ.injective (Subtype.ext h)
-          simp [cyclicIndex, Fin.ext_iff] at this
-
 /-- The six-element boundary of rank-four KUM.
 
 A uniformly dense rank-four matroid on six elements has rank-two dual of
@@ -162,12 +96,9 @@ theorem exists_cyclicBasisOrder_of_rank_four_six
     exists_cyclicBasisOrder_of_rank_two M✶ 3 (by omega)
       hDualE hDualRank hDualCard hDualDense
   refine ⟨σ, ?_⟩
-  intro i
-  let j : Fin 6 := cyclicIndex 6 (by omega) i 4
-  have hj : M✶.IsBase (cyclicWindow 2 (by omega) σ j) := hσ j
-  have hc : M.IsBase (M.E \ cyclicWindow 2 (by omega) σ j) := by
-    simpa using hj.compl_isBase_of_dual
-  simpa [j, sdiff_two_window_eq_four_window M σ i] using hc
+  simpa using
+    (cyclicBasisOrder_of_dual M (n := 6) (r := 4) (s := 2)
+      (by omega) (by omega) σ hσ)
 
 end
 end Rank4
