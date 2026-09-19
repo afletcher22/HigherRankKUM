@@ -146,6 +146,10 @@ jobs:
           PY
       - name: Verify Sprint 5 six-block certificates
         run: python3 experiments/sprint5_verify.py
+      - name: Verify rank4 t0 pair-cycle obstruction certificate
+        run: |
+          python3 experiments/rank4_t0_unorientable_pair_cycle_certificate.py > /tmp/rank4-t0-pair-cycle-result.json
+          diff -u experiments/rank4_t0_unorientable_pair_cycle_result.json /tmp/rank4-t0-pair-cycle-result.json
       - name: Verify density-slack deletion certificate
         run: |
           python3 experiments/density_slack_deletion_certificate.py > /tmp/density-slack-deletion-result.json
