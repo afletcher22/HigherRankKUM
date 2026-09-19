@@ -1,4 +1,5 @@
 import Mathlib.Combinatorics.Matroid.Loop
+import Mathlib.Combinatorics.Matroid.Minor.Contract
 
 namespace HigherRankKUM
 
