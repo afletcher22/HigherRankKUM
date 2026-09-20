@@ -301,6 +301,209 @@ def t2IndexEquiv (k : ℕ) (hk : 2 ≤ k) :
 
 
 
+
+/-! ### Compressed dangerous-hyperplane schedules -/
+
+/-- Slot type for the unified dangerous-hyperplane construction:
+k+1 complement slots and 3k+1 core slots. -/
+abbrev HyperplaneSlots (k : ℕ) :=
+  Fin (k + 1) ⊕ Fin (3 * k + 1)
+
+/-- Ordinary block of the adjacent-good schedule (C G G G)^k C G. -/
+def hyperAdjacentBlockSlot {k : ℕ} (j : Fin k) : Fin 4 → HyperplaneSlots k :=
+  ![Sum.inl ⟨j.val, by omega⟩,
+    Sum.inr ⟨3 * j.val, by omega⟩,
+    Sum.inr ⟨3 * j.val + 1, by omega⟩,
+    Sum.inr ⟨3 * j.val + 2, by omega⟩]
+
+/-- Two-position tail of the adjacent-good schedule. -/
+def hyperAdjacentTailSlot {k : ℕ} : Fin 2 → HyperplaneSlots k :=
+  ![Sum.inl ⟨k, by omega⟩,
+    Sum.inr ⟨3 * k, by omega⟩]
+
+/-- Regroup k four-blocks and a two-position tail into complement/core
+slots for the adjacent-good schedule. -/
+def hyperAdjacentRegroupEquiv (k : ℕ) (hk : 1 ≤ k) :
+    (Fin k × Fin 4) ⊕ Fin 2 ≃ HyperplaneSlots k := by
+  let f : (Fin k × Fin 4) ⊕ Fin 2 → HyperplaneSlots k
+    | Sum.inl x => hyperAdjacentBlockSlot x.1 x.2
+    | Sum.inr r => hyperAdjacentTailSlot r
+  apply Equiv.ofBijective f
+  apply (Fintype.bijective_iff_injective_and_card f).2
+  refine ⟨?_, ?_⟩
+  · intro x y hxy
+    rcases x with x | x <;> rcases y with y | y
+    · rcases x with ⟨i, r⟩
+      rcases y with ⟨j, s⟩
+      fin_cases r <;> fin_cases s <;>
+        simp [f, hyperAdjacentBlockSlot, Fin.ext_iff] at hxy ⊢ <;> omega
+    · rcases x with ⟨i, r⟩
+      fin_cases r <;> fin_cases y <;>
+        simp [f, hyperAdjacentBlockSlot, hyperAdjacentTailSlot,
+          Fin.ext_iff] at hxy <;> omega
+    · rcases y with ⟨j, s⟩
+      fin_cases x <;> fin_cases s <;>
+        simp [f, hyperAdjacentBlockSlot, hyperAdjacentTailSlot,
+          Fin.ext_iff] at hxy <;> omega
+    · fin_cases x <;> fin_cases y <;>
+        simp [f, hyperAdjacentTailSlot, Fin.ext_iff] at hxy ⊢
+  · simp [HyperplaneSlots]
+    omega
+
+/-- Decompose the adjacent-good schedule into k four-blocks and a
+two-position tail. -/
+def hyperAdjacentBlockTailEquiv (k : ℕ) (hk : 1 ≤ k) :
+    Fin (4 * k + 2) ≃ (Fin k × Fin 4) ⊕ Fin 2 := by
+  have hcard : k * 4 + 2 = 4 * k + 2 := by omega
+  exact (finCongr hcard.symm).trans
+    ((finSumFinEquiv :
+      Fin (k * 4) ⊕ Fin 2 ≃ Fin (k * 4 + 2)).symm.trans
+      (Equiv.sumCongr finProdFinEquiv.symm (Equiv.refl _)))
+
+def hyperAdjacentIndexEquiv (k : ℕ) (hk : 1 ≤ k) :
+    Fin (4 * k + 2) ≃ HyperplaneSlots k :=
+  (hyperAdjacentBlockTailEquiv k hk).trans (hyperAdjacentRegroupEquiv k hk)
+
+@[simp] theorem hyperAdjacentBlockTailEquiv_symm_block
+    (k : ℕ) (hk : 1 ≤ k) (j : Fin k) (r : Fin 4) :
+    (hyperAdjacentBlockTailEquiv k hk).symm (Sum.inl (j, r)) =
+      ⟨r.val + 4 * j.val, by omega⟩ := by
+  apply Fin.ext
+  simp [hyperAdjacentBlockTailEquiv, finProdFinEquiv]
+
+@[simp] theorem hyperAdjacentBlockTailEquiv_symm_tail
+    (k : ℕ) (hk : 1 ≤ k) (r : Fin 2) :
+    (hyperAdjacentBlockTailEquiv k hk).symm (Sum.inr r) =
+      ⟨4 * k + r.val, by omega⟩ := by
+  apply Fin.ext
+  simp [hyperAdjacentBlockTailEquiv]
+  omega
+
+@[simp] theorem hyperAdjacentIndexEquiv_block
+    (k : ℕ) (hk : 1 ≤ k) (j : Fin k) (r : Fin 4) :
+    hyperAdjacentIndexEquiv k hk ⟨r.val + 4 * j.val, by omega⟩ =
+      hyperAdjacentBlockSlot j r := by
+  have hbt :
+      hyperAdjacentBlockTailEquiv k hk ⟨r.val + 4 * j.val, by omega⟩ =
+        Sum.inl (j, r) := by
+    apply (hyperAdjacentBlockTailEquiv k hk).symm.injective
+    simp
+  simp [hyperAdjacentIndexEquiv, hbt, hyperAdjacentRegroupEquiv]
+
+@[simp] theorem hyperAdjacentIndexEquiv_tail
+    (k : ℕ) (hk : 1 ≤ k) (r : Fin 2) :
+    hyperAdjacentIndexEquiv k hk ⟨4 * k + r.val, by omega⟩ =
+      hyperAdjacentTailSlot r := by
+  have hbt :
+      hyperAdjacentBlockTailEquiv k hk ⟨4 * k + r.val, by omega⟩ =
+        Sum.inr r := by
+    apply (hyperAdjacentBlockTailEquiv k hk).symm.injective
+    simp
+  simp [hyperAdjacentIndexEquiv, hbt, hyperAdjacentRegroupEquiv]
+
+/-- Six-position head of the separated-good schedule
+C G G C G G (C G G G)^(k-1). -/
+def hyperSeparatedHeadSlot {k : ℕ} (hk : 2 ≤ k) :
+    Fin 6 → HyperplaneSlots k :=
+  ![Sum.inl ⟨0, by omega⟩,
+    Sum.inr ⟨0, by omega⟩,
+    Sum.inr ⟨1, by omega⟩,
+    Sum.inl ⟨1, by omega⟩,
+    Sum.inr ⟨2, by omega⟩,
+    Sum.inr ⟨3, by omega⟩]
+
+/-- Repeated four-blocks following the six-position head in the
+separated-good schedule. -/
+def hyperSeparatedBlockSlot {k : ℕ} (hk : 2 ≤ k)
+    (j : Fin (k - 1)) : Fin 4 → HyperplaneSlots k :=
+  ![Sum.inl ⟨j.val + 2, by omega⟩,
+    Sum.inr ⟨3 * j.val + 4, by omega⟩,
+    Sum.inr ⟨3 * j.val + 5, by omega⟩,
+    Sum.inr ⟨3 * j.val + 6, by omega⟩]
+
+/-- Regroup the separated-good head and repeated blocks into complement/core
+slots. -/
+def hyperSeparatedRegroupEquiv (k : ℕ) (hk : 2 ≤ k) :
+    Fin 6 ⊕ (Fin (k - 1) × Fin 4) ≃ HyperplaneSlots k := by
+  let f : Fin 6 ⊕ (Fin (k - 1) × Fin 4) → HyperplaneSlots k
+    | Sum.inl r => hyperSeparatedHeadSlot hk r
+    | Sum.inr x => hyperSeparatedBlockSlot hk x.1 x.2
+  apply Equiv.ofBijective f
+  apply (Fintype.bijective_iff_injective_and_card f).2
+  refine ⟨?_, ?_⟩
+  · intro x y hxy
+    rcases x with x | x <;> rcases y with y | y
+    · fin_cases x <;> fin_cases y <;>
+        simp [f, hyperSeparatedHeadSlot, Fin.ext_iff] at hxy ⊢ <;> omega
+    · rcases y with ⟨j, s⟩
+      fin_cases x <;> fin_cases s <;>
+        simp [f, hyperSeparatedHeadSlot, hyperSeparatedBlockSlot,
+          Fin.ext_iff] at hxy <;> omega
+    · rcases x with ⟨i, r⟩
+      fin_cases r <;> fin_cases y <;>
+        simp [f, hyperSeparatedHeadSlot, hyperSeparatedBlockSlot,
+          Fin.ext_iff] at hxy <;> omega
+    · rcases x with ⟨i, r⟩
+      rcases y with ⟨j, s⟩
+      fin_cases r <;> fin_cases s <;>
+        simp [f, hyperSeparatedBlockSlot, Fin.ext_iff] at hxy ⊢ <;> omega
+  · simp [HyperplaneSlots]
+    omega
+
+/-- Decompose the separated-good schedule into a six-position head followed
+by k-1 four-blocks. -/
+def hyperSeparatedHeadBlockEquiv (k : ℕ) (hk : 2 ≤ k) :
+    Fin (4 * k + 2) ≃ Fin 6 ⊕ (Fin (k - 1) × Fin 4) := by
+  have hcard : 6 + (k - 1) * 4 = 4 * k + 2 := by omega
+  exact (finCongr hcard.symm).trans
+    ((finSumFinEquiv :
+      Fin 6 ⊕ Fin ((k - 1) * 4) ≃ Fin (6 + (k - 1) * 4)).symm.trans
+      (Equiv.sumCongr (Equiv.refl _) finProdFinEquiv.symm))
+
+def hyperSeparatedIndexEquiv (k : ℕ) (hk : 2 ≤ k) :
+    Fin (4 * k + 2) ≃ HyperplaneSlots k :=
+  (hyperSeparatedHeadBlockEquiv k hk).trans
+    (hyperSeparatedRegroupEquiv k hk)
+
+@[simp] theorem hyperSeparatedHeadBlockEquiv_symm_head
+    (k : ℕ) (hk : 2 ≤ k) (r : Fin 6) :
+    (hyperSeparatedHeadBlockEquiv k hk).symm (Sum.inl r) =
+      ⟨r.val, by omega⟩ := by
+  apply Fin.ext
+  simp [hyperSeparatedHeadBlockEquiv]
+
+@[simp] theorem hyperSeparatedHeadBlockEquiv_symm_block
+    (k : ℕ) (hk : 2 ≤ k) (j : Fin (k - 1)) (r : Fin 4) :
+    (hyperSeparatedHeadBlockEquiv k hk).symm (Sum.inr (j, r)) =
+      ⟨6 + r.val + 4 * j.val, by omega⟩ := by
+  apply Fin.ext
+  simp [hyperSeparatedHeadBlockEquiv, finProdFinEquiv]
+  omega
+
+@[simp] theorem hyperSeparatedIndexEquiv_head
+    (k : ℕ) (hk : 2 ≤ k) (r : Fin 6) :
+    hyperSeparatedIndexEquiv k hk ⟨r.val, by omega⟩ =
+      hyperSeparatedHeadSlot hk r := by
+  have hbt :
+      hyperSeparatedHeadBlockEquiv k hk ⟨r.val, by omega⟩ =
+        Sum.inl r := by
+    apply (hyperSeparatedHeadBlockEquiv k hk).symm.injective
+    simp
+  simp [hyperSeparatedIndexEquiv, hbt, hyperSeparatedRegroupEquiv]
+
+@[simp] theorem hyperSeparatedIndexEquiv_block
+    (k : ℕ) (hk : 2 ≤ k) (j : Fin (k - 1)) (r : Fin 4) :
+    hyperSeparatedIndexEquiv k hk
+        ⟨6 + r.val + 4 * j.val, by omega⟩ =
+      hyperSeparatedBlockSlot hk j r := by
+  have hbt :
+      hyperSeparatedHeadBlockEquiv k hk
+          ⟨6 + r.val + 4 * j.val, by omega⟩ =
+        Sum.inr (j, r) := by
+    apply (hyperSeparatedHeadBlockEquiv k hk).symm.injective
+    simp
+  simp [hyperSeparatedIndexEquiv, hbt, hyperSeparatedRegroupEquiv]
+
 end
 
 end FiniteSchedule
