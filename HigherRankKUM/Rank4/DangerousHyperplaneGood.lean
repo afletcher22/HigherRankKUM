@@ -9,6 +9,7 @@ namespace Rank4DangerousBranches
 
 open Set
 open scoped Matroid
+open Rank4GcdTwoDeletion
 
 noncomputable section
 
@@ -139,7 +140,9 @@ theorem one_of_three_pair_extensions_has_rank_four
     have hB_le : M.eRk B ≤ (2 : ℕ∞) := by
       calc
         M.eRk B ≤ M.eRk (X ∩ Y) := M.eRk_mono hBXY
-        _ = (2 : ℕ∞) := by rw [hXYr, hrxy]
+        _ = (2 : ℕ∞) := by
+          rw [hXYr, hrxy]
+          norm_num
     have hB_ge : (2 : ℕ∞) ≤ M.eRk B := by
       rw [← hC2]
       exact M.eRk_mono hCB
@@ -149,7 +152,9 @@ theorem one_of_three_pair_extensions_has_rank_four
     have hD_le : M.eRk D ≤ (2 : ℕ∞) := by
       calc
         M.eRk D ≤ M.eRk (Y ∩ Z) := M.eRk_mono hDYZ
-        _ = (2 : ℕ∞) := by rw [hYZr, hryz]
+        _ = (2 : ℕ∞) := by
+          rw [hYZr, hryz]
+          norm_num
     have hD_ge : (2 : ℕ∞) ≤ M.eRk D := by
       rw [← hC2]
       exact M.eRk_mono hCD
