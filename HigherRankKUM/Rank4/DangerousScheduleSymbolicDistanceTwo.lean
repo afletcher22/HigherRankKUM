@@ -271,11 +271,11 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
     have hrCases : r.val = 0 ∨ r.val = 1 ∨ r.val = 2 ∨ r.val = 3 := by
       omega
     rcases hrCases with hr | hr | hr | hr
-    · let m : Fin (k + 1) := ⟨j.val + 2, by omega⟩
-      have hrEq : r = (0 : Fin 4) := by
+    · have hrEq : r = (0 : Fin 4) := by
         apply Fin.ext
         exact hr
       subst r
+      let m : Fin (k + 1) := ⟨j.val + 2, by omega⟩
       let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
       have h := hOrd m q
       have hq1 := hcoreNoWrap q 1 (by
@@ -286,11 +286,11 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         omega)
       rw [hq1, hq2] at h
       simpa [m, q] using h
-    · by_cases hj : j.val + 1 < k - 1
-      have hrEq : r = (1 : Fin 4) := by
+    · have hrEq : r = (1 : Fin 4) := by
         apply Fin.ext
         exact hr
       subst r
+      by_cases hj : j.val + 1 < k - 1
       · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
         have h := hOrd m q
@@ -319,11 +319,11 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         ext z
         simp [m, q, hj, hjEq, i0, he0,
             Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-    · by_cases hj : j.val + 1 < k - 1
-      have hrEq : r = (2 : Fin 4) := by
+    · have hrEq : r = (2 : Fin 4) := by
         apply Fin.ext
         exact hr
       subst r
+      by_cases hj : j.val + 1 < k - 1
       · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 5, by omega⟩
         have h := hOrd m q
@@ -353,11 +353,11 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         ext z
         simp [m, q, hj, hjEq, i0, he0,
             Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-    · by_cases hj : j.val + 1 < k - 1
-      have hrEq : r = (3 : Fin 4) := by
+    · have hrEq : r = (3 : Fin 4) := by
         apply Fin.ext
         exact hr
       subst r
+      by_cases hj : j.val + 1 < k - 1
       · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 6, by omega⟩
         have h := hOrd m q
