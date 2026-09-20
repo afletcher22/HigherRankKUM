@@ -84,10 +84,10 @@ theorem exists_adjacent_or_distance_two_good
   push_neg at hExist
   have hNoAdj : ∀ i : Fin n, ¬ (Good i ∧ Good (shift1 i)) := by
     intro i h
-    exact (hExist i).1 h
+    exact (hExist i).1 h.1 h.2
   have hNoTwo : ∀ i : Fin n, ¬ (Good i ∧ Good (shift2 i)) := by
     intro i h
-    exact (hExist i).2 h
+    exact (hExist i).2 h.1 h.2
 
   have hshift1_inj : Function.Injective shift1 := by
     dsimp [shift1]
