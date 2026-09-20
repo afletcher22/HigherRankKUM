@@ -792,8 +792,9 @@ theorem exists_cbo_of_adjacent_good_normalized
     FiniteSchedule.exists_fin_equiv_with_two_prescribed
       hCfin hCcard iT iW hiTW hcT hcW hcne
 
-  let eG : Fin (3 * k + 1) ≃ (H : Set α) := by
-    simpa using order
+  let eG : Fin (3 * k + 1) ≃ (H : Set α) :=
+    order.trans (Equiv.setCongr (by
+      simpa [Matroid.restrict_ground, hH.subset_ground] ))
   let eSlots : FiniteSchedule.HyperplaneSlots k ≃
       (M.E \ H : Set α) ⊕ (H : Set α) :=
     Equiv.sumCongr eC eG
