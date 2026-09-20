@@ -48,7 +48,12 @@ theorem mem_closure_triple_inter_of_adjacent_indep
     · exact Or.inr hyz.1
   have h :=
     mem_closure_inter_of_indep_union hInd heXY heYZ
-  simpa [inter_assoc, inter_left_comm, inter_comm] using h
+  have hinter : (X ∩ Y) ∩ (Y ∩ Z) = X ∩ Y ∩ Z := by
+    ext x
+    simp only [Set.mem_inter_iff]
+    tauto
+  rw [hinter] at h
+  exact h
 
 /-- Four successive closure constraints collapse to their fourfold common
 intersection.  This is the abstract form of the rank-four statement that four
@@ -75,11 +80,17 @@ theorem mem_closure_fourfold_inter_of_adjacent_indep
     apply hXY.subset
     intro x hx
     rcases hx with hwxy | hxyz
-    · exact ⟨hwxy.2.1, hwxy.2.2⟩
-    · exact ⟨hxyz.1, hxyz.2.1⟩
+    · exact Or.inl hwxy.1.2
+    · exact Or.inl hxyz.1.1
   have h :=
     mem_closure_inter_of_indep_union hInd heWXY heXYZ
-  simpa [inter_assoc, inter_left_comm, inter_comm] using h
+  have hinter :
+      (W ∩ X ∩ Y) ∩ (X ∩ Y ∩ Z) = W ∩ X ∩ Y ∩ Z := by
+    ext x
+    simp only [Set.mem_inter_iff]
+    tauto
+  rw [hinter] at h
+  exact h
 
 end BlockerClosure
 end HigherRankKUM
