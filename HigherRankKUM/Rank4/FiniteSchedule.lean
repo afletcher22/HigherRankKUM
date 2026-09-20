@@ -605,6 +605,48 @@ def hyperSeparatedIndexEquiv (k : ℕ) (hk : 2 ≤ k) :
     simp
   simp [hyperSeparatedIndexEquiv, hbt, hyperSeparatedRegroupEquiv]
 
+@[simp] theorem hyperSeparatedIndexEquiv_head0
+    (k : ℕ) (hk : 2 ≤ k) :
+    hyperSeparatedIndexEquiv k hk ⟨0, by omega⟩ =
+      Sum.inl ⟨0, by omega⟩ := by
+  simpa [hyperSeparatedHeadSlot] using
+    hyperSeparatedIndexEquiv_head k hk (0 : Fin 6)
+
+@[simp] theorem hyperSeparatedIndexEquiv_head1
+    (k : ℕ) (hk : 2 ≤ k) :
+    hyperSeparatedIndexEquiv k hk ⟨1, by omega⟩ =
+      Sum.inr ⟨0, by omega⟩ := by
+  simpa [hyperSeparatedHeadSlot] using
+    hyperSeparatedIndexEquiv_head k hk (1 : Fin 6)
+
+@[simp] theorem hyperSeparatedIndexEquiv_head2
+    (k : ℕ) (hk : 2 ≤ k) :
+    hyperSeparatedIndexEquiv k hk ⟨2, by omega⟩ =
+      Sum.inr ⟨1, by omega⟩ := by
+  simpa [hyperSeparatedHeadSlot] using
+    hyperSeparatedIndexEquiv_head k hk (2 : Fin 6)
+
+@[simp] theorem hyperSeparatedIndexEquiv_head3
+    (k : ℕ) (hk : 2 ≤ k) :
+    hyperSeparatedIndexEquiv k hk ⟨3, by omega⟩ =
+      Sum.inl ⟨1, by omega⟩ := by
+  simpa [hyperSeparatedHeadSlot] using
+    hyperSeparatedIndexEquiv_head k hk (3 : Fin 6)
+
+@[simp] theorem hyperSeparatedIndexEquiv_head4
+    (k : ℕ) (hk : 2 ≤ k) :
+    hyperSeparatedIndexEquiv k hk ⟨4, by omega⟩ =
+      Sum.inr ⟨2, by omega⟩ := by
+  simpa [hyperSeparatedHeadSlot] using
+    hyperSeparatedIndexEquiv_head k hk (4 : Fin 6)
+
+@[simp] theorem hyperSeparatedIndexEquiv_head5
+    (k : ℕ) (hk : 2 ≤ k) :
+    hyperSeparatedIndexEquiv k hk ⟨5, by omega⟩ =
+      Sum.inr ⟨3, by omega⟩ := by
+  simpa [hyperSeparatedHeadSlot] using
+    hyperSeparatedIndexEquiv_head k hk (5 : Fin 6)
+
 end
 
 end FiniteSchedule
