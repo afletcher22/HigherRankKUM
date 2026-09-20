@@ -113,6 +113,19 @@ def separatedFinAdapter (k : ℕ) (hk : 2 ≤ k) :
     Fin (4 * k + 2) ≃ SeparatedPos k :=
   FiniteSchedule.hyperSeparatedHeadBlockEquiv k hk
 
+/-- Prove a transported successor equation using only natural-number index
+values. In particular, all metavariables are fixed before arithmetic tactics
+run; the symbolic grammar never rewrites with an under-specified Fin index. -/
+theorem transportedNext_eq_of_index_value
+    {β : Type*} {n : ℕ} (hn : 0 < n) (e : Fin n ≃ β)
+    (p q : β)
+    (h : ((e.symm p).val + 1) % n = (e.symm q).val) :
+    transportedNext hn e p = q := by
+  apply e.symm.injective
+  apply Fin.ext
+  simpa only [transportedNext, transportedCyclicIndex,
+    Equiv.symm_apply_apply, cyclicIndex_val] using h
+
 /-- Symbolic successor for the adjacent-good pattern.  Its definition is
 transported from the finite cycle, while the lemmas below expose the finite
 state machine seen by schedule proofs. -/
@@ -124,36 +137,36 @@ def adjacentNext (k : ℕ) (hk : 1 ≤ k) :
     {k : ℕ} (hk : 1 ≤ k) (j : Fin k) :
     adjacentNext k hk (Sum.inl (j, (0 : Fin 4))) =
       Sum.inl (j, (1 : Fin 4)) := by
-  apply (adjacentFinAdapter k hk).symm.injective
-  simp only [adjacentNext, transportedNext, transportedCyclicIndex,
-    Equiv.symm_apply_apply, adjacentFinAdapter,
-    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
-  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
-  apply Fin.ext
+  apply transportedNext_eq_of_index_value
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
+  change (0 + 4 * j.val + 1) % (4 * k + 2) = 1 + 4 * j.val
+  rw [Nat.mod_eq_of_lt (by omega)]
   omega
 
 @[simp] theorem adjacentNext_block1
     {k : ℕ} (hk : 1 ≤ k) (j : Fin k) :
     adjacentNext k hk (Sum.inl (j, (1 : Fin 4))) =
       Sum.inl (j, (2 : Fin 4)) := by
-  apply (adjacentFinAdapter k hk).symm.injective
-  simp only [adjacentNext, transportedNext, transportedCyclicIndex,
-    Equiv.symm_apply_apply, adjacentFinAdapter,
-    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
-  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
-  apply Fin.ext
+  apply transportedNext_eq_of_index_value
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
+  change (1 + 4 * j.val + 1) % (4 * k + 2) = 2 + 4 * j.val
+  rw [Nat.mod_eq_of_lt (by omega)]
   omega
 
 @[simp] theorem adjacentNext_block2
     {k : ℕ} (hk : 1 ≤ k) (j : Fin k) :
     adjacentNext k hk (Sum.inl (j, (2 : Fin 4))) =
       Sum.inl (j, (3 : Fin 4)) := by
-  apply (adjacentFinAdapter k hk).symm.injective
-  simp only [adjacentNext, transportedNext, transportedCyclicIndex,
-    Equiv.symm_apply_apply, adjacentFinAdapter,
-    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
-  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
-  apply Fin.ext
+  apply transportedNext_eq_of_index_value
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
+  change (2 + 4 * j.val + 1) % (4 * k + 2) = 3 + 4 * j.val
+  rw [Nat.mod_eq_of_lt (by omega)]
   omega
 
 @[simp] theorem adjacentNext_block3_of_lt
@@ -161,12 +174,12 @@ def adjacentNext (k : ℕ) (hk : 1 ≤ k) :
     (hj : j.val + 1 < k) :
     adjacentNext k hk (Sum.inl (j, (3 : Fin 4))) =
       Sum.inl ((⟨j.val + 1, hj⟩ : Fin k), (0 : Fin 4)) := by
-  apply (adjacentFinAdapter k hk).symm.injective
-  simp only [adjacentNext, transportedNext, transportedCyclicIndex,
-    Equiv.symm_apply_apply, adjacentFinAdapter,
-    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
-  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
-  apply Fin.ext
+  apply transportedNext_eq_of_index_value
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
+  change (3 + 4 * j.val + 1) % (4 * k + 2) = 0 + 4 * (j.val + 1)
+  rw [Nat.mod_eq_of_lt (by omega)]
   omega
 
 @[simp] theorem adjacentNext_block3_of_not_lt
@@ -174,40 +187,38 @@ def adjacentNext (k : ℕ) (hk : 1 ≤ k) :
     (hj : ¬ j.val + 1 < k) :
     adjacentNext k hk (Sum.inl (j, (3 : Fin 4))) =
       Sum.inr (0 : Fin 2) := by
-  apply (adjacentFinAdapter k hk).symm.injective
-  simp only [adjacentNext, transportedNext, transportedCyclicIndex,
-    Equiv.symm_apply_apply, adjacentFinAdapter,
+  apply transportedNext_eq_of_index_value
+  simp only [adjacentFinAdapter,
     FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block,
     FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
-  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
-  apply Fin.ext
+  change (3 + 4 * j.val + 1) % (4 * k + 2) = 4 * k + 0
+  rw [Nat.mod_eq_of_lt (by omega)]
   omega
 
 @[simp] theorem adjacentNext_tail0
     {k : ℕ} (hk : 1 ≤ k) :
     adjacentNext k hk (Sum.inr (0 : Fin 2)) =
       Sum.inr (1 : Fin 2) := by
-  apply (adjacentFinAdapter k hk).symm.injective
-  simp only [adjacentNext, transportedNext, transportedCyclicIndex,
-    Equiv.symm_apply_apply, adjacentFinAdapter,
+  apply transportedNext_eq_of_index_value
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block,
     FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
-  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
-  apply Fin.ext
+  change (4 * k + 0 + 1) % (4 * k + 2) = 4 * k + 1
+  rw [Nat.mod_eq_of_lt (by omega)]
   omega
 
 @[simp] theorem adjacentNext_tail1
     {k : ℕ} (hk : 1 ≤ k) :
     adjacentNext k hk (Sum.inr (1 : Fin 2)) =
       Sum.inl ((⟨0, by omega⟩ : Fin k), (0 : Fin 4)) := by
-  apply (adjacentFinAdapter k hk).symm.injective
-  simp only [adjacentNext, transportedNext, transportedCyclicIndex,
-    Equiv.symm_apply_apply, adjacentFinAdapter,
-    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail,
-    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
-  rw [cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul _ _ _ _
-    (by omega) (by omega)]
-  apply Fin.ext
-  omega
+  apply transportedNext_eq_of_index_value
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
+  change (4 * k + 1 + 1) % (4 * k + 2) = 0 + 4 * 0
+  have hlast : 4 * k + 1 + 1 = 4 * k + 2 := by omega
+  rw [hlast, Nat.mod_self]
+  rfl
 
 /-- Final adjacent schedule, factored as finite adapter followed by the
 symbolic ground order. -/
