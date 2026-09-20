@@ -206,6 +206,178 @@ theorem one_of_three_pair_extensions_has_rank_four
         intro x hx
         exact Or.inl hx)
 
+
+/-- A core edge is good for a chosen dangerous hyperplane when adjoining its
+two core endpoints to the complement has ambient rank four. -/
+def DangerousHyperplaneEdgeGood
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (i : Fin (3 * k + 1)) : Prop :=
+  M.eRk
+      ((M.E \ H) ∪
+        ({(order i : α),
+          (order (cyclicIndex (3 * k + 1) (by omega) i 1) : α)} : Set α)) =
+    (4 : ℕ∞)
+
+/-- Three consecutive entries of a rank-three CBO of the dangerous
+hyperplane form an ambient basis of that hyperplane. -/
+theorem dangerous_hyperplane_core_triple_isBasis
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hH : DangerousHyperplane M k H)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order)
+    (i : Fin (3 * k + 1)) :
+    M.IsBasis
+      ({(order i : α),
+        (order (cyclicIndex (3 * k + 1) (by omega) i 1) : α),
+        (order (cyclicIndex (3 * k + 1) (by omega) i 2) : α)} : Set α)
+      H := by
+  have hB := hOrder i
+  rw [cyclicWindow_three_eq] at hB
+  exact (M.isBase_restrict_iff hH.subset_ground).1 hB
+
+/-- Any basis of a dangerous hyperplane together with the whole complement
+has ambient rank four. -/
+theorem dangerous_hyperplane_basis_union_complement_rank_four
+    {M : Matroid α} {k : ℕ} {H I : Set α}
+    (hk : 1 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hH : DangerousHyperplane M k H)
+    (hI : M.IsBasis I H) :
+    M.eRk ((M.E \ H) ∪ I) = (4 : ℕ∞) := by
+  let C : Set α := M.E \ H
+  have hCfin : C.Finite := by
+    dsimp [C]
+    exact hE.sdiff
+  have hCcard : C.ncard = k + 1 := by
+    dsimp [C]
+    exact dangerous_complement_ncard_eq hE hEcard hH
+  have hCnonempty : C.Nonempty := by
+    rw [← Set.ncard_pos hCfin, hCcard]
+    omega
+  obtain ⟨c, hc⟩ := hCnonempty
+  have hbase :=
+    dangerous_one_hyperplane_basis_plus_complement_isBase
+      hRank hH hI (by simpa [C] using hc)
+  have hsub : insert c I ⊆ C ∪ I := by
+    intro x hx
+    rcases hx with rfl | hxI
+    · exact Or.inl hc
+    · exact Or.inr hxI
+  have hlower := M.eRk_mono hsub
+  have hbaseRank : M.eRk (insert c I) = (4 : ℕ∞) := by
+    rw [hbase.eRk_eq_eRank, hRank]
+  rw [hbaseRank] at hlower
+  apply le_antisymm
+  · rw [← hRank]
+    exact M.eRk_le_eRank _
+  · simpa [C] using hlower
+
+/-- Every three consecutive core-edge positions of a dangerous-hyperplane CBO
+contain a good edge. This is the matroid input for the 3k+1 cyclic
+pigeonhole lemma. -/
+theorem dangerous_hyperplane_no_three_consecutive_bad_edges
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order) :
+    ∀ i : Fin (3 * k + 1),
+      DangerousHyperplaneEdgeGood order i ∨
+      DangerousHyperplaneEdgeGood order
+        (cyclicIndex (3 * k + 1) (by omega) i 1) ∨
+      DangerousHyperplaneEdgeGood order
+        (cyclicIndex (3 * k + 1) (by omega) i 2) := by
+  intro i
+  let n := 3 * k + 1
+  let hn : 0 < n := by
+    dsimp [n]
+    omega
+  let i1 : Fin n := cyclicIndex n hn i 1
+  let i2 : Fin n := cyclicIndex n hn i 2
+  let i3 : Fin n := cyclicIndex n hn i 3
+  let a : α := (order i : α)
+  let b : α := (order i1 : α)
+  let c : α := (order i2 : α)
+  let d : α := (order i3 : α)
+  let C : Set α := M.E \ H
+
+  have hCrank :
+      M.eRk C = (2 : ℕ∞) ∨
+      M.eRk C = (3 : ℕ∞) ∨
+      M.eRk C = (4 : ℕ∞) := by
+    simpa [C] using
+      dangerous_complement_rank_trichotomy
+        hE hRank hEcard hStrict hH
+
+  have hBasis0 :=
+    dangerous_hyperplane_core_triple_isBasis
+      hH order hOrder i
+  have hABC :
+      M.eRk (C ∪ ({a, b, c} : Set α)) = (4 : ℕ∞) := by
+    have h :=
+      dangerous_hyperplane_basis_union_complement_rank_four
+        (by omega : 1 ≤ k) hE hRank hEcard hH hBasis0
+    simpa [C, a, b, c, i1, i2, n, hn] using h
+
+  have hBasis1 :=
+    dangerous_hyperplane_core_triple_isBasis
+      hH order hOrder i1
+  have hBCD :
+      M.eRk (C ∪ ({b, c, d} : Set α)) = (4 : ℕ∞) := by
+    have h :=
+      dangerous_hyperplane_basis_union_complement_rank_four
+        (by omega : 1 ≤ k) hE hRank hEcard hH hBasis1
+    simpa [C, b, c, d, i1, i2, i3, n, hn, cyclicIndex_add,
+      Nat.add_assoc] using h
+
+  have hgood :=
+    one_of_three_pair_extensions_has_rank_four
+      hRank hCrank hABC hBCD
+  rcases hgood with h0 | h1 | h2
+  · left
+    simpa [DangerousHyperplaneEdgeGood, C, a, b, i1, n, hn] using h0
+  · right; left
+    simpa [DangerousHyperplaneEdgeGood, C, b, c, i1, i2, n, hn,
+      cyclicIndex_add, Nat.add_assoc] using h1
+  · right; right
+    simpa [DangerousHyperplaneEdgeGood, C, c, d, i2, i3, n, hn,
+      cyclicIndex_add, Nat.add_assoc] using h2
+
+/-- A chosen dangerous hyperplane CBO has either two adjacent good core edges
+or two good core edges separated by one edge. -/
+theorem dangerous_hyperplane_exists_good_edge_configuration
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order) :
+    ∃ i : Fin (3 * k + 1),
+      (DangerousHyperplaneEdgeGood order i ∧
+        DangerousHyperplaneEdgeGood order
+          (cyclicIndex (3 * k + 1) (by omega) i 1)) ∨
+      (DangerousHyperplaneEdgeGood order i ∧
+        DangerousHyperplaneEdgeGood order
+          (cyclicIndex (3 * k + 1) (by omega) i 2)) := by
+  apply exists_adjacent_or_distance_two_good
+    (k := k) (by omega)
+    (DangerousHyperplaneEdgeGood order)
+  exact dangerous_hyperplane_no_three_consecutive_bad_edges
+    hk hE hRank hEcard hStrict hH order hOrder
+
 end
 
 end Rank4DangerousBranches
