@@ -21,6 +21,7 @@ jobs:
           path: .lake/packages
           key: lean-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}
       - name: Fetch pinned dependencies
+        if: steps.deps-cache.outputs.cache-hit != 'true'
         run: lake update
       - name: Save dependency cache
         if: steps.deps-cache.outputs.cache-hit != 'true'
