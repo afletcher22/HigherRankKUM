@@ -6,6 +6,7 @@ namespace Rank4DangerousScheduleSymbolic
 open Set
 open scoped Matroid
 open Rank4GcdTwoDeletion
+open Rank4DangerousBranches
 
 noncomputable section
 
@@ -83,7 +84,6 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
     separated_cbo_of_symbolic_windows hk hH eC order ?_⟩
   intro p
   rw [transportedWindow_four_next]
-  fold separatedNext
   rcases p with r | p
   · fin_cases r
     · dsimp only at hExc0
