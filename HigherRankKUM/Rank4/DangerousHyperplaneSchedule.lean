@@ -1498,6 +1498,48 @@ theorem exists_cbo_of_distance_two_good_normalized
   rw [hclass]
   exact hbase
 
+
+/-- Unified dangerous-hyperplane theorem.
+
+For strict rank four on 4k+2 elements with k >= 2, the existence of even one
+dangerous hyperplane implies a cyclic basis ordering, assuming a full
+rank-three KUM solver.  No count or uniqueness hypothesis on dangerous
+hyperplanes is needed. -/
+theorem exists_cbo_of_dangerous_hyperplane
+    {M : Matroid α} {k : ℕ}
+    (hSolve3 : SolvesKUMAtRank α 3)
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    {H : Set α}
+    (hH : DangerousHyperplane M k H) :
+    ∃ σ : Fin (4 * k + 2) ≃ M.E,
+      CyclicBasisOrder M 4 (by omega) σ := by
+  obtain ⟨order, hOrder⟩ :=
+    exists_hyperplane_cbo_of_one_dangerous
+      hSolve3 hE hRank hStrict hH
+
+  obtain ⟨i, hconfig⟩ :=
+    dangerous_hyperplane_exists_good_edge_configuration
+      hk hE hRank hEcard hStrict hH order hOrder
+
+  rcases hconfig with hAdj | hTwo
+  · obtain ⟨order', hOrder', hgoodEnd, hgoodWrap⟩ :=
+      exists_shifted_adjacent_good_at_end
+        hk order hOrder i hAdj.1 hAdj.2
+    exact exists_cbo_of_adjacent_good_normalized
+      hk hE hRank hEcard hStrict hH
+      order' hOrder' hgoodEnd hgoodWrap
+
+  · obtain ⟨order', hOrder', hgood0, hgood2⟩ :=
+      exists_shifted_distance_two_good_at_start
+        hk order hOrder i hTwo.1 hTwo.2
+    exact exists_cbo_of_distance_two_good_normalized
+      hk hE hRank hEcard hStrict hH
+      order' hOrder' hgood0 hgood2
+
 end
 
 end Rank4DangerousBranches
