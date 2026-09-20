@@ -22,5 +22,7 @@ jobs:
           key: lean-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}
       - name: Fetch pinned dependencies
         run: lake update
+      - name: Build endpoint
+        run: lake build +HigherRankKUM.Rank4.DangerousScheduleSymbolicEndpoint
       - name: Audit endpoint
         run: lake env lean AuditDangerousEndpoint.lean
