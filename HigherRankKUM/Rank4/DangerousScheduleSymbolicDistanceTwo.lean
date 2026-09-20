@@ -156,8 +156,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [he0', he1']
       convert hExc0 using 1
       ext z
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union,
-        or_assoc, or_left_comm, or_comm]
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+      aesop
     · have hrEq : r = (1 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -179,8 +179,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [he1'] at h
       convert h using 1
       ext z
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
-        or_assoc, or_left_comm, or_comm]
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      aesop
     · have hrEq : r = (2 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -202,8 +202,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [he1'] at h
       convert h using 1
       ext z
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
-        or_assoc, or_left_comm, or_comm]
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      aesop
     · have hrEq : r = (3 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -222,8 +222,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [he1', he2']
       convert hExc2 using 1
       ext z
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union,
-        or_assoc, or_left_comm, or_comm]
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+      aesop
     · have hrEq : r = (4 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -245,8 +245,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [he2'] at h
       convert h using 1
       ext z
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
-        or_assoc, or_left_comm, or_comm]
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      aesop
     · have hrEq : r = (5 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -268,8 +268,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [he2'] at h
       convert h using 1
       ext z
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
-        or_assoc, or_left_comm, or_comm]
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      aesop
   · rcases p with ⟨j, r⟩
     have hjlt := j.isLt
     have hrCases : r.val = 0 ∨ r.val = 1 ∨ r.val = 2 ∨ r.val = 3 := by
