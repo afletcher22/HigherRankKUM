@@ -83,7 +83,8 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    simpa only [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using hbase
+    convert hbase using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
   · have hb : (σ i : α) ∈ M.E \ H₁ :=
       hB i (by omega) hr
     have hc : (σ i1 : α) ∈ M.E \ H₂ :=
@@ -95,7 +96,8 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    simpa only [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using hbase
+    convert hbase using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
   · have hc : (σ i : α) ∈ M.E \ H₂ :=
       hC i (by omega) hr
     have hg : (σ i1 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
@@ -107,7 +109,8 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    simpa only [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using hbase
+    convert hbase using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
   · have hg : (σ i : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
       hG i (by omega) hr
     have ha : (σ i1 : α) ∈ M.E \ H₀ :=
@@ -119,7 +122,8 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    simpa only [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using hbase
+    convert hbase using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
 
 /-- The six exceptional windows of the explicit t=3 schedule are bases.
 
@@ -174,17 +178,31 @@ theorem dangerous_triple_six_exceptional_windows
       cyclicIndex (4 * k + 2) hn
           ⟨4 * (k - 1) + r, by omega⟩ s =
         ⟨4 * (k - 1) + r + s, by omega⟩ := by
+    have hlt :
+        (⟨4 * (k - 1) + r, by omega⟩ : Fin (4 * k + 2)).val + s <
+          4 * k + 2 := by
+      simp only [Fin.val_mk]
+      omega
     exact cyclicIndex_eq_mk_add_of_lt
-      (4 * k + 2) hn ⟨4 * (k - 1) + r, by omega⟩ s (by omega)
+      (4 * k + 2) hn ⟨4 * (k - 1) + r, by omega⟩ s hlt
 
   have hwrap (r s : ℕ) (hr : r < 6) (hge : 6 ≤ r + s)
       (hlt : r + s < 12) :
       cyclicIndex (4 * k + 2) hn
           ⟨4 * (k - 1) + r, by omega⟩ s =
         ⟨r + s - 6, by omega⟩ := by
+    have hge' :
+        4 * k + 2 ≤
+          (⟨4 * (k - 1) + r, by omega⟩ : Fin (4 * k + 2)).val + s := by
+      simp only [Fin.val_mk]
+      omega
+    have hlt' :
+        (⟨4 * (k - 1) + r, by omega⟩ : Fin (4 * k + 2)).val + s <
+          2 * (4 * k + 2) := by
+      simp only [Fin.val_mk]
+      omega
     have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
-      (4 * k + 2) hn ⟨4 * (k - 1) + r, by omega⟩ s
-      (by omega) (by omega)
+      (4 * k + 2) hn ⟨4 * (k - 1) + r, by omega⟩ s hge' hlt'
     rw [h]
     apply Fin.ext
     change (4 * (k - 1) + r + s - (4 * k + 2)) = r + s - 6
@@ -251,7 +269,10 @@ theorem dangerous_triple_six_exceptional_windows
   dsimp only
   constructor
   · rw [cyclicWindow_four_eq]
-    have h0 := hidx 0 1 (by omega)
+    have h0 :
+        cyclicIndex (4 * k + 2) hn ⟨4 * (k - 1), by omega⟩ 1 =
+          ⟨4 * (k - 1) + 1, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 1 (by omega)
     have h1 := hidx 0 2 (by omega)
     have h2 := hidx 0 3 (by omega)
     rw [h0, h1, h2, hσpA, hσpB, hσpC, hσdA]
