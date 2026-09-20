@@ -327,7 +327,7 @@ theorem dangerous_hyperplane_core_pair_indep_rank_two
   have hPrank : M.eRk P = (2 : ℕ∞) := by
     rw [hPind.eRk_eq_encard]
     simpa [P, Set.encard_pair hvals]
-  exact ⟨hPind, hPrank⟩
+  simpa [P, j, hn] using And.intro hPind hPrank
 
 /-- A rank-two base selected inside the complement-restricted contraction
 lifts directly to an ambient rank-four base together with the contracted
