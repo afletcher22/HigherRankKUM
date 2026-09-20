@@ -303,6 +303,56 @@ theorem exists_cbo_of_adjacent_good_normalized
           (eC ⟨0, by omega⟩ : α) := by simpa using h
       _ = cW := by simpa [iW] using heW
 
+  have hCstream (m : Fin (k + 1)) :
+      (σ ⟨4 * m.val, by omega⟩ : α) = (eC m : α) := by
+    by_cases hm : m.val < k
+    · let j : Fin k := ⟨m.val, hm⟩
+      have h := hCpos j
+      have hEq :
+          (⟨4 * m.val, by omega⟩ : Fin (4 * k + 2)) =
+            ⟨4 * j.val, by omega⟩ := by
+        apply Fin.ext
+        rfl
+      rw [hEq]
+      simpa [j] using h
+    · have hmEq : m.val = k := by omega
+      have hEq :
+          (⟨4 * m.val, by omega⟩ : Fin (4 * k + 2)) =
+            ⟨4 * k, by omega⟩ := by
+        apply Fin.ext
+        omega
+      rw [hEq, hTailC]
+      have hmIT : m = iT := by
+        apply Fin.ext
+        simpa [iT] using hmEq
+      subst m
+      exact heT.symm
+
+  have hGnext0 (j : Fin k) :
+      (σ ⟨4 * j.val + 5, by omega⟩ : α) =
+        (order ⟨3 * j.val + 3, by omega⟩ : α) := by
+    by_cases hj : j.val + 1 < k
+    · let jn : Fin k := ⟨j.val + 1, hj⟩
+      have h := hGpos jn (0 : Fin 3)
+      have hEq :
+          (⟨4 * j.val + 5, by omega⟩ : Fin (4 * k + 2)) =
+            ⟨4 * jn.val + 1, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jn]
+        omega
+      rw [hEq]
+      simpa [jn] using h
+    · have hjEq : j.val = k - 1 := by omega
+      have hEq :
+          (⟨4 * j.val + 5, by omega⟩ : Fin (4 * k + 2)) =
+            ⟨4 * k + 1, by omega⟩ := by
+        apply Fin.ext
+        omega
+      rw [hEq, hTailG]
+      congr 2
+      apply Fin.ext
+      omega
+
   have hOrdinaryCoreTriple (q : Fin (3 * k + 1)) :
       M.IsBasis
         ({(order q : α),
@@ -452,7 +502,6 @@ theorem exists_cbo_of_adjacent_good_normalized
     have hsEq : s = ⟨4 * j.val, by omega⟩ := Fin.ext hsval
     subst s
     have hc := (eC ⟨j.val, by omega⟩).property
-    rw [hCpos j]
     have h1 :
         cyclicIndex (4 * k + 2) (by omega)
           ⟨4 * j.val, by omega⟩ 1 =
@@ -471,15 +520,207 @@ theorem exists_cbo_of_adjacent_good_normalized
           ⟨4 * j.val + 3, by omega⟩ := by
       apply cyclicIndex_eq_mk_add_of_lt
       omega
-    rw [h1, h2, h3, hGpos j 0, hGpos j 1, hGpos j 2]
+    have hg0 := hGpos j (0 : Fin 3)
+    have hg1 := hGpos j (1 : Fin 3)
+    have hg2 := hGpos j (2 : Fin 3)
+    rw [h1, h2, h3, hCpos j, hg0, hg1, hg2]
+    let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
+    have hq1 :
+        cyclicIndex (3 * k + 1) (by omega) q 1 =
+          ⟨3 * j.val + 1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hq2 :
+        cyclicIndex (3 * k + 1) (by omega) q 2 =
+          ⟨3 * j.val + 2, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
     have hbase :=
       hOneCThreeG (eC ⟨j.val, by omega⟩ : α)
-        (by simpa [C] using hc)
-        ⟨3 * j.val, by omega⟩
-    simpa using hbase
-  · sorry
-  · sorry
-  · sorry
+        (by simpa [C] using hc) q
+    rw [hq1, hq2] at hbase
+    simpa [q] using hbase
+
+  · have hsval : s.val = 4 * j.val + 1 := by
+      dsimp [j]
+      have hm := Nat.mod_add_div s.val 4
+      omega
+    have hsEq : s = ⟨4 * j.val + 1, by omega⟩ := Fin.ext hsval
+    subst s
+    let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
+    have hc := (eC m).property
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 1, by omega⟩ 1 =
+          ⟨4 * j.val + 2, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 1, by omega⟩ 2 =
+          ⟨4 * j.val + 3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 1, by omega⟩ 3 =
+          ⟨4 * (j.val + 1), by omega⟩ := by
+      apply Fin.ext
+      have h := cyclicIndex_eq_mk_add_of_lt
+        (4 * k + 2) (by omega)
+        (⟨4 * j.val + 1, by omega⟩ : Fin (4 * k + 2)) 3
+        (by omega)
+      rw [h]
+      omega
+    have hg0 := hGpos j (0 : Fin 3)
+    have hg1 := hGpos j (1 : Fin 3)
+    have hg2 := hGpos j (2 : Fin 3)
+    have hcEval := hCstream m
+    rw [h1, h2, h3, hg0, hg1, hg2, hcEval]
+    let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
+    have hq1 :
+        cyclicIndex (3 * k + 1) (by omega) q 1 =
+          ⟨3 * j.val + 1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hq2 :
+        cyclicIndex (3 * k + 1) (by omega) q 2 =
+          ⟨3 * j.val + 2, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hbase :=
+      hOneCThreeG (eC m : α) (by simpa [C] using hc) q
+    rw [hq1, hq2] at hbase
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+
+  · have hsval : s.val = 4 * j.val + 2 := by
+      dsimp [j]
+      have hm := Nat.mod_add_div s.val 4
+      omega
+    have hsEq : s = ⟨4 * j.val + 2, by omega⟩ := Fin.ext hsval
+    subst s
+    let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
+    have hc := (eC m).property
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 2, by omega⟩ 1 =
+          ⟨4 * j.val + 3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 2, by omega⟩ 2 =
+          ⟨4 * (j.val + 1), by omega⟩ := by
+      apply Fin.ext
+      have h := cyclicIndex_eq_mk_add_of_lt
+        (4 * k + 2) (by omega)
+        (⟨4 * j.val + 2, by omega⟩ : Fin (4 * k + 2)) 2
+        (by omega)
+      rw [h]
+      omega
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 2, by omega⟩ 3 =
+          ⟨4 * j.val + 5, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hg1 := hGpos j (1 : Fin 3)
+    have hg2 := hGpos j (2 : Fin 3)
+    have hcEval := hCstream m
+    have hg3 := hGnext0 j
+    rw [h1, h2, h3, hg1, hg2, hcEval, hg3]
+    let q : Fin (3 * k + 1) := ⟨3 * j.val + 1, by omega⟩
+    have hq1 :
+        cyclicIndex (3 * k + 1) (by omega) q 1 =
+          ⟨3 * j.val + 2, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hq2 :
+        cyclicIndex (3 * k + 1) (by omega) q 2 =
+          ⟨3 * j.val + 3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hbase :=
+      hOneCThreeG (eC m : α) (by simpa [C] using hc) q
+    rw [hq1, hq2] at hbase
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+
+  · have hsval : s.val = 4 * j.val + 3 := by
+      dsimp [j]
+      have hm := Nat.mod_add_div s.val 4
+      omega
+    have hsEq : s = ⟨4 * j.val + 3, by omega⟩ := Fin.ext hsval
+    subst s
+    have hjNext : j.val + 1 < k := by
+      omega
+    let jn : Fin k := ⟨j.val + 1, hjNext⟩
+    let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
+    have hc := (eC m).property
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 3, by omega⟩ 1 =
+          ⟨4 * (j.val + 1), by omega⟩ := by
+      apply Fin.ext
+      have h := cyclicIndex_eq_mk_add_of_lt
+        (4 * k + 2) (by omega)
+        (⟨4 * j.val + 3, by omega⟩ : Fin (4 * k + 2)) 1
+        (by omega)
+      rw [h]
+      omega
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 3, by omega⟩ 2 =
+          ⟨4 * j.val + 5, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val + 3, by omega⟩ 3 =
+          ⟨4 * j.val + 6, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hg2 := hGpos j (2 : Fin 3)
+    have hcEval := hCstream m
+    have hg3 := hGpos jn (0 : Fin 3)
+    have hg4 := hGpos jn (1 : Fin 3)
+    rw [h1, h2, h3, hg2, hcEval]
+    have hEq2 :
+        (⟨4 * j.val + 5, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨4 * jn.val + 1, by omega⟩ := by
+      apply Fin.ext
+      dsimp [jn]
+      omega
+    have hEq3 :
+        (⟨4 * j.val + 6, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨4 * jn.val + 2, by omega⟩ := by
+      apply Fin.ext
+      dsimp [jn]
+      omega
+    rw [hEq2, hEq3, hg3, hg4]
+    let q : Fin (3 * k + 1) := ⟨3 * j.val + 2, by omega⟩
+    have hq1 :
+        cyclicIndex (3 * k + 1) (by omega) q 1 =
+          ⟨3 * j.val + 3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hq2 :
+        cyclicIndex (3 * k + 1) (by omega) q 2 =
+          ⟨3 * j.val + 4, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have hbase :=
+      hOneCThreeG (eC m : α) (by simpa [C] using hc) q
+    rw [hq1, hq2] at hbase
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
 end
 
