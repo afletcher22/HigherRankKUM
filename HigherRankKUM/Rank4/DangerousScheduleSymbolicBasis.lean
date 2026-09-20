@@ -13,9 +13,9 @@ noncomputable section
 variable {α : Type*}
 
 -- Symbolic adjacent certification; all finite-index arithmetic is confined to helper lemmas below.
+set_option maxHeartbeats 800000 in
 /-- Adjacent-good normalized dangerous-hyperplane construction, proved
 entirely through the symbolic schedule API. -/
-set_option maxHeartbeats 800000 in
 theorem exists_cbo_of_adjacent_good_normalized_symbolic
     {M : Matroid α} {k : ℕ} {H : Set α}
     (hk : 2 ≤ k)
@@ -289,14 +289,24 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
             cyclicIndex (3 * k + 1) (by omega)
                 (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 =
               ⟨3 * k, by omega⟩ := by
-          exact cyclicIndex_eq_mk_add_of_lt
+          have hh := cyclicIndex_eq_mk_add_of_lt
             (3 * k + 1) (by omega)
             (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 hltEdge
+          apply Fin.ext
+          have hv := congrArg Fin.val hh
+          simpa using hv
         rw [hEdge] at hExcEnd
+        have hlast :
+            (⟨3 * j.val + 2, by omega⟩ : Fin (3 * k + 1)) =
+              iEnd := by
+          apply Fin.ext
+          dsimp [iEnd]
+          omega
+        rw [hlast, heW']
         convert hExcEnd using 1
         ext z
-        simp [hjEq, heT', heW',
-            Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;> tauto
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+        tauto
   · have hrCases : r.val = 0 ∨ r.val = 1 := by
       omega
     rcases hrCases with hr | hr
@@ -320,10 +330,11 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
               (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
             ⟨0, by omega⟩ := hcoreWrap1
       rw [hEdge, hWrap] at hExcWrap
+      rw [heW']
       convert hExcWrap using 1
       ext z
-      simp [heT', heW',
-          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;> tauto
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+      tauto
     · have hrEq : r = (1 : Fin 2) := by
         apply Fin.ext
         exact hr
@@ -344,10 +355,12 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         simpa [q] using hcoreWrap2
       rw [hq1, hq2] at h
       dsimp [m, q] at h
+      rw [heW'] at h
+      rw [heW']
       convert h using 1
       ext z
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
-        or_assoc, or_left_comm, or_comm]
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
 
 end
 
