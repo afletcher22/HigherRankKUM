@@ -251,10 +251,32 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         have hq2 := hcoreNoWrap q 2 (by
           dsimp [q]
           omega)
-        rw [hq1, hq2] at h
+        have hq1' :
+            cyclicIndex (3 * k + 1) (by omega) q 1 =
+              ⟨3 * (j.val + 1), by omega⟩ := by
+          rw [hq1]
+          apply Fin.ext
+          dsimp [q]
+          omega
+        have hq2' :
+            cyclicIndex (3 * k + 1) (by omega) q 2 =
+              ⟨3 * (j.val + 1) + 1, by omega⟩ := by
+          rw [hq2]
+          apply Fin.ext
+          dsimp [q]
+          omega
+        rw [hq1', hq2'] at h
+        have hnext :=
+          adjacentNext_block3_of_lt (k := k) (by omega) j hj
+        rw [hnext]
+        simp only [adjacentNext_block0, adjacentNext_block1,
+          adjacentSymbolicOrder_block_g2, adjacentSymbolicOrder_block_c,
+          adjacentSymbolicOrder_block_g0, adjacentSymbolicOrder_block_g1]
+        dsimp [m, q] at h
         convert h using 1
         ext z
-        simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+        aesop
       · have hjEq : j.val = k - 1 := by omega
         have hnextTail :=
           adjacentNext_block3_of_not_lt (k := k) (by omega) j hj
