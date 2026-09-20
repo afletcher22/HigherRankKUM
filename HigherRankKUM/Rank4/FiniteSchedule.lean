@@ -302,6 +302,59 @@ def t2IndexEquiv (k : ℕ) (hk : 2 ≤ k) :
 
 
 
+/-- Enumerate a finite set while prescribing three pairwise-distinct
+positions and three pairwise-distinct values. -/
+theorem exists_fin_equiv_with_three_slots
+    {S : Set α} {n : ℕ}
+    (hS : S.Finite) (hcard : S.ncard = n)
+    (i j l : Fin n)
+    (hij : i ≠ j) (hil : i ≠ l) (hjl : j ≠ l)
+    {x y z : α}
+    (hx : x ∈ S) (hy : y ∈ S) (hz : z ∈ S)
+    (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) :
+    ∃ e : Fin n ≃ S,
+      (e i : α) = x ∧ (e j : α) = y ∧ (e l : α) = z := by
+  letI : Fintype S := hS.fintype
+  have hNatCard : Nat.card S = n := by
+    simpa [Nat.card_coe_set_eq] using hcard
+  let e₀ : Fin n ≃ S := (Finite.equivFinOfCardEq hNatCard).symm
+  let pos : Fin 3 → Fin n := ![i, j, l]
+  let val : Fin 3 → S := ![⟨x, hx⟩, ⟨y, hy⟩, ⟨z, hz⟩]
+  have hpos : Function.Injective pos := by
+    intro a b hab
+    fin_cases a <;> fin_cases b <;> simp [pos] at hab ⊢
+    · exact (hij hab).elim
+    · exact (hil hab).elim
+    · exact (hij hab.symm).elim
+    · exact (hjl hab).elim
+    · exact (hil hab.symm).elim
+    · exact (hjl hab.symm).elim
+  have hval : Function.Injective val := by
+    intro a b hab
+    fin_cases a <;> fin_cases b <;> simp_all [val]
+  let target : Fin 3 → Fin n := fun r => e₀.symm (val r)
+  have htarget : Function.Injective target :=
+    e₀.symm.injective.comp hval
+  obtain ⟨π, hπ⟩ :=
+    Equiv.Perm.exists_extending_pair pos target hpos htarget
+  let e : Fin n ≃ S := π.trans e₀
+  refine ⟨e, ?_, ?_, ?_⟩
+  · have h0 : π i = e₀.symm ⟨x, hx⟩ := by
+      simpa [pos, target, val] using hπ (0 : Fin 3)
+    change (e₀ (π i) : α) = x
+    rw [h0]
+    simp
+  · have h1 : π j = e₀.symm ⟨y, hy⟩ := by
+      simpa [pos, target, val] using hπ (1 : Fin 3)
+    change (e₀ (π j) : α) = y
+    rw [h1]
+    simp
+  · have h2 : π l = e₀.symm ⟨z, hz⟩ := by
+      simpa [pos, target, val] using hπ (2 : Fin 3)
+    change (e₀ (π l) : α) = z
+    rw [h2]
+    simp
+
 /-! ### Compressed dangerous-hyperplane schedules -/
 
 /-- Slot type for the unified dangerous-hyperplane construction:
