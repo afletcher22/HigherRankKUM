@@ -1419,7 +1419,7 @@ theorem exists_cbo_of_distance_two_good_normalized
         hk hH eC order (⟨0, by omega⟩ : Fin (k - 1))
     rw [show
       (⟨6, by omega⟩ : Fin (4 * k + 2)) =
-        ⟨6 + 4 * (0 : Fin (k - 1)).val, by omega⟩ by
+        ⟨6 + 4 * ((⟨0, by omega⟩ : Fin (k - 1)).val), by omega⟩ by
           apply Fin.ext
           simp]
     rw [h]
