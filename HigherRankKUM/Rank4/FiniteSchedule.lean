@@ -430,7 +430,6 @@ def hyperAdjacentIndexEquiv (k : ℕ) (hk : 1 ≤ k) :
       ⟨4 * k + r.val, by omega⟩ := by
   apply Fin.ext
   simp [hyperAdjacentBlockTailEquiv]
-  omega
 
 @[simp] theorem hyperAdjacentIndexEquiv_block
     (k : ℕ) (hk : 1 ≤ k) (j : Fin k) (r : Fin 4) :
