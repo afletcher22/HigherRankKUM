@@ -1,16 +1,45 @@
 {
   "binary_exact": {
+    "n8": {
+      "matroids": 3375,
+      "pointed_deletions": 27000,
+      "prescribed_element_failure_matroids": 840,
+      "prescribed_element_failures": 840,
+      "existential_failures": 0,
+      "failure_count_histogram": {
+        "0": 2535,
+        "1": 840
+      }
+    },
+    "n10": {
+      "matroids": 2163,
+      "pointed_deletions": 21630,
+      "prescribed_element_failure_matroids": 0,
+      "prescribed_element_failures": 0,
+      "existential_failures": 0,
+      "failure_count_histogram": {
+        "0": 2163
+      }
+    },
     "n12": {
       "matroids": 455,
       "pointed_deletions": 5460,
+      "prescribed_element_failure_matroids": 0,
       "prescribed_element_failures": 0,
-      "existential_failures": 0
+      "existential_failures": 0,
+      "failure_count_histogram": {
+        "0": 455
+      }
     },
     "n14": {
       "matroids": 15,
       "pointed_deletions": 210,
+      "prescribed_element_failure_matroids": 0,
       "prescribed_element_failures": 0,
-      "existential_failures": 0
+      "existential_failures": 0,
+      "failure_count_histogram": {
+        "0": 15
+      }
     }
   },
   "seeded_nonbinary": {
@@ -72,7 +101,12 @@
     }
   },
   "interpretation": {
-    "binary_scope": "all simple binary rank-4 n=12 and n=14 representations inside PG(3,2)",
+    "binary_scope": "all universally deletion-robust simple binary rank-4 representations of even size n=8,10,12,14 inside PG(3,2)",
+    "binary_totals": {
+      "matroids": 6008,
+      "pointed_deletions": 54300,
+      "existential_failures": 0
+    },
     "nonbinary_scope": "seeded samples only",
     "claim_level": "reproducible computation; not Lean certification"
   }
