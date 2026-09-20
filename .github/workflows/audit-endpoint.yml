@@ -1,0 +1,26 @@
+name: Dangerous Endpoint Audit
+
+on:
+  push:
+    branches:
+      - sol-symbolic-endpoint-audit
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake/packages
+          key: lean-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}
+      - name: Fetch pinned dependencies
+        run: lake update
+      - name: Audit endpoint
+        run: lake env lean AuditDangerousEndpoint.lean
