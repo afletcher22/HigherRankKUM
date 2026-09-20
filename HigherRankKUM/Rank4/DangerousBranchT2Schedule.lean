@@ -62,7 +62,7 @@ theorem dangerous_two_exists_oriented_good_core_edge
     have hxG : x ∈ H ∩ K := hBadAsub hx
     have hxE : x ∈ M.E := hH.subset_ground hxG.1
     let sx : (M.restrict (H ∩ K)).E := ⟨x, by
-      simpa using And.intro hxE hxG⟩
+      simpa using hxG⟩
     refine ⟨order.symm sx, ?_⟩
     dsimp [f, sx]
     simpa using congrArg Subtype.val (order.apply_symm_apply sx)
@@ -73,7 +73,7 @@ theorem dangerous_two_exists_oriented_good_core_edge
     have hxG : x ∈ H ∩ K := by simpa [Set.inter_comm] using hxG'
     have hxE : x ∈ M.E := hH.subset_ground hxG.1
     let sx : (M.restrict (H ∩ K)).E := ⟨x, by
-      simpa using And.intro hxE hxG⟩
+      simpa using hxG⟩
     refine ⟨order.symm sx, ?_⟩
     dsimp [f, sx]
     simpa using congrArg Subtype.val (order.apply_symm_apply sx)
@@ -203,8 +203,10 @@ theorem exists_shifted_core_cbo_with_edge_at_end
         dsimp [i0]
         omega
       have h := cyclicIndex_eq_mk_add_of_lt (2 * k) hn i0 1 hlt
-      symm
-      simpa [i0, i1] using h
+      rw [h]
+      apply Fin.ext
+      dsimp [i0, i1]
+      omega
     change
       (order
         (cyclicShiftEquiv (2 * k) hn t.val i1) : α) =
@@ -272,8 +274,7 @@ theorem dangerous_two_ordinary_prefix_windows
     have hnext :
         cyclicIndex (2 * k) (by omega) g 1 =
           ⟨2 * j.val + 1, by omega⟩ := by
-      apply cyclicIndex_eq_mk_add_of_lt
-      omega
+      exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
     have hpair := dangerous_two_core_order_adjacent_indep
       (M := M) (k := k) (H := H) (K := K)
       (by omega : 1 ≤ k) order hOrder g
@@ -309,8 +310,7 @@ theorem dangerous_two_ordinary_prefix_windows
     have hnext :
         cyclicIndex (2 * k) (by omega) g 1 =
           ⟨2 * j.val + 1, by omega⟩ := by
-      apply cyclicIndex_eq_mk_add_of_lt
-      omega
+      exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
     have hpair := dangerous_two_core_order_adjacent_indep
       (M := M) (k := k) (H := H) (K := K)
       (by omega : 1 ≤ k) order hOrder g
@@ -345,8 +345,7 @@ theorem dangerous_two_ordinary_prefix_windows
     have hnext :
         cyclicIndex (2 * k) (by omega) g 1 =
           ⟨2 * j.val + 1, by omega⟩ := by
-      apply cyclicIndex_eq_mk_add_of_lt
-      omega
+      exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
     have hpair := dangerous_two_core_order_adjacent_indep
       (M := M) (k := k) (H := H) (K := K)
       (by omega : 1 ≤ k) order hOrder g
