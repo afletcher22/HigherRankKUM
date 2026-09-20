@@ -175,7 +175,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         dsimp [q]
         omega)
       rw [hq1, hq2] at h
-      rw [he1']
+      dsimp [m, q] at h
+      rw [he1'] at h
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -197,7 +198,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         dsimp [q]
         omega)
       rw [hq1, hq2] at h
-      rw [he1']
+      dsimp [m, q] at h
+      rw [he1'] at h
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -239,7 +241,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         dsimp [q]
         omega)
       rw [hq1, hq2] at h
-      rw [he2']
+      dsimp [m, q] at h
+      rw [he2'] at h
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -261,7 +264,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         dsimp [q]
         omega)
       rw [hq1, hq2] at h
-      rw [he2']
+      dsimp [m, q] at h
+      rw [he2'] at h
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
