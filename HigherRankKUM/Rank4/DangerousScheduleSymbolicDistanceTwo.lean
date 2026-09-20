@@ -136,8 +136,14 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
   rw [transportedWindow_four_next]
   simp only [transportedNext_separated]
   rcases p with r | p
-  · fin_cases r
+  · have hrCases : r.val = 0 ∨ r.val = 1 ∨ r.val = 2 ∨ r.val = 3 ∨ r.val = 4 ∨ r.val = 5 := by
+      omega
+    rcases hrCases with hr | hr | hr | hr | hr | hr
     · simp only [separatedNext_head0, separatedNext_head1, separatedNext_head2,
+      have hrEq : r = (0 : Fin 6) := by
+        apply Fin.ext
+        exact hr
+      subst r
           separatedSymbolicOrder_head_c0, separatedSymbolicOrder_head_g0,
           separatedSymbolicOrder_head_g1, separatedSymbolicOrder_head_c1]
       have hlt01 : 0 + 1 < 3 * k + 1 := by omega
@@ -153,6 +159,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
       tauto
     · simp only [separatedNext_head1, separatedNext_head2, separatedNext_head3,
+      have hrEq : r = (1 : Fin 6) := by
+        apply Fin.ext
+        exact hr
+      subst r
           separatedSymbolicOrder_head_g0, separatedSymbolicOrder_head_g1,
           separatedSymbolicOrder_head_c1, separatedSymbolicOrder_head_g2]
       let m : Fin (k + 1) := ⟨1, by omega⟩
@@ -171,6 +181,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
     · simp only [separatedNext_head2, separatedNext_head3, separatedNext_head4,
+      have hrEq : r = (2 : Fin 6) := by
+        apply Fin.ext
+        exact hr
+      subst r
           separatedSymbolicOrder_head_g1, separatedSymbolicOrder_head_c1,
           separatedSymbolicOrder_head_g2, separatedSymbolicOrder_head_g3]
       let m : Fin (k + 1) := ⟨1, by omega⟩
@@ -189,6 +203,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
     · simp only [separatedNext_head3, separatedNext_head4, separatedNext_head5,
+      have hrEq : r = (3 : Fin 6) := by
+        apply Fin.ext
+        exact hr
+      subst r
           separatedSymbolicOrder_head_c1, separatedSymbolicOrder_head_g2,
           separatedSymbolicOrder_head_g3, separatedSymbolicOrder_block_c]
       rw [hidx2] at hExc2
@@ -205,6 +223,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
       tauto
     · simp only [separatedNext_head4, separatedNext_head5, separatedNext_block0,
+      have hrEq : r = (4 : Fin 6) := by
+        apply Fin.ext
+        exact hr
+      subst r
           separatedSymbolicOrder_head_g2, separatedSymbolicOrder_head_g3,
           separatedSymbolicOrder_block_c, separatedSymbolicOrder_block_g0]
       let m : Fin (k + 1) := ⟨2, by omega⟩
@@ -223,6 +245,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
     · simp only [separatedNext_head5, separatedNext_block0, separatedNext_block1,
+      have hrEq : r = (5 : Fin 6) := by
+        apply Fin.ext
+        exact hr
+      subst r
           separatedSymbolicOrder_head_g3, separatedSymbolicOrder_block_c,
           separatedSymbolicOrder_block_g0, separatedSymbolicOrder_block_g1]
       let m : Fin (k + 1) := ⟨2, by omega⟩
@@ -242,8 +268,14 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       tauto
   · rcases p with ⟨j, r⟩
     have hjlt := j.isLt
-    fin_cases r
+    have hrCases : r.val = 0 ∨ r.val = 1 ∨ r.val = 2 ∨ r.val = 3 := by
+      omega
+    rcases hrCases with hr | hr | hr | hr
     · let m : Fin (k + 1) := ⟨j.val + 2, by omega⟩
+      have hrEq : r = (0 : Fin 4) := by
+        apply Fin.ext
+        exact hr
+      subst r
       let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
       have h := hOrd m q
       have hq1 := hcoreNoWrap q 1 (by
@@ -255,6 +287,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [hq1, hq2] at h
       simpa [m, q] using h
     · by_cases hj : j.val + 1 < k - 1
+      have hrEq : r = (1 : Fin 4) := by
+        apply Fin.ext
+        exact hr
+      subst r
       · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
         have h := hOrd m q
@@ -284,6 +320,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         simp [m, q, hj, hjEq, i0, he0,
             Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
     · by_cases hj : j.val + 1 < k - 1
+      have hrEq : r = (2 : Fin 4) := by
+        apply Fin.ext
+        exact hr
+      subst r
       · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 5, by omega⟩
         have h := hOrd m q
@@ -314,6 +354,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         simp [m, q, hj, hjEq, i0, he0,
             Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
     · by_cases hj : j.val + 1 < k - 1
+      have hrEq : r = (3 : Fin 4) := by
+        apply Fin.ext
+        exact hr
+      subst r
       · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 6, by omega⟩
         have h := hOrd m q
