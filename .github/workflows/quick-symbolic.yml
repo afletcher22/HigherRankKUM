@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - sol-symbolic-distance-two
-    paths-ignore:
-      - QUICK_SYMBOLIC_DIAGNOSTIC.txt
-
-permissions:
-  contents: write
 
 jobs:
   build:
@@ -21,21 +16,5 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Fetch pinned dependencies
         run: lake update
-      - name: Build symbolic target and persist diagnostics
-        shell: bash
-        run: |
-          set +e
-          lake build +HigherRankKUM.Rank4.DangerousScheduleSymbolicDistanceTwo > /tmp/symbolic-build.log 2>&1
-          status=$?
-          tail -n 240 /tmp/symbolic-build.log > QUICK_SYMBOLIC_DIAGNOSTIC.txt
-          if [ "$status" -eq 0 ]; then
-            printf 'BUILD SUCCESS\n' > QUICK_SYMBOLIC_DIAGNOSTIC.txt
-          fi
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add QUICK_SYMBOLIC_DIAGNOSTIC.txt
-          if ! git diff --cached --quiet; then
-            git commit -m "ci: persist symbolic diagnostic [skip ci]"
-            git push
-          fi
-          exit "$status"
+      - name: Build symbolic target
+        run: lake build +HigherRankKUM.Rank4.DangerousScheduleSymbolicDistanceTwo
