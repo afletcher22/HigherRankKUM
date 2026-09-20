@@ -129,7 +129,6 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 hge hlt]
     apply Fin.ext
     simp
-    omega
 
   refine ⟨separatedOrder hk hH eC order,
     separated_cbo_of_symbolic_windows hk hH eC order ?_⟩
