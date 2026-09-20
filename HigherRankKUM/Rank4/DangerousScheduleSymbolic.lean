@@ -520,23 +520,6 @@ theorem adjacentWindow_four_next
   exact transportedWindow_four_next (by omega) (adjacentFinAdapter k hk)
     (adjacentSymbolicOrder hk hH eC order) p
 
-theorem separatedWindow_four_next
-    {M : Matroid α} {k : ℕ} {H : Set α}
-    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
-    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
-    (order : Fin (3 * k + 1) ≃ (M.restrict H).E) (p : SeparatedPos k) :
-    transportedWindow 4 (by omega) (separatedFinAdapter k hk)
-        (separatedSymbolicOrder hk hH eC order) p =
-      {(separatedSymbolicOrder hk hH eC order p : α),
-        (separatedSymbolicOrder hk hH eC order (separatedNext k hk p) : α),
-        (separatedSymbolicOrder hk hH eC order
-          (separatedNext k hk (separatedNext k hk p)) : α),
-        (separatedSymbolicOrder hk hH eC order
-          (separatedNext k hk (separatedNext k hk (separatedNext k hk p))) : α)} := by
-  unfold separatedNext
-  exact transportedWindow_four_next (by omega) (separatedFinAdapter k hk)
-    (separatedSymbolicOrder hk hH eC order) p
-
 /-- Final adjacent schedule, factored as finite adapter followed by the
 symbolic ground order. -/
 def adjacentOrder
