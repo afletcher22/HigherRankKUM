@@ -80,6 +80,37 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
     dangerous_hyperplane_complement_plus_core_triple_isBase
       hRank hH order hOrder (eC m).property q
 
+  have hcoreNoWrap
+      (q : Fin (3 * k + 1)) (d : ℕ)
+      (hqd : q.val + d < 3 * k + 1) :
+      cyclicIndex (3 * k + 1) (by omega) q d =
+        ⟨q.val + d, hqd⟩ :=
+    cyclicIndex_eq_mk_add_of_lt _ _ _ _ hqd
+
+  have hcoreWrap1 :
+      cyclicIndex (3 * k + 1) (by omega)
+          (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
+        ⟨0, by omega⟩ := by
+    have hh := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (3 * k + 1) (by omega)
+      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1
+      (by omega) (by omega)
+    apply Fin.ext
+    have hv := congrArg Fin.val hh
+    simpa using hv
+
+  have hcoreWrap2 :
+      cyclicIndex (3 * k + 1) (by omega)
+          (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
+        ⟨1, by omega⟩ := by
+    have hh := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (3 * k + 1) (by omega)
+      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2
+      (by omega) (by omega)
+    apply Fin.ext
+    have hv := congrArg Fin.val hh
+    simpa using hv
+
   refine ⟨adjacentOrder (by omega) hH eC order,
     adjacent_cbo_of_symbolic_windows (by omega) hH eC order ?_⟩
   intro p
@@ -90,98 +121,84 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
     · let m : Fin (k + 1) := ⟨j.val, by omega⟩
       let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
       have h := hOrd m q
-      have hq1 :
-          cyclicIndex (3 * k + 1) (by omega) q 1 =
-            ⟨3 * j.val + 1, by omega⟩ :=
-        cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
-      have hq2 :
-          cyclicIndex (3 * k + 1) (by omega) q 2 =
-            ⟨3 * j.val + 2, by omega⟩ :=
-        cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
+      have hq1 := hcoreNoWrap q 1 (by
+        dsimp [q]
+        omega)
+      have hq2 := hcoreNoWrap q 2 (by
+        dsimp [q]
+        omega)
       rw [hq1, hq2] at h
       simpa [m, q] using h
     · by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
         have h := hOrd m q
-        have hq1 :
-            cyclicIndex (3 * k + 1) (by omega) q 1 =
-              ⟨3 * j.val + 1, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
-        have hq2 :
-            cyclicIndex (3 * k + 1) (by omega) q 2 =
-              ⟨3 * j.val + 2, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
+        have hq1 := hcoreNoWrap q 1 (by
+          dsimp [q]
+          omega)
+        have hq2 := hcoreNoWrap q 2 (by
+          dsimp [q]
+          omega)
         rw [hq1, hq2] at h
-        convert h using 1 <;>
-          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff] <;>
-          tauto
+        convert h using 1
+        ext z
+          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 1 := by omega
         let m : Fin (k + 1) := ⟨k, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
         have h := hOrd m q
-        have hq1 :
-            cyclicIndex (3 * k + 1) (by omega) q 1 =
-              ⟨3 * j.val + 1, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
-        have hq2 :
-            cyclicIndex (3 * k + 1) (by omega) q 2 =
-              ⟨3 * j.val + 2, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
+        have hq1 := hcoreNoWrap q 1 (by
+          dsimp [q]
+          omega)
+        have hq2 := hcoreNoWrap q 2 (by
+          dsimp [q]
+          omega)
         rw [hq1, hq2] at h
-        convert h using 1 <;>
-          simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff] <;>
-          tauto
+        convert h using 1
+        ext z
+          simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
     · by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 1, by omega⟩
         have h := hOrd m q
-        have hq1 :
-            cyclicIndex (3 * k + 1) (by omega) q 1 =
-              ⟨3 * j.val + 2, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
-        have hq2 :
-            cyclicIndex (3 * k + 1) (by omega) q 2 =
-              ⟨3 * j.val + 3, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
+        have hq1 := hcoreNoWrap q 1 (by
+          dsimp [q]
+          omega)
+        have hq2 := hcoreNoWrap q 2 (by
+          dsimp [q]
+          omega)
         rw [hq1, hq2] at h
-        convert h using 1 <;>
-          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff] <;>
-          tauto
+        convert h using 1
+        ext z
+          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 1 := by omega
         let m : Fin (k + 1) := ⟨k, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 1, by omega⟩
         have h := hOrd m q
-        have hq1 :
-            cyclicIndex (3 * k + 1) (by omega) q 1 =
-              ⟨3 * j.val + 2, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
-        have hq2 :
-            cyclicIndex (3 * k + 1) (by omega) q 2 =
-              ⟨3 * k, by omega⟩ := by
-          apply Fin.ext
-          simp [cyclicIndex, q, hjEq]
-          omega
+        have hq1 := hcoreNoWrap q 1 (by
+          dsimp [q]
+          omega)
+        have hq2 := hcoreNoWrap q 2 (by
+          dsimp [q]
+          omega)
         rw [hq1, hq2] at h
-        convert h using 1 <;>
-          simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff] <;>
-          tauto
+        convert h using 1
+        ext z
+          simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
     · by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 2, by omega⟩
         have h := hOrd m q
-        have hq1 :
-            cyclicIndex (3 * k + 1) (by omega) q 1 =
-              ⟨3 * j.val + 3, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
-        have hq2 :
-            cyclicIndex (3 * k + 1) (by omega) q 2 =
-              ⟨3 * j.val + 4, by omega⟩ :=
-          cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
+        have hq1 := hcoreNoWrap q 1 (by
+          dsimp [q]
+          omega)
+        have hq2 := hcoreNoWrap q 2 (by
+          dsimp [q]
+          omega)
         rw [hq1, hq2] at h
-        convert h using 1 <;>
-          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff] <;>
-          tauto
+        convert h using 1
+        ext z
+          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 1 := by omega
         have hEdge :
             cyclicIndex (3 * k + 1) (by omega)
@@ -190,10 +207,10 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
           cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
         dsimp only at hExcEnd
         rw [hEdge] at hExcEnd
-        convert hExcEnd using 1 <;>
+        convert hExcEnd using 1
+        ext z
           simp [hj, hjEq, iT, iW, heT, heW,
-            Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;>
-          tauto
+            Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]  <;> tauto
   · fin_cases r
     · have hEdge :
           cyclicIndex (3 * k + 1) (by omega)
@@ -208,27 +225,25 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         simp [cyclicIndex]
       dsimp only at hExcWrap
       rw [hEdge, hWrap] at hExcWrap
-      convert hExcWrap using 1 <;>
+      convert hExcWrap using 1
+      ext z
         simp [iT, iW, heT, heW,
-          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;>
-        tauto
+          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]  <;> tauto
     · let m : Fin (k + 1) := ⟨0, by omega⟩
       let q : Fin (3 * k + 1) := ⟨3 * k, by omega⟩
       have h := hOrd m q
       have hq1 :
           cyclicIndex (3 * k + 1) (by omega) q 1 =
             ⟨0, by omega⟩ := by
-        apply Fin.ext
-        simp [cyclicIndex, q]
+        simpa [q] using hcoreWrap1
       have hq2 :
           cyclicIndex (3 * k + 1) (by omega) q 2 =
             ⟨1, by omega⟩ := by
-        apply Fin.ext
-        simp [cyclicIndex, q]
+        simpa [q] using hcoreWrap2
       rw [hq1, hq2] at h
-      convert h using 1 <;>
-        simp [m, q, iW, heW, Set.mem_insert_iff, Set.mem_singleton_iff] <;>
-        tauto
+      convert h using 1
+      ext z
+        simp [m, q, iW, heW, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
 
 end
 
