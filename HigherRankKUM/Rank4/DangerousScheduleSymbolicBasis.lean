@@ -12,6 +12,7 @@ noncomputable section
 
 variable {α : Type*}
 
+-- Symbolic adjacent certification; all finite-index arithmetic is confined to helper lemmas below.
 /-- Adjacent-good normalized dangerous-hyperplane construction, proved
 entirely through the symbolic schedule API. -/
 theorem exists_cbo_of_adjacent_good_normalized_symbolic
