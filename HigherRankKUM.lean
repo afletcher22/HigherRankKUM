@@ -89,8 +89,9 @@ import HigherRankKUM.Rank4.CyclicPigeonhole
 import HigherRankKUM.Rank4.FiniteSchedule
 import HigherRankKUM.Rank4.DangerousBranchFactors
 import HigherRankKUM.Rank4.DangerousBranchT3Geometry
-import HigherRankKUM.Rank4.DangerousBranchT3Schedule
 import HigherRankKUM.Rank4.DangerousBranchT2Geometry
 import HigherRankKUM.Rank4.DangerousBranchT2Good
-import HigherRankKUM.Rank4.DangerousBranchT2Schedule
 import HigherRankKUM.Rank4.DangerousBranchT1Geometry
+import HigherRankKUM.Rank4.DangerousHyperplaneGood
+import HigherRankKUM.Rank4.DangerousHyperplaneSelection
+import HigherRankKUM.Rank4.DangerousHyperplaneSchedule
