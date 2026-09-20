@@ -75,8 +75,15 @@ theorem not_isColoop_of_strict_gcd_two
   rw [← hXfin.cast_ncard_eq, hj, hXcard] at hs
   have hsNat : 4 * (4 * k + 1) < (4 * k + 2) * j := by
     exact_mod_cast hs
-  have hUpper : (4 * k + 2) * j ≤ 4 * (4 * k + 1) := by
+  have hjle3 : j ≤ 3 := by omega
+  have hmul :
+      (4 * k + 2) * j ≤ (4 * k + 2) * 3 :=
+    Nat.mul_le_mul_left (4 * k + 2) hjle3
+  have hcap :
+      (4 * k + 2) * 3 ≤ 4 * (4 * k + 1) := by
     omega
+  have hUpper : (4 * k + 2) * j ≤ 4 * (4 * k + 1) :=
+    hmul.trans hcap
   exact (not_lt_of_ge hUpper) hsNat
 
 /-- Exact deletion package for the strict `t=0` gcd-two branch.
