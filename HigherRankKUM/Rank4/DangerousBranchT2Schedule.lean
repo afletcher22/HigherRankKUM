@@ -264,149 +264,235 @@ theorem dangerous_two_ordinary_prefix_windows
 
   let j : Fin (k - 1) := ⟨i.val / 4, by omega⟩
   have hmod : i.val % 4 < 4 := Nat.mod_lt _ (by omega)
+
+  have horder_ne (u v : Fin (2 * k)) (huv : u.val ≠ v.val) :
+      (order u : α) ≠ (order v : α) := by
+    intro h
+    have hsub : order u = order v := Subtype.ext h
+    have huvEq := order.injective hsub
+    exact huv (congrArg Fin.val huvEq)
+
   interval_cases hr : i.val % 4
   · have hival : i.val = 4 * j.val := by
       dsimp [j]
       have hm := Nat.mod_add_div i.val 4
       omega
     let jk : Fin k := ⟨j.val, by omega⟩
-    let g : Fin (2 * k) := ⟨2 * j.val, by omega⟩
-    have hnext :
-        cyclicIndex (2 * k) (by omega) g 1 =
-          ⟨2 * j.val + 1, by omega⟩ := by
+    let g0 : Fin (2 * k) := ⟨2 * j.val, by omega⟩
+    let g1 : Fin (2 * k) := ⟨2 * j.val + 1, by omega⟩
+    have hnext : cyclicIndex (2 * k) (by omega) g0 1 = g1 := by
       exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
     have hpair := dangerous_two_core_order_adjacent_indep
       (M := M) (k := k) (H := H) (K := K)
-      (by omega : 1 ≤ k) order hOrder g
+      (by omega : 1 ≤ k) order hOrder g0
     rw [hnext] at hpair
+    have hiEq : i = ⟨4 * j.val, by omega⟩ := Fin.ext hival
+    have hi1Eq : i1 = ⟨4 * j.val + 1, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i1]
+      omega
+    have hi2Eq : i2 = ⟨4 * j.val + 2, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i2]
+      omega
+    have hi3Eq : i3 = ⟨4 * j.val + 3, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i3]
+      omega
+    have ha : (σ i : α) ∈ M.E \ H := by
+      rw [hiEq]
+      simpa [jk] using hA jk
+    have hb : (σ i1 : α) ∈ M.E \ K := by
+      rw [hi1Eq]
+      simpa [jk] using hB jk
     have hbase := dangerous_two_core_pair_sides_isBase
       (M := M) (k := k) (H₀ := H) (H₁ := K)
-      (g₀ := (order ⟨2 * j.val, by omega⟩ : α))
-      (g₁ := (order ⟨2 * j.val + 1, by omega⟩ : α))
+      (g₀ := (order g0 : α)) (g₁ := (order g1 : α))
       (a := (σ i : α)) (b := (σ i1 : α))
       (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
-      (by simpa using (order ⟨2 * j.val, by omega⟩).property)
-      (by simpa using (order ⟨2 * j.val + 1, by omega⟩).property)
-      (by
-        intro hEq
-        apply order.injective
-        apply Subtype.ext
-        exact hEq)
-      hpair
-      (by simpa [i1, jk, hival] using hA jk)
-      (by simpa [i1, jk, hival] using hB jk)
-    rw [hival]
-    have hg0 := hG0 jk
-    have hg1 := hG1 j
-    simpa [i1, i2, i3, jk, hival, hg0, hg1,
-      Set.pair_comm, or_comm, or_left_comm, or_assoc] using hbase
+      (by simpa [g0] using (order g0).property)
+      (by simpa [g1] using (order g1).property)
+      (horder_ne g0 g1 (by simp [g0, g1]))
+      hpair ha hb
+    have hg0 :
+        (σ ⟨4 * j.val + 2, by omega⟩ : α) = (order g0 : α) := by
+      simpa [jk, g0] using hG0 jk
+    have hg1 :
+        (σ ⟨4 * j.val + 3, by omega⟩ : α) = (order g1 : α) := by
+      simpa [g1] using hG1 j
+    rw [hiEq, hi1Eq, hi2Eq, hi3Eq, hg0, hg1]
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+
   · have hival : i.val = 4 * j.val + 1 := by
       dsimp [j]
       have hm := Nat.mod_add_div i.val 4
       omega
     let jk : Fin k := ⟨j.val, by omega⟩
     let jnext : Fin k := ⟨j.val + 1, by omega⟩
-    let g : Fin (2 * k) := ⟨2 * j.val, by omega⟩
-    have hnext :
-        cyclicIndex (2 * k) (by omega) g 1 =
-          ⟨2 * j.val + 1, by omega⟩ := by
+    let g0 : Fin (2 * k) := ⟨2 * j.val, by omega⟩
+    let g1 : Fin (2 * k) := ⟨2 * j.val + 1, by omega⟩
+    have hnext : cyclicIndex (2 * k) (by omega) g0 1 = g1 := by
       exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
     have hpair := dangerous_two_core_order_adjacent_indep
       (M := M) (k := k) (H := H) (K := K)
-      (by omega : 1 ≤ k) order hOrder g
+      (by omega : 1 ≤ k) order hOrder g0
     rw [hnext] at hpair
+    have hiEq : i = ⟨4 * j.val + 1, by omega⟩ := Fin.ext hival
+    have hi1Eq : i1 = ⟨4 * j.val + 2, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i1]
+      omega
+    have hi2Eq : i2 = ⟨4 * j.val + 3, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i2]
+      omega
+    have hi3Eq : i3 = ⟨4 * (j.val + 1), by omega⟩ := by
+      apply Fin.ext
+      dsimp [i3]
+      omega
+    have ha : (σ i3 : α) ∈ M.E \ H := by
+      rw [hi3Eq]
+      simpa [jnext] using hA jnext
+    have hb : (σ i : α) ∈ M.E \ K := by
+      rw [hiEq]
+      simpa [jk] using hB jk
     have hbase := dangerous_two_core_pair_sides_isBase
       (M := M) (k := k) (H₀ := H) (H₁ := K)
-      (g₀ := (order ⟨2 * j.val, by omega⟩ : α))
-      (g₁ := (order ⟨2 * j.val + 1, by omega⟩ : α))
+      (g₀ := (order g0 : α)) (g₁ := (order g1 : α))
       (a := (σ i3 : α)) (b := (σ i : α))
       (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
-      (by simpa using (order ⟨2 * j.val, by omega⟩).property)
-      (by simpa using (order ⟨2 * j.val + 1, by omega⟩).property)
-      (by
-        intro hEq
-        apply order.injective
-        apply Subtype.ext
-        exact hEq)
-      hpair
-      (by simpa [i3, jnext, hival] using hA jnext)
-      (by simpa [i, jk, hival] using hB jk)
-    have hg0 := hG0 jk
-    have hg1 := hG1 j
-    simpa [i1, i2, i3, jk, jnext, hival, hg0, hg1,
-      Set.pair_comm, or_comm, or_left_comm, or_assoc] using hbase
+      (by simpa [g0] using (order g0).property)
+      (by simpa [g1] using (order g1).property)
+      (horder_ne g0 g1 (by simp [g0, g1]))
+      hpair ha hb
+    have hg0 :
+        (σ ⟨4 * j.val + 2, by omega⟩ : α) = (order g0 : α) := by
+      simpa [jk, g0] using hG0 jk
+    have hg1 :
+        (σ ⟨4 * j.val + 3, by omega⟩ : α) = (order g1 : α) := by
+      simpa [g1] using hG1 j
+    rw [hiEq, hi1Eq, hi2Eq, hi3Eq, hg0, hg1]
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+
   · have hival : i.val = 4 * j.val + 2 := by
       dsimp [j]
       have hm := Nat.mod_add_div i.val 4
       omega
-    let jnext : Fin k := ⟨j.val + 1, by omega⟩
     let jk : Fin k := ⟨j.val, by omega⟩
-    let g : Fin (2 * k) := ⟨2 * j.val, by omega⟩
-    have hnext :
-        cyclicIndex (2 * k) (by omega) g 1 =
-          ⟨2 * j.val + 1, by omega⟩ := by
+    let jnext : Fin k := ⟨j.val + 1, by omega⟩
+    let g0 : Fin (2 * k) := ⟨2 * j.val, by omega⟩
+    let g1 : Fin (2 * k) := ⟨2 * j.val + 1, by omega⟩
+    have hnext : cyclicIndex (2 * k) (by omega) g0 1 = g1 := by
       exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
     have hpair := dangerous_two_core_order_adjacent_indep
       (M := M) (k := k) (H := H) (K := K)
-      (by omega : 1 ≤ k) order hOrder g
+      (by omega : 1 ≤ k) order hOrder g0
     rw [hnext] at hpair
+    have hiEq : i = ⟨4 * j.val + 2, by omega⟩ := Fin.ext hival
+    have hi1Eq : i1 = ⟨4 * j.val + 3, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i1]
+      omega
+    have hi2Eq : i2 = ⟨4 * (j.val + 1), by omega⟩ := by
+      apply Fin.ext
+      dsimp [i2]
+      omega
+    have hi3Eq : i3 = ⟨4 * (j.val + 1) + 1, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i3]
+      omega
+    have ha : (σ i2 : α) ∈ M.E \ H := by
+      rw [hi2Eq]
+      simpa [jnext] using hA jnext
+    have hb : (σ i3 : α) ∈ M.E \ K := by
+      rw [hi3Eq]
+      simpa [jnext] using hB jnext
     have hbase := dangerous_two_core_pair_sides_isBase
       (M := M) (k := k) (H₀ := H) (H₁ := K)
-      (g₀ := (order ⟨2 * j.val, by omega⟩ : α))
-      (g₁ := (order ⟨2 * j.val + 1, by omega⟩ : α))
+      (g₀ := (order g0 : α)) (g₁ := (order g1 : α))
       (a := (σ i2 : α)) (b := (σ i3 : α))
       (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
-      (by simpa using (order ⟨2 * j.val, by omega⟩).property)
-      (by simpa using (order ⟨2 * j.val + 1, by omega⟩).property)
-      (by
-        intro hEq
-        apply order.injective
-        apply Subtype.ext
-        exact hEq)
-      hpair
-      (by simpa [i2, jnext, hival] using hA jnext)
-      (by simpa [i3, jnext, hival] using hB jnext)
-    have hg0 := hG0 jk
-    have hg1 := hG1 j
-    simpa [i1, i2, i3, jk, jnext, hival, hg0, hg1,
-      Set.pair_comm, or_comm, or_left_comm, or_assoc] using hbase
+      (by simpa [g0] using (order g0).property)
+      (by simpa [g1] using (order g1).property)
+      (horder_ne g0 g1 (by simp [g0, g1]))
+      hpair ha hb
+    have hg0 :
+        (σ ⟨4 * j.val + 2, by omega⟩ : α) = (order g0 : α) := by
+      simpa [jk, g0] using hG0 jk
+    have hg1 :
+        (σ ⟨4 * j.val + 3, by omega⟩ : α) = (order g1 : α) := by
+      simpa [g1] using hG1 j
+    rw [hiEq, hi1Eq, hi2Eq, hi3Eq, hg0, hg1]
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+
   · have hival : i.val = 4 * j.val + 3 := by
       dsimp [j]
       have hm := Nat.mod_add_div i.val 4
       omega
     let jnext : Fin k := ⟨j.val + 1, by omega⟩
-    let g : Fin (2 * k) := ⟨2 * j.val + 1, by omega⟩
-    have hnext :
-        cyclicIndex (2 * k) (by omega) g 1 =
-          ⟨2 * (j.val + 1), by omega⟩ := by
+    let g0 : Fin (2 * k) := ⟨2 * j.val + 1, by omega⟩
+    let g1 : Fin (2 * k) := ⟨2 * (j.val + 1), by omega⟩
+    have hnext : cyclicIndex (2 * k) (by omega) g0 1 = g1 := by
+      have hlt : g0.val + 1 < 2 * k := by
+        dsimp [g0]
+        omega
+      have h := cyclicIndex_eq_mk_add_of_lt (2 * k) (by omega) g0 1 hlt
+      rw [h]
       apply Fin.ext
-      have h := cyclicIndex_eq_mk_add_of_lt
-        (2 * k) (by omega) g 1 (by omega)
-      simpa [g] using congrArg Fin.val h
+      dsimp [g0, g1]
+      omega
     have hpair := dangerous_two_core_order_adjacent_indep
       (M := M) (k := k) (H := H) (K := K)
-      (by omega : 1 ≤ k) order hOrder g
+      (by omega : 1 ≤ k) order hOrder g0
     rw [hnext] at hpair
+    have hiEq : i = ⟨4 * j.val + 3, by omega⟩ := Fin.ext hival
+    have hi1Eq : i1 = ⟨4 * (j.val + 1), by omega⟩ := by
+      apply Fin.ext
+      dsimp [i1]
+      omega
+    have hi2Eq : i2 = ⟨4 * (j.val + 1) + 1, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i2]
+      omega
+    have hi3Eq : i3 = ⟨4 * (j.val + 1) + 2, by omega⟩ := by
+      apply Fin.ext
+      dsimp [i3]
+      omega
+    have ha : (σ i1 : α) ∈ M.E \ H := by
+      rw [hi1Eq]
+      simpa [jnext] using hA jnext
+    have hb : (σ i2 : α) ∈ M.E \ K := by
+      rw [hi2Eq]
+      simpa [jnext] using hB jnext
     have hbase := dangerous_two_core_pair_sides_isBase
       (M := M) (k := k) (H₀ := H) (H₁ := K)
-      (g₀ := (order ⟨2 * j.val + 1, by omega⟩ : α))
-      (g₁ := (order ⟨2 * (j.val + 1), by omega⟩ : α))
+      (g₀ := (order g0 : α)) (g₁ := (order g1 : α))
       (a := (σ i1 : α)) (b := (σ i2 : α))
       (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
-      (by simpa using (order ⟨2 * j.val + 1, by omega⟩).property)
-      (by simpa using (order ⟨2 * (j.val + 1), by omega⟩).property)
-      (by
-        intro hEq
-        apply order.injective
-        apply Subtype.ext
-        exact hEq)
-      hpair
-      (by simpa [i1, jnext, hival] using hA jnext)
-      (by simpa [i2, jnext, hival] using hB jnext)
-    have hg1 := hG1 j
-    have hg0 := hG0 jnext
-    simpa [i1, i2, i3, jnext, hival, hg0, hg1,
-      Set.pair_comm, or_comm, or_left_comm, or_assoc] using hbase
+      (by simpa [g0] using (order g0).property)
+      (by simpa [g1] using (order g1).property)
+      (horder_ne g0 g1 (by simp [g0, g1]))
+      hpair ha hb
+    have hg0 :
+        (σ ⟨4 * j.val + 3, by omega⟩ : α) = (order g0 : α) := by
+      simpa [g0] using hG1 j
+    have hg1 :
+        (σ ⟨4 * (j.val + 1) + 2, by omega⟩ : α) = (order g1 : α) := by
+      simpa [jnext, g1] using hG0 jnext
+    rw [hiEq, hi1Eq, hi2Eq, hi3Eq, hg0, hg1]
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
 /-- The six exceptional windows of the normalized t=2 schedule are bases.
 
