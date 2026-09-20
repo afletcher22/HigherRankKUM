@@ -62,7 +62,7 @@ theorem dangerous_two_exists_oriented_good_core_edge
     have hxG : x ∈ H ∩ K := hBadAsub hx
     have hxE : x ∈ M.E := hH.subset_ground hxG.1
     let sx : (M.restrict (H ∩ K)).E := ⟨x, by
-      simpa using And.intro hxG hxE⟩
+      simpa using And.intro hxE hxG⟩
     refine ⟨order.symm sx, ?_⟩
     dsimp [f, sx]
     simpa using congrArg Subtype.val (order.apply_symm_apply sx)
@@ -73,7 +73,7 @@ theorem dangerous_two_exists_oriented_good_core_edge
     have hxG : x ∈ H ∩ K := by simpa [Set.inter_comm] using hxG'
     have hxE : x ∈ M.E := hH.subset_ground hxG.1
     let sx : (M.restrict (H ∩ K)).E := ⟨x, by
-      simpa using And.intro hxG hxE⟩
+      simpa using And.intro hxE hxG⟩
     refine ⟨order.symm sx, ?_⟩
     dsimp [f, sx]
     simpa using congrArg Subtype.val (order.apply_symm_apply sx)
@@ -199,9 +199,12 @@ theorem exists_shifted_core_cbo_with_edge_at_end
   · let i1 : Fin (2 * k) := ⟨2 * k - 1, by omega⟩
     have hi1 :
         i1 = cyclicIndex (2 * k) hn i0 1 := by
-      apply Fin.ext
-      simp [i0, i1, cyclicIndex]
-      omega
+      have hlt : i0.val + 1 < 2 * k := by
+        dsimp [i0]
+        omega
+      have h := cyclicIndex_eq_mk_add_of_lt (2 * k) hn i0 1 hlt
+      symm
+      simpa [i0, i1] using h
     change
       (order
         (cyclicShiftEquiv (2 * k) hn t.val i1) : α) =
@@ -240,6 +243,7 @@ theorem dangerous_two_ordinary_prefix_windows
     ∀ i : Fin (4 * k + 2), i.val < 4 * (k - 1) →
       M.IsBase (cyclicWindow 4 hn σ i) := by
   let hn : 0 < 4 * k + 2 := by omega
+  dsimp only
   intro i hi
   have hi3 : i.val + 3 < 4 * k + 2 := by omega
   let i1 : Fin (4 * k + 2) := ⟨i.val + 1, by omega⟩
@@ -460,14 +464,26 @@ theorem dangerous_two_six_exceptional_windows
   have hidx (r s : ℕ) (hrs : r + s < 6) :
       cyclicIndex n hnpos ⟨m + r, by omega⟩ s =
         ⟨m + r + s, by omega⟩ := by
-    apply cyclicIndex_eq_mk_add_of_lt
+    have hlt : (⟨m + r, by omega⟩ : Fin n).val + s < n := by
+      simp only [Fin.val_mk]
+      dsimp [m, n]
+      omega
+    exact cyclicIndex_eq_mk_add_of_lt n hnpos ⟨m + r, by omega⟩ s hlt
 
   have hwrap (r s : ℕ) (hr : r < 6) (hge : 6 ≤ r + s)
       (hlt : r + s < 12) :
       cyclicIndex n hnpos ⟨m + r, by omega⟩ s =
         ⟨r + s - 6, by omega⟩ := by
+    have hge' : n ≤ (⟨m + r, by omega⟩ : Fin n).val + s := by
+      simp only [Fin.val_mk]
+      dsimp [m, n]
+      omega
+    have hlt' : (⟨m + r, by omega⟩ : Fin n).val + s < 2 * n := by
+      simp only [Fin.val_mk]
+      dsimp [m, n]
+      omega
     have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
-      n hnpos ⟨m + r, by omega⟩ s (by omega) (by omega)
+      n hnpos ⟨m + r, by omega⟩ s hge' hlt'
     rw [h]
     apply Fin.ext
     dsimp [m, n]
@@ -526,7 +542,10 @@ theorem dangerous_two_six_exceptional_windows
   dsimp only
   constructor
   · rw [cyclicWindow_four_eq]
-    have h0 := hidx 0 1 (by omega)
+    have h0 :
+        cyclicIndex n hnpos ⟨m, by omega⟩ 1 =
+          ⟨m + 1, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 1 (by omega)
     have h1 := hidx 0 2 (by omega)
     have h2 := hidx 0 3 (by omega)
     rw [h0, h1, h2, hσpA, hσpB, hσgB, hσdB]
@@ -628,12 +647,12 @@ theorem exists_cyclicBasisOrder_of_two_dangerous
     FiniteSchedule.exists_fin_equiv_with_two_prescribed
       hBfin hBcard iBp iBd hiB hb₀ hb₁ hbne
 
-  let eG : Fin (2 * k) ≃ (H ∩ K : Set α) :=
-    order'.trans (Equiv.setCongr (by simp))
+  let eG : Fin (2 * k) ≃ (H ∩ K : Set α) := by
+    simpa using order'
 
   let eSlots :
       FiniteSchedule.T2Slots k ≃
-        ((M.E \ H) ⊕ (M.E \ K)) ⊕ (H ∩ K) :=
+        ((M.E \ H : Set α) ⊕ (M.E \ K : Set α)) ⊕ ((H ∩ K : Set α)) :=
     Equiv.sumCongr (Equiv.sumCongr eA eB) eG
   let eGround :=
     dangerous_two_parts_equiv_ground
