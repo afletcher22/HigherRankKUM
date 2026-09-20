@@ -83,8 +83,10 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    convert hbase using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
   · have hb : (σ i : α) ∈ M.E \ H₁ :=
       hB i (by omega) hr
     have hc : (σ i1 : α) ∈ M.E \ H₂ :=
@@ -96,8 +98,10 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    convert hbase using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
   · have hc : (σ i : α) ∈ M.E \ H₂ :=
       hC i (by omega) hr
     have hg : (σ i1 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
@@ -109,8 +113,10 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    convert hbase using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
   · have hg : (σ i : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
       hG i (by omega) hr
     have ha : (σ i1 : α) ∈ M.E \ H₀ :=
@@ -122,8 +128,10 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    convert hbase using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
 /-- The six exceptional windows of the explicit t=3 schedule are bases.
 
@@ -273,8 +281,14 @@ theorem dangerous_triple_six_exceptional_windows
         cyclicIndex (4 * k + 2) hn ⟨4 * (k - 1), by omega⟩ 1 =
           ⟨4 * (k - 1) + 1, by omega⟩ := by
       simpa only [Nat.add_zero, zero_add] using hidx 0 1 (by omega)
-    have h1 := hidx 0 2 (by omega)
-    have h2 := hidx 0 3 (by omega)
+    have h1 :
+        cyclicIndex (4 * k + 2) hn ⟨4 * (k - 1), by omega⟩ 2 =
+          ⟨4 * (k - 1) + 2, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 2 (by omega)
+    have h2 :
+        cyclicIndex (4 * k + 2) hn ⟨4 * (k - 1), by omega⟩ 3 =
+          ⟨4 * (k - 1) + 3, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 3 (by omega)
     rw [h0, h1, h2, hσpA, hσpB, hσpC, hσdA]
     exact hbaseA_pd
   constructor
@@ -472,56 +486,54 @@ theorem dangerous_triple_cbo_of_local_orders
     simp [eGround, dangerous_triple_parts_equiv_ground]
 
   have hprefixA (j : Fin (k - 1)) :
-      (σ ⟨4 * j.val, by omega⟩ : α) =
-        (eA ⟨j.val, by omega⟩ : α) := by
+      (σ ⟨4 * j.val, by omega⟩ : α) = (eA ⟨j.val, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * j.val, by omega⟩)) : α) =
-        (eA ⟨j.val, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * j.val, by omega⟩ =
-        FiniteSchedule.t3PrefixSlot j 0 by
-          simpa using FiniteSchedule.t3IndexEquiv_prefix k hk j (0 : Fin 4)]
-    change (eGround (Sum.inl (Sum.inl (eA ⟨j.val, by omega⟩))) : α) =
-      (eA ⟨j.val, by omega⟩ : α)
+            ⟨4 * j.val, by omega⟩)) : α) = (eA ⟨j.val, by omega⟩ : α)
+    have hpos :
+        (⟨4 * j.val, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(0 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+      omega
+    rw [hpos, FiniteSchedule.t3IndexEquiv_prefix]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨j.val, by omega⟩))) : α) = (eA ⟨j.val, by omega⟩ : α)
     exact hslotA _
 
   have hprefixB (j : Fin (k - 1)) :
-      (σ ⟨4 * j.val + 1, by omega⟩ : α) =
-        (eB ⟨j.val, by omega⟩ : α) := by
+      (σ ⟨4 * j.val + 1, by omega⟩ : α) = (eB ⟨j.val, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * j.val + 1, by omega⟩)) : α) =
-        (eB ⟨j.val, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * j.val + 1, by omega⟩ =
-        FiniteSchedule.t3PrefixSlot j 1 by
-          simpa [Nat.add_comm] using
-            FiniteSchedule.t3IndexEquiv_prefix k hk j (1 : Fin 4)]
-    change (eGround (Sum.inl (Sum.inr (eB ⟨j.val, by omega⟩))) : α) =
-      (eB ⟨j.val, by omega⟩ : α)
+            ⟨4 * j.val + 1, by omega⟩)) : α) = (eB ⟨j.val, by omega⟩ : α)
+    have hpos :
+        (⟨4 * j.val + 1, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(1 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+      omega
+    rw [hpos, FiniteSchedule.t3IndexEquiv_prefix]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨j.val, by omega⟩))) : α) = (eB ⟨j.val, by omega⟩ : α)
     exact hslotB _
 
   have hprefixC (j : Fin (k - 1)) :
-      (σ ⟨4 * j.val + 2, by omega⟩ : α) =
-        (eC ⟨j.val, by omega⟩ : α) := by
+      (σ ⟨4 * j.val + 2, by omega⟩ : α) = (eC ⟨j.val, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * j.val + 2, by omega⟩)) : α) =
-        (eC ⟨j.val, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * j.val + 2, by omega⟩ =
-        FiniteSchedule.t3PrefixSlot j 2 by
-          simpa [Nat.add_comm] using
-            FiniteSchedule.t3IndexEquiv_prefix k hk j (2 : Fin 4)]
-    change (eGround (Sum.inr (Sum.inl (eC ⟨j.val, by omega⟩))) : α) =
-      (eC ⟨j.val, by omega⟩ : α)
+            ⟨4 * j.val + 2, by omega⟩)) : α) = (eC ⟨j.val, by omega⟩ : α)
+    have hpos :
+        (⟨4 * j.val + 2, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(2 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+      omega
+    rw [hpos, FiniteSchedule.t3IndexEquiv_prefix]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨j.val, by omega⟩))) : α) = (eC ⟨j.val, by omega⟩ : α)
     exact hslotC _
 
   have hprefixG (j : Fin (k - 1)) :
@@ -531,114 +543,80 @@ theorem dangerous_triple_cbo_of_local_orders
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
             ⟨4 * j.val + 3, by omega⟩)) : α) = (eG j : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * j.val + 3, by omega⟩ =
-        FiniteSchedule.t3PrefixSlot j 3 by
-          simpa [Nat.add_comm] using
-            FiniteSchedule.t3IndexEquiv_prefix k hk j (3 : Fin 4)]
+    have hpos :
+        (⟨4 * j.val + 3, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(3 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+      omega
+    rw [hpos, FiniteSchedule.t3IndexEquiv_prefix]
     change (eGround (Sum.inr (Sum.inr (eG j))) : α) = (eG j : α)
     exact hslotG _
 
   have htailA0 :
-      (σ ⟨4 * (k - 1), by omega⟩ : α) =
-        (eA ⟨k - 1, by omega⟩ : α) := by
+      (σ ⟨4 * (k - 1), by omega⟩ : α) = (eA ⟨k - 1, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * (k - 1), by omega⟩)) : α) =
-        (eA ⟨k - 1, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1), by omega⟩ =
-        FiniteSchedule.t3TailSlot hk 0 by
-          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (0 : Fin 6)]
-    change (eGround (Sum.inl (Sum.inl (eA ⟨k - 1, by omega⟩))) : α) =
-      (eA ⟨k - 1, by omega⟩ : α)
+            ⟨4 * (k - 1), by omega⟩)) : α) = (eA ⟨k - 1, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨k - 1, by omega⟩))) : α) = (eA ⟨k - 1, by omega⟩ : α)
     exact hslotA _
 
   have htailB0 :
-      (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) =
-        (eB ⟨k - 1, by omega⟩ : α) := by
+      (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = (eB ⟨k - 1, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * (k - 1) + 1, by omega⟩)) : α) =
-        (eB ⟨k - 1, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 1, by omega⟩ =
-        FiniteSchedule.t3TailSlot hk 1 by
-          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (1 : Fin 6)]
-    change (eGround (Sum.inl (Sum.inr (eB ⟨k - 1, by omega⟩))) : α) =
-      (eB ⟨k - 1, by omega⟩ : α)
+            ⟨4 * (k - 1) + 1, by omega⟩)) : α) = (eB ⟨k - 1, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨k - 1, by omega⟩))) : α) = (eB ⟨k - 1, by omega⟩ : α)
     exact hslotB _
 
   have htailC0 :
-      (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) =
-        (eC ⟨k - 1, by omega⟩ : α) := by
+      (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = (eC ⟨k - 1, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * (k - 1) + 2, by omega⟩)) : α) =
-        (eC ⟨k - 1, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 2, by omega⟩ =
-        FiniteSchedule.t3TailSlot hk 2 by
-          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (2 : Fin 6)]
-    change (eGround (Sum.inr (Sum.inl (eC ⟨k - 1, by omega⟩))) : α) =
-      (eC ⟨k - 1, by omega⟩ : α)
+            ⟨4 * (k - 1) + 2, by omega⟩)) : α) = (eC ⟨k - 1, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨k - 1, by omega⟩))) : α) = (eC ⟨k - 1, by omega⟩ : α)
     exact hslotC _
 
   have htailA1 :
-      (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) =
-        (eA ⟨k, by omega⟩ : α) := by
+      (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = (eA ⟨k, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * (k - 1) + 3, by omega⟩)) : α) =
-        (eA ⟨k, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 3, by omega⟩ =
-        FiniteSchedule.t3TailSlot hk 3 by
-          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (3 : Fin 6)]
-    change (eGround (Sum.inl (Sum.inl (eA ⟨k, by omega⟩))) : α) =
-      (eA ⟨k, by omega⟩ : α)
+            ⟨4 * (k - 1) + 3, by omega⟩)) : α) = (eA ⟨k, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨k, by omega⟩))) : α) = (eA ⟨k, by omega⟩ : α)
     exact hslotA _
 
   have htailB1 :
-      (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) =
-        (eB ⟨k, by omega⟩ : α) := by
+      (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = (eB ⟨k, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * (k - 1) + 4, by omega⟩)) : α) =
-        (eB ⟨k, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 4, by omega⟩ =
-        FiniteSchedule.t3TailSlot hk 4 by
-          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (4 : Fin 6)]
-    change (eGround (Sum.inl (Sum.inr (eB ⟨k, by omega⟩))) : α) =
-      (eB ⟨k, by omega⟩ : α)
+            ⟨4 * (k - 1) + 4, by omega⟩)) : α) = (eB ⟨k, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨k, by omega⟩))) : α) = (eB ⟨k, by omega⟩ : α)
     exact hslotB _
 
   have htailC1 :
-      (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) =
-        (eC ⟨k, by omega⟩ : α) := by
+      (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = (eC ⟨k, by omega⟩ : α) := by
     change
       (eGround
         (eSlots
           (FiniteSchedule.t3IndexEquiv k hk
-            ⟨4 * (k - 1) + 5, by omega⟩)) : α) =
-        (eC ⟨k, by omega⟩ : α)
-    rw [show
-      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 5, by omega⟩ =
-        FiniteSchedule.t3TailSlot hk 5 by
-          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (5 : Fin 6)]
-    change (eGround (Sum.inr (Sum.inl (eC ⟨k, by omega⟩))) : α) =
-      (eC ⟨k, by omega⟩ : α)
+            ⟨4 * (k - 1) + 5, by omega⟩)) : α) = (eC ⟨k, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨k, by omega⟩))) : α) = (eC ⟨k, by omega⟩ : α)
     exact hslotC _
 
   have hA : ∀ t : Fin (4 * k + 2),
