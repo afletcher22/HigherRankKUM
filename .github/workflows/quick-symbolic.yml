@@ -1,0 +1,26 @@
+name: Quick Symbolic Lean
+
+on:
+  push:
+    branches:
+      - sol-symbolic-adjacent
+      - sol-symbolic-distance-two
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch pinned dependencies
+        run: lake update
+      - name: Build symbolic targets
+        run: |
+          if [ "$GITHUB_REF_NAME" = "sol-symbolic-adjacent" ]; then
+            lake build +HigherRankKUM.Rank4.DangerousScheduleSymbolicBasis
+          else
+            lake build +HigherRankKUM.Rank4.DangerousScheduleSymbolicDistanceTwo
+          fi
