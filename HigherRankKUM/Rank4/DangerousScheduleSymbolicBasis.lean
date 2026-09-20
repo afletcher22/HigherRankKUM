@@ -346,14 +346,15 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         simpa [q] using hcoreWrap2
       rw [hq1, hq2] at h
       dsimp [m, q] at h
-      have h' :
-          M.IsBase
-            ({cW,
-              (order (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) : α),
-              (order (⟨0, by omega⟩ : Fin (3 * k + 1)) : α),
-              (order (⟨1, by omega⟩ : Fin (3 * k + 1)) : α)} : Set α) := by
-        simpa only [heW'] using h
-      convert h' using 1
+      have hzero :
+          (0 : Fin (k + 1)) = (⟨0, by omega⟩ : Fin (k + 1)) := by
+        apply Fin.ext
+        rfl
+      have heW0 : (eC (0 : Fin (k + 1)) : α) = cW := by
+        rw [hzero]
+        exact heW'
+      rw [heW0] at h
+      convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
