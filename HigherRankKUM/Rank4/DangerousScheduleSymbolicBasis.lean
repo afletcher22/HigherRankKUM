@@ -6,6 +6,7 @@ namespace Rank4DangerousScheduleSymbolic
 open Set
 open scoped Matroid
 open Rank4GcdTwoDeletion
+open Rank4DangerousBranches
 
 noncomputable section
 
