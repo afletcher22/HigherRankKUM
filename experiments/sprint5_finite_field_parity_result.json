@@ -1,0 +1,52 @@
+{
+  "complete": true,
+  "scope": "all normalized GF(2), GF(3), and GF(5) rank-four forced six-block represented contexts",
+  "normalization": "C union D is sent to the coordinate basis; all projective lifts are exhausted",
+  "fields": [
+    {
+      "field_order": 2,
+      "projective_points": 15,
+      "unordered_projective_pair_types": 105,
+      "left_middle_types": 16,
+      "right_middle_types": 16,
+      "left_contexts": 256,
+      "right_contexts": 256,
+      "six_block_contexts": 65536,
+      "legal_nonidentity_move_occurrences": 74752,
+      "forced_preserving_move_occurrences": 5120,
+      "slack_created": 69632,
+      "forced_parity_flips": 0,
+      "first_parity_flip": null
+    },
+    {
+      "field_order": 3,
+      "projective_points": 40,
+      "unordered_projective_pair_types": 780,
+      "left_middle_types": 81,
+      "right_middle_types": 81,
+      "left_contexts": 6561,
+      "right_contexts": 6561,
+      "six_block_contexts": 43046721,
+      "legal_nonidentity_move_occurrences": 91644048,
+      "forced_preserving_move_occurrences": 1364688,
+      "slack_created": 90279360,
+      "forced_parity_flips": 0,
+      "first_parity_flip": null
+    },
+    {
+      "field_order": 5,
+      "projective_points": 156,
+      "unordered_projective_pair_types": 12090,
+      "left_middle_types": 625,
+      "right_middle_types": 625,
+      "left_contexts": 390625,
+      "right_contexts": 390625,
+      "six_block_contexts": 152587890625,
+      "legal_nonidentity_move_occurrences": 480625000000,
+      "forced_preserving_move_occurrences": 1025000000,
+      "slack_created": 479600000000,
+      "forced_parity_flips": 0,
+      "first_parity_flip": null
+    }
+  ]
+}
