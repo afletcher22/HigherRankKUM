@@ -458,9 +458,6 @@ theorem dangerous_hyperplane_complement_plus_core_triple_isBase
     dangerous_one_hyperplane_basis_plus_complement_isBase
       hRank hH hBasis hc
   convert h using 1
-  ext z
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-  tauto
 
 /-- A chosen dangerous hyperplane CBO has either two adjacent good core edges
 or two good core edges separated by one edge. -/
