@@ -579,16 +579,20 @@ theorem dangerous_two_six_exceptional_windows
       (M := M) (k := k) (H₀ := H) (H₁ := K)
       (I := ({gB, pB, dB} : Set α)) (a := pA)
       hRank hH hbBasis hpA
-    convert h using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert h using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
   have hbase1 : M.IsBase ({pB, gB, dB, dA} : Set α) := by
     have h := dangerous_two_hyperplane_triple_plus_other_isBase
       (M := M) (k := k) (H₀ := H) (H₁ := K)
       (I := ({gB, pB, dB} : Set α)) (a := dA)
       hRank hH hbBasis hdA
-    convert h using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert h using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
   have hbase2 : M.IsBase ({gB, dB, dA, gA} : Set α) := by
     have h := dangerous_two_core_pair_sides_isBase
@@ -596,24 +600,30 @@ theorem dangerous_two_six_exceptional_windows
       (g₀ := gB) (g₁ := gA) (a := dA) (b := dB)
       (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
       hgB hgA hgBneA hpairBA hdA hdB
-    convert h using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert h using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
   have hbase3 : M.IsBase ({dB, dA, gA, qA} : Set α) := by
     have h := dangerous_two_hyperplane_triple_plus_other_isBase
       (M := M) (k := k) (H₀ := K) (H₁ := H)
       (I := ({gA, dA, qA} : Set α)) (a := dB)
       hRank hK haBasis hdB
-    convert h using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert h using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
   have hbase4 : M.IsBase ({dA, gA, qA, qB} : Set α) := by
     have h := dangerous_two_hyperplane_triple_plus_other_isBase
       (M := M) (k := k) (H₀ := K) (H₁ := H)
       (I := ({gA, dA, qA} : Set α)) (a := qB)
       hRank hK haBasis hqB
-    convert h using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert h using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
   have hbase5 : M.IsBase ({gA, qA, qB, g0} : Set α) := by
     have h := dangerous_two_core_pair_sides_isBase
@@ -621,8 +631,10 @@ theorem dangerous_two_six_exceptional_windows
       (g₀ := gA) (g₁ := g0) (a := qA) (b := qB)
       (by omega : 1 ≤ k) hE hRank hEcard hStrict hH hK hne
       hgA hg0 hgAne0 hpairA0 hqA hqB
-    convert h using 1 <;> ext z <;>
-      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+    convert h using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
 
   dsimp only
   constructor
@@ -631,8 +643,14 @@ theorem dangerous_two_six_exceptional_windows
         cyclicIndex n hnpos ⟨m, by omega⟩ 1 =
           ⟨m + 1, by omega⟩ := by
       simpa only [Nat.add_zero, zero_add] using hidx 0 1 (by omega)
-    have h1 := hidx 0 2 (by omega)
-    have h2 := hidx 0 3 (by omega)
+    have h1 :
+        cyclicIndex n hnpos ⟨m, by omega⟩ 2 =
+          ⟨m + 2, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 2 (by omega)
+    have h2 :
+        cyclicIndex n hnpos ⟨m, by omega⟩ 3 =
+          ⟨m + 3, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 3 (by omega)
     rw [h0, h1, h2, hσpA, hσpB, hσgB, hσdB]
     exact hbase0
   constructor
