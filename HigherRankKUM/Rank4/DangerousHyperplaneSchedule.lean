@@ -165,6 +165,98 @@ theorem exists_shifted_adjacent_good_at_end
 
   exact ⟨order', hOrder', hgoodEnd, hgoodWrap⟩
 
+/-- Rotate distance-two good edges so they become the core edges at
+indices 0 and 2. -/
+theorem exists_shifted_distance_two_good_at_start
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order)
+    (i : Fin (3 * k + 1))
+    (hgood0 : DangerousHyperplaneEdgeGood order i)
+    (hgood2 :
+      DangerousHyperplaneEdgeGood order
+        (cyclicIndex (3 * k + 1) (by omega) i 2)) :
+    ∃ order' : Fin (3 * k + 1) ≃ (M.restrict H).E,
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order' ∧
+      DangerousHyperplaneEdgeGood order' ⟨0, by omega⟩ ∧
+      DangerousHyperplaneEdgeGood order' ⟨2, by omega⟩ := by
+  let n := 3 * k + 1
+  let hn : 0 < n := by
+    dsimp [n]
+    omega
+  let target : Fin n := ⟨0, by omega⟩
+  obtain ⟨order', hOrder', hmap⟩ :=
+    exists_shifted_cbo_with_start hn order hOrder i target
+
+  have hmap0 :
+      (order' ⟨0, by omega⟩ : α) = (order i : α) := by
+    simpa [target, n, hn] using hmap 0
+  have hmap1 :
+      (order' ⟨1, by omega⟩ : α) =
+        (order (cyclicIndex n hn i 1) : α) := by
+    have h := hmap 1
+    have ht :
+        cyclicIndex n hn target 1 = ⟨1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      dsimp [target, n]
+      omega
+    rw [ht] at h
+    exact h
+  have hmap2 :
+      (order' ⟨2, by omega⟩ : α) =
+        (order (cyclicIndex n hn i 2) : α) := by
+    have h := hmap 2
+    have ht :
+        cyclicIndex n hn target 2 = ⟨2, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      dsimp [target, n]
+      omega
+    rw [ht] at h
+    exact h
+  have hmap3 :
+      (order' ⟨3, by omega⟩ : α) =
+        (order (cyclicIndex n hn i 3) : α) := by
+    have h := hmap 3
+    have ht :
+        cyclicIndex n hn target 3 = ⟨3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      dsimp [target, n]
+      omega
+    rw [ht] at h
+    exact h
+
+  have hgoodStart :
+      DangerousHyperplaneEdgeGood order' ⟨0, by omega⟩ := by
+    unfold DangerousHyperplaneEdgeGood at hgood0 ⊢
+    have hnext :
+        cyclicIndex n hn (⟨0, by omega⟩ : Fin n) 1 =
+          ⟨1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    rw [hnext, hmap0, hmap1]
+    simpa [n, hn] using hgood0
+
+  have hgoodTwo :
+      DangerousHyperplaneEdgeGood order' ⟨2, by omega⟩ := by
+    unfold DangerousHyperplaneEdgeGood at hgood2 ⊢
+    have hnext :
+        cyclicIndex n hn (⟨2, by omega⟩ : Fin n) 1 =
+          ⟨3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    rw [hnext, hmap2, hmap3]
+    have hadd :
+        cyclicIndex n hn
+            (cyclicIndex n hn i 2) 1 =
+          cyclicIndex n hn i 3 := by
+      rw [cyclicIndex_add]
+      norm_num
+    simpa [n, hn, hadd] using hgood2
+
+  exact ⟨order', hOrder', hgoodStart, hgoodTwo⟩
+
 /-- The adjacent-good compressed schedule has a cyclic basis ordering.
 
 The core order is normalized so the two good edges are
