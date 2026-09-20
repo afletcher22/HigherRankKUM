@@ -158,8 +158,9 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hq1, hq2] at h
         have hnextTail :=
           adjacentNext_block3_of_not_lt (k := k) (by omega) j hj
-        simp only [adjacentNext_block1, adjacentNext_block2, hnextTail,
-          adjacentSymbolicOrder_block_g0, adjacentSymbolicOrder_block_g1,
+        simp only [adjacentNext_block1, adjacentNext_block2]
+        rw [hnextTail]
+        simp only [adjacentSymbolicOrder_block_g0, adjacentSymbolicOrder_block_g1,
           adjacentSymbolicOrder_block_g2, adjacentSymbolicOrder_tail_c]
         convert h using 1
         ext z
@@ -191,9 +192,11 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hq1, hq2] at h
         have hnextTail :=
           adjacentNext_block3_of_not_lt (k := k) (by omega) j hj
-        simp only [adjacentNext_block2, hnextTail, adjacentNext_tail0,
-          adjacentSymbolicOrder_block_g1, adjacentSymbolicOrder_block_g2,
-          adjacentSymbolicOrder_tail_c, adjacentSymbolicOrder_tail_g]
+        simp only [adjacentNext_block2]
+        rw [hnextTail]
+        simp only [adjacentNext_tail0, adjacentSymbolicOrder_block_g1,
+          adjacentSymbolicOrder_block_g2, adjacentSymbolicOrder_tail_c,
+          adjacentSymbolicOrder_tail_g]
         convert h using 1
         ext z
         simp [m, q, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff] <;> tauto
