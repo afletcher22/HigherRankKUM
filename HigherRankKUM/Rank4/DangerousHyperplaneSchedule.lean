@@ -333,25 +333,77 @@ theorem dangerousSeparatedSchedule_window_classification
           (eC ⟨k, by omega⟩ : α) := by
       have h := dangerousSeparatedScheduleOrder_blockC
         hk hH eC order jlast
-      simpa [σ, jlast] using h
+      have hpos :
+          (⟨6 + 4 * jlast.val, by omega⟩ : Fin (4 * k + 2)) =
+            ⟨4 * k - 2, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jlast]
+        omega
+      have hm :
+          (⟨jlast.val + 2, by omega⟩ : Fin (k + 1)) =
+            ⟨k, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jlast]
+        omega
+      rw [hpos, hm] at h
+      simpa only [σ] using h
     have hG_last0 :
         (σ ⟨4 * k - 1, by omega⟩ : α) =
           (order ⟨3 * k - 2, by omega⟩ : α) := by
       have h := dangerousSeparatedScheduleOrder_blockG0
         hk hH eC order jlast
-      simpa [σ, jlast] using h
+      have hpos :
+          (⟨7 + 4 * jlast.val, by omega⟩ : Fin (4 * k + 2)) =
+            ⟨4 * k - 1, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jlast]
+        omega
+      have hq :
+          (⟨3 * jlast.val + 4, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k - 2, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jlast]
+        omega
+      rw [hpos, hq] at h
+      simpa only [σ] using h
     have hG_last1 :
         (σ ⟨4 * k, by omega⟩ : α) =
           (order ⟨3 * k - 1, by omega⟩ : α) := by
       have h := dangerousSeparatedScheduleOrder_blockG1
         hk hH eC order jlast
-      simpa [σ, jlast] using h
+      have hpos :
+          (⟨8 + 4 * jlast.val, by omega⟩ : Fin (4 * k + 2)) =
+            ⟨4 * k, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jlast]
+        omega
+      have hq :
+          (⟨3 * jlast.val + 5, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k - 1, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jlast]
+        omega
+      rw [hpos, hq] at h
+      simpa only [σ] using h
     have hG_last2 :
         (σ ⟨4 * k + 1, by omega⟩ : α) =
           (order ⟨3 * k, by omega⟩ : α) := by
       have h := dangerousSeparatedScheduleOrder_blockG2
         hk hH eC order jlast
-      simpa [σ, jlast] using h
+      have hpos :
+          (⟨9 + 4 * jlast.val, by omega⟩ : Fin (4 * k + 2)) =
+            ⟨4 * k + 1, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jlast]
+        omega
+      have hq :
+          (⟨3 * jlast.val + 6, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k, by omega⟩ := by
+        apply Fin.ext
+        dsimp [jlast]
+        omega
+      rw [hpos, hq] at h
+      simpa only [σ] using h
     rcases hcases with hA | hB | hC
     · have hs : s = ⟨4 * k - 1, by omega⟩ := Fin.ext hA
       rw [hs]
@@ -1366,12 +1418,13 @@ theorem exists_cbo_of_distance_two_good_normalized
     have h := cyclicIndex_eq_mk_add_of_lt (3 * k + 1) (by omega)
       (⟨0, by omega⟩ : Fin (3 * k + 1)) 2 (by omega)
     apply Fin.ext
-    exact congrArg Fin.val h
+    have hv := congrArg Fin.val h
+    simpa using hv
   obtain ⟨c₀, c₁, c₂, hc01, hc12, hc02,
       hc₀, hc₁, hc₂, hExc0, hExc2⟩ :=
     dangerous_hyperplane_distance_two_good_selection
       hk hE hRank hEcard hStrict hH order hOrder
-      ⟨0, by omega⟩ hgood0 (by simpa [hidx2] using hgood2)
+      ⟨0, by omega⟩ hgood0 (by rw [hidx2]; exact hgood2)
 
   let C : Set α := M.E \ H
   have hCfin : C.Finite := by
