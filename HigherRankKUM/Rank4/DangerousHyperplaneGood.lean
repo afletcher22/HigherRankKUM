@@ -326,7 +326,7 @@ theorem dangerous_hyperplane_core_pair_indep_rank_two
     exact Subtype.ext h
   have hPrank : M.eRk P = (2 : ℕ∞) := by
     rw [hPind.eRk_eq_encard]
-    simpa [P, Set.encard_pair hvals]
+    simpa [P] using Set.encard_pair hvals
   simpa [P, j, hn] using And.intro hPind hPrank
 
 /-- A rank-two base selected inside the complement-restricted contraction
@@ -457,10 +457,7 @@ theorem dangerous_hyperplane_complement_plus_core_triple_isBase
   have h :=
     dangerous_one_hyperplane_basis_plus_complement_isBase
       hRank hH hBasis hc
-  convert h using 1
-  ext z
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-  tauto
+  simpa [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using h
 
 /-- A chosen dangerous hyperplane CBO has either two adjacent good core edges
 or two good core edges separated by one edge. -/
