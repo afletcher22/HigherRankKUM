@@ -142,7 +142,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hq1, hq2] at h
         convert h using 1
         ext z
-          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 1 := by omega
         let m : Fin (k + 1) := ⟨k, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
@@ -156,7 +156,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hq1, hq2] at h
         convert h using 1
         ext z
-          simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
     · by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 1, by omega⟩
@@ -170,7 +170,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hq1, hq2] at h
         convert h using 1
         ext z
-          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 1 := by omega
         let m : Fin (k + 1) := ⟨k, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 1, by omega⟩
@@ -184,7 +184,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hq1, hq2] at h
         convert h using 1
         ext z
-          simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
     · by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 2, by omega⟩
@@ -198,7 +198,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hq1, hq2] at h
         convert h using 1
         ext z
-          simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 1 := by omega
         have hEdge :
             cyclicIndex (3 * k + 1) (by omega)
@@ -209,7 +209,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hEdge] at hExcEnd
         convert hExcEnd using 1
         ext z
-          simp [hj, hjEq, iT, iW, heT, heW,
+        simp [hj, hjEq, iT, iW, heT, heW,
             Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]  <;> tauto
   · fin_cases r
     · have hEdge :
@@ -227,7 +227,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
       rw [hEdge, hWrap] at hExcWrap
       convert hExcWrap using 1
       ext z
-        simp [iT, iW, heT, heW,
+      simp [iT, iW, heT, heW,
           Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]  <;> tauto
     · let m : Fin (k + 1) := ⟨0, by omega⟩
       let q : Fin (3 * k + 1) := ⟨3 * k, by omega⟩
@@ -243,7 +243,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
       rw [hq1, hq2] at h
       convert h using 1
       ext z
-        simp [m, q, iW, heW, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+      simp [m, q, iW, heW, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
 
 end
 
