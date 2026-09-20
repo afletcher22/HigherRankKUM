@@ -224,7 +224,7 @@ theorem dangerous_hyperplane_distance_two_good_selection
     RankTwoSelection.exists_two_matroid_basis_path
       N₀ N₂ (by simp [N₀, N₂, C])
       (by simpa [N₀] using hCfin)
-      (by simpa [N₀, hCcard]; omega)
+      (by simpa [N₀, hCcard])
       hN₀.1 hN₂.1 hN₀.2 hN₂.2
 
   have hc₀ : c₀ ∈ C := by
