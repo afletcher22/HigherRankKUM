@@ -99,8 +99,13 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨1, by omega⟩ := by
+    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (3 * k + 1) (by omega)
+      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2
+      (by omega) (by omega)
     apply Fin.ext
-    simp [cyclicIndex]
+    have hv := congrArg Fin.val h
+    simpa using hv
 
   refine ⟨adjacentOrder (by omega) hH eC order,
     adjacent_cbo_of_symbolic_windows (by omega) hH eC order ?_⟩
@@ -146,9 +151,12 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
           dsimp [q]
           omega)
         rw [hq1, hq2] at h
+        have hnextTail :=
+          adjacentNext_block3_of_not_lt (k := k) (by omega) j hj
+        rw [hnextTail]
         convert h using 1
         ext z
-        simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp [m, q, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff] <;> tauto
     · by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 1, by omega⟩
@@ -174,9 +182,12 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
           dsimp [q]
           omega)
         rw [hq1, hq2] at h
+        have hnextTail :=
+          adjacentNext_block3_of_not_lt (k := k) (by omega) j hj
+        rw [hnextTail]
         convert h using 1
         ext z
-        simp [m, q, hj, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp [m, q, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff] <;> tauto
     · by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 2, by omega⟩
