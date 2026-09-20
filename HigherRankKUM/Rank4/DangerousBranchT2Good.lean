@@ -175,7 +175,7 @@ theorem dangerous_two_core_inter_complement_closure_ncard_le
     exact dangerous_two_complement_closure_ncard_le
       hk hE hRank hEcard hStrict hH hK hne hArank
   rw [hUnionCard, hAcard] at hSubCard
-  dsimp [B, G, A] at hSubCard ⊢
+  dsimp [B, G, A] at hSubCard hClosureBound ⊢
   omega
 
 
@@ -228,7 +228,7 @@ theorem dangerous_two_rankTwo_side_good_of_not_mem_closure
     norm_num
   have hBasisK : M.IsBasis (insert g J) K :=
     hInd.isBasis_of_eRk_ge (hE.subset hInd.subset_ground)
-      hSubK (by rw [hK.2.1, hRankInsert])
+      hSubK (by rw [hK.2.1, hRankInsert]) hK.subset_ground
   refine ⟨x, y, ?_, ?_, hxy, ?_⟩
   · simpa [A] using hxA
   · simpa [A] using hyA
@@ -260,7 +260,7 @@ theorem dangerous_two_rankThree_side_good
     rw [hJA.eRk_eq_eRk, hArank]
   have hJBasisK : M.IsBasis J K :=
     hJA.indep.isBasis_of_eRk_ge hJfin hJK
-      (by rw [hK.2.1, hJrank])
+      (by rw [hK.2.1, hJrank]) hK.subset_ground
   have hgNonloop : M.IsNonloop g :=
     isNonloop_of_strict_rankFour hRank hStrict
       (hH.subset_ground hg.1)
