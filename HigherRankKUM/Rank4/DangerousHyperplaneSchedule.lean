@@ -42,6 +42,171 @@ def dangerous_hyperplane_parts_equiv_ground
     (dangerous_hyperplane_parts_equiv_ground hH (Sum.inr g) : α) = g := by
   simp [dangerous_hyperplane_parts_equiv_ground]
 
+/-- The global separated-good schedule
+C G G C G G (C G G G)^(k-1), assembled from a complement enumeration
+and a core cyclic order. -/
+def dangerousSeparatedScheduleOrder
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
+    Fin (4 * k + 2) ≃ M.E := by
+  let eG : Fin (3 * k + 1) ≃ (H : Set α) := by
+    simpa using order
+  exact
+    (FiniteSchedule.hyperSeparatedIndexEquiv k hk).trans
+      ((Equiv.sumCongr eC eG).trans
+        (dangerous_hyperplane_parts_equiv_ground hH))
+
+@[simp] theorem dangerousSeparatedScheduleOrder_head0
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨0, by omega⟩ : α) =
+      (eC ⟨0, by omega⟩ : α) := by
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedHeadSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_head1
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨1, by omega⟩ : α) =
+      (order ⟨0, by omega⟩ : α) := by
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedHeadSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_head2
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨2, by omega⟩ : α) =
+      (order ⟨1, by omega⟩ : α) := by
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedHeadSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_head3
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨3, by omega⟩ : α) =
+      (eC ⟨1, by omega⟩ : α) := by
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedHeadSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_head4
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨4, by omega⟩ : α) =
+      (order ⟨2, by omega⟩ : α) := by
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedHeadSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_head5
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨5, by omega⟩ : α) =
+      (order ⟨3, by omega⟩ : α) := by
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedHeadSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_blockC
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (j : Fin (k - 1)) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨6 + 4 * j.val, by omega⟩ : α) =
+      (eC ⟨j.val + 2, by omega⟩ : α) := by
+  have hpos :
+      (⟨6 + 4 * j.val, by omega⟩ : Fin (4 * k + 2)) =
+        ⟨6 + (0 : Fin 4).val + 4 * j.val, by omega⟩ := by
+    apply Fin.ext
+    simp
+  rw [hpos]
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedBlockSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_blockG0
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (j : Fin (k - 1)) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨7 + 4 * j.val, by omega⟩ : α) =
+      (order ⟨3 * j.val + 4, by omega⟩ : α) := by
+  have hpos :
+      (⟨7 + 4 * j.val, by omega⟩ : Fin (4 * k + 2)) =
+        ⟨6 + (1 : Fin 4).val + 4 * j.val, by omega⟩ := by
+    apply Fin.ext
+    simp
+  rw [hpos]
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedBlockSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_blockG1
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (j : Fin (k - 1)) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨8 + 4 * j.val, by omega⟩ : α) =
+      (order ⟨3 * j.val + 5, by omega⟩ : α) := by
+  have hpos :
+      (⟨8 + 4 * j.val, by omega⟩ : Fin (4 * k + 2)) =
+        ⟨6 + (2 : Fin 4).val + 4 * j.val, by omega⟩ := by
+    apply Fin.ext
+    simp
+  rw [hpos]
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedBlockSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerousSeparatedScheduleOrder_blockG2
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k) (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (j : Fin (k - 1)) :
+    (dangerousSeparatedScheduleOrder hk hH eC order
+      ⟨9 + 4 * j.val, by omega⟩ : α) =
+      (order ⟨3 * j.val + 6, by omega⟩ : α) := by
+  have hpos :
+      (⟨9 + 4 * j.val, by omega⟩ : Fin (4 * k + 2)) =
+        ⟨6 + (3 : Fin 4).val + 4 * j.val, by omega⟩ := by
+    apply Fin.ext
+    simp
+  rw [hpos]
+  simp [dangerousSeparatedScheduleOrder,
+    FiniteSchedule.hyperSeparatedBlockSlot,
+    dangerous_hyperplane_parts_equiv_ground]
+
 /-- Rotate a core CBO so a chosen source index appears at a chosen target
 index. The returned pointwise identity tracks every later cyclic offset. -/
 theorem exists_shifted_cbo_with_start
