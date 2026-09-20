@@ -1,6 +1,7 @@
 import HigherRankKUM.CyclicIndex
 import HigherRankKUM.Density
 import HigherRankKUM.CyclicOrder
+import HigherRankKUM.TransportedCycle
 import HigherRankKUM.CyclicRotation
 import HigherRankKUM.TightContraction
 import HigherRankKUM.GenericGluing
