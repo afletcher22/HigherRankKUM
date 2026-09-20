@@ -138,14 +138,25 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
   simp only [transportedNext_separated]
   rcases p with r | p
   · fin_cases r
-    · have h01 := hcoreNoWrap
-        (⟨0, by omega⟩ : Fin (3 * k + 1)) 1 (by omega)
+    · simp only [separatedNext_head0, separatedNext_head1, separatedNext_head2,
+          separatedSymbolicOrder_head_c0, separatedSymbolicOrder_head_g0,
+          separatedSymbolicOrder_head_g1, separatedSymbolicOrder_head_c1]
+      have hlt01 : 0 + 1 < 3 * k + 1 := by omega
+      have h01 :
+          cyclicIndex (3 * k + 1) (by omega)
+              (⟨0, by omega⟩ : Fin (3 * k + 1)) 1 =
+            ⟨1, by omega⟩ := by
+        exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ hlt01
       rw [h01] at hExc0
+      rw [he0', he1']
       convert hExc0 using 1
       ext z
-      simp [he0', he1',
-          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;> tauto
-    · let m : Fin (k + 1) := ⟨1, by omega⟩
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+      tauto
+    · simp only [separatedNext_head1, separatedNext_head2, separatedNext_head3,
+          separatedSymbolicOrder_head_g0, separatedSymbolicOrder_head_g1,
+          separatedSymbolicOrder_head_c1, separatedSymbolicOrder_head_g2]
+      let m : Fin (k + 1) := ⟨1, by omega⟩
       let q : Fin (3 * k + 1) := ⟨0, by omega⟩
       have h := hOrd m q
       have hq1 := hcoreNoWrap q 1 (by
@@ -155,11 +166,15 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         dsimp [q]
         omega)
       rw [hq1, hq2] at h
+      rw [he1']
       convert h using 1
       ext z
-      simp [m, q, i1, he1,
-          Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-    · let m : Fin (k + 1) := ⟨1, by omega⟩
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · simp only [separatedNext_head2, separatedNext_head3, separatedNext_head4,
+          separatedSymbolicOrder_head_g1, separatedSymbolicOrder_head_c1,
+          separatedSymbolicOrder_head_g2, separatedSymbolicOrder_head_g3]
+      let m : Fin (k + 1) := ⟨1, by omega⟩
       let q : Fin (3 * k + 1) := ⟨1, by omega⟩
       have h := hOrd m q
       have hq1 := hcoreNoWrap q 1 (by
@@ -169,22 +184,31 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         dsimp [q]
         omega)
       rw [hq1, hq2] at h
+      rw [he1']
       convert h using 1
       ext z
-      simp [m, q, i1, he1,
-          Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-    · rw [hidx2] at hExc2
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · simp only [separatedNext_head3, separatedNext_head4, separatedNext_head5,
+          separatedSymbolicOrder_head_c1, separatedSymbolicOrder_head_g2,
+          separatedSymbolicOrder_head_g3, separatedSymbolicOrder_block_c]
+      rw [hidx2] at hExc2
+      have hlt23 : 2 + 1 < 3 * k + 1 := by omega
       have h23 :
           cyclicIndex (3 * k + 1) (by omega)
               (⟨2, by omega⟩ : Fin (3 * k + 1)) 1 =
             ⟨3, by omega⟩ := by
-        exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
+        exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ hlt23
       rw [h23] at hExc2
+      rw [he1', he2']
       convert hExc2 using 1
       ext z
-      simp [he1', he2',
-          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;> tauto
-    · let m : Fin (k + 1) := ⟨2, by omega⟩
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+      tauto
+    · simp only [separatedNext_head4, separatedNext_head5, separatedNext_block0,
+          separatedSymbolicOrder_head_g2, separatedSymbolicOrder_head_g3,
+          separatedSymbolicOrder_block_c, separatedSymbolicOrder_block_g0]
+      let m : Fin (k + 1) := ⟨2, by omega⟩
       let q : Fin (3 * k + 1) := ⟨2, by omega⟩
       have h := hOrd m q
       have hq1 := hcoreNoWrap q 1 (by
@@ -194,11 +218,15 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         dsimp [q]
         omega)
       rw [hq1, hq2] at h
+      rw [he2']
       convert h using 1
       ext z
-      simp [m, q, i2, he2,
-          Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-    · let m : Fin (k + 1) := ⟨2, by omega⟩
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · simp only [separatedNext_head5, separatedNext_block0, separatedNext_block1,
+          separatedSymbolicOrder_head_g3, separatedSymbolicOrder_block_c,
+          separatedSymbolicOrder_block_g0, separatedSymbolicOrder_block_g1]
+      let m : Fin (k + 1) := ⟨2, by omega⟩
       let q : Fin (3 * k + 1) := ⟨3, by omega⟩
       have h := hOrd m q
       have hq1 := hcoreNoWrap q 1 (by
@@ -208,10 +236,11 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         dsimp [q]
         omega)
       rw [hq1, hq2] at h
+      rw [he2']
       convert h using 1
       ext z
-      simp [m, q, i2, he2,
-          Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
   · rcases p with ⟨j, r⟩
     have hjlt := j.isLt
     fin_cases r
