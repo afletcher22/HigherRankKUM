@@ -91,25 +91,15 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
         ⟨0, by omega⟩ := by
-    have hh := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
-      (3 * k + 1) (by omega)
-      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1
-      (by omega) (by omega)
     apply Fin.ext
-    have hv := congrArg Fin.val hh
-    simpa using hv
+    simp [cyclicIndex]
 
   have hcoreWrap2 :
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨1, by omega⟩ := by
-    have hh := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
-      (3 * k + 1) (by omega)
-      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2
-      (by omega) (by omega)
     apply Fin.ext
-    have hv := congrArg Fin.val hh
-    simpa using hv
+    simp [cyclicIndex]
 
   refine ⟨adjacentOrder (by omega) hH eC order,
     adjacent_cbo_of_symbolic_windows (by omega) hH eC order ?_⟩
