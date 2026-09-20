@@ -276,6 +276,37 @@ theorem dangerous_hyperplane_basis_union_complement_rank_four
     exact M.eRk_le_eRank _
   · simpa [C] using hlower
 
+
+/-- A rank-two base selected inside the complement-restricted contraction
+lifts directly to an ambient rank-four base together with the contracted
+independent rank-two core pair. -/
+theorem ambient_isBase_of_restricted_contract_base
+    {M : Matroid α} {P C B : Set α}
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hP : M.Indep P)
+    (hPrank : M.eRk P = (2 : ℕ∞))
+    (hNrank : ((M.contract P).restrict C).eRank = (2 : ℕ∞))
+    (hB : ((M.contract P).restrict C).IsBase B) :
+    M.IsBase (B ∪ P) := by
+  have hBindContract : (M.contract P).Indep B :=
+    hB.indep.of_restrict
+  have hcontractData := hP.contract_indep_iff.1 hBindContract
+  have hDisj : Disjoint B P := hcontractData.1
+  have hUnionInd : M.Indep (B ∪ P) := hcontractData.2
+  have hPcard : P.encard = (2 : ℕ∞) := by
+    have h := hPrank
+    rw [hP.eRk_eq_encard] at h
+    exact h
+  have hBcard : B.encard = (2 : ℕ∞) := by
+    rw [hB.encard_eq_eRank, hNrank]
+  have hUnionCard : (B ∪ P).encard = (4 : ℕ∞) := by
+    rw [Set.encard_union_eq hDisj, hBcard, hPcard]
+    norm_num
+  have hUnionFinite : (B ∪ P).Finite :=
+    Set.finite_of_encard_eq_coe hUnionCard
+  apply hUnionInd.isBase_of_eRk_ge hUnionFinite
+  rw [hRank, hUnionInd.eRk_eq_encard, hUnionCard]
+
 /-- Every three consecutive core-edge positions of a dangerous-hyperplane CBO
 contain a good edge. This is the matroid input for the 3k+1 cyclic
 pigeonhole lemma. -/
