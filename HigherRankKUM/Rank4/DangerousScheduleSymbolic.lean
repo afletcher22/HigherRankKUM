@@ -1,5 +1,6 @@
 import HigherRankKUM.TransportedCycle
 import HigherRankKUM.Rank4.FiniteSchedule
+import HigherRankKUM.Rank4.CyclicIndexArithmetic
 import HigherRankKUM.Rank4.DangerousHyperplaneSelection
 import Mathlib.Logic.Equiv.Set
 import Mathlib.Tactic
@@ -111,6 +112,125 @@ def adjacentFinAdapter (k : ℕ) (hk : 1 ≤ k) :
 def separatedFinAdapter (k : ℕ) (hk : 2 ≤ k) :
     Fin (4 * k + 2) ≃ SeparatedPos k :=
   FiniteSchedule.hyperSeparatedHeadBlockEquiv k hk
+
+/-- Symbolic successor for the adjacent-good pattern.  Its definition is
+transported from the finite cycle, while the lemmas below expose the finite
+state machine seen by schedule proofs. -/
+def adjacentNext (k : ℕ) (hk : 1 ≤ k) :
+    AdjacentPos k → AdjacentPos k :=
+  transportedNext (by omega) (adjacentFinAdapter k hk)
+
+@[simp] theorem adjacentNext_block0
+    {k : ℕ} (hk : 1 ≤ k) (j : Fin k) :
+    adjacentNext k hk (Sum.inl (j, (0 : Fin 4))) =
+      Sum.inl (j, (1 : Fin 4)) := by
+  apply (adjacentFinAdapter k hk).symm.injective
+  change
+    cyclicIndex (4 * k + 2) (by omega)
+        ((adjacentFinAdapter k hk).symm (Sum.inl (j, (0 : Fin 4)))) 1 =
+      (adjacentFinAdapter k hk).symm (Sum.inl (j, (1 : Fin 4)))
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
+  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
+  apply Fin.ext
+  omega
+
+@[simp] theorem adjacentNext_block1
+    {k : ℕ} (hk : 1 ≤ k) (j : Fin k) :
+    adjacentNext k hk (Sum.inl (j, (1 : Fin 4))) =
+      Sum.inl (j, (2 : Fin 4)) := by
+  apply (adjacentFinAdapter k hk).symm.injective
+  change
+    cyclicIndex (4 * k + 2) (by omega)
+        ((adjacentFinAdapter k hk).symm (Sum.inl (j, (1 : Fin 4)))) 1 =
+      (adjacentFinAdapter k hk).symm (Sum.inl (j, (2 : Fin 4)))
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
+  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
+  apply Fin.ext
+  omega
+
+@[simp] theorem adjacentNext_block2
+    {k : ℕ} (hk : 1 ≤ k) (j : Fin k) :
+    adjacentNext k hk (Sum.inl (j, (2 : Fin 4))) =
+      Sum.inl (j, (3 : Fin 4)) := by
+  apply (adjacentFinAdapter k hk).symm.injective
+  change
+    cyclicIndex (4 * k + 2) (by omega)
+        ((adjacentFinAdapter k hk).symm (Sum.inl (j, (2 : Fin 4)))) 1 =
+      (adjacentFinAdapter k hk).symm (Sum.inl (j, (3 : Fin 4)))
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
+  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
+  apply Fin.ext
+  omega
+
+@[simp] theorem adjacentNext_block3_of_lt
+    {k : ℕ} (hk : 1 ≤ k) (j : Fin k)
+    (hj : j.val + 1 < k) :
+    adjacentNext k hk (Sum.inl (j, (3 : Fin 4))) =
+      Sum.inl ((⟨j.val + 1, hj⟩ : Fin k), (0 : Fin 4)) := by
+  apply (adjacentFinAdapter k hk).symm.injective
+  change
+    cyclicIndex (4 * k + 2) (by omega)
+        ((adjacentFinAdapter k hk).symm (Sum.inl (j, (3 : Fin 4)))) 1 =
+      (adjacentFinAdapter k hk).symm
+        (Sum.inl ((⟨j.val + 1, hj⟩ : Fin k), (0 : Fin 4)))
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
+  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
+  apply Fin.ext
+  omega
+
+@[simp] theorem adjacentNext_block3_of_not_lt
+    {k : ℕ} (hk : 1 ≤ k) (j : Fin k)
+    (hj : ¬ j.val + 1 < k) :
+    adjacentNext k hk (Sum.inl (j, (3 : Fin 4))) =
+      Sum.inr (0 : Fin 2) := by
+  apply (adjacentFinAdapter k hk).symm.injective
+  change
+    cyclicIndex (4 * k + 2) (by omega)
+        ((adjacentFinAdapter k hk).symm (Sum.inl (j, (3 : Fin 4)))) 1 =
+      (adjacentFinAdapter k hk).symm (Sum.inr (0 : Fin 2))
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
+  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
+  apply Fin.ext
+  omega
+
+@[simp] theorem adjacentNext_tail0
+    {k : ℕ} (hk : 1 ≤ k) :
+    adjacentNext k hk (Sum.inr (0 : Fin 2)) =
+      Sum.inr (1 : Fin 2) := by
+  apply (adjacentFinAdapter k hk).symm.injective
+  change
+    cyclicIndex (4 * k + 2) (by omega)
+        ((adjacentFinAdapter k hk).symm (Sum.inr (0 : Fin 2))) 1 =
+      (adjacentFinAdapter k hk).symm (Sum.inr (1 : Fin 2))
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail]
+  rw [cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)]
+  apply Fin.ext
+  omega
+
+@[simp] theorem adjacentNext_tail1
+    {k : ℕ} (hk : 1 ≤ k) :
+    adjacentNext k hk (Sum.inr (1 : Fin 2)) =
+      Sum.inl ((⟨0, by omega⟩ : Fin k), (0 : Fin 4)) := by
+  apply (adjacentFinAdapter k hk).symm.injective
+  change
+    cyclicIndex (4 * k + 2) (by omega)
+        ((adjacentFinAdapter k hk).symm (Sum.inr (1 : Fin 2))) 1 =
+      (adjacentFinAdapter k hk).symm
+        (Sum.inl ((⟨0, by omega⟩ : Fin k), (0 : Fin 4)))
+  simp only [adjacentFinAdapter,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_tail,
+    FiniteSchedule.hyperAdjacentBlockTailEquiv_symm_block]
+  rw [cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul _ _ _ _
+    (by omega) (by omega)]
+  apply Fin.ext
+  omega
 
 /-- Final adjacent schedule, factored as finite adapter followed by the
 symbolic ground order. -/
