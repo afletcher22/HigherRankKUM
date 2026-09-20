@@ -12,9 +12,9 @@ noncomputable section
 
 variable {α : Type*}
 
+set_option maxHeartbeats 800000 in
 /-- Distance-two-good normalized dangerous-hyperplane construction,
 proved through the symbolic separated schedule. -/
-set_option maxHeartbeats 800000 in
 theorem exists_cbo_of_distance_two_good_normalized_symbolic
     {M : Matroid α} {k : ℕ} {H : Set α}
     (hk : 2 ≤ k)
@@ -326,6 +326,13 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         ext z
         simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 2 := by omega
+        have hnextHead :=
+          separatedNext_block3_of_not_lt (k := k) hk j hj
+        simp only [separatedNext_block2]
+        rw [hnextHead]
+        simp only [separatedSymbolicOrder_block_g0,
+          separatedSymbolicOrder_block_g1, separatedSymbolicOrder_block_g2,
+          separatedSymbolicOrder_head_c0]
         let m : Fin (k + 1) := ⟨0, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * k - 2, by omega⟩
         have h := hOrd m q
@@ -336,10 +343,27 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
           dsimp [q]
           omega)
         rw [hq1, hq2] at h
+        dsimp [m, q] at h
+        have hg0 :
+            (⟨3 * j.val + 4, by omega⟩ : Fin (3 * k + 1)) =
+              ⟨3 * k - 2, by omega⟩ := by
+          apply Fin.ext
+          omega
+        have hg1 :
+            (⟨3 * j.val + 5, by omega⟩ : Fin (3 * k + 1)) =
+              ⟨3 * k - 2 + 1, by omega⟩ := by
+          apply Fin.ext
+          omega
+        have hg2 :
+            (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
+              ⟨3 * k - 2 + 2, by omega⟩ := by
+          apply Fin.ext
+          omega
+        rw [hg0, hg1, hg2]
         convert h using 1
         ext z
-        simp [m, q, hj, hjEq, i0, he0,
-            Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+        tauto
     · have hrEq : r = (2 : Fin 4) := by
         apply Fin.ext
         exact hr
@@ -359,6 +383,13 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         ext z
         simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 2 := by omega
+        have hnextHead :=
+          separatedNext_block3_of_not_lt (k := k) hk j hj
+        simp only [separatedNext_block2]
+        rw [hnextHead]
+        simp only [separatedNext_head0,
+          separatedSymbolicOrder_block_g1, separatedSymbolicOrder_block_g2,
+          separatedSymbolicOrder_head_c0, separatedSymbolicOrder_head_g0]
         let m : Fin (k + 1) := ⟨0, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * k - 1, by omega⟩
         have h := hOrd m q
@@ -370,10 +401,22 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
               ⟨0, by omega⟩ := by
           simpa [q] using hcoreLastMinusOne2
         rw [hq1, hq2] at h
+        dsimp [m, q] at h
+        have hg1 :
+            (⟨3 * j.val + 5, by omega⟩ : Fin (3 * k + 1)) =
+              ⟨3 * k - 1, by omega⟩ := by
+          apply Fin.ext
+          omega
+        have hg2 :
+            (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
+              ⟨3 * k - 1 + 1, by omega⟩ := by
+          apply Fin.ext
+          omega
+        rw [hg1, hg2]
         convert h using 1
         ext z
-        simp [m, q, hj, hjEq, i0, he0,
-            Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+        tauto
     · have hrEq : r = (3 : Fin 4) := by
         apply Fin.ext
         exact hr
@@ -393,6 +436,12 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
         ext z
         simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
       · have hjEq : j.val = k - 2 := by omega
+        have hnextHead :=
+          separatedNext_block3_of_not_lt (k := k) hk j hj
+        rw [hnextHead]
+        simp only [separatedNext_head0, separatedNext_head1,
+          separatedSymbolicOrder_block_g2, separatedSymbolicOrder_head_c0,
+          separatedSymbolicOrder_head_g0, separatedSymbolicOrder_head_g1]
         let m : Fin (k + 1) := ⟨0, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * k, by omega⟩
         have h := hOrd m q
@@ -405,10 +454,17 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
               ⟨1, by omega⟩ := by
           simpa [q] using hcoreWrap2
         rw [hq1, hq2] at h
+        dsimp [m, q] at h
+        have hg2 :
+            (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
+              ⟨3 * k, by omega⟩ := by
+          apply Fin.ext
+          omega
+        rw [hg2]
         convert h using 1
         ext z
-        simp [m, q, hj, hjEq, i0, he0,
-            Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+        tauto
 
 end
 
