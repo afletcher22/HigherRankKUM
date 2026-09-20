@@ -67,7 +67,7 @@ def coreEquiv
     {M : Matroid α} {H : Set α} {n : ℕ}
     (order : Fin n ≃ (M.restrict H).E) (i : Fin n) :
     (coreEquiv order i : α) = (order i : α) := by
-  simp [coreEquiv]
+  simp only [coreEquiv, Equiv.trans_apply, Set.equivOfEq_apply]
 
 /-- Map complement/core slots to actual ground elements. -/
 def slotGroundEquiv
