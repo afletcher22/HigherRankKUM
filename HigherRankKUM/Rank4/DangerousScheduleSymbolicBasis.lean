@@ -243,15 +243,22 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
             cyclicIndex (3 * k + 1) (by omega)
                 (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 =
               ⟨3 * k, by omega⟩ := by
-          exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ hltEdge
-        dsimp only at hExcEnd
+          exact cyclicIndex_eq_mk_add_of_lt
+            (3 * k + 1) (by omega)
+            (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 hltEdge
         rw [hEdge] at hExcEnd
         convert hExcEnd using 1
         ext z
         simp [hjEq, heT', heW',
             Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;> tauto
-  · fin_cases r
-    · simp only [adjacentNext_tail0, adjacentNext_tail1, adjacentNext_block0,
+  · have hrCases : r.val = 0 ∨ r.val = 1 := by
+      omega
+    rcases hrCases with hr | hr
+    · have hrEq : r = (0 : Fin 2) := by
+        apply Fin.ext
+        exact hr
+      subst r
+      simp only [adjacentNext_tail0, adjacentNext_tail1, adjacentNext_block0,
           adjacentSymbolicOrder_tail_c, adjacentSymbolicOrder_tail_g,
           adjacentSymbolicOrder_block_c, adjacentSymbolicOrder_block_g0]
       have hltEdge : (3 * k - 1) + 1 < 3 * k + 1 := by omega
@@ -259,18 +266,23 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
           cyclicIndex (3 * k + 1) (by omega)
               (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 =
             ⟨3 * k, by omega⟩ := by
-        exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ hltEdge
+        exact cyclicIndex_eq_mk_add_of_lt
+          (3 * k + 1) (by omega)
+          (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 hltEdge
       have hWrap :
           cyclicIndex (3 * k + 1) (by omega)
               (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
             ⟨0, by omega⟩ := hcoreWrap1
-      dsimp only at hExcWrap
       rw [hEdge, hWrap] at hExcWrap
       convert hExcWrap using 1
       ext z
       simp [heT', heW',
           Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;> tauto
-    · simp only [adjacentNext_tail1, adjacentNext_block0, adjacentNext_block1,
+    · have hrEq : r = (1 : Fin 2) := by
+        apply Fin.ext
+        exact hr
+      subst r
+      simp only [adjacentNext_tail1, adjacentNext_block0, adjacentNext_block1,
           adjacentSymbolicOrder_tail_g, adjacentSymbolicOrder_block_c,
           adjacentSymbolicOrder_block_g0, adjacentSymbolicOrder_block_g1]
       let m : Fin (k + 1) := ⟨0, by omega⟩
