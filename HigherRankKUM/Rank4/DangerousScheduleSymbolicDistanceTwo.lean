@@ -14,6 +14,7 @@ variable {α : Type*}
 
 /-- Distance-two-good normalized dangerous-hyperplane construction,
 proved through the symbolic separated schedule. -/
+set_option maxHeartbeats 800000 in
 theorem exists_cbo_of_distance_two_good_normalized_symbolic
     {M : Matroid α} {k : ℕ} {H : Set α}
     (hk : 2 ≤ k)
