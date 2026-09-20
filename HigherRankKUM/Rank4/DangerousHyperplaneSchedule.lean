@@ -57,7 +57,7 @@ def dangerousCoreEquiv
     {M : Matroid α} {H : Set α} {n : ℕ}
     (order : Fin n ≃ (M.restrict H).E) (i : Fin n) :
     (dangerousCoreEquiv order i : α) = (order i : α) := by
-  simp [dangerousCoreEquiv, Set.equivOfEq_apply]
+  simp [dangerousCoreEquiv]
 
 /-- The global separated-good schedule
 C G G C G G (C G G G)^(k-1), assembled from a complement enumeration
