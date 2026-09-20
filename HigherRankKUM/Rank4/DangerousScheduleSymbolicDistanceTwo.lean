@@ -69,6 +69,12 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
     FiniteSchedule.exists_fin_equiv_with_three_at_positions
       hCfin hCcard i0 i1 i2 hi01 hi02 hi12
       hc₀ hc₁ hc₂ hc01 hc02 hc12
+  have he0' : (eC (0 : Fin (k + 1)) : α) = c₀ := by
+    simpa [i0] using he0
+  have he1' : (eC (1 : Fin (k + 1)) : α) = c₁ := by
+    simpa [i1] using he1
+  have he2' : (eC (2 : Fin (k + 1)) : α) = c₂ := by
+    simpa [i2] using he2
 
   have hOrd
       (m : Fin (k + 1)) (q : Fin (3 * k + 1)) :
@@ -91,8 +97,13 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨0, by omega⟩ := by
+    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (3 * k + 1) (by omega)
+      (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 2
+      (by omega) (by omega)
     apply Fin.ext
-    simp [cyclicIndex]
+    have hv := congrArg Fin.val h
+    simpa using hv
 
   have hcoreWrap1 :
       cyclicIndex (3 * k + 1) (by omega)
@@ -105,8 +116,13 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨1, by omega⟩ := by
+    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (3 * k + 1) (by omega)
+      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2
+      (by omega) (by omega)
     apply Fin.ext
-    simp [cyclicIndex]
+    have hv := congrArg Fin.val h
+    simpa using hv
 
   refine ⟨separatedOrder hk hH eC order,
     separated_cbo_of_symbolic_windows hk hH eC order ?_⟩
@@ -120,8 +136,8 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [h01] at hExc0
       convert hExc0 using 1
       ext z
-      simp [i0, i1, he0, he1,
-          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]  <;> tauto
+      simp [he0', he1',
+          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;> tauto
     · let m : Fin (k + 1) := ⟨1, by omega⟩
       let q : Fin (3 * k + 1) := ⟨0, by omega⟩
       have h := hOrd m q
@@ -150,13 +166,17 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       ext z
       simp [m, q, i1, he1,
           Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-    · have h23 := hcoreNoWrap
-        (⟨2, by omega⟩ : Fin (3 * k + 1)) 1 (by omega)
+    · rw [hidx2] at hExc2
+      have h23 :
+          cyclicIndex (3 * k + 1) (by omega)
+              (⟨2, by omega⟩ : Fin (3 * k + 1)) 1 =
+            ⟨3, by omega⟩ := by
+        exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ (by omega)
       rw [h23] at hExc2
       convert hExc2 using 1
       ext z
-      simp [i1, i2, he1, he2,
-          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]  <;> tauto
+      simp [he1', he2',
+          Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union] <;> tauto
     · let m : Fin (k + 1) := ⟨2, by omega⟩
       let q : Fin (3 * k + 1) := ⟨2, by omega⟩
       have h := hOrd m q
