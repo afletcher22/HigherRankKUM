@@ -130,7 +130,7 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
   simp only [transportedNext_separated]
   rcases p with r | p
   · fin_cases r
-      have h01 := hcoreNoWrap
+    · have h01 := hcoreNoWrap
         (⟨0, by omega⟩ : Fin (3 * k + 1)) 1 (by omega)
       rw [h01] at hExc0
       convert hExc0 using 1
@@ -165,7 +165,7 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       ext z
       simp [m, q, i1, he1,
           Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-      have h23 := hcoreNoWrap
+    · have h23 := hcoreNoWrap
         (⟨2, by omega⟩ : Fin (3 * k + 1)) 1 (by omega)
       rw [h23] at hExc2
       convert hExc2 using 1
