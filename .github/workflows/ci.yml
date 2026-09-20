@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - sol-symbolic-distance-two
   pull_request:
     branches:
       - main
