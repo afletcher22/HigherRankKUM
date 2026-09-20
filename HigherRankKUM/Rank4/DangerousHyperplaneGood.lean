@@ -277,6 +277,53 @@ theorem dangerous_hyperplane_basis_union_complement_rank_four
   · simpa [C] using hlower
 
 
+
+/-- Every adjacent pair in the rank-three core CBO is an independent
+rank-two set in the ambient matroid. -/
+theorem dangerous_hyperplane_core_pair_indep_rank_two
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 1 ≤ k)
+    (hH : DangerousHyperplane M k H)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order)
+    (i : Fin (3 * k + 1)) :
+    let P : Set α :=
+      {(order i : α),
+        (order (cyclicIndex (3 * k + 1) (by omega) i 1) : α)}
+    M.Indep P ∧ M.eRk P = (2 : ℕ∞) := by
+  let hn : 0 < 3 * k + 1 := by omega
+  let j := cyclicIndex (3 * k + 1) hn i 1
+  let P : Set α := {(order i : α), (order j : α)}
+  have hTriple :=
+    dangerous_hyperplane_core_triple_isBasis
+      hH order hOrder i
+  have hPsub :
+      P ⊆
+        ({(order i : α),
+          (order (cyclicIndex (3 * k + 1) hn i 1) : α),
+          (order (cyclicIndex (3 * k + 1) hn i 2) : α)} : Set α) := by
+    intro x hx
+    rcases hx with rfl | hx
+    · simp
+    · have hxj : x = (order j : α) := by simpa [P] using hx
+      subst x
+      simp [j]
+  have hPind : M.Indep P := hTriple.indep.subset hPsub
+  have hij : i ≠ j := by
+    intro h
+    exact cyclicIndex_ne_self_of_pos_of_lt
+      (3 * k + 1) hn i (a := 1) (by omega) (by omega) h.symm
+  have hvals : (order i : α) ≠ (order j : α) := by
+    intro h
+    apply hij
+    apply order.injective
+    exact Subtype.ext h
+  have hPrank : M.eRk P = (2 : ℕ∞) := by
+    rw [hPind.eRk_eq_encard]
+    simpa [P, Set.encard_pair hvals]
+  exact ⟨hPind, hPrank⟩
+
 /-- A rank-two base selected inside the complement-restricted contraction
 lifts directly to an ambient rank-four base together with the contracted
 independent rank-two core pair. -/
