@@ -204,6 +204,15 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
           dsimp [q]
           omega)
         rw [hq1, hq2] at h
+        have hlastCore :
+            (⟨q.val + 2, by
+                dsimp [q]
+                omega⟩ : Fin (3 * k + 1)) =
+              ⟨3 * k, by omega⟩ := by
+          apply Fin.ext
+          dsimp [q]
+          omega
+        rw [hlastCore] at h
         have hnextTail :=
           adjacentNext_block3_of_not_lt (k := k) (by omega) j hj
         simp only [adjacentNext_block2]
@@ -211,9 +220,11 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         simp only [adjacentNext_tail0, adjacentSymbolicOrder_block_g1,
           adjacentSymbolicOrder_block_g2, adjacentSymbolicOrder_tail_c,
           adjacentSymbolicOrder_tail_g]
+        dsimp [m, q] at h
         convert h using 1
         ext z
-        simp [m, q, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff] <;> tauto
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+        tauto
     · have hrEq : r = (3 : Fin 4) := by
         apply Fin.ext
         exact hr
@@ -297,9 +308,11 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
             ⟨1, by omega⟩ := by
         simpa [q] using hcoreWrap2
       rw [hq1, hq2] at h
+      dsimp [m, q] at h
       convert h using 1
       ext z
-      simp [m, q, heW', Set.mem_insert_iff, Set.mem_singleton_iff] <;> tauto
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
 
 end
 
