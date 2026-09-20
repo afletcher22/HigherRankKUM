@@ -328,7 +328,7 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       · have hjEq : j.val = k - 2 := by omega
         have hnextHead :=
           separatedNext_block3_of_not_lt (k := k) hk j hj
-        simp only [separatedNext_block2]
+        simp only [separatedNext_block1, separatedNext_block2]
         rw [hnextHead]
         simp only [separatedSymbolicOrder_block_g0,
           separatedSymbolicOrder_block_g1, separatedSymbolicOrder_block_g2,
@@ -348,16 +348,19 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
             (⟨3 * j.val + 4, by omega⟩ : Fin (3 * k + 1)) =
               ⟨3 * k - 2, by omega⟩ := by
           apply Fin.ext
+          change 3 * j.val + 4 = 3 * k - 2
           omega
         have hg1 :
             (⟨3 * j.val + 5, by omega⟩ : Fin (3 * k + 1)) =
               ⟨3 * k - 2 + 1, by omega⟩ := by
           apply Fin.ext
+          change 3 * j.val + 5 = 3 * k - 2 + 1
           omega
         have hg2 :
             (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
               ⟨3 * k - 2 + 2, by omega⟩ := by
           apply Fin.ext
+          change 3 * j.val + 6 = 3 * k - 2 + 2
           omega
         rw [hg0, hg1, hg2]
         convert h using 1
@@ -406,11 +409,13 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
             (⟨3 * j.val + 5, by omega⟩ : Fin (3 * k + 1)) =
               ⟨3 * k - 1, by omega⟩ := by
           apply Fin.ext
+          change 3 * j.val + 5 = 3 * k - 1
           omega
         have hg2 :
             (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
               ⟨3 * k - 1 + 1, by omega⟩ := by
           apply Fin.ext
+          change 3 * j.val + 6 = 3 * k - 1 + 1
           omega
         rw [hg1, hg2]
         convert h using 1
@@ -459,6 +464,7 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
             (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
               ⟨3 * k, by omega⟩ := by
           apply Fin.ext
+          change 3 * j.val + 6 = 3 * k
           omega
         rw [hg2]
         convert h using 1
