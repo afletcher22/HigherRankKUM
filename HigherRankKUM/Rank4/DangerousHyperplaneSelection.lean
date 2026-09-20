@@ -7,6 +7,7 @@ namespace Rank4DangerousBranches
 
 open Set
 open scoped Matroid
+open Rank4GcdTwoDeletion
 
 noncomputable section
 
