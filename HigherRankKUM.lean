@@ -83,6 +83,7 @@ import HigherRankKUM.Rank4.GcdTwoCrossRepairParity
 import HigherRankKUM.Rank4.GcdTwoClosurePropagation
 import HigherRankKUM.Rank4.GcdTwoRankTwoTight
 import HigherRankKUM.Rank4.T0Deletion
+import HigherRankKUM.Rank4.T0TwoDeletion
 import HigherRankKUM.Rank4.SixElementBoundary
 import HigherRankKUM.Rank4.DangerousCore
 import HigherRankKUM.Rank4.CyclicWindowFour
