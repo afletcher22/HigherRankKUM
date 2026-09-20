@@ -14,6 +14,8 @@ noncomputable section
 
 variable {α : Type*}
 
+set_option maxHeartbeats 800000
+
 /-- Every window beginning before the six-element tail of the t=3 pattern
 is ordinary, provided the prefix follows the repeating A,B,C,G class pattern.
 
@@ -81,10 +83,7 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    convert hbase using 1
-    ext x
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-    aesop
+    simpa only [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using hbase
   · have hb : (σ i : α) ∈ M.E \ H₁ :=
       hB i (by omega) hr
     have hc : (σ i1 : α) ∈ M.E \ H₂ :=
@@ -96,10 +95,7 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    convert hbase using 1
-    ext x
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-    aesop
+    simpa only [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using hbase
   · have hc : (σ i : α) ∈ M.E \ H₂ :=
       hC i (by omega) hr
     have hg : (σ i1 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
@@ -111,10 +107,7 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    convert hbase using 1
-    ext x
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-    aesop
+    simpa only [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using hbase
   · have hg : (σ i : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
       hG i (by omega) hr
     have ha : (σ i1 : α) ∈ M.E \ H₀ :=
@@ -126,10 +119,7 @@ theorem dangerous_triple_ordinary_prefix_windows
     have hbase := dangerous_triple_one_each_isBase
       hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
       hg ha hb hc
-    convert hbase using 1
-    ext x
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-    aesop
+    simpa only [Set.insert_comm, Set.insert_left_comm, Set.insert_assoc] using hbase
 
 /-- The six exceptional windows of the explicit t=3 schedule are bases.
 
@@ -184,8 +174,8 @@ theorem dangerous_triple_six_exceptional_windows
       cyclicIndex (4 * k + 2) hn
           ⟨4 * (k - 1) + r, by omega⟩ s =
         ⟨4 * (k - 1) + r + s, by omega⟩ := by
-    apply cyclicIndex_eq_mk_add_of_lt
-    omega
+    exact cyclicIndex_eq_mk_add_of_lt
+      (4 * k + 2) hn ⟨4 * (k - 1) + r, by omega⟩ s (by omega)
 
   have hwrap (r s : ℕ) (hr : r < 6) (hge : 6 ≤ r + s)
       (hlt : r + s < 12) :
@@ -197,7 +187,7 @@ theorem dangerous_triple_six_exceptional_windows
       (by omega) (by omega)
     rw [h]
     apply Fin.ext
-    simp only [Fin.val_mk]
+    change (4 * (k - 1) + r + s - (4 * k + 2)) = r + s - 6
     omega
 
   have hbaseA_pd : M.IsBase ({pA, pB, pC, dA} : Set α) := by
@@ -411,10 +401,10 @@ theorem dangerous_triple_cbo_of_local_orders
     (hH₁ : DangerousHyperplane M k H₁)
     (hH₂ : DangerousHyperplane M k H₂)
     (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂)
-    (eA : Fin (k + 1) ≃ (M.E \ H₀))
-    (eB : Fin (k + 1) ≃ (M.E \ H₁))
-    (eC : Fin (k + 1) ≃ (M.E \ H₂))
-    (eG : Fin (k - 1) ≃ ((H₀ ∩ H₁) ∩ H₂))
+    (eA : Fin (k + 1) ≃ (M.E \ H₀ : Set α))
+    (eB : Fin (k + 1) ≃ (M.E \ H₁ : Set α))
+    (eC : Fin (k + 1) ≃ (M.E \ H₂ : Set α))
+    (eG : Fin (k - 1) ≃ (((H₀ ∩ H₁) ∩ H₂ : Set α)))
     {qA pA dA qB pB dB qC pC dC : α}
     (heA0 : (eA ⟨0, by omega⟩ : α) = qA)
     (heAp : (eA ⟨k - 1, by omega⟩ : α) = pA)
@@ -438,8 +428,8 @@ theorem dangerous_triple_cbo_of_local_orders
       CyclicBasisOrder M 4 (by omega) σ := by
   let eSlots :
       FiniteSchedule.T3Slots k ≃
-        ((M.E \ H₀) ⊕ (M.E \ H₁)) ⊕
-          ((M.E \ H₂) ⊕ ((H₀ ∩ H₁) ∩ H₂)) :=
+        ((M.E \ H₀ : Set α) ⊕ (M.E \ H₁ : Set α)) ⊕
+          ((M.E \ H₂ : Set α) ⊕ (((H₀ ∩ H₁) ∩ H₂ : Set α))) :=
     Equiv.sumCongr (Equiv.sumCongr eA eB) (Equiv.sumCongr eC eG)
   let eGround :=
     dangerous_triple_parts_equiv_ground
