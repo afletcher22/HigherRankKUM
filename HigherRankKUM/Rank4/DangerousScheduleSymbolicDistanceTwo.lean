@@ -69,12 +69,21 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
     FiniteSchedule.exists_fin_equiv_with_three_at_positions
       hCfin hCcard i0 i1 i2 hi01 hi02 hi12
       hc₀ hc₁ hc₂ hc01 hc02 hc12
-  have he0' : (eC (0 : Fin (k + 1)) : α) = c₀ := by
-    simpa [i0] using he0
-  have he1' : (eC (1 : Fin (k + 1)) : α) = c₁ := by
-    simpa [i1] using he1
-  have he2' : (eC (2 : Fin (k + 1)) : α) = c₂ := by
-    simpa [i2] using he2
+  have he0' : (eC (⟨0, by omega⟩ : Fin (k + 1)) : α) = c₀ := by
+    rw [show (⟨0, by omega⟩ : Fin (k + 1)) = i0 by
+      apply Fin.ext
+      rfl]
+    exact he0
+  have he1' : (eC (⟨1, by omega⟩ : Fin (k + 1)) : α) = c₁ := by
+    rw [show (⟨1, by omega⟩ : Fin (k + 1)) = i1 by
+      apply Fin.ext
+      rfl]
+    exact he1
+  have he2' : (eC (⟨2, by omega⟩ : Fin (k + 1)) : α) = c₂ := by
+    rw [show (⟨2, by omega⟩ : Fin (k + 1)) = i2 by
+      apply Fin.ext
+      rfl]
+    exact he2
 
   have hOrd
       (m : Fin (k + 1)) (q : Fin (3 * k + 1)) :
@@ -97,13 +106,10 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨0, by omega⟩ := by
-    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
-      (3 * k + 1) (by omega)
-      (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 2
-      (by omega) (by omega)
     apply Fin.ext
-    have hv := congrArg Fin.val h
-    simpa using hv
+    simp only [cyclicIndex_val, Fin.val_mk]
+    have hsum : 3 * k - 1 + 2 = 3 * k + 1 := by omega
+    rw [hsum, Nat.mod_self]
 
   have hcoreWrap1 :
       cyclicIndex (3 * k + 1) (by omega)
@@ -116,13 +122,14 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨1, by omega⟩ := by
-    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+    have hge : 3 * k + 1 ≤ 3 * k + 2 := by omega
+    have hlt : 3 * k + 2 < 2 * (3 * k + 1) := by omega
+    rw [cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
       (3 * k + 1) (by omega)
-      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2
-      (by omega) (by omega)
+      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 hge hlt]
     apply Fin.ext
-    have hv := congrArg Fin.val h
-    simpa using hv
+    simp
+    omega
 
   refine ⟨separatedOrder hk hH eC order,
     separated_cbo_of_symbolic_windows hk hH eC order ?_⟩
