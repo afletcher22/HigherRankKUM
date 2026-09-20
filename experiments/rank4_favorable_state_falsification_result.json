@@ -1,0 +1,79 @@
+{
+  "binary_exact": {
+    "n12": {
+      "matroids": 455,
+      "pointed_deletions": 5460,
+      "prescribed_element_failures": 0,
+      "existential_failures": 0
+    },
+    "n14": {
+      "matroids": 15,
+      "pointed_deletions": 210,
+      "prescribed_element_failures": 0,
+      "existential_failures": 0
+    }
+  },
+  "seeded_nonbinary": {
+    "gf3_n12": {
+      "matroids": 20,
+      "pointed_deletions": 240,
+      "prescribed_element_failures": 0,
+      "existential_failures": 0,
+      "accepted_after_draws": 22,
+      "profile_counts": {
+        "1,3,6": 4,
+        "1,3,7": 6,
+        "1,4,6": 1,
+        "1,4,7": 7,
+        "1,4,8": 2
+      }
+    },
+    "gf3_n14": {
+      "matroids": 20,
+      "pointed_deletions": 280,
+      "prescribed_element_failures": 0,
+      "existential_failures": 0,
+      "accepted_after_draws": 21,
+      "profile_counts": {
+        "1,3,7": 2,
+        "1,4,7": 5,
+        "1,4,8": 10,
+        "1,4,9": 3
+      }
+    },
+    "gf5_n12": {
+      "matroids": 20,
+      "pointed_deletions": 240,
+      "prescribed_element_failures": 0,
+      "existential_failures": 0,
+      "accepted_after_draws": 20,
+      "profile_counts": {
+        "1,3,6": 12,
+        "1,3,7": 3,
+        "1,4,6": 1,
+        "1,4,7": 2,
+        "1,4,8": 2
+      }
+    },
+    "gf5_n14": {
+      "matroids": 20,
+      "pointed_deletions": 280,
+      "prescribed_element_failures": 0,
+      "existential_failures": 0,
+      "accepted_after_draws": 20,
+      "profile_counts": {
+        "1,3,6": 1,
+        "1,3,7": 11,
+        "1,3,8": 1,
+        "1,4,6": 1,
+        "1,4,7": 5,
+        "1,4,8": 1
+      }
+    }
+  },
+  "interpretation": {
+    "binary_scope": "all simple binary rank-4 n=12 and n=14 representations inside PG(3,2)",
+    "nonbinary_scope": "seeded samples only",
+    "claim_level": "reproducible computation; not Lean certification"
+  }
+}
