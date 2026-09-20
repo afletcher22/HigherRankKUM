@@ -1,5 +1,6 @@
 import HigherRankKUM.Rank4.DangerousHyperplaneSelection
 import HigherRankKUM.Rank4.FiniteSchedule
+import HigherRankKUM.Rank4.CyclicIndexArithmetic
 import HigherRankKUM.CyclicRotation
 import Mathlib.Logic.Equiv.Set
 import Mathlib.Tactic
@@ -21,6 +22,7 @@ def dangerous_hyperplane_parts_equiv_ground
     {M : Matroid α} {k : ℕ} {H : Set α}
     (hH : DangerousHyperplane M k H) :
     (M.E \ H : Set α) ⊕ (H : Set α) ≃ M.E := by
+  classical
   have hd : Disjoint (M.E \ H) H := disjoint_sdiff_left
   let e : (M.E \ H : Set α) ⊕ (H : Set α) ≃
       ((M.E \ H) ∪ H : Set α) :=
