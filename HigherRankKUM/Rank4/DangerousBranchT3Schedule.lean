@@ -471,29 +471,175 @@ theorem dangerous_triple_cbo_of_local_orders
       (eGround (Sum.inr (Sum.inr (eG g))) : α) = (eG g : α) := by
     simp [eGround, dangerous_triple_parts_equiv_ground]
 
-  have hprefix_eval (j : Fin (k - 1)) (r : Fin 4) :
-      (σ ⟨r.val + 4 * j.val, by omega⟩ : α) =
-        match r.val with
-        | 0 => (eA ⟨j.val, by omega⟩ : α)
-        | 1 => (eB ⟨j.val, by omega⟩ : α)
-        | 2 => (eC ⟨j.val, by omega⟩ : α)
-        | _ => (eG j : α) := by
-    fin_cases r <;>
-      simp [σ, eSlots, FiniteSchedule.t3IndexEquiv_prefix,
-        FiniteSchedule.t3PrefixSlot, hslotA, hslotB, hslotC, hslotG]
+  have hprefixA (j : Fin (k - 1)) :
+      (σ ⟨4 * j.val, by omega⟩ : α) =
+        (eA ⟨j.val, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * j.val, by omega⟩)) : α) =
+        (eA ⟨j.val, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * j.val, by omega⟩ =
+        FiniteSchedule.t3PrefixSlot j 0 by
+          simpa using FiniteSchedule.t3IndexEquiv_prefix k hk j (0 : Fin 4)]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨j.val, by omega⟩))) : α) =
+      (eA ⟨j.val, by omega⟩ : α)
+    exact hslotA _
 
-  have htail_eval (r : Fin 6) :
-      (σ ⟨4 * (k - 1) + r.val, by omega⟩ : α) =
-        match r.val with
-        | 0 => (eA ⟨k - 1, by omega⟩ : α)
-        | 1 => (eB ⟨k - 1, by omega⟩ : α)
-        | 2 => (eC ⟨k - 1, by omega⟩ : α)
-        | 3 => (eA ⟨k, by omega⟩ : α)
-        | 4 => (eB ⟨k, by omega⟩ : α)
-        | _ => (eC ⟨k, by omega⟩ : α) := by
-    fin_cases r <;>
-      simp [σ, eSlots, FiniteSchedule.t3IndexEquiv_tail,
-        FiniteSchedule.t3TailSlot, hslotA, hslotB, hslotC]
+  have hprefixB (j : Fin (k - 1)) :
+      (σ ⟨4 * j.val + 1, by omega⟩ : α) =
+        (eB ⟨j.val, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * j.val + 1, by omega⟩)) : α) =
+        (eB ⟨j.val, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * j.val + 1, by omega⟩ =
+        FiniteSchedule.t3PrefixSlot j 1 by
+          simpa [Nat.add_comm] using
+            FiniteSchedule.t3IndexEquiv_prefix k hk j (1 : Fin 4)]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨j.val, by omega⟩))) : α) =
+      (eB ⟨j.val, by omega⟩ : α)
+    exact hslotB _
+
+  have hprefixC (j : Fin (k - 1)) :
+      (σ ⟨4 * j.val + 2, by omega⟩ : α) =
+        (eC ⟨j.val, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * j.val + 2, by omega⟩)) : α) =
+        (eC ⟨j.val, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * j.val + 2, by omega⟩ =
+        FiniteSchedule.t3PrefixSlot j 2 by
+          simpa [Nat.add_comm] using
+            FiniteSchedule.t3IndexEquiv_prefix k hk j (2 : Fin 4)]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨j.val, by omega⟩))) : α) =
+      (eC ⟨j.val, by omega⟩ : α)
+    exact hslotC _
+
+  have hprefixG (j : Fin (k - 1)) :
+      (σ ⟨4 * j.val + 3, by omega⟩ : α) = (eG j : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * j.val + 3, by omega⟩)) : α) = (eG j : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * j.val + 3, by omega⟩ =
+        FiniteSchedule.t3PrefixSlot j 3 by
+          simpa [Nat.add_comm] using
+            FiniteSchedule.t3IndexEquiv_prefix k hk j (3 : Fin 4)]
+    change (eGround (Sum.inr (Sum.inr (eG j))) : α) = (eG j : α)
+    exact hslotG _
+
+  have htailA0 :
+      (σ ⟨4 * (k - 1), by omega⟩ : α) =
+        (eA ⟨k - 1, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1), by omega⟩)) : α) =
+        (eA ⟨k - 1, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1), by omega⟩ =
+        FiniteSchedule.t3TailSlot hk 0 by
+          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (0 : Fin 6)]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨k - 1, by omega⟩))) : α) =
+      (eA ⟨k - 1, by omega⟩ : α)
+    exact hslotA _
+
+  have htailB0 :
+      (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) =
+        (eB ⟨k - 1, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 1, by omega⟩)) : α) =
+        (eB ⟨k - 1, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 1, by omega⟩ =
+        FiniteSchedule.t3TailSlot hk 1 by
+          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (1 : Fin 6)]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨k - 1, by omega⟩))) : α) =
+      (eB ⟨k - 1, by omega⟩ : α)
+    exact hslotB _
+
+  have htailC0 :
+      (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) =
+        (eC ⟨k - 1, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 2, by omega⟩)) : α) =
+        (eC ⟨k - 1, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 2, by omega⟩ =
+        FiniteSchedule.t3TailSlot hk 2 by
+          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (2 : Fin 6)]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨k - 1, by omega⟩))) : α) =
+      (eC ⟨k - 1, by omega⟩ : α)
+    exact hslotC _
+
+  have htailA1 :
+      (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) =
+        (eA ⟨k, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 3, by omega⟩)) : α) =
+        (eA ⟨k, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 3, by omega⟩ =
+        FiniteSchedule.t3TailSlot hk 3 by
+          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (3 : Fin 6)]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨k, by omega⟩))) : α) =
+      (eA ⟨k, by omega⟩ : α)
+    exact hslotA _
+
+  have htailB1 :
+      (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) =
+        (eB ⟨k, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 4, by omega⟩)) : α) =
+        (eB ⟨k, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 4, by omega⟩ =
+        FiniteSchedule.t3TailSlot hk 4 by
+          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (4 : Fin 6)]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨k, by omega⟩))) : α) =
+      (eB ⟨k, by omega⟩ : α)
+    exact hslotB _
+
+  have htailC1 :
+      (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) =
+        (eC ⟨k, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 5, by omega⟩)) : α) =
+        (eC ⟨k, by omega⟩ : α)
+    rw [show
+      FiniteSchedule.t3IndexEquiv k hk ⟨4 * (k - 1) + 5, by omega⟩ =
+        FiniteSchedule.t3TailSlot hk 5 by
+          simpa using FiniteSchedule.t3IndexEquiv_tail k hk (5 : Fin 6)]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨k, by omega⟩))) : α) =
+      (eC ⟨k, by omega⟩ : α)
+    exact hslotC _
 
   have hA : ∀ t : Fin (4 * k + 2),
       t.val < 4 * (k - 1) + 3 → t.val % 4 = 0 →
@@ -501,14 +647,14 @@ theorem dangerous_triple_cbo_of_local_orders
     intro t ht hmod
     by_cases hpref : t.val < 4 * (k - 1)
     · let j : Fin (k - 1) := ⟨t.val / 4, by omega⟩
-      have hdecomp : t.val = 0 + 4 * j.val := by
+      have hdecomp : t.val = 4 * j.val := by
         dsimp [j]
         have hm := Nat.mod_add_div t.val 4
         omega
-      have htEq : t = ⟨0 + 4 * j.val, by omega⟩ := by
+      have htEq : t = ⟨4 * j.val, by omega⟩ := by
         apply Fin.ext
-        simpa [hdecomp]
-      rw [htEq, hprefix_eval j 0]
+        exact hdecomp
+      rw [htEq, hprefixA j]
       exact (eA ⟨j.val, by omega⟩).property
     · have htval : t.val = 4 * (k - 1) := by
         have h4 : (4 * (k - 1)) % 4 = 0 := by simp
@@ -516,7 +662,7 @@ theorem dangerous_triple_cbo_of_local_orders
       have htEq : t = ⟨4 * (k - 1), by omega⟩ := by
         apply Fin.ext
         exact htval
-      rw [htEq, htail_eval 0]
+      rw [htEq, htailA0]
       exact (eA ⟨k - 1, by omega⟩).property
 
   have hB : ∀ t : Fin (4 * k + 2),
@@ -525,20 +671,20 @@ theorem dangerous_triple_cbo_of_local_orders
     intro t ht hmod
     by_cases hpref : t.val < 4 * (k - 1)
     · let j : Fin (k - 1) := ⟨t.val / 4, by omega⟩
-      have hdecomp : t.val = 1 + 4 * j.val := by
+      have hdecomp : t.val = 4 * j.val + 1 := by
         dsimp [j]
         have hm := Nat.mod_add_div t.val 4
         omega
-      have htEq : t = ⟨1 + 4 * j.val, by omega⟩ := by
+      have htEq : t = ⟨4 * j.val + 1, by omega⟩ := by
         apply Fin.ext
-        simpa [hdecomp]
-      rw [htEq, hprefix_eval j 1]
+        exact hdecomp
+      rw [htEq, hprefixB j]
       exact (eB ⟨j.val, by omega⟩).property
     · have htval : t.val = 4 * (k - 1) + 1 := by omega
       have htEq : t = ⟨4 * (k - 1) + 1, by omega⟩ := by
         apply Fin.ext
         exact htval
-      rw [htEq, htail_eval 1]
+      rw [htEq, htailB0]
       exact (eB ⟨k - 1, by omega⟩).property
 
   have hC : ∀ t : Fin (4 * k + 2),
@@ -547,20 +693,20 @@ theorem dangerous_triple_cbo_of_local_orders
     intro t ht hmod
     by_cases hpref : t.val < 4 * (k - 1)
     · let j : Fin (k - 1) := ⟨t.val / 4, by omega⟩
-      have hdecomp : t.val = 2 + 4 * j.val := by
+      have hdecomp : t.val = 4 * j.val + 2 := by
         dsimp [j]
         have hm := Nat.mod_add_div t.val 4
         omega
-      have htEq : t = ⟨2 + 4 * j.val, by omega⟩ := by
+      have htEq : t = ⟨4 * j.val + 2, by omega⟩ := by
         apply Fin.ext
-        simpa [hdecomp]
-      rw [htEq, hprefix_eval j 2]
+        exact hdecomp
+      rw [htEq, hprefixC j]
       exact (eC ⟨j.val, by omega⟩).property
     · have htval : t.val = 4 * (k - 1) + 2 := by omega
       have htEq : t = ⟨4 * (k - 1) + 2, by omega⟩ := by
         apply Fin.ext
         exact htval
-      rw [htEq, htail_eval 2]
+      rw [htEq, htailC0]
       exact (eC ⟨k - 1, by omega⟩).property
 
   have hG : ∀ t : Fin (4 * k + 2),
@@ -569,55 +715,78 @@ theorem dangerous_triple_cbo_of_local_orders
     intro t ht hmod
     have hpref : t.val < 4 * (k - 1) := by omega
     let j : Fin (k - 1) := ⟨t.val / 4, by omega⟩
-    have hdecomp : t.val = 3 + 4 * j.val := by
+    have hdecomp : t.val = 4 * j.val + 3 := by
       dsimp [j]
       have hm := Nat.mod_add_div t.val 4
       omega
-    have htEq : t = ⟨3 + 4 * j.val, by omega⟩ := by
+    have htEq : t = ⟨4 * j.val + 3, by omega⟩ := by
       apply Fin.ext
-      simpa [hdecomp]
-    rw [htEq, hprefix_eval j 3]
+      exact hdecomp
+    rw [htEq, hprefixG j]
     exact (eG j).property
 
   have hσ0 : (σ ⟨0, by omega⟩ : α) = qA := by
-    have h := hprefix_eval ⟨0, by omega⟩ 0
-    simpa [heA0] using h
+    calc
+      (σ ⟨0, by omega⟩ : α) = (eA ⟨0, by omega⟩ : α) := by
+        simpa using hprefixA ⟨0, by omega⟩
+      _ = qA := heA0
   have hσ1 : (σ ⟨1, by omega⟩ : α) = qB := by
-    have h := hprefix_eval ⟨0, by omega⟩ 1
-    simpa [heB0] using h
+    calc
+      (σ ⟨1, by omega⟩ : α) = (eB ⟨0, by omega⟩ : α) := by
+        simpa using hprefixB ⟨0, by omega⟩
+      _ = qB := heB0
   have hσ2 : (σ ⟨2, by omega⟩ : α) = qC := by
-    have h := hprefix_eval ⟨0, by omega⟩ 2
-    simpa [heC0] using h
+    calc
+      (σ ⟨2, by omega⟩ : α) = (eC ⟨0, by omega⟩ : α) := by
+        simpa using hprefixC ⟨0, by omega⟩
+      _ = qC := heC0
 
-  have hσpA : (σ ⟨4 * (k - 1), by omega⟩ : α) = pA := by
-    have h := htail_eval 0
-    simpa [heAp] using h
-  have hσpB : (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = pB := by
-    have h := htail_eval 1
-    simpa [heBp] using h
-  have hσpC : (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = pC := by
-    have h := htail_eval 2
-    simpa [heCp] using h
-  have hσdA : (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = dA := by
-    have h := htail_eval 3
-    simpa [heAd] using h
-  have hσdB : (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = dB := by
-    have h := htail_eval 4
-    simpa [heBd] using h
-  have hσdC : (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = dC := by
-    have h := htail_eval 5
-    simpa [heCd] using h
+  have hσpA : (σ ⟨4 * (k - 1), by omega⟩ : α) = pA :=
+    htailA0.trans heAp
+  have hσpB : (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = pB :=
+    htailB0.trans heBp
+  have hσpC : (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = pC :=
+    htailC0.trans heCp
+  have hσdA : (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = dA :=
+    htailA1.trans heAd
+  have hσdB : (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = dB :=
+    htailB1.trans heBd
+  have hσdC : (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = dC :=
+    htailC1.trans heCd
+
+  have hqA' : qA ∈ M.E \ H₀ := by
+    rw [← heA0]
+    exact (eA ⟨0, by omega⟩).property
+  have hpA' : pA ∈ M.E \ H₀ := by
+    rw [← heAp]
+    exact (eA ⟨k - 1, by omega⟩).property
+  have hdA' : dA ∈ M.E \ H₀ := by
+    rw [← heAd]
+    exact (eA ⟨k, by omega⟩).property
+  have hqB' : qB ∈ M.E \ H₁ := by
+    rw [← heB0]
+    exact (eB ⟨0, by omega⟩).property
+  have hpB' : pB ∈ M.E \ H₁ := by
+    rw [← heBp]
+    exact (eB ⟨k - 1, by omega⟩).property
+  have hdB' : dB ∈ M.E \ H₁ := by
+    rw [← heBd]
+    exact (eB ⟨k, by omega⟩).property
+  have hqC' : qC ∈ M.E \ H₂ := by
+    rw [← heC0]
+    exact (eC ⟨0, by omega⟩).property
+  have hpC' : pC ∈ M.E \ H₂ := by
+    rw [← heCp]
+    exact (eC ⟨k - 1, by omega⟩).property
+  have hdC' : dC ∈ M.E \ H₂ := by
+    rw [← heCd]
+    exact (eC ⟨k, by omega⟩).property
 
   refine ⟨σ, ?_⟩
   exact dangerous_triple_cbo_of_normalized_schedule
     hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
     σ hA hB hC hG
-    (eA ⟨0, by omega⟩).property (eA ⟨k - 1, by omega⟩).property
-    (eA ⟨k, by omega⟩).property
-    (eB ⟨0, by omega⟩).property (eB ⟨k - 1, by omega⟩).property
-    (eB ⟨k, by omega⟩).property
-    (eC ⟨0, by omega⟩).property (eC ⟨k - 1, by omega⟩).property
-    (eC ⟨k, by omega⟩).property
+    hqA' hpA' hdA' hqB' hpB' hdB' hqC' hpC' hdC'
     hpAdA hdAqA hpBdB hdBqB hpCdC hdCqC
     hpdA hdqA hpdB hdqB hpdC hdqC
     hσ0 hσ1 hσ2 hσpA hσpB hσpC hσdA hσdB hσdC
@@ -683,6 +852,7 @@ theorem exists_cyclicBasisOrder_of_three_dangerous
     hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
   have hGfin : ((H₀ ∩ H₁) ∩ H₂).Finite :=
     hE.subset hGdata.1.subset_ground
+  letI : Finite (↥((H₀ ∩ H₁) ∩ H₂)) := hGfin.to_subtype
   have hGnatCard : Nat.card (↥((H₀ ∩ H₁) ∩ H₂)) = k - 1 := by
     simpa [Nat.card_coe_set_eq] using hGdata.2.2
   let eG : Fin (k - 1) ≃ (↥((H₀ ∩ H₁) ∩ H₂)) :=
