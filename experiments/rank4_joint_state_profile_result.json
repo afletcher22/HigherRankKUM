@@ -1,0 +1,59 @@
+{
+  "strict8": {
+    "states": 432,
+    "undirected_edges": 864,
+    "components": [
+      432
+    ],
+    "successful_states": 144,
+    "states_without_nondecreasing_profile_escape": 48,
+    "unsuccessful_local_profile_maxima": 48,
+    "bad_profile_counts": {
+      "(3, 1)": 48
+    },
+    "witness_local_maximum": {
+      "omitted_label": 0,
+      "order": [
+        1,
+        2,
+        4,
+        3,
+        7,
+        6,
+        5
+      ],
+      "profile": [
+        3,
+        1
+      ],
+      "blockers": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "neighbor_profiles": [
+        [
+          2,
+          2
+        ]
+      ]
+    }
+  },
+  "t0_n10": {
+    "states": 4224,
+    "undirected_edges": 9600,
+    "components": [
+      4224
+    ],
+    "successful_states": 1920,
+    "states_without_nondecreasing_profile_escape": 0,
+    "unsuccessful_local_profile_maxima": 0,
+    "bad_profile_counts": {},
+    "witness_local_maximum": null
+  },
+  "interpretation": "Lexicographically nondecreasing nonblocker-run profile is not a universal escape potential: strict8 has genuine bad local maxima. The t0 n=10 witness nevertheless has monotone escape from every state."
+}
