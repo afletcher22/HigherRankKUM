@@ -92,5 +92,26 @@ theorem mem_closure_fourfold_inter_of_adjacent_indep
   rw [hinter] at h
   exact h
 
+/-- Four closure constraints with empty common intersection are impossible for
+a nonloop. This is the abstract endpoint behind the rank-four fact that a
+blocker word cannot contain four consecutive blockers. -/
+theorem not_four_closures_of_nonloop_of_fourfold_inter_empty
+    {M : Matroid α} {W X Y Z : Set α} {e : α}
+    (he : M.IsNonloop e)
+    (hWX : M.Indep (W ∪ X))
+    (hXY : M.Indep (X ∪ Y))
+    (hYZ : M.Indep (Y ∪ Z))
+    (hEmpty : W ∩ X ∩ Y ∩ Z = ∅) :
+    ¬ (e ∈ M.closure W ∧
+       e ∈ M.closure X ∧
+       e ∈ M.closure Y ∧
+       e ∈ M.closure Z) := by
+  rintro ⟨heW, heX, heY, heZ⟩
+  have hmem :=
+    mem_closure_fourfold_inter_of_adjacent_indep
+      hWX hXY hYZ heW heX heY heZ
+  rw [hEmpty, M.closure_empty] at hmem
+  exact he.not_isLoop hmem
+
 end BlockerClosure
 end HigherRankKUM
