@@ -91,37 +91,22 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨0, by omega⟩ := by
-    have hh := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
-      (3 * k + 1) (by omega)
-      (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 2
-      (by omega) (by omega)
     apply Fin.ext
-    have hv := congrArg Fin.val hh
-    simpa using hv
+    simp [cyclicIndex]
 
   have hcoreWrap1 :
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
         ⟨0, by omega⟩ := by
-    have hh := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
-      (3 * k + 1) (by omega)
-      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1
-      (by omega) (by omega)
     apply Fin.ext
-    have hv := congrArg Fin.val hh
-    simpa using hv
+    simp [cyclicIndex]
 
   have hcoreWrap2 :
       cyclicIndex (3 * k + 1) (by omega)
           (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨1, by omega⟩ := by
-    have hh := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
-      (3 * k + 1) (by omega)
-      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2
-      (by omega) (by omega)
     apply Fin.ext
-    have hv := congrArg Fin.val hh
-    simpa using hv
+    simp [cyclicIndex]
 
   refine ⟨separatedOrder hk hH eC order,
     separated_cbo_of_symbolic_windows hk hH eC order ?_⟩
