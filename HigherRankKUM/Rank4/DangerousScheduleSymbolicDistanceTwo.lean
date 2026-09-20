@@ -12,6 +12,258 @@ noncomputable section
 
 variable {α : Type*}
 
+/-- Every repeated-block window in the separated symbolic schedule is a basis.
+This is independent of the two exceptional good-edge selections; it uses only
+the ordinary one-complement/three-core basis fact. -/
+private theorem separated_block_window_isBase
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hH : DangerousHyperplane M k H)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder : CyclicBasisOrder (M.restrict H) 3 (by omega) order)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (j : Fin (k - 1)) (r : Fin 4) :
+    M.IsBase
+      ({(separatedSymbolicOrder hk hH eC order (Sum.inr (j, r)) : α),
+        (separatedSymbolicOrder hk hH eC order
+          (separatedNext k hk (Sum.inr (j, r))) : α),
+        (separatedSymbolicOrder hk hH eC order
+          (separatedNext k hk
+            (separatedNext k hk (Sum.inr (j, r)))) : α),
+        (separatedSymbolicOrder hk hH eC order
+          (separatedNext k hk
+            (separatedNext k hk
+              (separatedNext k hk (Sum.inr (j, r))))) : α)} : Set α) := by
+  have hOrd
+      (m : Fin (k + 1)) (q : Fin (3 * k + 1)) :
+      M.IsBase
+        ({(eC m : α),
+          (order q : α),
+          (order (cyclicIndex (3 * k + 1) (by omega) q 1) : α),
+          (order (cyclicIndex (3 * k + 1) (by omega) q 2) : α)} : Set α) :=
+    dangerous_hyperplane_complement_plus_core_triple_isBase
+      hRank hH order hOrder (eC m).property q
+
+  have hcoreNoWrap
+      (q : Fin (3 * k + 1)) (d : ℕ)
+      (hqd : q.val + d < 3 * k + 1) :
+      cyclicIndex (3 * k + 1) (by omega) q d =
+        ⟨q.val + d, hqd⟩ :=
+    cyclicIndex_eq_mk_add_of_lt _ _ _ _ hqd
+
+  have hcoreLastMinusOne2 :
+      cyclicIndex (3 * k + 1) (by omega)
+          (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 2 =
+        ⟨0, by omega⟩ := by
+    apply Fin.ext
+    simp only [cyclicIndex_val, Fin.val_mk]
+    have hsum : 3 * k - 1 + 2 = 3 * k + 1 := by omega
+    rw [hsum, Nat.mod_self]
+
+  have hcoreWrap1 :
+      cyclicIndex (3 * k + 1) (by omega)
+          (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
+        ⟨0, by omega⟩ := by
+    apply Fin.ext
+    simp [cyclicIndex]
+
+  have hcoreWrap2 :
+      cyclicIndex (3 * k + 1) (by omega)
+          (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
+        ⟨1, by omega⟩ := by
+    have hge : 3 * k + 1 ≤ 3 * k + 2 := by omega
+    have hlt : 3 * k + 2 < 2 * (3 * k + 1) := by omega
+    rw [cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (3 * k + 1) (by omega)
+      (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 hge hlt]
+    apply Fin.ext
+    simp
+
+  have hjlt := j.isLt
+  have hrCases : r.val = 0 ∨ r.val = 1 ∨ r.val = 2 ∨ r.val = 3 := by
+    omega
+  rcases hrCases with hr | hr | hr | hr
+  · have hrEq : r = (0 : Fin 4) := by
+      apply Fin.ext
+      exact hr
+    subst r
+    let m : Fin (k + 1) := ⟨j.val + 2, by omega⟩
+    let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
+    have h := hOrd m q
+    have hq1 := hcoreNoWrap q 1 (by
+      dsimp [q]
+      omega)
+    have hq2 := hcoreNoWrap q 2 (by
+      dsimp [q]
+      omega)
+    rw [hq1, hq2] at h
+    simpa [m, q] using h
+  · have hrEq : r = (1 : Fin 4) := by
+      apply Fin.ext
+      exact hr
+    subst r
+    by_cases hj : j.val + 1 < k - 1
+    · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
+      let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
+      have h := hOrd m q
+      have hq1 := hcoreNoWrap q 1 (by
+        dsimp [q]
+        omega)
+      have hq2 := hcoreNoWrap q 2 (by
+        dsimp [q]
+        omega)
+      rw [hq1, hq2] at h
+      convert h using 1
+      ext z
+      simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+    · have hjEq : j.val = k - 2 := by omega
+      have hnextHead :=
+        separatedNext_block3_of_not_lt (k := k) hk j hj
+      simp only [separatedNext_block1, separatedNext_block2]
+      rw [hnextHead]
+      simp only [separatedSymbolicOrder_block_g0,
+        separatedSymbolicOrder_block_g1, separatedSymbolicOrder_block_g2,
+        separatedSymbolicOrder_head_c0]
+      let m : Fin (k + 1) := ⟨0, by omega⟩
+      let q : Fin (3 * k + 1) := ⟨3 * k - 2, by omega⟩
+      have h := hOrd m q
+      have hq1 := hcoreNoWrap q 1 (by
+        dsimp [q]
+        omega)
+      have hq2 := hcoreNoWrap q 2 (by
+        dsimp [q]
+        omega)
+      rw [hq1, hq2] at h
+      dsimp [m, q] at h
+      have hg0 :
+          (⟨3 * j.val + 4, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k - 2, by omega⟩ := by
+        apply Fin.ext
+        change 3 * j.val + 4 = 3 * k - 2
+        omega
+      have hg1 :
+          (⟨3 * j.val + 5, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k - 2 + 1, by omega⟩ := by
+        apply Fin.ext
+        change 3 * j.val + 5 = 3 * k - 2 + 1
+        omega
+      have hg2 :
+          (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k - 2 + 2, by omega⟩ := by
+        apply Fin.ext
+        change 3 * j.val + 6 = 3 * k - 2 + 2
+        omega
+      rw [hg0, hg1, hg2]
+      convert h using 1
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+  · have hrEq : r = (2 : Fin 4) := by
+      apply Fin.ext
+      exact hr
+    subst r
+    by_cases hj : j.val + 1 < k - 1
+    · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
+      let q : Fin (3 * k + 1) := ⟨3 * j.val + 5, by omega⟩
+      have h := hOrd m q
+      have hq1 := hcoreNoWrap q 1 (by
+        dsimp [q]
+        omega)
+      have hq2 := hcoreNoWrap q 2 (by
+        dsimp [q]
+        omega)
+      rw [hq1, hq2] at h
+      convert h using 1
+      ext z
+      simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+    · have hjEq : j.val = k - 2 := by omega
+      have hnextHead :=
+        separatedNext_block3_of_not_lt (k := k) hk j hj
+      simp only [separatedNext_block2]
+      rw [hnextHead]
+      simp only [separatedNext_head0,
+        separatedSymbolicOrder_block_g1, separatedSymbolicOrder_block_g2,
+        separatedSymbolicOrder_head_c0, separatedSymbolicOrder_head_g0]
+      let m : Fin (k + 1) := ⟨0, by omega⟩
+      let q : Fin (3 * k + 1) := ⟨3 * k - 1, by omega⟩
+      have h := hOrd m q
+      have hq1 := hcoreNoWrap q 1 (by
+        dsimp [q]
+        omega)
+      have hq2 :
+          cyclicIndex (3 * k + 1) (by omega) q 2 =
+            ⟨0, by omega⟩ := by
+        simpa [q] using hcoreLastMinusOne2
+      rw [hq1, hq2] at h
+      dsimp [m, q] at h
+      have hg1 :
+          (⟨3 * j.val + 5, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k - 1, by omega⟩ := by
+        apply Fin.ext
+        change 3 * j.val + 5 = 3 * k - 1
+        omega
+      have hg2 :
+          (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k - 1 + 1, by omega⟩ := by
+        apply Fin.ext
+        change 3 * j.val + 6 = 3 * k - 1 + 1
+        omega
+      rw [hg1, hg2]
+      convert h using 1
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+  · have hrEq : r = (3 : Fin 4) := by
+      apply Fin.ext
+      exact hr
+    subst r
+    by_cases hj : j.val + 1 < k - 1
+    · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
+      let q : Fin (3 * k + 1) := ⟨3 * j.val + 6, by omega⟩
+      have h := hOrd m q
+      have hq1 := hcoreNoWrap q 1 (by
+        dsimp [q]
+        omega)
+      have hq2 := hcoreNoWrap q 2 (by
+        dsimp [q]
+        omega)
+      rw [hq1, hq2] at h
+      convert h using 1
+      ext z
+      simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
+    · have hjEq : j.val = k - 2 := by omega
+      have hnextHead :=
+        separatedNext_block3_of_not_lt (k := k) hk j hj
+      rw [hnextHead]
+      simp only [separatedNext_head0, separatedNext_head1,
+        separatedSymbolicOrder_block_g2, separatedSymbolicOrder_head_c0,
+        separatedSymbolicOrder_head_g0, separatedSymbolicOrder_head_g1]
+      let m : Fin (k + 1) := ⟨0, by omega⟩
+      let q : Fin (3 * k + 1) := ⟨3 * k, by omega⟩
+      have h := hOrd m q
+      have hq1 :
+          cyclicIndex (3 * k + 1) (by omega) q 1 =
+            ⟨0, by omega⟩ := by
+        simpa [q] using hcoreWrap1
+      have hq2 :
+          cyclicIndex (3 * k + 1) (by omega) q 2 =
+            ⟨1, by omega⟩ := by
+        simpa [q] using hcoreWrap2
+      rw [hq1, hq2] at h
+      dsimp [m, q] at h
+      have hg2 :
+          (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
+            ⟨3 * k, by omega⟩ := by
+        apply Fin.ext
+        change 3 * j.val + 6 = 3 * k
+        omega
+      rw [hg2]
+      convert h using 1
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+
 set_option maxHeartbeats 800000 in
 /-- Distance-two-good normalized dangerous-hyperplane construction,
 proved through the symbolic separated schedule. -/
@@ -288,189 +540,7 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
   · rcases p with ⟨j, r⟩
-    have hjlt := j.isLt
-    have hrCases : r.val = 0 ∨ r.val = 1 ∨ r.val = 2 ∨ r.val = 3 := by
-      omega
-    rcases hrCases with hr | hr | hr | hr
-    · have hrEq : r = (0 : Fin 4) := by
-        apply Fin.ext
-        exact hr
-      subst r
-      let m : Fin (k + 1) := ⟨j.val + 2, by omega⟩
-      let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
-      have h := hOrd m q
-      have hq1 := hcoreNoWrap q 1 (by
-        dsimp [q]
-        omega)
-      have hq2 := hcoreNoWrap q 2 (by
-        dsimp [q]
-        omega)
-      rw [hq1, hq2] at h
-      simpa [m, q] using h
-    · have hrEq : r = (1 : Fin 4) := by
-        apply Fin.ext
-        exact hr
-      subst r
-      by_cases hj : j.val + 1 < k - 1
-      · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
-        let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
-        have h := hOrd m q
-        have hq1 := hcoreNoWrap q 1 (by
-          dsimp [q]
-          omega)
-        have hq2 := hcoreNoWrap q 2 (by
-          dsimp [q]
-          omega)
-        rw [hq1, hq2] at h
-        convert h using 1
-        ext z
-        simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-      · have hjEq : j.val = k - 2 := by omega
-        have hnextHead :=
-          separatedNext_block3_of_not_lt (k := k) hk j hj
-        simp only [separatedNext_block1, separatedNext_block2]
-        rw [hnextHead]
-        simp only [separatedSymbolicOrder_block_g0,
-          separatedSymbolicOrder_block_g1, separatedSymbolicOrder_block_g2,
-          separatedSymbolicOrder_head_c0]
-        let m : Fin (k + 1) := ⟨0, by omega⟩
-        let q : Fin (3 * k + 1) := ⟨3 * k - 2, by omega⟩
-        have h := hOrd m q
-        have hq1 := hcoreNoWrap q 1 (by
-          dsimp [q]
-          omega)
-        have hq2 := hcoreNoWrap q 2 (by
-          dsimp [q]
-          omega)
-        rw [hq1, hq2] at h
-        dsimp [m, q] at h
-        have hg0 :
-            (⟨3 * j.val + 4, by omega⟩ : Fin (3 * k + 1)) =
-              ⟨3 * k - 2, by omega⟩ := by
-          apply Fin.ext
-          change 3 * j.val + 4 = 3 * k - 2
-          omega
-        have hg1 :
-            (⟨3 * j.val + 5, by omega⟩ : Fin (3 * k + 1)) =
-              ⟨3 * k - 2 + 1, by omega⟩ := by
-          apply Fin.ext
-          change 3 * j.val + 5 = 3 * k - 2 + 1
-          omega
-        have hg2 :
-            (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
-              ⟨3 * k - 2 + 2, by omega⟩ := by
-          apply Fin.ext
-          change 3 * j.val + 6 = 3 * k - 2 + 2
-          omega
-        rw [hg0, hg1, hg2]
-        convert h using 1
-        ext z
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-        tauto
-    · have hrEq : r = (2 : Fin 4) := by
-        apply Fin.ext
-        exact hr
-      subst r
-      by_cases hj : j.val + 1 < k - 1
-      · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
-        let q : Fin (3 * k + 1) := ⟨3 * j.val + 5, by omega⟩
-        have h := hOrd m q
-        have hq1 := hcoreNoWrap q 1 (by
-          dsimp [q]
-          omega)
-        have hq2 := hcoreNoWrap q 2 (by
-          dsimp [q]
-          omega)
-        rw [hq1, hq2] at h
-        convert h using 1
-        ext z
-        simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-      · have hjEq : j.val = k - 2 := by omega
-        have hnextHead :=
-          separatedNext_block3_of_not_lt (k := k) hk j hj
-        simp only [separatedNext_block2]
-        rw [hnextHead]
-        simp only [separatedNext_head0,
-          separatedSymbolicOrder_block_g1, separatedSymbolicOrder_block_g2,
-          separatedSymbolicOrder_head_c0, separatedSymbolicOrder_head_g0]
-        let m : Fin (k + 1) := ⟨0, by omega⟩
-        let q : Fin (3 * k + 1) := ⟨3 * k - 1, by omega⟩
-        have h := hOrd m q
-        have hq1 := hcoreNoWrap q 1 (by
-          dsimp [q]
-          omega)
-        have hq2 :
-            cyclicIndex (3 * k + 1) (by omega) q 2 =
-              ⟨0, by omega⟩ := by
-          simpa [q] using hcoreLastMinusOne2
-        rw [hq1, hq2] at h
-        dsimp [m, q] at h
-        have hg1 :
-            (⟨3 * j.val + 5, by omega⟩ : Fin (3 * k + 1)) =
-              ⟨3 * k - 1, by omega⟩ := by
-          apply Fin.ext
-          change 3 * j.val + 5 = 3 * k - 1
-          omega
-        have hg2 :
-            (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
-              ⟨3 * k - 1 + 1, by omega⟩ := by
-          apply Fin.ext
-          change 3 * j.val + 6 = 3 * k - 1 + 1
-          omega
-        rw [hg1, hg2]
-        convert h using 1
-        ext z
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-        tauto
-    · have hrEq : r = (3 : Fin 4) := by
-        apply Fin.ext
-        exact hr
-      subst r
-      by_cases hj : j.val + 1 < k - 1
-      · let m : Fin (k + 1) := ⟨j.val + 3, by omega⟩
-        let q : Fin (3 * k + 1) := ⟨3 * j.val + 6, by omega⟩
-        have h := hOrd m q
-        have hq1 := hcoreNoWrap q 1 (by
-          dsimp [q]
-          omega)
-        have hq2 := hcoreNoWrap q 2 (by
-          dsimp [q]
-          omega)
-        rw [hq1, hq2] at h
-        convert h using 1
-        ext z
-        simp [m, q, hj, Set.mem_insert_iff, Set.mem_singleton_iff]  <;> tauto
-      · have hjEq : j.val = k - 2 := by omega
-        have hnextHead :=
-          separatedNext_block3_of_not_lt (k := k) hk j hj
-        rw [hnextHead]
-        simp only [separatedNext_head0, separatedNext_head1,
-          separatedSymbolicOrder_block_g2, separatedSymbolicOrder_head_c0,
-          separatedSymbolicOrder_head_g0, separatedSymbolicOrder_head_g1]
-        let m : Fin (k + 1) := ⟨0, by omega⟩
-        let q : Fin (3 * k + 1) := ⟨3 * k, by omega⟩
-        have h := hOrd m q
-        have hq1 :
-            cyclicIndex (3 * k + 1) (by omega) q 1 =
-              ⟨0, by omega⟩ := by
-          simpa [q] using hcoreWrap1
-        have hq2 :
-            cyclicIndex (3 * k + 1) (by omega) q 2 =
-              ⟨1, by omega⟩ := by
-          simpa [q] using hcoreWrap2
-        rw [hq1, hq2] at h
-        dsimp [m, q] at h
-        have hg2 :
-            (⟨3 * j.val + 6, by omega⟩ : Fin (3 * k + 1)) =
-              ⟨3 * k, by omega⟩ := by
-          apply Fin.ext
-          change 3 * j.val + 6 = 3 * k
-          omega
-        rw [hg2]
-        convert h using 1
-        ext z
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-        tauto
+    exact separated_block_window_isBase hk hRank hH order hOrder eC j r
 
 end
 
