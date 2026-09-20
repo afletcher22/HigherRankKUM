@@ -203,7 +203,19 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-      aesop
+      constructor
+      · intro hz
+        rcases hz with hz | hz | hz | hz
+        · exact Or.inr (Or.inl hz)
+        · exact Or.inl hz
+        · exact Or.inr (Or.inr (Or.inl hz))
+        · exact Or.inr (Or.inr (Or.inr hz))
+      · intro hz
+        rcases hz with hz | hz | hz | hz
+        · exact Or.inr (Or.inl hz)
+        · exact Or.inl hz
+        · exact Or.inr (Or.inr (Or.inl hz))
+        · exact Or.inr (Or.inr (Or.inr hz))
     · have hrEq : r = (3 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -223,7 +235,19 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       convert hExc2 using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
-      aesop
+      constructor
+      · intro hz
+        rcases hz with hz | hz | hz | hz
+        · exact Or.inl hz
+        · exact Or.inr (Or.inr (Or.inl hz))
+        · exact Or.inr (Or.inr (Or.inr hz))
+        · exact Or.inr (Or.inl hz)
+      · intro hz
+        rcases hz with hz | hz | hz | hz
+        · exact Or.inl hz
+        · exact Or.inr (Or.inr (Or.inr hz))
+        · exact Or.inr (Or.inl hz)
+        · exact Or.inr (Or.inr (Or.inl hz))
     · have hrEq : r = (4 : Fin 6) := by
         apply Fin.ext
         exact hr
