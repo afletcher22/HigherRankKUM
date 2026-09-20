@@ -2,8 +2,10 @@
 """Falsification audit for the post-t>0 favorable-state conjecture.
 
 Exact:
-  * all 455 simple binary rank-4 12-point subsets of PG(3,2);
-  * all 15 simple binary rank-4 14-point subsets of PG(3,2).
+  * every universally deletion-robust simple binary rank-4 matroid of even
+    size n=8,10,12,14, represented as a subset of PG(3,2).
+  These are the entire possible even sizes >=8 for a simple binary rank-4
+  matroid, since PG(3,2) has 15 points.
 
 Seeded stress test:
   * 20 universally deletion-robust simple examples for each of
@@ -202,6 +204,8 @@ def main():
     seed = 20260920
     out = {
         "binary_exact": {
+            "n8": binary_exact(8),
+            "n10": binary_exact(10),
             "n12": binary_exact(12),
             "n14": binary_exact(14),
         },
@@ -212,7 +216,7 @@ def main():
             "gf5_n14": seeded_nonbinary(5, 14, 20, seed + 514),
         },
         "interpretation": {
-            "binary_scope": "all simple binary rank-4 n=12 and n=14 representations inside PG(3,2)",
+            "binary_scope": "all universally deletion-robust simple binary rank-4 representations of even size n=8,10,12,14 inside PG(3,2)",
             "nonbinary_scope": "seeded samples only",
             "claim_level": "reproducible computation; not Lean certification",
         },
