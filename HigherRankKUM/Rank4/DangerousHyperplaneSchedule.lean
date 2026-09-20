@@ -1298,6 +1298,206 @@ theorem exists_cbo_of_adjacent_good_normalized
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
     tauto
 
+
+/-- The distance-two-good compressed schedule has a cyclic basis ordering.
+
+The normalized good core edges are 0 and 2.  The complementary path
+c₀-c₁-c₂ is placed in complement slots 0,1,2 of the schedule
+C G G C G G (C G G G)^(k-1).  Starts 0 and 3 are the only exceptional
+windows; every other window is ordinary. -/
+theorem exists_cbo_of_distance_two_good_normalized
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order)
+    (hgood0 :
+      DangerousHyperplaneEdgeGood order ⟨0, by omega⟩)
+    (hgood2 :
+      DangerousHyperplaneEdgeGood order ⟨2, by omega⟩) :
+    ∃ σ : Fin (4 * k + 2) ≃ M.E,
+      CyclicBasisOrder M 4 (by omega) σ := by
+  have hidx2 :
+      cyclicIndex (3 * k + 1) (by omega)
+          (⟨0, by omega⟩ : Fin (3 * k + 1)) 2 =
+        ⟨2, by omega⟩ := by
+    apply cyclicIndex_eq_mk_add_of_lt
+    omega
+  obtain ⟨c₀, c₁, c₂, hc01, hc12, hc02,
+      hc₀, hc₁, hc₂, hExc0, hExc2⟩ :=
+    dangerous_hyperplane_distance_two_good_selection
+      hk hE hRank hEcard hStrict hH order hOrder
+      ⟨0, by omega⟩ hgood0 (by simpa [hidx2] using hgood2)
+
+  let C : Set α := M.E \ H
+  have hCfin : C.Finite := by
+    dsimp [C]
+    exact hE.sdiff
+  have hCcard : C.ncard = k + 1 := by
+    dsimp [C]
+    exact dangerous_complement_ncard_eq hE hEcard hH
+
+  let i0 : Fin (k + 1) := ⟨0, by omega⟩
+  let i1 : Fin (k + 1) := ⟨1, by omega⟩
+  let i2 : Fin (k + 1) := ⟨2, by omega⟩
+  have hi01 : i0 ≠ i1 := by
+    intro h
+    have := congrArg Fin.val h
+    simp [i0, i1] at this
+  have hi02 : i0 ≠ i2 := by
+    intro h
+    have := congrArg Fin.val h
+    simp [i0, i2] at this
+  have hi12 : i1 ≠ i2 := by
+    intro h
+    have := congrArg Fin.val h
+    simp [i1, i2] at this
+
+  obtain ⟨eC, he0, he1, he2⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_three_at_positions
+      hCfin hCcard i0 i1 i2 hi01 hi02 hi12
+      hc₀ hc₁ hc₂ hc01 hc02 hc12
+
+  let σ : Fin (4 * k + 2) ≃ M.E :=
+    dangerousSeparatedScheduleOrder hk hH eC order
+
+  have hs0 : (σ ⟨0, by omega⟩ : α) = c₀ := by
+    change
+      (dangerousSeparatedScheduleOrder hk hH eC order
+        ⟨0, by omega⟩ : α) = c₀
+    rw [dangerousSeparatedScheduleOrder_head0]
+    simpa [i0] using he0
+  have hs1 :
+      (σ ⟨1, by omega⟩ : α) = (order ⟨0, by omega⟩ : α) := by
+    change
+      (dangerousSeparatedScheduleOrder hk hH eC order
+        ⟨1, by omega⟩ : α) = (order ⟨0, by omega⟩ : α)
+    exact dangerousSeparatedScheduleOrder_head1 hk hH eC order
+  have hs2 :
+      (σ ⟨2, by omega⟩ : α) = (order ⟨1, by omega⟩ : α) := by
+    change
+      (dangerousSeparatedScheduleOrder hk hH eC order
+        ⟨2, by omega⟩ : α) = (order ⟨1, by omega⟩ : α)
+    exact dangerousSeparatedScheduleOrder_head2 hk hH eC order
+  have hs3 : (σ ⟨3, by omega⟩ : α) = c₁ := by
+    change
+      (dangerousSeparatedScheduleOrder hk hH eC order
+        ⟨3, by omega⟩ : α) = c₁
+    rw [dangerousSeparatedScheduleOrder_head3]
+    simpa [i1] using he1
+  have hs4 :
+      (σ ⟨4, by omega⟩ : α) = (order ⟨2, by omega⟩ : α) := by
+    change
+      (dangerousSeparatedScheduleOrder hk hH eC order
+        ⟨4, by omega⟩ : α) = (order ⟨2, by omega⟩ : α)
+    exact dangerousSeparatedScheduleOrder_head4 hk hH eC order
+  have hs5 :
+      (σ ⟨5, by omega⟩ : α) = (order ⟨3, by omega⟩ : α) := by
+    change
+      (dangerousSeparatedScheduleOrder hk hH eC order
+        ⟨5, by omega⟩ : α) = (order ⟨3, by omega⟩ : α)
+    exact dangerousSeparatedScheduleOrder_head5 hk hH eC order
+  have hs6 : (σ ⟨6, by omega⟩ : α) = c₂ := by
+    change
+      (dangerousSeparatedScheduleOrder hk hH eC order
+        ⟨6, by omega⟩ : α) = c₂
+    have h :=
+      dangerousSeparatedScheduleOrder_blockC
+        hk hH eC order (⟨0, by omega⟩ : Fin (k - 1))
+    rw [show
+      (⟨6, by omega⟩ : Fin (4 * k + 2)) =
+        ⟨6 + 4 * (0 : Fin (k - 1)).val, by omega⟩ by
+          apply Fin.ext
+          simp]
+    rw [h]
+    simpa [i2] using he2
+
+  refine ⟨σ, (cyclicBasisOrder_four_iff (by omega) σ).2 ?_⟩
+  intro s
+  by_cases h0 : s.val = 0
+  · have hs : s = ⟨0, by omega⟩ := Fin.ext h0
+    subst s
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          (⟨0, by omega⟩ : Fin (4 * k + 2)) 1 =
+          ⟨1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          (⟨0, by omega⟩ : Fin (4 * k + 2)) 2 =
+          ⟨2, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          (⟨0, by omega⟩ : Fin (4 * k + 2)) 3 =
+          ⟨3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    rw [h1, h2, h3, hs0, hs1, hs2, hs3]
+    have hP :
+        cyclicIndex (3 * k + 1) (by omega)
+            (⟨0, by omega⟩ : Fin (3 * k + 1)) 1 =
+          ⟨1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    dsimp only at hExc0
+    rw [hP] at hExc0
+    convert hExc0 using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+    tauto
+
+  by_cases h3s : s.val = 3
+  · have hs : s = ⟨3, by omega⟩ := Fin.ext h3s
+    subst s
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          (⟨3, by omega⟩ : Fin (4 * k + 2)) 1 =
+          ⟨4, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          (⟨3, by omega⟩ : Fin (4 * k + 2)) 2 =
+          ⟨5, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          (⟨3, by omega⟩ : Fin (4 * k + 2)) 3 =
+          ⟨6, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    rw [h1, h2, h3, hs3, hs4, hs5, hs6]
+    have hP :
+        cyclicIndex (3 * k + 1) (by omega)
+            (⟨2, by omega⟩ : Fin (3 * k + 1)) 1 =
+          ⟨3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    dsimp only at hExc2
+    rw [hP] at hExc2
+    convert hExc2 using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+    tauto
+
+  obtain ⟨m, q, hclass⟩ :=
+    dangerousSeparatedSchedule_window_classification
+      hk hH eC order s h0 h3s
+  have hbase :=
+    dangerous_hyperplane_complement_plus_core_triple_isBase
+      hRank hH order hOrder (eC m).property q
+  rw [hclass]
+  exact hbase
+
 end
 
 end Rank4DangerousBranches
