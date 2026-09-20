@@ -130,6 +130,25 @@ Thus the weaker bounded-valley statement `Lmax drop <= 1` is exact for the
 entire simple-binary n=8 class, and the no-closed-all-bad-component statement
 also survives exactly there.
 
+The 3,375 qualifying n=8 representations split into exactly three
+`GL(4,2)` orbits, and these orbit sizes coincide with the three state-graph
+classes:
+
+* orbit size 2,520: four triangles, 384 states, connected, monotone escape;
+* orbit size 840: three triangles, 432 states, connected, 48 profile-local
+  obstructions and required `Lmax` drop exactly one;
+* orbit size 15: no triangles, 384 isolated states, every state successful.
+
+The size-15 orbit consists of complements of projective hyperplanes (the
+8-point affine-cube type). The size-840 orbit is exactly the prescribed-e
+failure class from the favorable-state audit: a representative is
+`(7,8,10,11,12,13,14,15)`, whose unique bad element is 7. Its three
+triangles are
+`(7,8,15)`, `(7,10,13)`, and `(7,11,12)`.
+Thus six of the seven other points are paired by lines through the bad
+element. This gives a concrete rank-2 geometric source for the run-profile
+valley.
+
 ## Structural interpretation of the strict8 plateau
 
 In the local-maximum witness above, the two consecutive blockers collapse to
