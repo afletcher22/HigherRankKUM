@@ -57,7 +57,7 @@ def dangerousSeparatedScheduleOrder
     Fin (4 * k + 2) ≃ M.E := by
   let eG : Fin (3 * k + 1) ≃ (H : Set α) :=
     order.trans (Equiv.setCongr (by
-      simpa [Matroid.restrict_ground, hH.subset_ground] ))
+      simpa [Matroid.restrict_ground_eq] ))
   exact
     (FiniteSchedule.hyperSeparatedIndexEquiv k hk).trans
       ((Equiv.sumCongr eC eG).trans
@@ -797,7 +797,7 @@ theorem exists_cbo_of_adjacent_good_normalized
 
   let eG : Fin (3 * k + 1) ≃ (H : Set α) :=
     order.trans (Equiv.setCongr (by
-      simpa [Matroid.restrict_ground, hH.subset_ground] ))
+      simpa [Matroid.restrict_ground_eq] ))
   let eSlots : FiniteSchedule.HyperplaneSlots k ≃
       (M.E \ H : Set α) ⊕ (H : Set α) :=
     Equiv.sumCongr eC eG
