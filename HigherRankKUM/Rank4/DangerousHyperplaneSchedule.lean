@@ -45,6 +45,20 @@ def dangerous_hyperplane_parts_equiv_ground
     (dangerous_hyperplane_parts_equiv_ground hH (Sum.inr g) : α) = g := by
   simp [dangerous_hyperplane_parts_equiv_ground]
 
+/-- The identity-on-elements equivalence from the restricted ground subtype
+to the underlying dangerous hyperplane subtype. -/
+def dangerousCoreEquiv
+    {M : Matroid α} {H : Set α} {n : ℕ}
+    (order : Fin n ≃ (M.restrict H).E) :
+    Fin n ≃ (H : Set α) :=
+  order.trans (Equiv.setCongr (by simp [Matroid.restrict_ground_eq]))
+
+@[simp] theorem dangerousCoreEquiv_coe
+    {M : Matroid α} {H : Set α} {n : ℕ}
+    (order : Fin n ≃ (M.restrict H).E) (i : Fin n) :
+    (dangerousCoreEquiv order i : α) = (order i : α) := by
+  simp [dangerousCoreEquiv, Set.equivOfEq_apply]
+
 /-- The global separated-good schedule
 C G G C G G (C G G G)^(k-1), assembled from a complement enumeration
 and a core cyclic order. -/
@@ -56,8 +70,7 @@ def dangerousSeparatedScheduleOrder
     (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
     Fin (4 * k + 2) ≃ M.E := by
   let eG : Fin (3 * k + 1) ≃ (H : Set α) :=
-    order.trans (Equiv.setCongr (by
-      simpa [Matroid.restrict_ground_eq] ))
+    dangerousCoreEquiv order
   exact
     (FiniteSchedule.hyperSeparatedIndexEquiv k hk).trans
       ((Equiv.sumCongr eC eG).trans
@@ -796,8 +809,7 @@ theorem exists_cbo_of_adjacent_good_normalized
       hCfin hCcard iT iW hiTW hcT hcW hcne
 
   let eG : Fin (3 * k + 1) ≃ (H : Set α) :=
-    order.trans (Equiv.setCongr (by
-      simpa [Matroid.restrict_ground_eq] ))
+    dangerousCoreEquiv order
   let eSlots : FiniteSchedule.HyperplaneSlots k ≃
       (M.E \ H : Set α) ⊕ (H : Set α) :=
     Equiv.sumCongr eC eG
