@@ -15,6 +15,7 @@ variable {α : Type*}
 -- Symbolic adjacent certification; all finite-index arithmetic is confined to helper lemmas below.
 /-- Adjacent-good normalized dangerous-hyperplane construction, proved
 entirely through the symbolic schedule API. -/
+set_option maxHeartbeats 800000 in
 theorem exists_cbo_of_adjacent_good_normalized_symbolic
     {M : Matroid α} {k : ℕ} {H : Set α}
     (hk : 2 ≤ k)
