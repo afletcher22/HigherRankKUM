@@ -268,7 +268,7 @@ theorem dangerousSeparatedSchedule_window_classification
       omega
     rcases hcases with h1 | h2 | h4 | h5
     · have hs : s = ⟨1, by omega⟩ := Fin.ext h1
-      subst s
+      rw [hs]
       have hg1 := hglobal_add 1 1 (by omega) (by omega)
       have hg2 := hglobal_add 1 2 (by omega) (by omega)
       have hg3 := hglobal_add 1 3 (by omega) (by omega)
@@ -281,7 +281,7 @@ theorem dangerousSeparatedSchedule_window_classification
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
     · have hs : s = ⟨2, by omega⟩ := Fin.ext h2
-      subst s
+      rw [hs]
       have hg1 := hglobal_add 2 1 (by omega) (by omega)
       have hg2 := hglobal_add 2 2 (by omega) (by omega)
       have hg3 := hglobal_add 2 3 (by omega) (by omega)
@@ -294,7 +294,7 @@ theorem dangerousSeparatedSchedule_window_classification
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
     · have hs : s = ⟨4, by omega⟩ := Fin.ext h4
-      subst s
+      rw [hs]
       have hg1 := hglobal_add 4 1 (by omega) (by omega)
       have hg2 := hglobal_add 4 2 (by omega) (by omega)
       have hg3 := hglobal_add 4 3 (by omega) (by omega)
@@ -307,7 +307,7 @@ theorem dangerousSeparatedSchedule_window_classification
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
     · have hs : s = ⟨5, by omega⟩ := Fin.ext h5
-      subst s
+      rw [hs]
       have hg1 := hglobal_add 5 1 (by omega) (by omega)
       have hg2 := hglobal_add 5 2 (by omega) (by omega)
       have hg3 := hglobal_add 5 3 (by omega) (by omega)
@@ -354,7 +354,7 @@ theorem dangerousSeparatedSchedule_window_classification
       simpa [σ, jlast] using h
     rcases hcases with hA | hB | hC
     · have hs : s = ⟨4 * k - 1, by omega⟩ := Fin.ext hA
-      subst s
+      rw [hs]
       have hg1 := hglobal_add (4 * k - 1) 1 (by omega) (by omega)
       have hg2 := hglobal_add (4 * k - 1) 2 (by omega) (by omega)
       have hg3 :
@@ -374,7 +374,7 @@ theorem dangerousSeparatedSchedule_window_classification
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
     · have hs : s = ⟨4 * k, by omega⟩ := Fin.ext hB
-      subst s
+      rw [hs]
       have hg1 := hglobal_add (4 * k) 1 (by omega) (by omega)
       have hg2 :
           cyclicIndex (4 * k + 2) (by omega)
@@ -403,7 +403,7 @@ theorem dangerousSeparatedSchedule_window_classification
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
     · have hs : s = ⟨4 * k + 1, by omega⟩ := Fin.ext hC
-      subst s
+      rw [hs]
       have hg1 :
           cyclicIndex (4 * k + 2) (by omega)
               (⟨4 * k + 1, by omega⟩ : Fin (4 * k + 2)) 1 =
@@ -454,7 +454,7 @@ theorem dangerousSeparatedSchedule_window_classification
       have hm := Nat.mod_add_div t 4
       omega
     have hs : s = ⟨6 + 4 * j.val, by omega⟩ := Fin.ext hsval
-    subst s
+    rw [hs]
     have hg1 := hglobal_add (6 + 4 * j.val) 1 (by omega) (by omega)
     have hg2 := hglobal_add (6 + 4 * j.val) 2 (by omega) (by omega)
     have hg3 := hglobal_add (6 + 4 * j.val) 3 (by omega) (by omega)
@@ -474,7 +474,7 @@ theorem dangerousSeparatedSchedule_window_classification
     have hjnext : j.val + 1 < k - 1 := by omega
     let jn : Fin (k - 1) := ⟨j.val + 1, hjnext⟩
     have hs : s = ⟨7 + 4 * j.val, by omega⟩ := Fin.ext hsval
-    subst s
+    rw [hs]
     have hg1 := hglobal_add (7 + 4 * j.val) 1 (by omega) (by omega)
     have hg2 := hglobal_add (7 + 4 * j.val) 2 (by omega) (by omega)
     have hg3 := hglobal_add (7 + 4 * j.val) 3 (by omega) (by omega)
@@ -497,7 +497,7 @@ theorem dangerousSeparatedSchedule_window_classification
     have hjnext : j.val + 1 < k - 1 := by omega
     let jn : Fin (k - 1) := ⟨j.val + 1, hjnext⟩
     have hs : s = ⟨8 + 4 * j.val, by omega⟩ := Fin.ext hsval
-    subst s
+    rw [hs]
     have hg1 := hglobal_add (8 + 4 * j.val) 1 (by omega) (by omega)
     have hg2 := hglobal_add (8 + 4 * j.val) 2 (by omega) (by omega)
     have hg3 := hglobal_add (8 + 4 * j.val) 3 (by omega) (by omega)
@@ -522,7 +522,7 @@ theorem dangerousSeparatedSchedule_window_classification
     have hjnext : j.val + 1 < k - 1 := by omega
     let jn : Fin (k - 1) := ⟨j.val + 1, hjnext⟩
     have hs : s = ⟨9 + 4 * j.val, by omega⟩ := Fin.ext hsval
-    subst s
+    rw [hs]
     have hg1 := hglobal_add (9 + 4 * j.val) 1 (by omega) (by omega)
     have hg2 := hglobal_add (9 + 4 * j.val) 2 (by omega) (by omega)
     have hg3 := hglobal_add (9 + 4 * j.val) 3 (by omega) (by omega)
@@ -994,7 +994,7 @@ theorem exists_cbo_of_adjacent_good_normalized
   intro s
   by_cases hEnd : s.val = 4 * k - 1
   · have hs : s = ⟨4 * k - 1, by omega⟩ := Fin.ext hEnd
-    subst s
+    rw [hs]
     have h1 :
         cyclicIndex (4 * k + 2) (by omega)
           ⟨4 * k - 1, by omega⟩ 1 = ⟨4 * k, by omega⟩ := by
@@ -1026,7 +1026,7 @@ theorem exists_cbo_of_adjacent_good_normalized
 
   by_cases hWrap : s.val = 4 * k
   · have hs : s = ⟨4 * k, by omega⟩ := Fin.ext hWrap
-    subst s
+    rw [hs]
     have h1 :
         cyclicIndex (4 * k + 2) (by omega)
           ⟨4 * k, by omega⟩ 1 = ⟨4 * k + 1, by omega⟩ := by
@@ -1057,7 +1057,7 @@ theorem exists_cbo_of_adjacent_good_normalized
 
   by_cases hLast : s.val = 4 * k + 1
   · have hs : s = ⟨4 * k + 1, by omega⟩ := Fin.ext hLast
-    subst s
+    rw [hs]
     have h1 :
         cyclicIndex (4 * k + 2) (by omega)
           ⟨4 * k + 1, by omega⟩ 1 = ⟨0, by omega⟩ := by
@@ -1113,7 +1113,7 @@ theorem exists_cbo_of_adjacent_good_normalized
       have hm := Nat.mod_add_div s.val 4
       omega
     have hsEq : s = ⟨4 * j.val, by omega⟩ := Fin.ext hsval
-    subst s
+    rw [hsEq]
     have hc := (eC ⟨j.val, by omega⟩).property
     have h1 :
         cyclicIndex (4 * k + 2) (by omega)
@@ -1159,7 +1159,7 @@ theorem exists_cbo_of_adjacent_good_normalized
       have hm := Nat.mod_add_div s.val 4
       omega
     have hsEq : s = ⟨4 * j.val + 1, by omega⟩ := Fin.ext hsval
-    subst s
+    rw [hsEq]
     let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
     have hc := (eC m).property
     have h1 :
@@ -1214,7 +1214,7 @@ theorem exists_cbo_of_adjacent_good_normalized
       have hm := Nat.mod_add_div s.val 4
       omega
     have hsEq : s = ⟨4 * j.val + 2, by omega⟩ := Fin.ext hsval
-    subst s
+    rw [hsEq]
     let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
     have hc := (eC m).property
     have h1 :
@@ -1269,7 +1269,7 @@ theorem exists_cbo_of_adjacent_good_normalized
       have hm := Nat.mod_add_div s.val 4
       omega
     have hsEq : s = ⟨4 * j.val + 3, by omega⟩ := Fin.ext hsval
-    subst s
+    rw [hsEq]
     have hjNext : j.val + 1 < k := by
       omega
     let jn : Fin k := ⟨j.val + 1, hjNext⟩
@@ -1460,7 +1460,7 @@ theorem exists_cbo_of_distance_two_good_normalized
   intro s
   by_cases h0 : s.val = 0
   · have hs : s = ⟨0, by omega⟩ := Fin.ext h0
-    subst s
+    rw [hs]
     have h1 :
         cyclicIndex (4 * k + 2) (by omega)
           (⟨0, by omega⟩ : Fin (4 * k + 2)) 1 =
@@ -1495,7 +1495,7 @@ theorem exists_cbo_of_distance_two_good_normalized
 
   by_cases h3s : s.val = 3
   · have hs : s = ⟨3, by omega⟩ := Fin.ext h3s
-    subst s
+    rw [hs]
     have h1 :
         cyclicIndex (4 * k + 2) (by omega)
           (⟨3, by omega⟩ : Fin (4 * k + 2)) 1 =
