@@ -1,0 +1,26 @@
+name: Endpoint Check
+
+on:
+  push:
+    branches:
+      - sol-symbolic-endpoint-check
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Restore dependency cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake/packages
+          key: lean-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}
+      - name: Fetch pinned dependencies
+        run: lake update
+      - name: Build endpoint
+        run: lake build +HigherRankKUM.Rank4.DangerousScheduleSymbolicEndpoint
