@@ -104,6 +104,7 @@ theorem delete_two_package_of_no_dangerous
     (M ＼ D).E.encard = ((4 * k : ℕ) : ℕ∞) ∧
     (M ＼ D).eRank = (4 : ℕ∞) ∧
     UniformlyDenseRatio (M ＼ D) (4 * k) 4 := by
+  letI : M.Finite := ⟨hE⟩
   have hDfin : D.Finite := hE.subset hDsub
   have hDnonempty : D.Nonempty := by
     rw [← Set.ncard_pos hDfin, hDcard]
@@ -198,6 +199,7 @@ theorem delete_two_package_of_no_dangerous
       · omega
       · have hRk3 : M.eRk X ≤ (3 : ℕ∞) := by
           rw [hj]
+          norm_num
         have hXcard :=
           ncard_le_three_mul_of_no_dangerous
             hE hRank hStrict hNoDangerous hXE hRk3
