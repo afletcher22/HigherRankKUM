@@ -177,10 +177,11 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [hq1, hq2] at h
       dsimp [m, q] at h
       rw [he1'] at h
+      rw [he1']
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-      aesop
+      tauto
     · have hrEq : r = (2 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -200,6 +201,7 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [hq1, hq2] at h
       dsimp [m, q] at h
       rw [he1'] at h
+      rw [he1']
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -235,19 +237,7 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       convert hExc2 using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
-      constructor
-      · intro hz
-        rcases hz with hz | hz | hz | hz
-        · exact Or.inl hz
-        · exact Or.inr (Or.inr (Or.inl hz))
-        · exact Or.inr (Or.inr (Or.inr hz))
-        · exact Or.inr (Or.inl hz)
-      · intro hz
-        rcases hz with hz | hz | hz | hz
-        · exact Or.inl hz
-        · exact Or.inr (Or.inr (Or.inr hz))
-        · exact Or.inr (Or.inl hz)
-        · exact Or.inr (Or.inr (Or.inl hz))
+      tauto
     · have hrEq : r = (4 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -267,10 +257,11 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [hq1, hq2] at h
       dsimp [m, q] at h
       rw [he2'] at h
+      rw [he2']
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-      aesop
+      tauto
     · have hrEq : r = (5 : Fin 6) := by
         apply Fin.ext
         exact hr
@@ -290,10 +281,11 @@ theorem exists_cbo_of_distance_two_good_normalized_symbolic
       rw [hq1, hq2] at h
       dsimp [m, q] at h
       rw [he2'] at h
+      rw [he2']
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-      aesop
+      tauto
   · rcases p with ⟨j, r⟩
     have hjlt := j.isLt
     have hrCases : r.val = 0 ∨ r.val = 1 ∨ r.val = 2 ∨ r.val = 3 := by
