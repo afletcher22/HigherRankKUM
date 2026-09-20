@@ -430,6 +430,33 @@ theorem dangerous_hyperplane_no_three_consecutive_bad_edges
     simpa [DangerousHyperplaneEdgeGood, C, c, d, i2, i3, n, hn,
       cyclicIndex_add, Nat.add_assoc] using h2
 
+/-- Any complement element together with three consecutive entries of a
+rank-three CBO of the dangerous hyperplane forms an ambient basis. -/
+theorem dangerous_hyperplane_complement_plus_core_triple_isBase
+    {M : Matroid α} {k : ℕ} {H : Set α} {c : α}
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hH : DangerousHyperplane M k H)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order)
+    (hc : c ∈ M.E \ H)
+    (q : Fin (3 * k + 1)) :
+    M.IsBase
+      ({c,
+        (order q : α),
+        (order (cyclicIndex (3 * k + 1) (by omega) q 1) : α),
+        (order (cyclicIndex (3 * k + 1) (by omega) q 2) : α)} : Set α) := by
+  have hBasis :=
+    dangerous_hyperplane_core_triple_isBasis
+      hH order hOrder q
+  have h :=
+    dangerous_one_hyperplane_basis_plus_complement_isBase
+      hRank hH hBasis hc
+  convert h using 1
+  ext z
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+  tauto
+
 /-- A chosen dangerous hyperplane CBO has either two adjacent good core edges
 or two good core edges separated by one edge. -/
 theorem dangerous_hyperplane_exists_good_edge_configuration
