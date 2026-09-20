@@ -379,6 +379,12 @@ def separatedNext (k : ℕ) (hk : 2 ≤ k) :
     SeparatedPos k → SeparatedPos k :=
   transportedNext (by omega) (separatedFinAdapter k hk)
 
+@[simp] theorem transportedNext_separated
+    {k : ℕ} (hk : 2 ≤ k) (p : SeparatedPos k) :
+    transportedNext (by omega) (separatedFinAdapter k hk) p =
+      separatedNext k hk p := by
+  rfl
+
 @[simp] theorem separatedNext_head0
     {k : ℕ} (hk : 2 ≤ k) :
     separatedNext k hk (Sum.inl (0 : Fin 6)) = Sum.inl (1 : Fin 6) := by
