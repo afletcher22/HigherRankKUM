@@ -1,0 +1,487 @@
+import HigherRankKUM.Rank4.DangerousHyperplaneSelection
+import HigherRankKUM.Rank4.FiniteSchedule
+import HigherRankKUM.CyclicRotation
+import Mathlib.Logic.Equiv.Set
+import Mathlib.Tactic
+
+namespace HigherRankKUM
+namespace Rank4DangerousBranches
+
+open Set
+open scoped Matroid
+
+noncomputable section
+
+variable {α : Type*}
+
+/-- Partition the ground into the complement of a dangerous hyperplane and
+the hyperplane itself. -/
+def dangerous_hyperplane_parts_equiv_ground
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hH : DangerousHyperplane M k H) :
+    (M.E \ H : Set α) ⊕ (H : Set α) ≃ M.E := by
+  have hd : Disjoint (M.E \ H) H := disjoint_sdiff_left
+  let e : (M.E \ H : Set α) ⊕ (H : Set α) ≃
+      ((M.E \ H) ∪ H : Set α) :=
+    (Equiv.Set.union hd).symm
+  have hEq : (M.E \ H) ∪ H = M.E := by
+    rw [sdiff_union_self, union_eq_self_of_subset_right hH.subset_ground]
+  exact e.trans (Equiv.setCongr hEq)
+
+@[simp] theorem dangerous_hyperplane_parts_equiv_ground_left
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hH : DangerousHyperplane M k H)
+    (c : (M.E \ H : Set α)) :
+    (dangerous_hyperplane_parts_equiv_ground hH (Sum.inl c) : α) = c := by
+  simp [dangerous_hyperplane_parts_equiv_ground]
+
+@[simp] theorem dangerous_hyperplane_parts_equiv_ground_right
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hH : DangerousHyperplane M k H)
+    (g : (H : Set α)) :
+    (dangerous_hyperplane_parts_equiv_ground hH (Sum.inr g) : α) = g := by
+  simp [dangerous_hyperplane_parts_equiv_ground]
+
+/-- Rotate a core CBO so a chosen source index appears at a chosen target
+index. The returned pointwise identity tracks every later cyclic offset. -/
+theorem exists_shifted_cbo_with_start
+    {M : Matroid α} {n r : ℕ}
+    (hn : 0 < n)
+    (order : Fin n ≃ M.E)
+    (hOrder : CyclicBasisOrder M r hn order)
+    (src target : Fin n) :
+    ∃ order' : Fin n ≃ M.E,
+      CyclicBasisOrder M r hn order' ∧
+      ∀ j : ℕ,
+        (order' (cyclicIndex n hn target j) : α) =
+          (order (cyclicIndex n hn src j) : α) := by
+  obtain ⟨t, ht, _⟩ :=
+    existsUnique_cyclicIndex_offset n hn target src
+  let order' : Fin n ≃ M.E :=
+    (cyclicShiftEquiv n hn t.val).trans order
+  have hCBO : CyclicBasisOrder M r hn order' :=
+    hOrder.shift hn order t.val
+  refine ⟨order', hCBO, ?_⟩
+  intro j
+  change
+    (order
+      (cyclicShiftEquiv n hn t.val
+        (cyclicIndex n hn target j)) : α) =
+      (order (cyclicIndex n hn src j) : α)
+  rw [cyclicShiftEquiv_cyclicIndex, cyclicShiftEquiv_apply, ← ht]
+
+/-- Rotate adjacent good edges so they become the two wrap-adjacent core
+edges at indices 3k-1 and 3k. -/
+theorem exists_shifted_adjacent_good_at_end
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order)
+    (i : Fin (3 * k + 1))
+    (hgood0 : DangerousHyperplaneEdgeGood order i)
+    (hgood1 :
+      DangerousHyperplaneEdgeGood order
+        (cyclicIndex (3 * k + 1) (by omega) i 1)) :
+    ∃ order' : Fin (3 * k + 1) ≃ (M.restrict H).E,
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order' ∧
+      DangerousHyperplaneEdgeGood order'
+        ⟨3 * k - 1, by omega⟩ ∧
+      DangerousHyperplaneEdgeGood order'
+        ⟨3 * k, by omega⟩ := by
+  let n := 3 * k + 1
+  let hn : 0 < n := by
+    dsimp [n]
+    omega
+  let target : Fin n := ⟨3 * k - 1, by omega⟩
+  obtain ⟨order', hOrder', hmap⟩ :=
+    exists_shifted_cbo_with_start hn order hOrder i target
+  have hmap0 :
+      (order' target : α) = (order i : α) := by
+    simpa [target, n, hn] using hmap 0
+  have hmap1 :
+      (order' (cyclicIndex n hn target 1) : α) =
+        (order (cyclicIndex n hn i 1) : α) :=
+    hmap 1
+  have hmap2 :
+      (order' (cyclicIndex n hn target 2) : α) =
+        (order (cyclicIndex n hn i 2) : α) :=
+    hmap 2
+
+  have ht1 :
+      cyclicIndex n hn target 1 = ⟨3 * k, by omega⟩ := by
+    apply cyclicIndex_eq_mk_add_of_lt
+    dsimp [target, n]
+    omega
+  have ht2 :
+      cyclicIndex n hn target 2 = ⟨0, by omega⟩ := by
+    apply Fin.ext
+    simp [cyclicIndex, target, n]
+    omega
+
+  have hgoodEnd :
+      DangerousHyperplaneEdgeGood order'
+        ⟨3 * k - 1, by omega⟩ := by
+    unfold DangerousHyperplaneEdgeGood at hgood0 ⊢
+    rw [show (⟨3 * k - 1, by omega⟩ : Fin n) = target by rfl,
+      ht1, hmap0]
+    have hmap1' :
+        (order' ⟨3 * k, by omega⟩ : α) =
+          (order (cyclicIndex n hn i 1) : α) := by
+      rw [← ht1]
+      exact hmap1
+    rw [hmap1']
+    simpa [n, hn] using hgood0
+
+  have hgoodWrap :
+      DangerousHyperplaneEdgeGood order'
+        ⟨3 * k, by omega⟩ := by
+    unfold DangerousHyperplaneEdgeGood at hgood1 ⊢
+    have hnext :
+        cyclicIndex n hn (⟨3 * k, by omega⟩ : Fin n) 1 =
+          ⟨0, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex, n]
+      omega
+    rw [hnext]
+    have hmap1' :
+        (order' ⟨3 * k, by omega⟩ : α) =
+          (order (cyclicIndex n hn i 1) : α) := by
+      rw [← ht1]
+      exact hmap1
+    have hmap2' :
+        (order' ⟨0, by omega⟩ : α) =
+          (order (cyclicIndex n hn i 2) : α) := by
+      rw [← ht2]
+      exact hmap2
+    rw [hmap1', hmap2']
+    have hadd :
+        cyclicIndex n hn
+            (cyclicIndex n hn i 1) 1 =
+          cyclicIndex n hn i 2 := by
+      rw [cyclicIndex_add]
+      norm_num
+    simpa [n, hn, hadd] using hgood1
+
+  exact ⟨order', hOrder', hgoodEnd, hgoodWrap⟩
+
+/-- The adjacent-good compressed schedule has a cyclic basis ordering.
+
+The core order is normalized so the two good edges are
+(g_(3k-1),g_(3k)) and (g_(3k),g_0). The common complement pair is placed at
+the tail/wrap complement slots C_k,C_0. -/
+theorem exists_cbo_of_adjacent_good_normalized
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH : DangerousHyperplane M k H)
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (hOrder :
+      CyclicBasisOrder (M.restrict H) 3 (by omega) order)
+    (hgoodEnd :
+      DangerousHyperplaneEdgeGood order
+        ⟨3 * k - 1, by omega⟩)
+    (hgoodWrap :
+      DangerousHyperplaneEdgeGood order
+        ⟨3 * k, by omega⟩) :
+    ∃ σ : Fin (4 * k + 2) ≃ M.E,
+      CyclicBasisOrder M 4 (by omega) σ := by
+  obtain ⟨cT, cW, hcne, hcT, hcW, hExcEnd, hExcWrap⟩ :=
+    dangerous_hyperplane_adjacent_good_selection
+      hk hE hRank hEcard hStrict hH order hOrder
+      ⟨3 * k - 1, by omega⟩ hgoodEnd hgoodWrap
+
+  let C : Set α := M.E \ H
+  have hCfin : C.Finite := by
+    dsimp [C]
+    exact hE.sdiff
+  have hCcard : C.ncard = k + 1 := by
+    dsimp [C]
+    exact dangerous_complement_ncard_eq hE hEcard hH
+  let iT : Fin (k + 1) := ⟨k, by omega⟩
+  let iW : Fin (k + 1) := ⟨0, by omega⟩
+  have hiTW : iT ≠ iW := by
+    intro h
+    have hv := congrArg Fin.val h
+    simp [iT, iW] at hv
+    omega
+  obtain ⟨eC, heT, heW⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_two_prescribed
+      hCfin hCcard iT iW hiTW hcT hcW hcne
+
+  let eG : Fin (3 * k + 1) ≃ (H : Set α) := by
+    simpa using order
+  let eSlots : FiniteSchedule.HyperplaneSlots k ≃
+      (M.E \ H : Set α) ⊕ (H : Set α) :=
+    Equiv.sumCongr eC eG
+  let eGround := dangerous_hyperplane_parts_equiv_ground hH
+  let σ : Fin (4 * k + 2) ≃ M.E :=
+    (FiniteSchedule.hyperAdjacentIndexEquiv k (by omega)).trans
+      (eSlots.trans eGround)
+
+  have hCpos (j : Fin k) :
+      (σ ⟨4 * j.val, by omega⟩ : α) =
+        (eC ⟨j.val, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.hyperAdjacentIndexEquiv k (by omega)
+            ⟨4 * j.val, by omega⟩)) : α) =
+        (eC ⟨j.val, by omega⟩ : α)
+    have hpos :
+        (⟨4 * j.val, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(0 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+    rw [hpos, FiniteSchedule.hyperAdjacentIndexEquiv_block]
+    exact dangerous_hyperplane_parts_equiv_ground_left hH _
+
+  have hGpos (j : Fin k) (r : Fin 3) :
+      (σ ⟨4 * j.val + 1 + r.val, by omega⟩ : α) =
+        (order ⟨3 * j.val + r.val, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.hyperAdjacentIndexEquiv k (by omega)
+            ⟨4 * j.val + 1 + r.val, by omega⟩)) : α) =
+        (order ⟨3 * j.val + r.val, by omega⟩ : α)
+    let s : Fin 4 := ⟨r.val + 1, by omega⟩
+    have hpos :
+        (⟨4 * j.val + 1 + r.val, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨s.val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      dsimp [s]
+      omega
+    rw [hpos, FiniteSchedule.hyperAdjacentIndexEquiv_block]
+    fin_cases r <;>
+      simp [s, FiniteSchedule.hyperAdjacentBlockSlot, eSlots, eG,
+        eGround, dangerous_hyperplane_parts_equiv_ground]
+
+  have hTailC :
+      (σ ⟨4 * k, by omega⟩ : α) = cT := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.hyperAdjacentIndexEquiv k (by omega)
+            ⟨4 * k, by omega⟩)) : α) = cT
+    have hpos :
+        (⟨4 * k, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨4 * k + (0 : Fin 2).val, by omega⟩ := by
+      apply Fin.ext
+      simp
+    rw [hpos, FiniteSchedule.hyperAdjacentIndexEquiv_tail]
+    change (eGround (Sum.inl (eC iT)) : α) = cT
+    rw [dangerous_hyperplane_parts_equiv_ground_left, heT]
+
+  have hTailG :
+      (σ ⟨4 * k + 1, by omega⟩ : α) =
+        (order ⟨3 * k, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.hyperAdjacentIndexEquiv k (by omega)
+            ⟨4 * k + 1, by omega⟩)) : α) =
+        (order ⟨3 * k, by omega⟩ : α)
+    rw [show
+      (⟨4 * k + 1, by omega⟩ : Fin (4 * k + 2)) =
+        ⟨4 * k + (1 : Fin 2).val, by omega⟩ by
+          apply Fin.ext
+          simp,
+      FiniteSchedule.hyperAdjacentIndexEquiv_tail]
+    change (eGround (Sum.inr (eG ⟨3 * k, by omega⟩)) : α) =
+      (order ⟨3 * k, by omega⟩ : α)
+    simp [eG, eGround, dangerous_hyperplane_parts_equiv_ground]
+
+  have hWrapC :
+      (σ ⟨0, by omega⟩ : α) = cW := by
+    have h := hCpos (⟨0, by omega⟩ : Fin k)
+    calc
+      (σ ⟨0, by omega⟩ : α) =
+          (eC ⟨0, by omega⟩ : α) := by simpa using h
+      _ = cW := by simpa [iW] using heW
+
+  have hOrdinaryCoreTriple (q : Fin (3 * k + 1)) :
+      M.IsBasis
+        ({(order q : α),
+          (order (cyclicIndex (3 * k + 1) (by omega) q 1) : α),
+          (order (cyclicIndex (3 * k + 1) (by omega) q 2) : α)} : Set α)
+        H :=
+    dangerous_hyperplane_core_triple_isBasis hH order hOrder q
+
+  have hOneCThreeG
+      (c : α) (hc : c ∈ M.E \ H)
+      (q : Fin (3 * k + 1)) :
+      M.IsBase
+        ({c,
+          (order q : α),
+          (order (cyclicIndex (3 * k + 1) (by omega) q 1) : α),
+          (order (cyclicIndex (3 * k + 1) (by omega) q 2) : α)} : Set α) := by
+    have h :=
+      dangerous_one_hyperplane_basis_plus_complement_isBase
+        hRank hH (hOrdinaryCoreTriple q) hc
+    convert h using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+
+  refine ⟨σ, (cyclicBasisOrder_four_iff (by omega) σ).2 ?_⟩
+  intro s
+  by_cases hEnd : s.val = 4 * k - 1
+  · have hs : s = ⟨4 * k - 1, by omega⟩ := Fin.ext hEnd
+    subst s
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k - 1, by omega⟩ 1 = ⟨4 * k, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k - 1, by omega⟩ 2 = ⟨4 * k + 1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k - 1, by omega⟩ 3 = ⟨0, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex]
+      omega
+    have hGend :
+        (σ ⟨4 * k - 1, by omega⟩ : α) =
+          (order ⟨3 * k - 1, by omega⟩ : α) := by
+      let j : Fin k := ⟨k - 1, by omega⟩
+      have h := hGpos j (2 : Fin 3)
+      simpa [j] using h
+    rw [h1, h2, h3, hGend, hTailC, hTailG, hWrapC]
+    convert hExcEnd using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
+      Set.mem_union]
+    tauto
+
+  by_cases hWrap : s.val = 4 * k
+  · have hs : s = ⟨4 * k, by omega⟩ := Fin.ext hWrap
+    subst s
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k, by omega⟩ 1 = ⟨4 * k + 1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k, by omega⟩ 2 = ⟨0, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex]
+      omega
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k, by omega⟩ 3 = ⟨1, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex]
+      omega
+    have hG0 :
+        (σ ⟨1, by omega⟩ : α) = (order ⟨0, by omega⟩ : α) := by
+      have h := hGpos (⟨0, by omega⟩ : Fin k) (0 : Fin 3)
+      simpa using h
+    rw [h1, h2, h3, hTailC, hTailG, hWrapC, hG0]
+    convert hExcWrap using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
+      Set.mem_union]
+    tauto
+
+  by_cases hLast : s.val = 4 * k + 1
+  · have hs : s = ⟨4 * k + 1, by omega⟩ := Fin.ext hLast
+    subst s
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k + 1, by omega⟩ 1 = ⟨0, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex]
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k + 1, by omega⟩ 2 = ⟨1, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex]
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * k + 1, by omega⟩ 3 = ⟨2, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex]
+    have hG0 :
+        (σ ⟨1, by omega⟩ : α) = (order ⟨0, by omega⟩ : α) := by
+      have h := hGpos (⟨0, by omega⟩ : Fin k) (0 : Fin 3)
+      simpa using h
+    have hG1 :
+        (σ ⟨2, by omega⟩ : α) = (order ⟨1, by omega⟩ : α) := by
+      have h := hGpos (⟨0, by omega⟩ : Fin k) (1 : Fin 3)
+      simpa using h
+    rw [h1, h2, h3, hTailG, hWrapC, hG0, hG1]
+    have hbase :=
+      hOneCThreeG cW hcW ⟨3 * k, by omega⟩
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    have hnext1 :
+        cyclicIndex (3 * k + 1) (by omega)
+          (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
+          ⟨0, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex]
+    have hnext2 :
+        cyclicIndex (3 * k + 1) (by omega)
+          (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
+          ⟨1, by omega⟩ := by
+      apply Fin.ext
+      simp [cyclicIndex]
+    rw [hnext1, hnext2]
+    tauto
+
+  have hslt : s.val < 4 * k - 1 := by
+    have hsmax := s.isLt
+    omega
+  let j : Fin k := ⟨s.val / 4, by omega⟩
+  have hrem : s.val % 4 < 4 := Nat.mod_lt _ (by omega)
+  interval_cases hr : s.val % 4
+  · have hsval : s.val = 4 * j.val := by
+      dsimp [j]
+      have hm := Nat.mod_add_div s.val 4
+      omega
+    have hsEq : s = ⟨4 * j.val, by omega⟩ := Fin.ext hsval
+    subst s
+    have hc := (eC ⟨j.val, by omega⟩).property
+    rw [hCpos j]
+    have h1 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val, by omega⟩ 1 =
+          ⟨4 * j.val + 1, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h2 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val, by omega⟩ 2 =
+          ⟨4 * j.val + 2, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    have h3 :
+        cyclicIndex (4 * k + 2) (by omega)
+          ⟨4 * j.val, by omega⟩ 3 =
+          ⟨4 * j.val + 3, by omega⟩ := by
+      apply cyclicIndex_eq_mk_add_of_lt
+      omega
+    rw [h1, h2, h3, hGpos j 0, hGpos j 1, hGpos j 2]
+    have hbase :=
+      hOneCThreeG (eC ⟨j.val, by omega⟩ : α)
+        (by simpa [C] using hc)
+        ⟨3 * j.val, by omega⟩
+    simpa using hbase
+  · sorry
+  · sorry
+  · sorry
+
+end
+
+end Rank4DangerousBranches
+end HigherRankKUM
