@@ -116,10 +116,19 @@ pivots: every state is isolated. All 384 states are successful.
 Hence global state-graph connectivity is not the right theorem. The relevant
 weaker target is absence of a closed all-bad component.
 
-In a seeded sample of 300 qualifying simple-binary n=8 matroids, no closed
-all-bad component was found. For 74 of the 300, some unsuccessful state
-required an Lmax drop of exactly one before success; none required a larger
-drop. This last statement is sampling evidence only.
+The complete qualifying simple-binary n=8 class was then audited exactly.
+Across all 3,375 matroids there is no closed all-bad component. The state
+graphs fall into exactly three metric classes:
+
+* 2,520 matroids: 384 states, one component, monotone run-profile escape from
+  every state, required Lmax drop 0;
+* 840 matroids: 432 states, one component, exactly 48 states without
+  lexicographically nondecreasing profile escape, maximum required Lmax drop 1;
+* 15 matroids: 384 states, 384 isolated components, all states successful.
+
+Thus the weaker bounded-valley statement `Lmax drop <= 1` is exact for the
+entire simple-binary n=8 class, and the no-closed-all-bad-component statement
+also survives exactly there.
 
 ## Structural interpretation of the strict8 plateau
 
@@ -163,7 +172,8 @@ Dead:
 Still alive:
 * existential favorable-state conjecture;
 * no closed all-bad component under adjacent swaps + point pivots;
-* bounded-valley escape (empirically, drop <=1 in the current n=8 sample);
+* bounded-valley escape (exactly drop <=1 throughout the complete qualifying
+  simple-binary n=8 class);
 * stronger prescribed-e statement specific to tested t=0 instances.
 
 ## Next priorities
