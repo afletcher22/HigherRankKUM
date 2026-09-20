@@ -533,6 +533,7 @@ theorem separatedWindow_four_next
           (separatedNext k hk (separatedNext k hk p)) : α),
         (separatedSymbolicOrder hk hH eC order
           (separatedNext k hk (separatedNext k hk (separatedNext k hk p))) : α)} := by
+  unfold separatedNext
   exact transportedWindow_four_next (by omega) (separatedFinAdapter k hk)
     (separatedSymbolicOrder hk hH eC order) p
 
