@@ -175,8 +175,45 @@ On isolated branch `rank4-t0-two-deletion-robustness`, the proposed module
 This is strictly stronger deletion robustness in the t=0 branch. It should be
 treated as structural infrastructure, not as an insertion theorem.
 
-At the time of this ledger entry, its full root CI run is still pending final
-build and must not yet be called certified.
+That isolated branch is now certified: commit
+`56644c48b9ddd9f9249058c76907f07433a74cc4` passed the full root CI build.
+This does not mean it has been merged into the shared research branch.
+
+## Exact simple-binary two-deletion filter
+
+The stronger t=0-specific target
+
+> every element is favorable under universal two-element deletion robustness
+
+gets a substantially cleaner exact binary test than the one-deletion theorem.
+
+Using the exact slack condition `s_j >= 2j`, the complete strict simple-binary
+rank-four classes inside `PG(3,2)` split as follows:
+
+| n | strict simple-binary matroids | two-deletion robust | prescribed-e failures inside robust class |
+|---|---:|---:|---:|
+| 8  | 3,375 | 15 | 0 |
+| 10 | 3,003 | 2,163 | 0 |
+| 12 | 455 | 455 | 0 |
+| 14 | 15 | 15 | 0 |
+
+Thus all **2,648** two-deletion-robust simple-binary matroids in the complete
+even-size range, comprising **27,420 pointed deletions**, are favorable for
+every omitted element.
+
+At n=8 the filter is especially revealing.  The 3,360 strict examples with
+profile `(m1,m2,m3)=(1,3,5)` fail two-deletion robustness.  The only 15
+survivors have profile `(1,2,4)`; they are exactly the affine-cube orbit
+identified above, whose 384 joint states are all successful.  In particular,
+the entire 840-member prescribed-e failure orbit is excluded by the
+two-deletion hypothesis.
+
+At n=10 the split is similarly sharp: 2,163 examples have profile `(1,3,6)`
+and are two-deletion robust, while the remaining 840 have profile
+`(1,3,7)` and fail the two-deletion inequality in rank three.
+
+This is exact finite computation for simple binary representations, not a
+Lean theorem and not evidence about all nonrepresentable matroids.
 
 ## Current falsification status
 
