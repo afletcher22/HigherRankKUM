@@ -99,3 +99,4 @@ import HigherRankKUM.Rank4.DangerousScheduleSymbolic
 import HigherRankKUM.Rank4.DangerousScheduleNormalization
 import HigherRankKUM.Rank4.DangerousScheduleSymbolicBasis
 import HigherRankKUM.Rank4.DangerousScheduleSymbolicDistanceTwo
+import HigherRankKUM.Rank4.DangerousScheduleSymbolicEndpoint
