@@ -1,0 +1,98 @@
+{
+  "complete": true,
+  "scope": "normalized binary rank-four forced center geometries with C=(1,2), D=(4,8)",
+  "forced_left_neighbor_choices": 16,
+  "forced_right_neighbor_choices": 16,
+  "center_geometries": 256,
+  "compatible_outer_A_per_B": [
+    16
+  ],
+  "compatible_outer_F_per_E": [
+    16
+  ],
+  "classification": {
+    "all_cross_slack": 161,
+    "no_legal_cross": 81,
+    "all_cross_forced": 14,
+    "mixed": 0
+  },
+  "all_cross_forced_centers": [
+    {
+      "B": [4, 9],
+      "E": [2, 9],
+      "legal_cross_replacements": [[[2, 8], [1, 4]]]
+    },
+    {
+      "B": [4, 9],
+      "E": [6, 9],
+      "legal_cross_replacements": [[[2, 8], [1, 4]]]
+    },
+    {
+      "B": [4, 10],
+      "E": [1, 10],
+      "legal_cross_replacements": [[[1, 8], [2, 4]]]
+    },
+    {
+      "B": [4, 10],
+      "E": [5, 10],
+      "legal_cross_replacements": [[[1, 8], [2, 4]]]
+    },
+    {
+      "B": [5, 8],
+      "E": [2, 5],
+      "legal_cross_replacements": [[[2, 4], [1, 8]]]
+    },
+    {
+      "B": [5, 8],
+      "E": [5, 10],
+      "legal_cross_replacements": [[[2, 4], [1, 8]]]
+    },
+    {
+      "B": [5, 10],
+      "E": [1, 10],
+      "legal_cross_replacements": [[[1, 8], [2, 4]]]
+    },
+    {
+      "B": [5, 10],
+      "E": [2, 5],
+      "legal_cross_replacements": [[[2, 4], [1, 8]]]
+    },
+    {
+      "B": [5, 10],
+      "E": [5, 10],
+      "legal_cross_replacements": [
+        [[1, 8], [2, 4]],
+        [[2, 4], [1, 8]]
+      ]
+    },
+    {
+      "B": [6, 8],
+      "E": [1, 6],
+      "legal_cross_replacements": [[[1, 4], [2, 8]]]
+    },
+    {
+      "B": [6, 8],
+      "E": [6, 9],
+      "legal_cross_replacements": [[[1, 4], [2, 8]]]
+    },
+    {
+      "B": [6, 9],
+      "E": [1, 6],
+      "legal_cross_replacements": [[[1, 4], [2, 8]]]
+    },
+    {
+      "B": [6, 9],
+      "E": [2, 9],
+      "legal_cross_replacements": [[[2, 8], [1, 4]]]
+    },
+    {
+      "B": [6, 9],
+      "E": [6, 9],
+      "legal_cross_replacements": [
+        [[1, 4], [2, 8]],
+        [[2, 8], [1, 4]]
+      ]
+    }
+  ],
+  "status": "exact binary center dichotomy: no center has a mix of forced-preserving and slack-creating legal cross repairs across compatible outer contexts"
+}
