@@ -866,7 +866,7 @@ theorem exists_cbo_of_adjacent_good_normalized
   have hCcard : C.ncard = k + 1 := by
     dsimp [C]
     exact dangerous_complement_ncard_eq hE hEcard hH
-  let iT : Fin (k + 1) := ⟨k, by omega⟩
+  let iT : Fin (k + 1) := ⟨k, Nat.lt_succ_iff.mpr (Nat.le_refl k)⟩
   let iW : Fin (k + 1) := ⟨0, by omega⟩
   have hiTW : iT ≠ iW := by
     intro h
