@@ -207,6 +207,325 @@ def dangerousSeparatedScheduleOrder
     FiniteSchedule.hyperSeparatedBlockSlot,
     dangerous_hyperplane_parts_equiv_ground]
 
+/-- Every nonexceptional length-four window of the separated-good
+schedule consists of one complement element and three consecutive core
+elements. The only exceptional starts are 0 and 3. -/
+theorem dangerousSeparatedSchedule_window_classification
+    {M : Matroid α} {k : ℕ} {H : Set α}
+    (hk : 2 ≤ k)
+    (hH : DangerousHyperplane M k H)
+    (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
+    (order : Fin (3 * k + 1) ≃ (M.restrict H).E)
+    (s : Fin (4 * k + 2))
+    (hs0 : s.val ≠ 0)
+    (hs3 : s.val ≠ 3) :
+    ∃ m : Fin (k + 1), ∃ q : Fin (3 * k + 1),
+      ({(dangerousSeparatedScheduleOrder hk hH eC order s : α),
+        (dangerousSeparatedScheduleOrder hk hH eC order
+          (cyclicIndex (4 * k + 2) (by omega) s 1) : α),
+        (dangerousSeparatedScheduleOrder hk hH eC order
+          (cyclicIndex (4 * k + 2) (by omega) s 2) : α),
+        (dangerousSeparatedScheduleOrder hk hH eC order
+          (cyclicIndex (4 * k + 2) (by omega) s 3) : α)} : Set α) =
+      ({(eC m : α),
+        (order q : α),
+        (order (cyclicIndex (3 * k + 1) (by omega) q 1) : α),
+        (order (cyclicIndex (3 * k + 1) (by omega) q 2) : α)} : Set α) := by
+  let σ := dangerousSeparatedScheduleOrder hk hH eC order
+  have hglobal_add
+      (a d : ℕ) (ha : a < 4 * k + 2) (had : a + d < 4 * k + 2) :
+      cyclicIndex (4 * k + 2) (by omega)
+          (⟨a, ha⟩ : Fin (4 * k + 2)) d =
+        ⟨a + d, had⟩ := by
+    exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ had
+  have hcore_add
+      (a d : ℕ) (ha : a < 3 * k + 1) (had : a + d < 3 * k + 1) :
+      cyclicIndex (3 * k + 1) (by omega)
+          (⟨a, ha⟩ : Fin (3 * k + 1)) d =
+        ⟨a + d, had⟩ := by
+    exact cyclicIndex_eq_mk_add_of_lt _ _ _ _ had
+
+  by_cases hs6 : s.val < 6
+  · have hcases :
+        s.val = 1 ∨ s.val = 2 ∨ s.val = 4 ∨ s.val = 5 := by
+      omega
+    rcases hcases with h1 | h2 | h4 | h5
+    · have hs : s = ⟨1, by omega⟩ := Fin.ext h1
+      subst s
+      have hg1 := hglobal_add 1 1 (by omega) (by omega)
+      have hg2 := hglobal_add 1 2 (by omega) (by omega)
+      have hg3 := hglobal_add 1 3 (by omega) (by omega)
+      have hc1 := hcore_add 0 1 (by omega) (by omega)
+      have hc2 := hcore_add 0 2 (by omega) (by omega)
+      refine ⟨⟨1, by omega⟩, ⟨0, by omega⟩, ?_⟩
+      rw [hg1, hg2, hg3, hc1, hc2]
+      simp [σ]
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · have hs : s = ⟨2, by omega⟩ := Fin.ext h2
+      subst s
+      have hg1 := hglobal_add 2 1 (by omega) (by omega)
+      have hg2 := hglobal_add 2 2 (by omega) (by omega)
+      have hg3 := hglobal_add 2 3 (by omega) (by omega)
+      have hc1 := hcore_add 1 1 (by omega) (by omega)
+      have hc2 := hcore_add 1 2 (by omega) (by omega)
+      refine ⟨⟨1, by omega⟩, ⟨1, by omega⟩, ?_⟩
+      rw [hg1, hg2, hg3, hc1, hc2]
+      simp [σ]
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · have hs : s = ⟨4, by omega⟩ := Fin.ext h4
+      subst s
+      have hg1 := hglobal_add 4 1 (by omega) (by omega)
+      have hg2 := hglobal_add 4 2 (by omega) (by omega)
+      have hg3 := hglobal_add 4 3 (by omega) (by omega)
+      have hc1 := hcore_add 2 1 (by omega) (by omega)
+      have hc2 := hcore_add 2 2 (by omega) (by omega)
+      refine ⟨⟨2, by omega⟩, ⟨2, by omega⟩, ?_⟩
+      rw [hg1, hg2, hg3, hc1, hc2]
+      simp [σ]
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · have hs : s = ⟨5, by omega⟩ := Fin.ext h5
+      subst s
+      have hg1 := hglobal_add 5 1 (by omega) (by omega)
+      have hg2 := hglobal_add 5 2 (by omega) (by omega)
+      have hg3 := hglobal_add 5 3 (by omega) (by omega)
+      have hc1 := hcore_add 3 1 (by omega) (by omega)
+      have hc2 := hcore_add 3 2 (by omega) (by omega)
+      refine ⟨⟨2, by omega⟩, ⟨3, by omega⟩, ?_⟩
+      rw [hg1, hg2, hg3, hc1, hc2]
+      simp [σ]
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+
+  by_cases hwrap : 4 * k - 1 ≤ s.val
+  · have hcases :
+        s.val = 4 * k - 1 ∨
+        s.val = 4 * k ∨
+        s.val = 4 * k + 1 := by
+      have hslt := s.isLt
+      omega
+    let jlast : Fin (k - 1) := ⟨k - 2, by omega⟩
+    have hC_last :
+        (σ ⟨4 * k - 2, by omega⟩ : α) =
+          (eC ⟨k, by omega⟩ : α) := by
+      have h := dangerousSeparatedScheduleOrder_blockC
+        hk hH eC order jlast
+      simpa [σ, jlast] using h
+    have hG_last0 :
+        (σ ⟨4 * k - 1, by omega⟩ : α) =
+          (order ⟨3 * k - 2, by omega⟩ : α) := by
+      have h := dangerousSeparatedScheduleOrder_blockG0
+        hk hH eC order jlast
+      simpa [σ, jlast] using h
+    have hG_last1 :
+        (σ ⟨4 * k, by omega⟩ : α) =
+          (order ⟨3 * k - 1, by omega⟩ : α) := by
+      have h := dangerousSeparatedScheduleOrder_blockG1
+        hk hH eC order jlast
+      simpa [σ, jlast] using h
+    have hG_last2 :
+        (σ ⟨4 * k + 1, by omega⟩ : α) =
+          (order ⟨3 * k, by omega⟩ : α) := by
+      have h := dangerousSeparatedScheduleOrder_blockG2
+        hk hH eC order jlast
+      simpa [σ, jlast] using h
+    rcases hcases with hA | hB | hC
+    · have hs : s = ⟨4 * k - 1, by omega⟩ := Fin.ext hA
+      subst s
+      have hg1 := hglobal_add (4 * k - 1) 1 (by omega) (by omega)
+      have hg2 := hglobal_add (4 * k - 1) 2 (by omega) (by omega)
+      have hg3 :
+          cyclicIndex (4 * k + 2) (by omega)
+              (⟨4 * k - 1, by omega⟩ : Fin (4 * k + 2)) 3 =
+            ⟨0, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+        omega
+      have hc1 := hcore_add (3 * k - 2) 1 (by omega) (by omega)
+      have hc2 := hcore_add (3 * k - 2) 2 (by omega) (by omega)
+      refine ⟨⟨0, by omega⟩, ⟨3 * k - 2, by omega⟩, ?_⟩
+      rw [hg1, hg2, hg3, hc1, hc2,
+        hG_last0, hG_last1, hG_last2]
+      simp [σ]
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · have hs : s = ⟨4 * k, by omega⟩ := Fin.ext hB
+      subst s
+      have hg1 := hglobal_add (4 * k) 1 (by omega) (by omega)
+      have hg2 :
+          cyclicIndex (4 * k + 2) (by omega)
+              (⟨4 * k, by omega⟩ : Fin (4 * k + 2)) 2 =
+            ⟨0, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+      have hg3 :
+          cyclicIndex (4 * k + 2) (by omega)
+              (⟨4 * k, by omega⟩ : Fin (4 * k + 2)) 3 =
+            ⟨1, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+      have hc1 := hcore_add (3 * k - 1) 1 (by omega) (by omega)
+      have hc2 :
+          cyclicIndex (3 * k + 1) (by omega)
+              (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 2 =
+            ⟨0, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+      refine ⟨⟨0, by omega⟩, ⟨3 * k - 1, by omega⟩, ?_⟩
+      rw [hg1, hg2, hg3, hc1, hc2,
+        hG_last1, hG_last2]
+      simp [σ]
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+    · have hs : s = ⟨4 * k + 1, by omega⟩ := Fin.ext hC
+      subst s
+      have hg1 :
+          cyclicIndex (4 * k + 2) (by omega)
+              (⟨4 * k + 1, by omega⟩ : Fin (4 * k + 2)) 1 =
+            ⟨0, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+      have hg2 :
+          cyclicIndex (4 * k + 2) (by omega)
+              (⟨4 * k + 1, by omega⟩ : Fin (4 * k + 2)) 2 =
+            ⟨1, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+      have hg3 :
+          cyclicIndex (4 * k + 2) (by omega)
+              (⟨4 * k + 1, by omega⟩ : Fin (4 * k + 2)) 3 =
+            ⟨2, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+      have hc1 :
+          cyclicIndex (3 * k + 1) (by omega)
+              (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
+            ⟨0, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+      have hc2 :
+          cyclicIndex (3 * k + 1) (by omega)
+              (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 2 =
+            ⟨1, by omega⟩ := by
+        apply Fin.ext
+        simp [cyclicIndex]
+      refine ⟨⟨0, by omega⟩, ⟨3 * k, by omega⟩, ?_⟩
+      rw [hg1, hg2, hg3, hc1, hc2, hG_last2]
+      simp [σ]
+      ext z
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+
+  have hslo : 6 ≤ s.val := by omega
+  have hshi : s.val < 4 * k - 1 := by omega
+  let t := s.val - 6
+  let j : Fin (k - 1) := ⟨t / 4, by
+    dsimp [t]
+    omega⟩
+  have hmod : t % 4 < 4 := Nat.mod_lt _ (by omega)
+  interval_cases hr : t % 4
+  · have hsval : s.val = 6 + 4 * j.val := by
+      dsimp [j, t]
+      have hm := Nat.mod_add_div t 4
+      omega
+    have hs : s = ⟨6 + 4 * j.val, by omega⟩ := Fin.ext hsval
+    subst s
+    have hg1 := hglobal_add (6 + 4 * j.val) 1 (by omega) (by omega)
+    have hg2 := hglobal_add (6 + 4 * j.val) 2 (by omega) (by omega)
+    have hg3 := hglobal_add (6 + 4 * j.val) 3 (by omega) (by omega)
+    let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
+    have hc1 := hcore_add (3 * j.val + 4) 1 (by omega) (by omega)
+    have hc2 := hcore_add (3 * j.val + 4) 2 (by omega) (by omega)
+    refine ⟨⟨j.val + 2, by omega⟩, q, ?_⟩
+    rw [hg1, hg2, hg3, hc1, hc2]
+    simp [σ, q]
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  · have hsval : s.val = 7 + 4 * j.val := by
+      dsimp [j, t]
+      have hm := Nat.mod_add_div t 4
+      omega
+    have hjnext : j.val + 1 < k - 1 := by omega
+    let jn : Fin (k - 1) := ⟨j.val + 1, hjnext⟩
+    have hs : s = ⟨7 + 4 * j.val, by omega⟩ := Fin.ext hsval
+    subst s
+    have hg1 := hglobal_add (7 + 4 * j.val) 1 (by omega) (by omega)
+    have hg2 := hglobal_add (7 + 4 * j.val) 2 (by omega) (by omega)
+    have hg3 := hglobal_add (7 + 4 * j.val) 3 (by omega) (by omega)
+    let q : Fin (3 * k + 1) := ⟨3 * j.val + 4, by omega⟩
+    have hc1 := hcore_add (3 * j.val + 4) 1 (by omega) (by omega)
+    have hc2 := hcore_add (3 * j.val + 4) 2 (by omega) (by omega)
+    refine ⟨⟨j.val + 3, by omega⟩, q, ?_⟩
+    rw [hg1, hg2, hg3, hc1, hc2]
+    have hnextC :=
+      dangerousSeparatedScheduleOrder_blockC hk hH eC order jn
+    simp [σ, q, jn] at hnextC ⊢
+    rw [hnextC]
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  · have hsval : s.val = 8 + 4 * j.val := by
+      dsimp [j, t]
+      have hm := Nat.mod_add_div t 4
+      omega
+    have hjnext : j.val + 1 < k - 1 := by omega
+    let jn : Fin (k - 1) := ⟨j.val + 1, hjnext⟩
+    have hs : s = ⟨8 + 4 * j.val, by omega⟩ := Fin.ext hsval
+    subst s
+    have hg1 := hglobal_add (8 + 4 * j.val) 1 (by omega) (by omega)
+    have hg2 := hglobal_add (8 + 4 * j.val) 2 (by omega) (by omega)
+    have hg3 := hglobal_add (8 + 4 * j.val) 3 (by omega) (by omega)
+    let q : Fin (3 * k + 1) := ⟨3 * j.val + 5, by omega⟩
+    have hc1 := hcore_add (3 * j.val + 5) 1 (by omega) (by omega)
+    have hc2 := hcore_add (3 * j.val + 5) 2 (by omega) (by omega)
+    refine ⟨⟨j.val + 3, by omega⟩, q, ?_⟩
+    rw [hg1, hg2, hg3, hc1, hc2]
+    have hnextC :=
+      dangerousSeparatedScheduleOrder_blockC hk hH eC order jn
+    have hnextG :=
+      dangerousSeparatedScheduleOrder_blockG0 hk hH eC order jn
+    simp [σ, q, jn] at hnextC hnextG ⊢
+    rw [hnextC, hnextG]
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  · have hsval : s.val = 9 + 4 * j.val := by
+      dsimp [j, t]
+      have hm := Nat.mod_add_div t 4
+      omega
+    have hjnext : j.val + 1 < k - 1 := by omega
+    let jn : Fin (k - 1) := ⟨j.val + 1, hjnext⟩
+    have hs : s = ⟨9 + 4 * j.val, by omega⟩ := Fin.ext hsval
+    subst s
+    have hg1 := hglobal_add (9 + 4 * j.val) 1 (by omega) (by omega)
+    have hg2 := hglobal_add (9 + 4 * j.val) 2 (by omega) (by omega)
+    have hg3 := hglobal_add (9 + 4 * j.val) 3 (by omega) (by omega)
+    let q : Fin (3 * k + 1) := ⟨3 * j.val + 6, by omega⟩
+    have hc1 := hcore_add (3 * j.val + 6) 1 (by omega) (by omega)
+    have hc2 := hcore_add (3 * j.val + 6) 2 (by omega) (by omega)
+    refine ⟨⟨j.val + 3, by omega⟩, q, ?_⟩
+    rw [hg1, hg2, hg3, hc1, hc2]
+    have hnextC :=
+      dangerousSeparatedScheduleOrder_blockC hk hH eC order jn
+    have hnextG0 :=
+      dangerousSeparatedScheduleOrder_blockG0 hk hH eC order jn
+    have hnextG1 :=
+      dangerousSeparatedScheduleOrder_blockG1 hk hH eC order jn
+    simp [σ, q, jn] at hnextC hnextG0 hnextG1 ⊢
+    rw [hnextC, hnextG0, hnextG1]
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+
 /-- Rotate a core CBO so a chosen source index appears at a chosen target
 index. The returned pointwise identity tracks every later cyclic offset. -/
 theorem exists_shifted_cbo_with_start
