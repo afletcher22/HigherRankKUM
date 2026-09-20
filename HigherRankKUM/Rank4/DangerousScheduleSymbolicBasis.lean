@@ -119,8 +119,14 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
   rcases p with p | r
   · rcases p with ⟨j, r⟩
     have hjlt := j.isLt
-    fin_cases r
-    · let m : Fin (k + 1) := ⟨j.val, by omega⟩
+    have hrCases : r.val = 0 ∨ r.val = 1 ∨ r.val = 2 ∨ r.val = 3 := by
+      omega
+    rcases hrCases with hr | hr | hr | hr
+    · have hrEq : r = (0 : Fin 4) := by
+        apply Fin.ext
+        exact hr
+      subst r
+      let m : Fin (k + 1) := ⟨j.val, by omega⟩
       let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
       have h := hOrd m q
       have hq1 := hcoreNoWrap q 1 (by
@@ -131,7 +137,11 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         omega)
       rw [hq1, hq2] at h
       simpa [m, q] using h
-    · by_cases hj : j.val + 1 < k
+    · have hrEq : r = (1 : Fin 4) := by
+        apply Fin.ext
+        exact hr
+      subst r
+      by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
         have h := hOrd m q
@@ -165,7 +175,11 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         convert h using 1
         ext z
         simp [m, q, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff] <;> tauto
-    · by_cases hj : j.val + 1 < k
+    · have hrEq : r = (2 : Fin 4) := by
+        apply Fin.ext
+        exact hr
+      subst r
+      by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 1, by omega⟩
         have h := hOrd m q
@@ -200,7 +214,11 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         convert h using 1
         ext z
         simp [m, q, hjEq, Set.mem_insert_iff, Set.mem_singleton_iff] <;> tauto
-    · by_cases hj : j.val + 1 < k
+    · have hrEq : r = (3 : Fin 4) := by
+        apply Fin.ext
+        exact hr
+      subst r
+      by_cases hj : j.val + 1 < k
       · let m : Fin (k + 1) := ⟨j.val + 1, by omega⟩
         let q : Fin (3 * k + 1) := ⟨3 * j.val + 2, by omega⟩
         have h := hOrd m q
