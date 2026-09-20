@@ -354,6 +354,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         rw [hzero]
         exact heW'
       rw [heW0] at h
+      rw [heW']
       convert h using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
