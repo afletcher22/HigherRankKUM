@@ -55,8 +55,9 @@ def dangerousSeparatedScheduleOrder
     (eC : Fin (k + 1) ≃ (M.E \ H : Set α))
     (order : Fin (3 * k + 1) ≃ (M.restrict H).E) :
     Fin (4 * k + 2) ≃ M.E := by
-  let eG : Fin (3 * k + 1) ≃ (H : Set α) := by
-    simpa using order
+  let eG : Fin (3 * k + 1) ≃ (H : Set α) :=
+    order.trans (Equiv.setCongr (by
+      simpa [Matroid.restrict_ground, hH.subset_ground] ))
   exact
     (FiniteSchedule.hyperSeparatedIndexEquiv k hk).trans
       ((Equiv.sumCongr eC eG).trans
