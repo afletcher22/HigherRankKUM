@@ -284,17 +284,11 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         simp only [hnextTail, adjacentNext_tail0, adjacentNext_tail1,
           adjacentSymbolicOrder_block_g2, adjacentSymbolicOrder_tail_c,
           adjacentSymbolicOrder_tail_g, adjacentSymbolicOrder_block_c]
-        have hltEdge : (3 * k - 1) + 1 < 3 * k + 1 := by omega
         have hEdge :
             cyclicIndex (3 * k + 1) (by omega)
                 (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 =
               ⟨3 * k, by omega⟩ := by
-          have hh := cyclicIndex_eq_mk_add_of_lt
-            (3 * k + 1) (by omega)
-            (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 hltEdge
-          apply Fin.ext
-          have hv := congrArg Fin.val hh
-          simpa using hv
+          simpa [iEnd] using hnextEnd
         rw [hEdge] at hExcEnd
         have hlast :
             (⟨3 * j.val + 2, by omega⟩ : Fin (3 * k + 1)) =
@@ -302,7 +296,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
           apply Fin.ext
           dsimp [iEnd]
           omega
-        rw [hlast, heW']
+        rw [hlast, heT', heW']
         convert hExcEnd using 1
         ext z
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
@@ -317,20 +311,17 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
       simp only [adjacentNext_tail0, adjacentNext_tail1, adjacentNext_block0,
           adjacentSymbolicOrder_tail_c, adjacentSymbolicOrder_tail_g,
           adjacentSymbolicOrder_block_c, adjacentSymbolicOrder_block_g0]
-      have hltEdge : (3 * k - 1) + 1 < 3 * k + 1 := by omega
       have hEdge :
           cyclicIndex (3 * k + 1) (by omega)
               (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 =
             ⟨3 * k, by omega⟩ := by
-        exact cyclicIndex_eq_mk_add_of_lt
-          (3 * k + 1) (by omega)
-          (⟨3 * k - 1, by omega⟩ : Fin (3 * k + 1)) 1 hltEdge
+        simpa [iEnd] using hnextEnd
       have hWrap :
           cyclicIndex (3 * k + 1) (by omega)
               (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) 1 =
             ⟨0, by omega⟩ := hcoreWrap1
       rw [hEdge, hWrap] at hExcWrap
-      rw [heW']
+      rw [heT', heW']
       convert hExcWrap using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
@@ -355,9 +346,14 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         simpa [q] using hcoreWrap2
       rw [hq1, hq2] at h
       dsimp [m, q] at h
-      rw [heW'] at h
-      rw [heW']
-      convert h using 1
+      have h' :
+          M.IsBase
+            ({cW,
+              (order (⟨3 * k, by omega⟩ : Fin (3 * k + 1)) : α),
+              (order (⟨0, by omega⟩ : Fin (3 * k + 1)) : α),
+              (order (⟨1, by omega⟩ : Fin (3 * k + 1)) : α)} : Set α) := by
+        simpa only [heW'] using h
+      convert h' using 1
       ext z
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       tauto
