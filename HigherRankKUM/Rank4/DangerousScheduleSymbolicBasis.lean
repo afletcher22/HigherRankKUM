@@ -117,6 +117,7 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
   rw [adjacentWindow_four_next]
   rcases p with p | r
   · rcases p with ⟨j, r⟩
+    have hjlt := j.isLt
     fin_cases r
     · let m : Fin (k + 1) := ⟨j.val, by omega⟩
       let q : Fin (3 * k + 1) := ⟨3 * j.val, by omega⟩
