@@ -223,8 +223,8 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
         dsimp [m, q] at h
         convert h using 1
         ext z
-        simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-        tauto
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
+          or_assoc, or_left_comm, or_comm]
     · have hrEq : r = (3 : Fin 4) := by
         apply Fin.ext
         exact hr
@@ -311,8 +311,8 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
       dsimp [m, q] at h
       convert h using 1
       ext z
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-      tauto
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
+        or_assoc, or_left_comm, or_comm]
 
 end
 
