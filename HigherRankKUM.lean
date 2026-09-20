@@ -96,4 +96,4 @@ import HigherRankKUM.Rank4.DangerousBranchT1Geometry
 import HigherRankKUM.Rank4.DangerousHyperplaneGood
 import HigherRankKUM.Rank4.DangerousHyperplaneSelection
 import HigherRankKUM.Rank4.DangerousScheduleSymbolic
-import HigherRankKUM.Rank4.DangerousScheduleSymbolicBasis
+import HigherRankKUM.Rank4.DangerousScheduleSymbolicDistanceTwo
