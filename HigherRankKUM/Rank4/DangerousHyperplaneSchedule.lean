@@ -611,14 +611,23 @@ theorem exists_shifted_adjacent_good_at_end
 
   have ht1 :
       cyclicIndex n hn target 1 = ⟨3 * k, by omega⟩ := by
-    simpa [target, n] using
-      (cyclicIndex_eq_mk_add_of_lt n hn target 1 (by
+    have h :=
+      cyclicIndex_eq_mk_add_of_lt n hn target 1 (by
         dsimp [target, n]
-        omega))
+        omega)
+    apply Fin.ext
+    have hv := congrArg Fin.val h
+    dsimp [target, n] at hv ⊢
+    omega
   have ht2 :
       cyclicIndex n hn target 2 = ⟨0, by omega⟩ := by
+    have h :=
+      cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul n hn target 2
+        (by dsimp [target, n]; omega)
+        (by dsimp [target, n]; omega)
     apply Fin.ext
-    simp [cyclicIndex, target, n]
+    have hv := congrArg Fin.val h
+    dsimp [target, n] at hv ⊢
     omega
 
   have hgoodEnd :
@@ -661,7 +670,6 @@ theorem exists_shifted_adjacent_good_at_end
             (cyclicIndex n hn i 1) 1 =
           cyclicIndex n hn i 2 := by
       rw [cyclicIndex_add]
-      norm_num
     simpa [n, hn, hadd] using hgood1
 
   exact ⟨order', hOrder', hgoodEnd, hgoodWrap⟩
@@ -700,10 +708,12 @@ theorem exists_shifted_distance_two_good_at_start
     have h := hmap 1
     have ht :
         cyclicIndex n hn target 1 = ⟨1, by omega⟩ := by
-      simpa [target, n] using
-        (cyclicIndex_eq_mk_add_of_lt n hn target 1 (by
+      have h :=
+        cyclicIndex_eq_mk_add_of_lt n hn target 1 (by
           dsimp [target, n]
-          omega))
+          omega)
+      apply Fin.ext
+      exact congrArg Fin.val h
     rw [ht] at h
     exact h
   have hmap2 :
@@ -712,10 +722,12 @@ theorem exists_shifted_distance_two_good_at_start
     have h := hmap 2
     have ht :
         cyclicIndex n hn target 2 = ⟨2, by omega⟩ := by
-      simpa [target, n] using
-        (cyclicIndex_eq_mk_add_of_lt n hn target 2 (by
+      have h :=
+        cyclicIndex_eq_mk_add_of_lt n hn target 2 (by
           dsimp [target, n]
-          omega))
+          omega)
+      apply Fin.ext
+      exact congrArg Fin.val h
     rw [ht] at h
     exact h
   have hmap3 :
@@ -724,10 +736,12 @@ theorem exists_shifted_distance_two_good_at_start
     have h := hmap 3
     have ht :
         cyclicIndex n hn target 3 = ⟨3, by omega⟩ := by
-      simpa [target, n] using
-        (cyclicIndex_eq_mk_add_of_lt n hn target 3 (by
+      have h :=
+        cyclicIndex_eq_mk_add_of_lt n hn target 3 (by
           dsimp [target, n]
-          omega))
+          omega)
+      apply Fin.ext
+      exact congrArg Fin.val h
     rw [ht] at h
     exact h
 
@@ -737,8 +751,10 @@ theorem exists_shifted_distance_two_good_at_start
     have hnext :
         cyclicIndex n hn (⟨0, by omega⟩ : Fin n) 1 =
           ⟨1, by omega⟩ := by
-      exact cyclicIndex_eq_mk_add_of_lt n hn
-        (⟨0, by omega⟩ : Fin n) 1 (by omega)
+      have h := cyclicIndex_eq_mk_add_of_lt n hn
+        (⟨0, by omega⟩ : Fin n) 1 (by dsimp [n]; omega)
+      apply Fin.ext
+      exact congrArg Fin.val h
     rw [hnext, hmap0, hmap1]
     simpa [n, hn] using hgood0
 
@@ -748,15 +764,16 @@ theorem exists_shifted_distance_two_good_at_start
     have hnext :
         cyclicIndex n hn (⟨2, by omega⟩ : Fin n) 1 =
           ⟨3, by omega⟩ := by
-      exact cyclicIndex_eq_mk_add_of_lt n hn
-        (⟨2, by omega⟩ : Fin n) 1 (by omega)
+      have h := cyclicIndex_eq_mk_add_of_lt n hn
+        (⟨2, by omega⟩ : Fin n) 1 (by dsimp [n]; omega)
+      apply Fin.ext
+      exact congrArg Fin.val h
     rw [hnext, hmap2, hmap3]
     have hadd :
         cyclicIndex n hn
             (cyclicIndex n hn i 2) 1 =
           cyclicIndex n hn i 3 := by
       rw [cyclicIndex_add]
-      norm_num
     simpa [n, hn, hadd] using hgood2
 
   exact ⟨order', hOrder', hgoodStart, hgoodTwo⟩
@@ -1346,8 +1363,10 @@ theorem exists_cbo_of_distance_two_good_normalized
       cyclicIndex (3 * k + 1) (by omega)
           (⟨0, by omega⟩ : Fin (3 * k + 1)) 2 =
         ⟨2, by omega⟩ := by
-    exact cyclicIndex_eq_mk_add_of_lt (3 * k + 1) (by omega)
+    have h := cyclicIndex_eq_mk_add_of_lt (3 * k + 1) (by omega)
       (⟨0, by omega⟩ : Fin (3 * k + 1)) 2 (by omega)
+    apply Fin.ext
+    exact congrArg Fin.val h
   obtain ⟨c₀, c₁, c₂, hc01, hc12, hc02,
       hc₀, hc₁, hc₂, hExc0, hExc2⟩ :=
     dangerous_hyperplane_distance_two_good_selection
