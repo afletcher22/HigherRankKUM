@@ -30,10 +30,27 @@ theorem exists_cbo_of_adjacent_good_normalized_symbolic
       DangerousHyperplaneEdgeGood order ⟨3 * k, by omega⟩) :
     ∃ σ : Fin (4 * k + 2) ≃ M.E,
       CyclicBasisOrder M 4 (by omega) σ := by
+  let iEnd : Fin (3 * k + 1) := ⟨3 * k - 1, by omega⟩
+  have hnextEnd :
+      cyclicIndex (3 * k + 1) (by omega) iEnd 1 =
+        ⟨3 * k, by omega⟩ := by
+    have h := cyclicIndex_eq_mk_add_of_lt (3 * k + 1) (by omega)
+      iEnd 1 (by dsimp [iEnd]; omega)
+    apply Fin.ext
+    have hv := congrArg Fin.val h
+    dsimp [iEnd] at hv ⊢
+    omega
+  have hgoodEnd' : DangerousHyperplaneEdgeGood order iEnd := by
+    simpa [iEnd] using hgoodEnd
+  have hgoodNext :
+      DangerousHyperplaneEdgeGood order
+        (cyclicIndex (3 * k + 1) (by omega) iEnd 1) := by
+    rw [hnextEnd]
+    exact hgoodWrap
   obtain ⟨cT, cW, hcne, hcT, hcW, hExcEnd, hExcWrap⟩ :=
     dangerous_hyperplane_adjacent_good_selection
       hk hE hRank hEcard hStrict hH order hOrder
-      ⟨3 * k - 1, by omega⟩ hgoodEnd hgoodWrap
+      iEnd hgoodEnd' hgoodNext
 
   let C : Set α := M.E \ H
   have hCfin : C.Finite := by
