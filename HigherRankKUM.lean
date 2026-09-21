@@ -114,3 +114,10 @@ import HigherRankKUM.Rank4.DangerousScheduleNormalization
 import HigherRankKUM.Rank4.DangerousScheduleSymbolicBasis
 import HigherRankKUM.Rank4.DangerousScheduleSymbolicDistanceTwo
 import HigherRankKUM.Rank4.DangerousScheduleSymbolicEndpoint
+
+import HigherRankKUM.LocalRepairFivePairRigidity
+import HigherRankKUM.Rank4.PositionSwapRigidity
+import HigherRankKUM.Rank4.SaturatedFourWindowDefect
+import HigherRankKUM.Rank4.SaturatedFlatRankThree
+import HigherRankKUM.Rank4.SevenMoveTypes
+import HigherRankKUM.Rank4.EndpointSwapGeometry
