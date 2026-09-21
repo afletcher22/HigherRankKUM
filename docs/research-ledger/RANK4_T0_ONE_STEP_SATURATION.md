@@ -573,3 +573,63 @@ plateaux by maximizing locally legal reordering freedom.
 
 Do not yet use the lexicographic score as a proof theorem; continue
 adversarial falsification first.
+
+
+## Full-S4 lexicographic local ascent is false
+
+The natural repair to blocker-count maximality was to add local reorder
+mobility as a secondary coordinate.  This also fails, even when mobility uses
+**all** nonidentity permutations of a four-position block.
+
+Explicit binary n=14 witness:
+
+- columns:
+  `(9,13,6,8,3,3,10,11,6,10,4,2,15,14)`;
+- omitted label: `e=0`;
+- deletion CBO:
+  `(1,8,6,5,13,7,11,3,12,10,2,9,4)`;
+- ambient flat profile: `(2,5,8)`;
+- all two-element deletions retain rank four and satisfy the 12/4 density
+  caps;
+- no 9-point rank-three flat exists anywhere.
+
+Define the local score
+
+`(# blockers, number of CBO-valid arbitrary-four-block attempts)`.
+
+At the displayed state:
+
+- score = `(7,3)`;
+- there is exactly one distinct CBO-preserving four-block neighbor;
+- it is still bad;
+- there is no lexicographically better neighbor;
+- there is no favorable one-step neighbor.
+
+Nevertheless the state reaches success in exactly two moves, with shortest
+path scores
+
+`(7,3) -> (6,7) -> (5,16) + success`.
+
+Thus the primary blocker count must **decrease** before repair.  The combined
+lexicographic local-ascent program is dead.
+
+Executable certificate:
+
+`experiments/rank4_binary_n14_full_lex_localmax_counterexample.py`.
+
+### Consequence
+
+Do not spend further time searching for scalar or finite-dimensional local
+potentials whose strict ascent is supposed to lead to success.
+
+The surviving target is genuinely component/periodic:
+
+1. assume a fixed-e four-block component is closed and all bad;
+2. choose a deterministic local move rule;
+3. follow the resulting infinite sequence, which becomes periodic by
+   finiteness;
+4. use persistence across the entire periodic orbit to force a saturated
+   rank-three flat through e.
+
+This is structurally much closer to the actual van den Heuvel--Thomasse proof
+than any of the discarded local-maximality statements.
