@@ -40,14 +40,18 @@ theorem sum_fourHitCount_eq_four_mul_ncard
       (∑ i : Fin n,
         if Good (cyclicIndex n hn i q.val) then 1 else 0) =
       (∑ i : Fin n, if Good i then 1 else 0) := by
-    let e := cyclicShiftEquiv n hn q.val
-    simpa [e, cyclicShiftEquiv] using
-      (e.sum_comp (fun j : Fin n => if Good j then (1 : ℕ) else 0))
+    have hinj :
+        Function.Injective (fun i : Fin n => cyclicIndex n hn i q.val) :=
+      cyclicIndex_injective_start n hn q.val
+    have hbij :
+        Function.Bijective (fun i : Fin n => cyclicIndex n hn i q.val) :=
+      ⟨hinj, Finite.surjective_of_injective hinj⟩
+    exact hbij.sum_comp
+      (fun j : Fin n => if Good j then (1 : ℕ) else 0)
   have hbase :
       (∑ i : Fin n, if Good i then 1 else 0) =
         ({i | Good i} : Set (Fin n)).ncard := by
-    rw [Finset.sum_boole, Set.toFinset_ofPred,
-      ← Set.ncard_eq_toFinset_card']
+    simpa only [Finset.sum_boole, Set.fintypeCard_eq_ncard]
   unfold fourHitCount
   rw [Finset.sum_comm]
   calc
@@ -88,16 +92,25 @@ theorem multiHitStarts_ncard_le_seven
   let B : Set (Fin n) := multiHitStarts hn Good
   have hcount_ge_one : ∀ i : Fin n, 1 ≤ fourHitCount hn Good i := by
     intro i
+    have hone (q : Fin 4)
+        (hq : Good (cyclicIndex n hn i q.val)) :
+        1 ≤ fourHitCount hn Good i := by
+      unfold fourHitCount
+      calc
+        1 = (if Good (cyclicIndex n hn i q.val) then 1 else 0) := by
+          simp [hq]
+        _ ≤ ∑ r : Fin 4,
+            if Good (cyclicIndex n hn i r.val) then 1 else 0 := by
+          exact Finset.single_le_sum
+            (fun r _ => Nat.zero_le
+              (if Good (cyclicIndex n hn i r.val) then 1 else 0))
+            (Finset.mem_univ q)
     have hi := hHit i
     rcases hi with h0 | h1 | h2 | h3
-    · unfold fourHitCount
-      simp [h0]
-    · unfold fourHitCount
-      simp [h1]
-    · unfold fourHitCount
-      simp [h2]
-    · unfold fourHitCount
-      simp [h3]
+    · exact hone 0 (by simpa [n, cyclicIndex_zero] using h0)
+    · exact hone 1 (by simpa [n] using h1)
+    · exact hone 2 (by simpa [n] using h2)
+    · exact hone 3 (by simpa [n] using h3)
   have hpoint :
       ∀ i : Fin n,
         1 + (if i ∈ B then 1 else 0) ≤ fourHitCount hn Good i := by
@@ -114,10 +127,7 @@ theorem multiHitStarts_ncard_le_seven
     exact Finset.sum_le_sum (fun i _ => hpoint i)
   have hBsum :
       (∑ i : Fin n, if i ∈ B then 1 else 0) = B.ncard := by
-    rw [Finset.sum_boole, ← Set.ncard_eq_toFinset_card']
-    congr 1
-    ext i
-    simp
+    simpa only [Finset.sum_boole, Set.fintypeCard_eq_ncard]
   have hleft :
       (∑ i : Fin n, (1 + (if i ∈ B then 1 else 0))) =
         n + B.ncard := by
