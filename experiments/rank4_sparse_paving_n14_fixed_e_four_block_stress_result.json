@@ -1,0 +1,107 @@
+{
+  "scope": "dense greedy rank-4 sparse-paving matroids on n=14",
+  "matroids": 10,
+  "circuit_hyperplane_range": [
+    62,
+    68
+  ],
+  "bad_states": 71,
+  "moves": "arbitrary CBO-preserving permutations of four consecutive positions; omitted element fixed; no pivots",
+  "distance_histogram": {
+    "1": 71
+  },
+  "rows": [
+    {
+      "hyperplane_seed": 1000,
+      "circuit_hyperplanes": 66,
+      "bad_states_found": 10,
+      "sampling_attempts": 2567,
+      "distance_histogram": {
+        "1": 10
+      }
+    },
+    {
+      "hyperplane_seed": 1001,
+      "circuit_hyperplanes": 66,
+      "bad_states_found": 2,
+      "sampling_attempts": 5000,
+      "distance_histogram": {
+        "1": 2
+      }
+    },
+    {
+      "hyperplane_seed": 1002,
+      "circuit_hyperplanes": 65,
+      "bad_states_found": 3,
+      "sampling_attempts": 5000,
+      "distance_histogram": {
+        "1": 3
+      }
+    },
+    {
+      "hyperplane_seed": 1003,
+      "circuit_hyperplanes": 62,
+      "bad_states_found": 7,
+      "sampling_attempts": 5000,
+      "distance_histogram": {
+        "1": 7
+      }
+    },
+    {
+      "hyperplane_seed": 1004,
+      "circuit_hyperplanes": 68,
+      "bad_states_found": 10,
+      "sampling_attempts": 3389,
+      "distance_histogram": {
+        "1": 10
+      }
+    },
+    {
+      "hyperplane_seed": 1005,
+      "circuit_hyperplanes": 65,
+      "bad_states_found": 8,
+      "sampling_attempts": 5000,
+      "distance_histogram": {
+        "1": 8
+      }
+    },
+    {
+      "hyperplane_seed": 1006,
+      "circuit_hyperplanes": 65,
+      "bad_states_found": 8,
+      "sampling_attempts": 5000,
+      "distance_histogram": {
+        "1": 8
+      }
+    },
+    {
+      "hyperplane_seed": 1007,
+      "circuit_hyperplanes": 65,
+      "bad_states_found": 7,
+      "sampling_attempts": 5000,
+      "distance_histogram": {
+        "1": 7
+      }
+    },
+    {
+      "hyperplane_seed": 1008,
+      "circuit_hyperplanes": 64,
+      "bad_states_found": 8,
+      "sampling_attempts": 5000,
+      "distance_histogram": {
+        "1": 8
+      }
+    },
+    {
+      "hyperplane_seed": 1009,
+      "circuit_hyperplanes": 64,
+      "bad_states_found": 6,
+      "sampling_attempts": 5000,
+      "distance_histogram": {
+        "1": 6
+      }
+    }
+  ],
+  "interpretation": "All 71 sampled bad states became favorable after one fixed-e four-block reorder. This provides nonrepresentable-style stress for the t=0 fixed-e component conjecture.",
+  "claim_level": "seeded finite computation; not exhaustive and not Lean certified"
+}
