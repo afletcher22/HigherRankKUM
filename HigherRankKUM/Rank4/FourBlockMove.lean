@@ -79,6 +79,46 @@ theorem cyclicWindow_four_eq_of_disjoint_fourBlockPositions
     have heq : τ j = σ j := hmove.1 j hjout
     exact congrArg Subtype.val heq
 
+/-- The moved four-position window itself is unchanged as a set of ground
+elements.  A four-block reorder only changes the order inside this basis
+window. -/
+theorem cyclicWindow_four_eq_at_fourBlock_start
+    {E : Set α} {n : ℕ}
+    {hn : 0 < n} {σ τ : Fin n ≃ E} {s : Fin n}
+    (hmove : FourBlockReorder hn σ τ s) :
+    cyclicWindow 4 hn τ s = cyclicWindow 4 hn σ s := by
+  ext x
+  constructor
+  · rintro ⟨q, rfl⟩
+    have hmem :
+        τ (cyclicIndex n hn s q.val) ∈
+          Set.range (fun r : Fin 4 => τ (cyclicIndex n hn s r.val)) :=
+      ⟨q, rfl⟩
+    rw [hmove.2] at hmem
+    rcases hmem with ⟨r, hr⟩
+    refine ⟨r, ?_⟩
+    exact congrArg Subtype.val hr
+  · rintro ⟨q, rfl⟩
+    have hmem :
+        σ (cyclicIndex n hn s q.val) ∈
+          Set.range (fun r : Fin 4 => σ (cyclicIndex n hn s r.val)) :=
+      ⟨q, rfl⟩
+    rw [← hmove.2] at hmem
+    rcases hmem with ⟨r, hr⟩
+    refine ⟨r, ?_⟩
+    exact congrArg Subtype.val hr
+
+/-- Consequently the central four-block window remains a base whenever the
+original order was a rank-four CBO. -/
+theorem isBase_cyclicWindow_four_at_fourBlock_start
+    {M : Matroid α} {E : Set α} {n : ℕ}
+    {hn : 0 < n} {σ τ : Fin n ≃ E} {s : Fin n}
+    (hσ : CyclicBasisOrder M 4 hn σ)
+    (hmove : FourBlockReorder hn σ τ s) :
+    M.IsBase (cyclicWindow 4 hn τ s) := by
+  rw [cyclicWindow_four_eq_at_fourBlock_start hmove]
+  exact hσ s
+
 /-- A four-block reorder preserves a rank-four cyclic basis ordering once the
 finitely many rank-four windows meeting the moved position block have been
 rechecked.
