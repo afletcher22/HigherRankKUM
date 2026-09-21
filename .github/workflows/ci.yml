@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - rank4-fundcircuit-blocker-iff
   pull_request:
     branches:
       - main
@@ -154,5 +155,7 @@ jobs:
         run: |
           python3 experiments/density_slack_deletion_certificate.py > /tmp/density-slack-deletion-result.json
           diff -u experiments/density_slack_deletion_result.json /tmp/density-slack-deletion-result.json
+      - name: Build blocker closure converse
+        run: lake build +HigherRankKUM.BlockerClosure
       - name: Build
         run: lake build
