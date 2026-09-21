@@ -65,6 +65,97 @@ theorem sum_fourHitCount_eq_four_mul_ncard
     _ = 4 * ({i | Good i} : Set (Fin n)).ncard := by
       simp [Nat.mul_comm]
 
+/-- Generic four-window excess bound.
+
+If every cyclic four-window contains at least one marked position, then the
+number of starts whose four-window contains at least two marked positions is
+bounded by the incidence excess
+`4 * |Good| - n`.  We state the subtraction-free form used by the rank-four
+specializations. -/
+theorem n_add_multiHitStarts_ncard_le_four_mul_ncard
+    {n : ℕ} (hn : 0 < n)
+    (Good : Fin n → Prop)
+    (hHit :
+      ∀ i : Fin n,
+        Good i ∨
+        Good (cyclicIndex n hn i 1) ∨
+        Good (cyclicIndex n hn i 2) ∨
+        Good (cyclicIndex n hn i 3)) :
+    n + (multiHitStarts hn Good).ncard ≤
+      4 * ({i | Good i} : Set (Fin n)).ncard := by
+  classical
+  let B : Set (Fin n) := multiHitStarts hn Good
+  have hcount_ge_one : ∀ i : Fin n, 1 ≤ fourHitCount hn Good i := by
+    intro i
+    have hone (q : Fin 4)
+        (hq : Good (cyclicIndex n hn i q.val)) :
+        1 ≤ fourHitCount hn Good i := by
+      unfold fourHitCount
+      calc
+        1 = (if Good (cyclicIndex n hn i q.val) then 1 else 0) := by
+          simp [hq]
+        _ ≤ ∑ r : Fin 4,
+            if Good (cyclicIndex n hn i r.val) then 1 else 0 := by
+          exact Finset.single_le_sum
+            (fun r _ => Nat.zero_le
+              (if Good (cyclicIndex n hn i r.val) then 1 else 0))
+            (Finset.mem_univ q)
+    rcases hHit i with h0 | h1 | h2 | h3
+    · exact hone 0 (by simpa [cyclicIndex_zero] using h0)
+    · exact hone 1 h1
+    · exact hone 2 h2
+    · exact hone 3 h3
+  have hpoint :
+      ∀ i : Fin n,
+        1 + (if i ∈ B then 1 else 0) ≤ fourHitCount hn Good i := by
+    intro i
+    by_cases hiB : i ∈ B
+    · simp only [hiB, if_true]
+      dsimp [B, multiHitStarts] at hiB
+      omega
+    · simp only [hiB, if_false, Nat.add_zero]
+      exact hcount_ge_one i
+  have hsum_le :
+      (∑ i : Fin n, (1 + (if i ∈ B then 1 else 0))) ≤
+        ∑ i : Fin n, fourHitCount hn Good i := by
+    exact Finset.sum_le_sum (fun i _ => hpoint i)
+  have hBsum :
+      (∑ i : Fin n, if i ∈ B then 1 else 0) = B.ncard := by
+    rw [Finset.sum_boole, ← Set.toFinset_ofPred]
+    simpa using (Set.ncard_eq_toFinset_card' B).symm
+  have hleft :
+      (∑ i : Fin n, (1 + (if i ∈ B then 1 else 0))) =
+        n + B.ncard := by
+    rw [Finset.sum_add_distrib, hBsum]
+    simp
+  have htotal :=
+    sum_fourHitCount_eq_four_mul_ncard hn Good
+  rw [hleft, htotal] at hsum_le
+  simpa [B] using hsum_le
+
+/-- Full-ground saturated rank-four defect bound.
+
+On `4k+2` cyclic positions, if exactly `k+2` positions lie outside a
+rank-three region and every rank-four window meets the outside set, then at
+most six windows contain two or more outside positions. -/
+theorem multiHitStarts_ncard_le_six
+    {k : ℕ}
+    (Good : Fin (4 * k + 2) → Prop)
+    (hGoodCard :
+      ({i | Good i} : Set (Fin (4 * k + 2))).ncard = k + 2)
+    (hHit :
+      ∀ i : Fin (4 * k + 2),
+        Good i ∨
+        Good (cyclicIndex (4 * k + 2) (by omega) i 1) ∨
+        Good (cyclicIndex (4 * k + 2) (by omega) i 2) ∨
+        Good (cyclicIndex (4 * k + 2) (by omega) i 3)) :
+    (multiHitStarts (by omega) Good).ncard ≤ 6 := by
+  have h :=
+    n_add_multiHitStarts_ncard_le_four_mul_ncard
+      (n := 4 * k + 2) (by omega) Good hHit
+  rw [hGoodCard] at h
+  omega
+
 /-- Constant-defect theorem for saturated four-window hitting.
 
 On a cycle of length 4k+1, suppose exactly k+2 positions are marked and every
