@@ -100,8 +100,7 @@ theorem endpointSwap_left_extreme_window_eq
         hn s (by omega) (by omega))
   have hs :
       tau s = sigma (cyclicIndex n hn s 3) := by
-    dsimp [tau]
-    simpa [cyclicIndex_zero] using
+    simpa only [tau, cyclicIndex_zero] using
       (apply_endpointSwap_local hn (by omega) sigma s).1
   rw [cyclicWindow_four_eq, cyclicWindow_three_eq]
   rw [h1, h2, h3, hout0, hout1, hout2, hs]
@@ -156,13 +155,11 @@ theorem endpointSwap_left_middle2_window_eq
         hn s (by omega) (by omega))
   have hs :
       tau s = sigma (cyclicIndex n hn s 3) := by
-    dsimp [tau]
-    simpa [cyclicIndex_zero] using
+    simpa only [tau, cyclicIndex_zero] using
       (apply_endpointSwap_local hn (by omega) sigma s).1
   have hs1 :
       tau (cyclicIndex n hn s 1) = sigma (cyclicIndex n hn s 1) := by
-    dsimp [tau]
-    exact (apply_endpointSwap_local hn (by omega) sigma s).2.1
+    simpa only [tau] using (apply_endpointSwap_local hn (by omega) sigma s).2.1
   rw [cyclicWindow_four_eq, h1, h2, h3, hout0, hout1, hs, hs1]
 
 /-- The s-1 boundary window under the endpoint swap is a single-element
@@ -205,17 +202,14 @@ theorem endpointSwap_left_middle1_window_eq
         hn s (by omega) (by omega))
   have hs :
       tau s = sigma (cyclicIndex n hn s 3) := by
-    dsimp [tau]
-    simpa [cyclicIndex_zero] using
+    simpa only [tau, cyclicIndex_zero] using
       (apply_endpointSwap_local hn (by omega) sigma s).1
   have hs1 :
       tau (cyclicIndex n hn s 1) = sigma (cyclicIndex n hn s 1) := by
-    dsimp [tau]
-    exact (apply_endpointSwap_local hn (by omega) sigma s).2.1
+    simpa only [tau] using (apply_endpointSwap_local hn (by omega) sigma s).2.1
   have hs2 :
       tau (cyclicIndex n hn s 2) = sigma (cyclicIndex n hn s 2) := by
-    dsimp [tau]
-    exact (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
+    simpa only [tau] using (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
   rw [cyclicWindow_four_eq, h1, h2, h3, hout0, hs, hs1, hs2]
 
 /-- The s+1 boundary window under the endpoint swap is a single-element
@@ -246,16 +240,13 @@ theorem endpointSwap_right_middle1_window_eq
     rw [cyclicIndex_add]
   have hs1 :
       tau (cyclicIndex n hn s 1) = sigma (cyclicIndex n hn s 1) := by
-    dsimp [tau]
-    exact (apply_endpointSwap_local hn (by omega) sigma s).2.1
+    simpa only [tau] using (apply_endpointSwap_local hn (by omega) sigma s).2.1
   have hs2 :
       tau (cyclicIndex n hn s 2) = sigma (cyclicIndex n hn s 2) := by
-    dsimp [tau]
-    exact (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
+    simpa only [tau] using (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
   have hs3 :
       tau (cyclicIndex n hn s 3) = sigma s := by
-    dsimp [tau]
-    simpa [cyclicIndex_zero] using
+    simpa only [tau, cyclicIndex_zero] using
       (apply_endpointSwap_local hn (by omega) sigma s).2.2.2
   have hout4 :
       tau (cyclicIndex n hn s 4) =
@@ -294,12 +285,10 @@ theorem endpointSwap_right_middle2_window_eq
     rw [cyclicIndex_add]
   have hs2 :
       tau (cyclicIndex n hn s 2) = sigma (cyclicIndex n hn s 2) := by
-    dsimp [tau]
-    exact (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
+    simpa only [tau] using (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
   have hs3 :
       tau (cyclicIndex n hn s 3) = sigma s := by
-    dsimp [tau]
-    simpa [cyclicIndex_zero] using
+    simpa only [tau, cyclicIndex_zero] using
       (apply_endpointSwap_local hn (by omega) sigma s).2.2.2
   have hout4 :
       tau (cyclicIndex n hn s 4) =
@@ -345,8 +334,7 @@ theorem endpointSwap_right_extreme_window_eq
     rw [cyclicIndex_add]
   have hs3 :
       tau (cyclicIndex n hn s 3) = sigma s := by
-    dsimp [tau]
-    simpa [cyclicIndex_zero] using
+    simpa only [tau, cyclicIndex_zero] using
       (apply_endpointSwap_local hn (by omega) sigma s).2.2.2
   have hout4 :
       tau (cyclicIndex n hn s 4) =
@@ -371,6 +359,10 @@ theorem endpointSwap_right_extreme_window_eq
         hn s (by omega) (by omega))
   rw [cyclicWindow_four_eq, cyclicWindow_three_eq]
   rw [h1, h2, h3, hs3, hout4, hout5, hout6]
+  simp only [cyclicIndex_add]
+  have h45 : 4 + 1 = 5 := by omega
+  have h46 : 4 + 2 = 6 := by omega
+  rw [h45, h46]
   ext x
   simp [or_comm, or_left_comm, or_assoc]
 
@@ -407,7 +399,7 @@ theorem mem_closure_left_extreme_of_endpointSwap_dep
     intro hd
     have hins : insert d C = C := Set.insert_eq_of_mem hd
     rw [hins] at hdep'
-    exact hdep' hCind
+    exact hCind.not_dep hdep'
   exact (hCind.mem_closure_iff_of_notMem hdC).2 hdep'
 
 /-- If the extreme right endpoint-swap boundary becomes dependent, the incoming
@@ -447,7 +439,7 @@ theorem mem_closure_right_extreme_of_endpointSwap_dep
     intro hd
     have hins : insert d C = C := Set.insert_eq_of_mem hd
     rw [hins] at hdep'
-    exact hdep' hCind
+    exact hCind.not_dep hdep'
   exact (hCind.mem_closure_iff_of_notMem hdC).2 hdep'
 
 end
