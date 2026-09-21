@@ -1,0 +1,102 @@
+{
+  "state": [
+    [
+      1,
+      2
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      13,
+      14
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      13,
+      14
+    ],
+    [
+      5,
+      9
+    ],
+    [
+      7,
+      8
+    ]
+  ],
+  "admissible_adjacent_bases": true,
+  "strict_density": true,
+  "flat_occupancy_maxima": {
+    "rank1": 3,
+    "rank2": 6,
+    "rank3": 10
+  },
+  "relation_bits": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0
+  ],
+  "unorientable": true,
+  "closure_edge_scores": [
+    0,
+    4,
+    4,
+    0,
+    0,
+    0,
+    2
+  ],
+  "closure_potential": 10,
+  "legal_repartition_occurrences": 12,
+  "distinct_repair_targets": 6,
+  "gain_histogram": {
+    "-2": 1,
+    "-1": 2,
+    "0": 9
+  },
+  "maximum_gain": 0,
+  "strictly_increasing_repair_exists": false,
+  "direct_orientable_repair_exists": true,
+  "equal_potential_orientable_repair_exists": true,
+  "equal_potential_orientable_example_boundary": 6,
+  "equal_potential_orientable_example_state": [
+    [
+      1,
+      7
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      13,
+      14
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      13,
+      14
+    ],
+    [
+      5,
+      9
+    ],
+    [
+      2,
+      8
+    ]
+  ],
+  "status": "exact fixed binary N=7 counterexample to universal strict closure-potential ascent; supports escape-or-ascent refinement"
+}
