@@ -93,7 +93,7 @@ def qualifying_patterns():
                     c[i] = 2
                 c = tuple(c)
                 m1, m2, m3 = occupancy_profile(c)
-                if (m1, m2, m3) <= (2, 4, 6):
+                if m1 <= 2 and m2 <= 4 and m3 <= 6:
                     out.add(c)
                     by_doubles[d] += 1
     return out, by_doubles
