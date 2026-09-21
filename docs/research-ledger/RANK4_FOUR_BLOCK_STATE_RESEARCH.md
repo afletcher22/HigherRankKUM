@@ -490,9 +490,9 @@ For either working seven-type family the repair histogram is:
 - distance 5: 7;
 - distance 6: 1.
 
-This does **not** justify replacing the arbitrary-S4 conjecture by the
-seven-type statement yet; it is only a proof-design simplification supported
-by the hardest historical stress example. In particular, the safest theorem
+The same seven-type family now also passes the **complete exact binary n=10** two-deletion-robust class: all 160 pointed orbit representatives have zero closed all-bad fixed-e components, and the exact worst repair distance remains 4, identical to the arbitrary-S4 audit. It also preserves the one-step repair behavior in the sampled sparse-paving n=14 stress.
+
+This still does **not** justify replacing the arbitrary-S4 conjecture by the seven-type statement as a theorem; it is a proof-design simplification supported by the hardest historical stress example plus the complete exact binary n=10 census. In particular, the safest theorem
 statement remains closure under arbitrary CBO-preserving four-block
 permutations. But a constructive proof may only need adjacent exchanges plus
 four nonadjacent local patterns.
@@ -504,3 +504,11 @@ Certificate:
 with compact result:
 
 `experiments/rank4_n18_fixed_e_move_family_minimization_result.json`.
+
+Exact n=10 companion certificate:
+
+`experiments/rank4_binary_n10_fixed_e_seven_type_exact.py`
+
+with compact result:
+
+`experiments/rank4_binary_n10_fixed_e_seven_type_exact_result.json`.
