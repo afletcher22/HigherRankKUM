@@ -114,6 +114,23 @@ theorem swapPositions_apply
       sigma (Equiv.swap p q i) := by
   rfl
 
+/-- A cyclic ground-element window is the image, under the enumeration, of
+the corresponding cyclic position window. -/
+theorem cyclicWindow_eq_image_cyclicPositionWindow
+    {E : Set alpha} {n r : ℕ}
+    (hn : 0 < n) (sigma : Fin n ≃ E) (i : Fin n) :
+    cyclicWindow r hn sigma i =
+      (fun j : Fin n => (sigma j : alpha)) ''
+        Rank4FourBlockMove.cyclicPositionWindow r hn i := by
+  ext x
+  constructor
+  · rintro ⟨q, rfl⟩
+    exact ⟨cyclicIndex n hn i q.val, ⟨q, rfl⟩, rfl⟩
+  · rintro ⟨j, hj, rfl⟩
+    rcases hj with ⟨q, hq⟩
+    subst j
+    exact ⟨q, rfl⟩
+
 /-- If a rank-four position window contains p but not q, swapping the two
 positions replaces exactly sigma(p) by sigma(q) in that window. -/
 theorem cyclicWindow_swapPositions_eq_insert_sdiff_of_mem_notMem
@@ -125,61 +142,24 @@ theorem cyclicWindow_swapPositions_eq_insert_sdiff_of_mem_notMem
     cyclicWindow 4 hn (swapPositions sigma p q) i =
       insert (sigma q : alpha)
         (cyclicWindow 4 hn sigma i \ {(sigma p : alpha)}) := by
-  ext x
-  constructor
-  · rintro ⟨r, hr⟩
-    let z := cyclicIndex n hn i r.val
-    have hzP :
-        z ∈ Rank4FourBlockMove.cyclicPositionWindow 4 hn i := ⟨r, rfl⟩
-    have hx :
-        x = (sigma (Equiv.swap p q z) : alpha) := by
-      simpa [swapPositions, z] using hr.symm
-    by_cases hzp : z = p
-    · subst z
-      left
-      simpa using hx
-    · have hzq : z ≠ q := by
-        intro hzq
-        subst z
-        exact hq hzP
-      right
-      have hswap : Equiv.swap p q z = z :=
-        Equiv.swap_apply_of_ne_of_ne hzp hzq
-      have hxz : x = (sigma z : alpha) := by
-        simpa [hswap] using hx
-      constructor
-      · refine ⟨r, ?_⟩
-        exact hxz
-      · intro hxp
-        apply hzp
-        apply sigma.injective
-        apply Subtype.ext
-        exact hxz.symm.trans hxp
-  · intro hx
-    rcases hx with hxq | ⟨hxW, hxp⟩
-    · rcases hp with ⟨r, hrp⟩
-      refine ⟨r, ?_⟩
-      have hpidx :
-          cyclicIndex n hn i r.val = p := hrp
-      subst p
-      simpa [swapPositions] using hxq.symm
-    · rcases hxW with ⟨r, hr⟩
-      refine ⟨r, ?_⟩
-      let z := cyclicIndex n hn i r.val
-      have hzP :
-          z ∈ Rank4FourBlockMove.cyclicPositionWindow 4 hn i := ⟨r, rfl⟩
-      have hzp : z ≠ p := by
-        intro h
-        subst z
-        apply hxp
-        exact hr
-      have hzq : z ≠ q := by
-        intro h
-        subst z
-        exact hq hzP
-      have hswap : Equiv.swap p q z = z :=
-        Equiv.swap_apply_of_ne_of_ne hzp hzq
-      simpa [swapPositions, z, hswap] using hr
+  let P := Rank4FourBlockMove.cyclicPositionWindow 4 hn i
+  let f : Fin n → alpha := fun j => (sigma j : alpha)
+  have hf : Function.Injective f := by
+    intro a b hab
+    apply sigma.injective
+    apply Subtype.ext
+    exact hab
+  have hswap :
+      (Equiv.swap p q : Fin n → Fin n) '' P =
+        insert q (P \ {p}) := by
+    exact (Equiv.swap_bijOn_exchange hp hq).image_eq
+  rw [cyclicWindow_eq_image_cyclicPositionWindow,
+    cyclicWindow_eq_image_cyclicPositionWindow]
+  change
+    (fun j : Fin n => f (Equiv.swap p q j)) '' P =
+      insert (f q) (f '' P \ {f p})
+  rw [← Set.image_image, hswap, Set.image_insert_eq,
+    Set.image_sdiff hf, Set.image_singleton]
 
 /-- If a position window contains either both swapped positions or neither,
 swapping those positions leaves the window unchanged as a set of ground
@@ -194,42 +174,32 @@ theorem cyclicWindow_swapPositions_eq_of_mem_iff
     cyclicWindow 4 hn (swapPositions sigma p q) i =
       cyclicWindow 4 hn sigma i := by
   let P := Rank4FourBlockMove.cyclicPositionWindow 4 hn i
+  let f : Fin n → alpha := fun j => (sigma j : alpha)
   have hpres :
       ∀ {z : Fin n}, z ∈ P → Equiv.swap p q z ∈ P := by
     intro z hz
     by_cases hzp : z = p
     · subst z
-      simpa [P] using hiff.mp (by simpa [P] using hz)
+      have hqP : q ∈ P := hiff.mp hz
+      simpa using hqP
     by_cases hzq : z = q
     · subst z
-      simpa [P] using hiff.mpr (by simpa [P] using hz)
+      have hpP : p ∈ P := hiff.mpr hz
+      simpa using hpP
     · rw [Equiv.swap_apply_of_ne_of_ne hzp hzq]
       exact hz
-  ext x
-  constructor
-  · rintro ⟨r, rfl⟩
-    let z := cyclicIndex n hn i r.val
-    have hzP : z ∈ P := by
-      exact ⟨r, rfl⟩
-    have hswP := hpres hzP
-    rcases hswP with ⟨r', hr'⟩
-    refine ⟨r', ?_⟩
-    change
-      (sigma (Equiv.swap p q z) : alpha) =
-        (sigma (cyclicIndex n hn i r'.val) : alpha)
-    rw [hr']
-  · rintro ⟨r, rfl⟩
-    let z := cyclicIndex n hn i r.val
-    have hzP : z ∈ P := by
-      exact ⟨r, rfl⟩
-    have hswP := hpres hzP
-    rcases hswP with ⟨r', hr'⟩
-    refine ⟨r', ?_⟩
-    change
-      (sigma (Equiv.swap p q (cyclicIndex n hn i r'.val)) : alpha) =
-        (sigma z : alpha)
-    rw [hr']
-    simp
+  have hswap : (Equiv.swap p q : Fin n → Fin n) '' P = P := by
+    apply Set.Subset.antisymm
+    · rintro z ⟨x, hx, rfl⟩
+      exact hpres hx
+    · intro z hz
+      refine ⟨Equiv.swap p q z, hpres hz, ?_⟩
+      simp
+  rw [cyclicWindow_eq_image_cyclicPositionWindow,
+    cyclicWindow_eq_image_cyclicPositionWindow]
+  change
+    (fun j : Fin n => f (Equiv.swap p q j)) '' P = f '' P
+  rw [← Set.image_image, hswap]
 
 /-- A dependent window produced by a one-sided position swap gives a closure
 obstruction on the unchanged three-element core. -/
