@@ -37,6 +37,21 @@ theorem cyclicIndex_not_mem_fourBlockPositions_of_four_le
       (lt_of_lt_of_le q.isLt h4n) htn hidx
   omega
 
+/-- Distinct relative offsets below the cycle length enumerate distinct ground
+elements. -/
+theorem cyclicOrder_value_ne_of_offsets_ne
+    {E : Set α} {n a b : ℕ}
+    (hn : 0 < n) (σ : Fin n ≃ E) (s : Fin n)
+    (ha : a < n) (hb : b < n) (hab : a ≠ b) :
+    (σ (cyclicIndex n hn s a) : α) ≠
+      (σ (cyclicIndex n hn s b) : α) := by
+  intro hEq
+  apply hab
+  apply cyclicIndex_injective_offsets n hn s ha hb
+  apply σ.injective
+  apply Subtype.ext
+  exact hEq
+
 /-- Explicit four-block permutations leave every cyclic offset at least four
 unchanged, as long as the offset is below the cycle length. -/
 theorem applyFourBlockPerm_eq_at_offset_of_four_le
