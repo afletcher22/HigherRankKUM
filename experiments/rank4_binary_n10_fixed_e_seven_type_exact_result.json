@@ -1,0 +1,152 @@
+{
+  "scope": "complete binary represented n=10 class satisfying exact two-deletion flat caps (2,4,6)",
+  "multiplicity_patterns": 28476,
+  "gl4_2_orbits": 16,
+  "pointed_orbit_representatives": 160,
+  "move_types": [
+    [
+      1,
+      0,
+      2,
+      3
+    ],
+    [
+      0,
+      2,
+      1,
+      3
+    ],
+    [
+      0,
+      1,
+      3,
+      2
+    ],
+    [
+      2,
+      3,
+      0,
+      1
+    ],
+    [
+      2,
+      3,
+      1,
+      0
+    ],
+    [
+      3,
+      1,
+      2,
+      0
+    ],
+    [
+      0,
+      3,
+      2,
+      1
+    ]
+  ],
+  "closed_all_bad_fixed_e_components": 0,
+  "maximum_fixed_e_distance_to_success": 4,
+  "orbit_summaries": [
+    {
+      "orbit_index": 0,
+      "orbit_size": 840,
+      "maximum_fixed_e_repair_distance": 1,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 1,
+      "orbit_size": 420,
+      "maximum_fixed_e_repair_distance": 2,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 2,
+      "orbit_size": 5040,
+      "maximum_fixed_e_repair_distance": 4,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 3,
+      "orbit_size": 840,
+      "maximum_fixed_e_repair_distance": 3,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 4,
+      "orbit_size": 168,
+      "maximum_fixed_e_repair_distance": 0,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 5,
+      "orbit_size": 2520,
+      "maximum_fixed_e_repair_distance": 2,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 6,
+      "orbit_size": 840,
+      "maximum_fixed_e_repair_distance": 2,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 7,
+      "orbit_size": 105,
+      "maximum_fixed_e_repair_distance": 1,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 8,
+      "orbit_size": 420,
+      "maximum_fixed_e_repair_distance": 2,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 9,
+      "orbit_size": 5040,
+      "maximum_fixed_e_repair_distance": 2,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 10,
+      "orbit_size": 5040,
+      "maximum_fixed_e_repair_distance": 3,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 11,
+      "orbit_size": 2520,
+      "maximum_fixed_e_repair_distance": 2,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 12,
+      "orbit_size": 315,
+      "maximum_fixed_e_repair_distance": 2,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 13,
+      "orbit_size": 2520,
+      "maximum_fixed_e_repair_distance": 3,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 14,
+      "orbit_size": 1680,
+      "maximum_fixed_e_repair_distance": 3,
+      "closed_all_bad_fixed_e_components": 0
+    },
+    {
+      "orbit_index": 15,
+      "orbit_size": 168,
+      "maximum_fixed_e_repair_distance": 2,
+      "closed_all_bad_fixed_e_components": 0
+    }
+  ],
+  "interpretation": "The seven-type move family isolated from the historical n=18 stress is already sufficient throughout the complete exact binary n=10 two-deletion-robust class. Its worst exact fixed-e repair distance is four, equal to the arbitrary-S4 audit.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
