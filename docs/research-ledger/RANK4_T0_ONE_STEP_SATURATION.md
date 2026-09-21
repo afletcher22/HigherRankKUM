@@ -200,41 +200,46 @@ word up to cyclic reversal for lengths 9, 13, and 17.  The run-length proof
 above removes the size restriction.
 
 
-## A local blocker-push lemma
+## A local isolated-blocker obstruction lemma
 
 Write the local deletion order as
 
 `..., x[-1], x0, x1, x2, x3, x4, x5, x6, ...`
 
-and suppose:
+and suppose the blocker word has the local pattern
 
-1. `T0={x0,x1,x2}` is a blocker for `e`;
-2. the triple at start `i-1` is a nonblocker;
-3. the triples at starts `i+1` and `i+2` are nonblockers.
+`0 1 0 0`
+
+at starts `i-1,i,i+1,i+2`.  Thus `{x0,x1,x2}` is a blocker while
+the neighboring triples at starts `i-1,i+1,i+2` are nonblockers.
 
 Consider the adjacent swap `x2 <-> x3` (the `swap23` four-block move).
 
-### If the swap preserves the deletion CBO
+### If the swap preserves the deletion CBO, it is immediately favorable
 
-The moved triple at start `i` is `{x0,x1,x3}`.
+The moved triple at start `i` becomes `{x0,x1,x3}`.
 
-It cannot be a blocker.  Otherwise `e` is in the closures of both
+It cannot be a blocker.  Otherwise `e` lies in the closures of both
 `{x0,x1,x2}` and `{x0,x1,x3}`; their union is the old basis
-`{x0,x1,x2,x3}`.  The certified closure-intersection mechanism then gives
+`{x0,x1,x2,x3}`.  The certified closure-intersection lemma then gives
 
 `e in cl({x0,x1})`.
 
-But `{x0,x1}` is contained in the old triple at start `i-1`, which would
-make that triple a blocker, contradiction.
+But `{x0,x1}` is contained in the old triple at start `i-1`, forcing
+that triple to be a blocker, contradiction.
 
-After the swap, the triples at starts `i+1` and `i+2` are unchanged as
-sets.  Therefore the first three starts `i,i+1,i+2` are nonblockers.
+The triples at starts `i+1` and `i+2` are unchanged as sets by the swap,
+and the triple at `i-1` is also unchanged.  Hence the new blocker word has
 
-Consequently, if the new CBO is still bad, its triple at start `i+3` must be
-a blocker.  In other words, inside an all-bad component the valid adjacent
-swap **pushes a blocker three starts forward**.
+`0 0 0 0`
 
-### If the swap does not preserve the deletion CBO
+at starts `i-1,i,i+1,i+2`.  Therefore **every CBO-preserving version of
+this swap is a one-step repair**.
+
+Consequently, in a one-step-rigid bad state, every occurrence of `0100`
+forces this adjacent swap to be CBO-invalid.
+
+### Invalidity has only two structural witnesses
 
 Only two rank-four windows change as sets:
 
@@ -243,7 +248,7 @@ Only two rank-four windows change as sets:
 - the right boundary replaces `x3` by `x2` in
   `{x3,x4,x5,x6}`.
 
-Hence failure gives one of the explicit closure incidences
+Hence invalidity gives one of the explicit ambient closure incidences
 
 `x3 in cl({x[-1],x0,x1})`
 
@@ -251,18 +256,14 @@ or
 
 `x2 in cl({x4,x5,x6})`.
 
-This uses exactly the existing one-element failed-exchange lemma.
+This is exactly the existing failed-one-element-exchange lemma.
 
-So this single probe has the van-den-Heuvel--Thomasse-style form:
-
-`valid push -> blocker propagates`
-
-or
-
-`invalid push -> structural closure obstruction`.
+Thus every `0100` occurrence in a one-step-rigid state emits a concrete
+rank-three closure obstruction.  The symmetric `0010` probe gives the
+reversed pair of boundary incidences.
 
 No representability, simplicity, strict density, or no-dangerousness is
-needed for the local lemma itself.
+needed for this local statement.
 
 ## Why this looks useful
 
@@ -271,9 +272,9 @@ and repeatedly pushes elements.  A push either strictly improves the closure
 profile or, in a periodic best configuration, forces a tight structural set.
 
 The local lemma above gives an analogous mechanism for the t=0 lifting
-problem.  In a closed all-bad four-block component, a valid probe cannot
-escape to success, so it transports a blocker.  An invalid probe emits a
-rank-three closure incidence.  The proposed global proof should propagate these incidences until either
+problem, but with an even sharper outcome for isolated blockers: the natural
+adjacent probe either repairs immediately or emits a rank-three closure
+incidence.  The proposed global proof should propagate these incidences until either
 (a) one blocker flat reaches the certified maximum, or (b) the blocker pattern
 falls into a periodic indirect-saturation configuration such as
 `001001001`, from which a saturated flat through `e` is forced by a
@@ -284,8 +285,9 @@ This avoids the scalar potentials already falsified in
 
 ## Next mathematical task
 
-Develop the symmetric and short-zero-run push rules for the remaining local
-blocker-run patterns, using the existing seven move types:
+Develop the symmetric isolated-blocker obstruction and the corresponding
+rules for the remaining local blocker-run patterns, using the existing seven
+move types:
 
 - adjacent swaps for one-element pushes;
 - endpoint/side swaps for skip-one transposition probes;
