@@ -738,6 +738,65 @@ theorem saturated_nondefect_window_decomposition
       saturated_tail_p9_window_decomposition
         M hk hHsub flatOrder outsideOrder⟩
 
+
+/-- Concrete six-defect certification for the explicit saturated full order.
+
+Once the flat order is a rank-three CBO, all nondefect windows of the explicit
+schedule are automatic. Thus the full order is a rank-four CBO as soon as the
+six named 2H+2R defect windows are bases. -/
+theorem cyclicBasisOrder_saturatedFullOrder_of_six_defect_bases
+    {M : Matroid α} {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (hGroundFin : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hHsub : H ⊆ M.E)
+    (hHflat : M.IsFlat H)
+    (hHrank : M.eRk H = (3 : ℕ∞))
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α))
+    (hFlatCBO :
+      CyclicBasisOrder (M ↾ H) 3 (by omega) flatOrder)
+    (h2 :
+      M.IsBase (cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 2, by omega⟩))
+    (h3 :
+      M.IsBase (cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 3, by omega⟩))
+    (h5 :
+      M.IsBase (cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 5, by omega⟩))
+    (h6 :
+      M.IsBase (cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 6, by omega⟩))
+    (h7 :
+      M.IsBase (cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 7, by omega⟩))
+    (h8 :
+      M.IsBase (cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 8, by omega⟩)) :
+    CyclicBasisOrder M 4 (by omega)
+      (saturatedFullOrder M hk hHsub flatOrder outsideOrder) := by
+  apply cyclicBasisOrder_of_saturated_six_defect_decomposition
+    hk hGroundFin hRank hHsub hHflat hHrank
+    flatOrder outsideOrder
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+    hFlatCBO
+  · intro i hi
+    exact saturated_nondefect_window_decomposition
+      M hk hHsub flatOrder outsideOrder i hi
+  · exact h2
+  · exact h3
+  · exact h5
+  · exact h6
+  · exact h7
+  · exact h8
+
 end
 
 end Rank4SaturatedSixDefectDecomposition
