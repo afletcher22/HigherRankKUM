@@ -31,26 +31,44 @@ theorem two_subset_four_pair_classification
   have hyU :
       y ∈ ({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α) :=
     hQsub (by simp)
-  have hb₀c₀ : b₀ ≠ c₀ := by
-    intro h
-    subst c₀
-    exact Set.disjoint_left.1 hdisj (by simp) (by simp)
-  have hb₀c₁ : b₀ ≠ c₁ := by
-    intro h
-    subst c₁
-    exact Set.disjoint_left.1 hdisj (by simp) (by simp)
-  have hb₁c₀ : b₁ ≠ c₀ := by
-    intro h
-    subst c₀
-    exact Set.disjoint_left.1 hdisj (by simp) (by simp)
-  have hb₁c₁ : b₁ ≠ c₁ := by
-    intro h
-    subst c₁
-    exact Set.disjoint_left.1 hdisj (by simp) (by simp)
   simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff] at hxU hyU
-  rcases hxU with (rfl | rfl) | (rfl | rfl) <;>
-    rcases hyU with (rfl | rfl) | (rfl | rfl) <;>
-    simp_all [Set.pair_comm]
+  rcases hxU with (hx0 | hx1) | (hxc0 | hxc1)
+  · subst x
+    rcases hyU with (hy0 | hy1) | (hyc0 | hyc1)
+    · exact (hxy hy0.symm).elim
+    · subst y
+      exact Or.inl rfl
+    · subst y
+      exact Or.inr (Or.inl rfl)
+    · subst y
+      exact Or.inr (Or.inr (Or.inl rfl))
+  · subst x
+    rcases hyU with (hy0 | hy1) | (hyc0 | hyc1)
+    · subst y
+      exact Or.inl (Set.pair_comm b₁ b₀)
+    · exact (hxy hy1.symm).elim
+    · subst y
+      exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
+    · subst y
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))
+  · subst x
+    rcases hyU with (hy0 | hy1) | (hyc0 | hyc1)
+    · subst y
+      exact Or.inr (Or.inl (Set.pair_comm c₀ b₀))
+    · subst y
+      exact Or.inr (Or.inr (Or.inr (Or.inl (Set.pair_comm c₀ b₁))))
+    · exact (hxy hyc0.symm).elim
+    · subst y
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr rfl))))
+  · subst x
+    rcases hyU with (hy0 | hy1) | (hyc0 | hyc1)
+    · subst y
+      exact Or.inr (Or.inr (Or.inl (Set.pair_comm c₁ b₀)))
+    · subst y
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (Set.pair_comm c₁ b₁)))))
+    · subst y
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Set.pair_comm c₁ c₀)))))
+    · exact (hxy hyc1.symm).elim
 
 /-- Four-element local rigidity in the form directly exposed by local moves.
 
