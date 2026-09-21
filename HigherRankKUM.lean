@@ -89,6 +89,7 @@ import HigherRankKUM.Rank4.DangerousCore
 import HigherRankKUM.Rank4.CyclicWindowFour
 import HigherRankKUM.Rank4.FourBlockMove
 import HigherRankKUM.Rank4.FourBlockPerm
+import HigherRankKUM.Rank4.FourBlockOffsets
 import HigherRankKUM.Rank4.FourBlockBoundary
 import HigherRankKUM.Rank4.BlockerCycle
 import HigherRankKUM.Rank4.BlockerRuns
