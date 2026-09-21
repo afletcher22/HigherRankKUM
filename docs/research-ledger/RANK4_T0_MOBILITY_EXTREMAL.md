@@ -83,11 +83,15 @@ reorderings of the deletion CBO** are currently available.  The n=14
 counterexample demonstrates the intended behavior:
 
 - initial one-step-rigid bad state: `mu7 = 11`;
-- a bad seven-type neighbor: `mu7 = 14`;
-- a second seven-type move reaches success.
+- there exists a bad seven-type neighbor with `mu7 = 14`;
+- independently, a shortest seven-type repair has length two and score sequence
+  `11 -> 11 -> 13`, with the last state favorable.
 
-Thus the first move does not improve the blocker profile; it increases local
-reorder freedom.
+Thus one available bad move increases local reorder freedom.  Separately, the
+shortest seven-type repair has length two but uses a different first move
+(`mu7 = 11 -> 11 -> 13`, with the final state favorable).  So the evidence
+supports an **extremal-state** argument, not a claim that every shortest repair
+path monotonically increases mobility.
 
 ## Exact binary n=10 census
 
