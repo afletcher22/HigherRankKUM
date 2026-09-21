@@ -23,12 +23,19 @@ theorem supportedFourBlockPerm_swap
       Equiv.swap
         (cyclicIndex n hn s a.val)
         (cyclicIndex n hn s b.val) := by
-  ext i
+  apply Equiv.ext
+  intro i
   by_cases hi : i ∈ Rank4FourBlockMove.fourBlockPositions hn s
   · rw [← Rank4FourBlockMove.range_fourBlockEmbedding_eq_fourBlockPositions
       hn h4n s] at hi
     rcases hi with ⟨q, rfl⟩
     rw [Rank4FourBlockMove.supportedFourBlockPerm_apply_block]
+    change
+      Rank4FourBlockMove.fourBlockEmbedding hn h4n s (Equiv.swap a b q) =
+        Equiv.swap
+          (Rank4FourBlockMove.fourBlockEmbedding hn h4n s a)
+          (Rank4FourBlockMove.fourBlockEmbedding hn h4n s b)
+          (Rank4FourBlockMove.fourBlockEmbedding hn h4n s q)
     by_cases hqa : q = a
     · subst q
       simp
@@ -39,12 +46,12 @@ theorem supportedFourBlockPerm_swap
           Rank4FourBlockMove.fourBlockEmbedding hn h4n s q ≠
             Rank4FourBlockMove.fourBlockEmbedding hn h4n s a := by
         intro h
-        exact hqa (Rank4FourBlockMove.fourBlockEmbedding hn h4n s).injective h
+        exact hqa ((Rank4FourBlockMove.fourBlockEmbedding hn h4n s).injective h)
       have hfb :
           Rank4FourBlockMove.fourBlockEmbedding hn h4n s q ≠
             Rank4FourBlockMove.fourBlockEmbedding hn h4n s b := by
         intro h
-        exact hqb (Rank4FourBlockMove.fourBlockEmbedding hn h4n s).injective h
+        exact hqb ((Rank4FourBlockMove.fourBlockEmbedding hn h4n s).injective h)
       rw [Equiv.swap_apply_of_ne_of_ne hqa hqb,
         Equiv.swap_apply_of_ne_of_ne hfa hfb]
   · rw [Rank4FourBlockMove.supportedFourBlockPerm_apply_outside
@@ -55,16 +62,18 @@ theorem supportedFourBlockPerm_swap
       apply hi
       rw [← Rank4FourBlockMove.range_fourBlockEmbedding_eq_fourBlockPositions
         hn h4n s]
-      refine ⟨a, ?_⟩
-      simpa [Rank4FourBlockMove.fourBlockEmbedding] using h.symm
+      exact ⟨a, by
+        change Rank4FourBlockMove.fourBlockEmbedding hn h4n s a = i
+        simpa using h.symm⟩
     have hib :
         i ≠ cyclicIndex n hn s b.val := by
       intro h
       apply hi
       rw [← Rank4FourBlockMove.range_fourBlockEmbedding_eq_fourBlockPositions
         hn h4n s]
-      refine ⟨b, ?_⟩
-      simpa [Rank4FourBlockMove.fourBlockEmbedding] using h.symm
+      exact ⟨b, by
+        change Rank4FourBlockMove.fourBlockEmbedding hn h4n s b = i
+        simpa using h.symm⟩
     rw [Equiv.swap_apply_of_ne_of_ne hia hib]
 
 /-- Swap two positions of a cyclic enumeration. -/
@@ -85,7 +94,8 @@ theorem applyFourBlockPerm_swap_eq_swapPositions
       swapPositions sigma
         (cyclicIndex n hn s a.val)
         (cyclicIndex n hn s b.val) := by
-  ext i
+  apply Equiv.ext
+  intro i
   change
     sigma
         (Rank4FourBlockMove.supportedFourBlockPerm
@@ -117,54 +127,59 @@ theorem cyclicWindow_swapPositions_eq_insert_sdiff_of_mem_notMem
         (cyclicWindow 4 hn sigma i \ {(sigma p : alpha)}) := by
   ext x
   constructor
-  · rintro ⟨r, rfl⟩
+  · rintro ⟨r, hr⟩
     let z := cyclicIndex n hn i r.val
     have hzP :
         z ∈ Rank4FourBlockMove.cyclicPositionWindow 4 hn i := ⟨r, rfl⟩
+    have hx :
+        x = (sigma (Equiv.swap p q z) : alpha) := by
+      simpa [swapPositions, z] using hr.symm
     by_cases hzp : z = p
     · subst z
-      simp [swapPositions, Equiv.swap_apply_def, hp, hq]
+      left
+      simpa using hx
     · have hzq : z ≠ q := by
         intro hzq
         subst z
         exact hq hzP
-      have hswap : Equiv.swap p q z = z := by
-        simp [Equiv.swap_apply_def, hzp, hzq]
-      rw [swapPositions_apply, hswap]
-      refine Or.inr ⟨⟨r, rfl⟩, ?_⟩
-      intro hEq
-      apply hzp
-      apply sigma.injective
-      apply Subtype.ext
-      exact hEq
+      right
+      have hswap : Equiv.swap p q z = z :=
+        Equiv.swap_apply_of_ne_of_ne hzp hzq
+      have hxz : x = (sigma z : alpha) := by
+        simpa [hswap] using hx
+      constructor
+      · refine ⟨r, ?_⟩
+        exact hxz
+      · intro hxp
+        apply hzp
+        apply sigma.injective
+        apply Subtype.ext
+        exact hxz.symm.trans hxp
   · intro hx
-    rcases hx with hqval | hx
-    · rcases hp with ⟨r, hr⟩
+    rcases hx with hxq | ⟨hxW, hxp⟩
+    · rcases hp with ⟨r, hrp⟩
       refine ⟨r, ?_⟩
-      change
-        (sigma (Equiv.swap p q (cyclicIndex n hn i r.val)) : alpha) = x
-      rw [← hr]
-      simpa [Equiv.swap_apply_def] using hqval.symm
-    · rcases hx with ⟨hxW, hxne⟩
-      rcases hxW with ⟨r, hr⟩
+      have hpidx :
+          cyclicIndex n hn i r.val = p := hrp
+      subst p
+      simpa [swapPositions] using hxq.symm
+    · rcases hxW with ⟨r, hr⟩
       refine ⟨r, ?_⟩
       let z := cyclicIndex n hn i r.val
       have hzP :
           z ∈ Rank4FourBlockMove.cyclicPositionWindow 4 hn i := ⟨r, rfl⟩
       have hzp : z ≠ p := by
-        intro hzp
+        intro h
         subst z
-        apply hxne
-        simpa using hr.symm
+        apply hxp
+        exact hr
       have hzq : z ≠ q := by
-        intro hzq
+        intro h
         subst z
         exact hq hzP
-      have hswap : Equiv.swap p q z = z := by
-        simp [Equiv.swap_apply_def, hzp, hzq]
-      change (sigma (Equiv.swap p q z) : alpha) = x
-      rw [hswap]
-      exact hr
+      have hswap : Equiv.swap p q z = z :=
+        Equiv.swap_apply_of_ne_of_ne hzp hzq
+      simpa [swapPositions, z, hswap] using hr
 
 /-- If a position window contains either both swapped positions or neither,
 swapping those positions leaves the window unchanged as a set of ground
