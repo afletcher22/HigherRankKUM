@@ -106,10 +106,19 @@ theorem fourBlockReorder_applyFourBlockPerm
     constructor
     · rintro ⟨q, rfl⟩
       refine ⟨π q, ?_⟩
-      simp [applyFourBlockPerm, fourBlockEmbedding]
+      change
+        σ (supportedFourBlockPerm hn h4n s π
+          (fourBlockEmbedding hn h4n s q)) =
+        σ (fourBlockEmbedding hn h4n s (π q))
+      rw [supportedFourBlockPerm_apply_block]
     · rintro ⟨q, rfl⟩
       refine ⟨π.symm q, ?_⟩
-      simp [applyFourBlockPerm, fourBlockEmbedding]
+      change
+        σ (supportedFourBlockPerm hn h4n s π
+          (fourBlockEmbedding hn h4n s (π.symm q))) =
+        σ (fourBlockEmbedding hn h4n s q)
+      rw [supportedFourBlockPerm_apply_block]
+      simp
 
 /-- Outside the moved four-position block, the explicitly permuted order agrees
 pointwise with the original order. -/
@@ -134,6 +143,8 @@ theorem supportedFourBlockPerm_symm_cancel
   by_cases hi : i ∈ fourBlockPositions hn s
   · rw [← range_fourBlockEmbedding_eq_fourBlockPositions hn h4n s] at hi
     rcases hi with ⟨q, rfl⟩
+    rw [supportedFourBlockPerm_apply_block,
+      supportedFourBlockPerm_apply_block]
     simp
   · rw [supportedFourBlockPerm_apply_outside hn h4n s π.symm hi,
       supportedFourBlockPerm_apply_outside hn h4n s π hi]
