@@ -1,0 +1,43 @@
+{
+  "all_multiplicity_vectors_sum_12": 1161615,
+  "claim_level": "exact finite computation; not Lean certification",
+  "existential_failure_orbits": 0,
+  "gl42_orbit_size_distribution": {
+    "35": 1,
+    "210": 1,
+    "315": 2,
+    "420": 2,
+    "840": 3,
+    "1260": 3,
+    "1680": 1,
+    "2520": 13,
+    "3360": 7,
+    "5040": 18,
+    "10080": 23,
+    "20160": 11
+  },
+  "gl42_orbits": 85,
+  "interpretation": "Every prescribed element is favorable throughout the complete binary strict n=12 class. Most strict configurations are not two-deletion robust, so this is evidence for the strict 4k branch beyond the stronger t=0 hypothesis.",
+  "not_two_deletion_robust_strict_configs": 562380,
+  "pointed_checks_on_orbit_representatives": 1020,
+  "prescribed_element_failure_orbits": 0,
+  "scope": "all binary strict rank-4 matroids on 12 labelled elements",
+  "strict_configs": 610295,
+  "strict_duplicate_class_counts": {
+    "0": 455,
+    "1": 15015,
+    "2": 117495,
+    "3": 264600,
+    "4": 187110,
+    "5": 25200,
+    "6": 420
+  },
+  "strict_profile_counts": {
+    "(1, 3, 6)": 35,
+    "(1, 3, 7)": 420,
+    "(2, 4, 7)": 47460,
+    "(2, 4, 8)": 69300,
+    "(2, 5, 8)": 493080
+  },
+  "two_deletion_robust_strict_configs": 47915
+}
