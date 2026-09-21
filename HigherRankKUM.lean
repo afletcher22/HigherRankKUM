@@ -98,6 +98,7 @@ import HigherRankKUM.Rank4.CyclicFlatCapacity
 import HigherRankKUM.Rank4.T0SaturatedCap
 import HigherRankKUM.Rank4.SaturatedSixDefectSchedule
 import HigherRankKUM.Rank4.SaturatedSixDefectGluing
+import HigherRankKUM.Rank4.SaturatedSixDefectCertification
 import HigherRankKUM.Rank4.SaturatedFlatRankThree
 import HigherRankKUM.Rank4.SaturatedFourWindowDefect
 import HigherRankKUM.Rank4.T0FixedEState
