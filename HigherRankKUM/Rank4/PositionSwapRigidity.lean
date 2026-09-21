@@ -1,6 +1,7 @@
 import HigherRankKUM.LocalExchangeClosure
 import HigherRankKUM.CyclicWindowCardinality
 import HigherRankKUM.Rank4.FourBlockMove
+import HigherRankKUM.Rank4.FourBlockPerm
 import Mathlib.Tactic
 
 namespace HigherRankKUM
@@ -13,12 +14,87 @@ noncomputable section
 
 variable {alpha : Type*}
 
+/-- Extending a transposition of two local four-block coordinates is exactly
+the global transposition of their two embedded cyclic positions. -/
+theorem supportedFourBlockPerm_swap
+    {n : ℕ} (hn : 0 < n) (h4n : 4 ≤ n)
+    (s : Fin n) (a b : Fin 4) :
+    Rank4FourBlockMove.supportedFourBlockPerm hn h4n s (Equiv.swap a b) =
+      Equiv.swap
+        (cyclicIndex n hn s a.val)
+        (cyclicIndex n hn s b.val) := by
+  ext i
+  by_cases hi : i ∈ Rank4FourBlockMove.fourBlockPositions hn s
+  · rw [← Rank4FourBlockMove.range_fourBlockEmbedding_eq_fourBlockPositions
+      hn h4n s] at hi
+    rcases hi with ⟨q, rfl⟩
+    rw [Rank4FourBlockMove.supportedFourBlockPerm_apply_block]
+    by_cases hqa : q = a
+    · subst q
+      simp
+    by_cases hqb : q = b
+    · subst q
+      simp
+    · have hfa :
+          Rank4FourBlockMove.fourBlockEmbedding hn h4n s q ≠
+            Rank4FourBlockMove.fourBlockEmbedding hn h4n s a := by
+        intro h
+        exact hqa (Rank4FourBlockMove.fourBlockEmbedding hn h4n s).injective h
+      have hfb :
+          Rank4FourBlockMove.fourBlockEmbedding hn h4n s q ≠
+            Rank4FourBlockMove.fourBlockEmbedding hn h4n s b := by
+        intro h
+        exact hqb (Rank4FourBlockMove.fourBlockEmbedding hn h4n s).injective h
+      rw [Equiv.swap_apply_of_ne_of_ne hqa hqb,
+        Equiv.swap_apply_of_ne_of_ne hfa hfb]
+  · rw [Rank4FourBlockMove.supportedFourBlockPerm_apply_outside
+      hn h4n s (Equiv.swap a b) hi]
+    have hia :
+        i ≠ cyclicIndex n hn s a.val := by
+      intro h
+      apply hi
+      rw [← Rank4FourBlockMove.range_fourBlockEmbedding_eq_fourBlockPositions
+        hn h4n s]
+      refine ⟨a, ?_⟩
+      simpa [Rank4FourBlockMove.fourBlockEmbedding] using h.symm
+    have hib :
+        i ≠ cyclicIndex n hn s b.val := by
+      intro h
+      apply hi
+      rw [← Rank4FourBlockMove.range_fourBlockEmbedding_eq_fourBlockPositions
+        hn h4n s]
+      refine ⟨b, ?_⟩
+      simpa [Rank4FourBlockMove.fourBlockEmbedding] using h.symm
+    rw [Equiv.swap_apply_of_ne_of_ne hia hib]
+
 /-- Swap two positions of a cyclic enumeration. -/
 def swapPositions
     {E : Set alpha} {n : ℕ}
     (sigma : Fin n ≃ E) (p q : Fin n) :
     Fin n ≃ E :=
   (Equiv.swap p q).trans sigma
+
+/-- A local transposition inside a four-block is literally the global
+position swap of the corresponding two cyclic positions. -/
+theorem applyFourBlockPerm_swap_eq_swapPositions
+    {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (sigma : Fin n ≃ E) (s : Fin n)
+    (a b : Fin 4) :
+    Rank4FourBlockMove.applyFourBlockPerm hn h4n sigma s (Equiv.swap a b) =
+      swapPositions sigma
+        (cyclicIndex n hn s a.val)
+        (cyclicIndex n hn s b.val) := by
+  ext i
+  change
+    sigma
+        (Rank4FourBlockMove.supportedFourBlockPerm
+          hn h4n s (Equiv.swap a b) i) =
+      sigma
+        (Equiv.swap
+          (cyclicIndex n hn s a.val)
+          (cyclicIndex n hn s b.val) i)
+  rw [supportedFourBlockPerm_swap hn h4n s a b]
 
 @[simp]
 theorem swapPositions_apply
