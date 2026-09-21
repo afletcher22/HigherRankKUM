@@ -203,7 +203,7 @@ theorem mem_closure_inter_of_fundCircuit_eq
     dsimp [C]
     rw [hEq]
     exact M.fundCircuit_subset_insert e B'
-  have hsub : C \\ {e} ⊆ B ∩ B' := by
+  have hsub : C \ {e} ⊆ B ∩ B' := by
     intro x hx
     have hxC : x ∈ C := hx.1
     have hxe : x ≠ e := by
@@ -217,7 +217,7 @@ theorem mem_closure_inter_of_fundCircuit_eq
       · exact (hxe hxe').elim
       · exact hxB'
     exact ⟨hxB, hxB'⟩
-  have heSmall : e ∈ M.closure (C \\ {e}) :=
+  have heSmall : e ∈ M.closure (C \ {e}) :=
     hC.subset_closure_sdiff_singleton e heC
   exact M.closure_subset_closure hsub heSmall
 
