@@ -1,0 +1,146 @@
+{
+  "scope": "three exact eligible insertion failures in strict binary n=10 orbit census",
+  "eligible_failures": [
+    {
+      "orbit_index": 10,
+      "omitted_label": 0,
+      "omitted_projective_point": 7,
+      "multiplicity_vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        0
+      ],
+      "deletion_cbos": 224,
+      "dangerous_hyperplanes": 3,
+      "blocker_count_distribution": {
+        "4": 96,
+        "6": 128
+      },
+      "nonblocker_run_profile_distribution": {
+        "(1, 1, 1)": 128,
+        "(3, 1, 1)": 96
+      },
+      "dangerous_blockers_per_cbo_distribution": {
+        "4": 96,
+        "6": 128
+      },
+      "blocker_closure_size_multiset_distribution": {
+        "(7, 7, 7, 7)": 96,
+        "(7, 7, 7, 7, 7, 7)": 128
+      },
+      "minimum_dangerous_blockers_in_any_cbo": 4
+    },
+    {
+      "orbit_index": 18,
+      "omitted_label": 8,
+      "omitted_projective_point": 15,
+      "multiplicity_vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        2,
+        2,
+        2
+      ],
+      "deletion_cbos": 224,
+      "dangerous_hyperplanes": 2,
+      "blocker_count_distribution": {
+        "5": 224
+      },
+      "nonblocker_run_profile_distribution": {
+        "(2, 1, 1)": 136,
+        "(2, 2)": 40,
+        "(3, 1)": 48
+      },
+      "dangerous_blockers_per_cbo_distribution": {
+        "2": 32,
+        "3": 64,
+        "4": 128
+      },
+      "blocker_closure_size_multiset_distribution": {
+        "(4, 5, 5, 7, 7)": 8,
+        "(4, 5, 6, 7, 7)": 16,
+        "(4, 6, 7, 7, 7)": 16,
+        "(4, 7, 7, 7, 7)": 8,
+        "(5, 5, 6, 7, 7)": 8,
+        "(5, 5, 7, 7, 7)": 16,
+        "(5, 6, 7, 7, 7)": 32,
+        "(5, 7, 7, 7, 7)": 48,
+        "(6, 7, 7, 7, 7)": 72
+      },
+      "minimum_dangerous_blockers_in_any_cbo": 2
+    },
+    {
+      "orbit_index": 18,
+      "omitted_label": 9,
+      "omitted_projective_point": 15,
+      "multiplicity_vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        2,
+        2,
+        2
+      ],
+      "deletion_cbos": 224,
+      "dangerous_hyperplanes": 2,
+      "blocker_count_distribution": {
+        "5": 224
+      },
+      "nonblocker_run_profile_distribution": {
+        "(2, 1, 1)": 136,
+        "(2, 2)": 40,
+        "(3, 1)": 48
+      },
+      "dangerous_blockers_per_cbo_distribution": {
+        "2": 32,
+        "3": 64,
+        "4": 128
+      },
+      "blocker_closure_size_multiset_distribution": {
+        "(4, 5, 5, 7, 7)": 8,
+        "(4, 5, 6, 7, 7)": 16,
+        "(4, 6, 7, 7, 7)": 16,
+        "(4, 7, 7, 7, 7)": 8,
+        "(5, 5, 6, 7, 7)": 8,
+        "(5, 5, 7, 7, 7)": 16,
+        "(5, 6, 7, 7, 7)": 32,
+        "(5, 7, 7, 7, 7)": 48,
+        "(6, 7, 7, 7, 7)": 72
+      },
+      "minimum_dangerous_blockers_in_any_cbo": 2
+    }
+  ],
+  "interpretation": "Dangerous blocker closures persist in every deletion CBO of every genuine failure; at least two dangerous blockers occur in each CBO.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
