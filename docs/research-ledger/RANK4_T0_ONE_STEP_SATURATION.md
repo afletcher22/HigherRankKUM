@@ -500,3 +500,76 @@ Then formulate a component invariant/propagation statement that cannot cycle
 indefinitely without producing a 3k-point rank-three flat through e.
 
 Do not return to a one-step theorem.
+
+
+## Blocker-count maximality: local form also false
+
+A second explicit binary n=14 witness rules out the next naive extremal
+strengthening.
+
+Columns:
+
+`(3,10,4,1,3,13,9,2,15,6,3,8,5,13)`.
+
+Omitted label: `e=0`.
+
+Deletion CBO:
+
+`(1,10,9,2,6,12,8,5,4,11,7,13,3)`.
+
+The ambient flat profile is again `(3,5,8)`; every two-element deletion
+retains rank four and satisfies the 12/4 density caps; there is no saturated
+9-point rank-three flat anywhere.
+
+The displayed state has:
+
+- blocker word `1100101110101`;
+- blocker count 8;
+- five arbitrary four-block CBO neighbors;
+- no favorable one-step neighbor;
+- no bad one-step neighbor with blocker count > 8.
+
+Therefore the statement
+
+`bad + blocker-count local maximum + no success neighbor -> saturation`
+
+is false.
+
+However the obstruction is a plateau phenomenon.  There is an equal-blocker
+bad neighbor with blocker count still 8 for which seven-move mobility rises
+
+`4 -> 9`,
+
+and from that state one more four-block move reaches success.
+
+Executable certificate:
+
+`experiments/rank4_binary_n14_blocker_localmax_counterexample.py`.
+
+### Surviving extremal candidate
+
+The data now suggest a lexicographic local score
+
+`(# blockers, seven-move mobility)`.
+
+This is **only a falsification target**, not a theorem claim.
+
+On the counterexample above, the forced escape is
+
+`(8,4) -> (8,9) -> success`.
+
+A seeded no-saturation binary n=14 stress with forced 3-element parallel
+classes found 32 bad states:
+
+- 19 had an immediate favorable seven-type neighbor;
+- 13 had a bad seven-type neighbor with strictly larger lexicographic score;
+- 0 were lexicographic local maxima without success.
+
+The reason this pair is conceptually natural is that blocker count equals
+persistence of the fundamental circuit sequence once the converse
+`equal adjacent fundamental circuits -> blocker` is formalized.  Thus the
+first coordinate minimizes circuit transitions, while the second resolves
+plateaux by maximizing locally legal reordering freedom.
+
+Do not yet use the lexicographic score as a proof theorem; continue
+adversarial falsification first.
