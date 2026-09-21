@@ -165,6 +165,78 @@ theorem mem_closure_of_dep_swap_window
   · exact M.subset_closure C hCoreInd.subset_ground hqC
   · exact (hCoreInd.mem_closure_iff_of_notMem hqC).2 hdep'
 
+
+/-- Global failed-swap rigidity.
+
+If swapping two cyclic positions destroys a rank-four cyclic basis ordering,
+then some basis window contains exactly one of the swapped positions.  In that
+window the incoming element is spanned by the unchanged three-element core.
+
+This packages all transposition-type local moves (adjacent, endpoint, and
+side swaps) into one representation-free obstruction theorem. -/
+theorem exists_closure_obstruction_of_not_cyclicBasisOrder_swapPositions
+    {M : Matroid alpha} {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (hEsub : E ⊆ M.E)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (sigma : Fin n ≃ E) (p q : Fin n)
+    (hCBO : CyclicBasisOrder M 4 hn sigma)
+    (hfail :
+      ¬ CyclicBasisOrder M 4 hn (swapPositions sigma p q)) :
+    ∃ i : Fin n,
+      (p ∈ Rank4FourBlockMove.cyclicPositionWindow 4 hn i ∧
+       q ∉ Rank4FourBlockMove.cyclicPositionWindow 4 hn i ∧
+       (sigma q : alpha) ∈
+         M.closure
+           (cyclicWindow 4 hn sigma i \ {(sigma p : alpha)})) ∨
+      (q ∈ Rank4FourBlockMove.cyclicPositionWindow 4 hn i ∧
+       p ∉ Rank4FourBlockMove.cyclicPositionWindow 4 hn i ∧
+       (sigma p : alpha) ∈
+         M.closure
+           (cyclicWindow 4 hn sigma i \ {(sigma q : alpha)})) := by
+  have hex :
+      ∃ i : Fin n,
+        ¬ M.IsBase (cyclicWindow 4 hn (swapPositions sigma p q) i) := by
+    simpa [CyclicBasisOrder] using hfail
+  rcases hex with ⟨i, hnot⟩
+  let P := Rank4FourBlockMove.cyclicPositionWindow 4 hn i
+  by_cases hp : p ∈ P
+  · by_cases hq : q ∈ P
+    · exfalso
+      apply hnot
+      rw [cyclicWindow_swapPositions_eq_of_mem_iff
+        hn sigma p q i (by
+          constructor <;> intro _ <;> assumption)]
+      exact hCBO i
+    · have hdep :
+          M.Dep (cyclicWindow 4 hn (swapPositions sigma p q) i) :=
+        cyclicWindow_four_dep_of_not_isBase
+          hn h4n hEsub hRank (swapPositions sigma p q) i hnot
+      refine ⟨i, Or.inl ⟨hp, hq, ?_⟩⟩
+      exact mem_closure_of_dep_swap_window
+        hn h4n sigma p q i hCBO hp hq hdep
+  · by_cases hq : q ∈ P
+    · have hdep :
+          M.Dep (cyclicWindow 4 hn (swapPositions sigma p q) i) :=
+        cyclicWindow_four_dep_of_not_isBase
+          hn h4n hEsub hRank (swapPositions sigma p q) i hnot
+      have hdep' :
+          M.Dep (cyclicWindow 4 hn (swapPositions sigma q p) i) := by
+        simpa [swapPositions, Equiv.swap_comm] using hdep
+      refine ⟨i, Or.inr ⟨hq, hp, ?_⟩⟩
+      exact mem_closure_of_dep_swap_window
+        hn h4n sigma q p i hCBO hq hp hdep'
+    · exfalso
+      apply hnot
+      rw [cyclicWindow_swapPositions_eq_of_mem_iff
+        hn sigma p q i (by
+          constructor
+          · intro hp'
+            exact (hp hp').elim
+          · intro hq'
+            exact (hq hq').elim)]
+      exact hCBO i
+
 end
 
 end Rank4PositionSwapRigidity
