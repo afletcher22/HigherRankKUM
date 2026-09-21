@@ -125,7 +125,7 @@ def orbit_representatives(robust):
     perms = gl42_permutations()
     reps = []
     while unseen:
-        rep = next(iter(unseen))
+        rep = min(unseen)
         orbit = {transform_config(rep, p) for p in perms}
         orbit &= robust_set
         reps.append((rep, len(orbit)))
