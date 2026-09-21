@@ -2,6 +2,7 @@ import HigherRankKUM.CyclicIndex
 import HigherRankKUM.Density
 import HigherRankKUM.CyclicOrder
 import HigherRankKUM.BlockerClosure
+import HigherRankKUM.BlockerFundamentalCircuit
 import HigherRankKUM.TransportedCycle
 import HigherRankKUM.CyclicRotation
 import HigherRankKUM.TightContraction
