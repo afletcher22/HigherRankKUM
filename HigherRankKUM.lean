@@ -96,6 +96,8 @@ import HigherRankKUM.Rank4.BlockerCycle
 import HigherRankKUM.Rank4.BlockerRuns
 import HigherRankKUM.Rank4.CyclicFlatCapacity
 import HigherRankKUM.Rank4.T0SaturatedCap
+import HigherRankKUM.Rank4.SaturatedSixDefectSchedule
+import HigherRankKUM.Rank4.SaturatedFlatRankThree
 import HigherRankKUM.Rank4.SaturatedFourWindowDefect
 import HigherRankKUM.Rank4.T0FixedEState
 import HigherRankKUM.Rank4.T0FixedELocalGeometry
