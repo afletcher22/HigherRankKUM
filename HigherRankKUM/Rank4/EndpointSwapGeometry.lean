@@ -20,6 +20,14 @@ theorem cyclicIndex_modulus
   apply Fin.ext
   simp [cyclicIndex, Nat.add_mod, Nat.mod_eq_of_lt i.isLt]
 
+@[simp]
+theorem cyclicIndex_modulus_add
+    {n : ℕ} (hn : 0 < n) (i : Fin n) (a : ℕ) :
+    cyclicIndex n hn i (n + a) = cyclicIndex n hn i a := by
+  apply Fin.ext
+  simp [cyclicIndex, Nat.add_assoc, Nat.add_mod]
+
+
 /-- A cyclic offset in the range 4,...,n-1 lies outside the four positions
 beginning at s. -/
 theorem cyclicIndex_offset_not_mem_fourBlockPositions
@@ -99,6 +107,215 @@ theorem endpointSwap_left_extreme_window_eq
   rw [h1, h2, h3, hout0, hout1, hout2, hs]
   ext x
   simp [or_comm, or_left_comm, or_assoc]
+
+
+/-- The s-2 boundary window under the endpoint swap is a single-element
+exchange: old s is replaced by old s+3. -/
+theorem endpointSwap_left_middle2_window_eq
+    {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h7n : 7 ≤ n)
+    (sigma : Fin n ≃ E) (s : Fin n) :
+    cyclicWindow 4 hn
+        (applyFourBlockPerm hn (by omega) sigma s endpointSwap)
+        (cyclicIndex n hn s (n - 2)) =
+      ({(sigma (cyclicIndex n hn s (n - 2)) : alpha),
+        (sigma (cyclicIndex n hn s (n - 1)) : alpha),
+        (sigma (cyclicIndex n hn s 3) : alpha),
+        (sigma (cyclicIndex n hn s 1) : alpha)} : Set alpha) := by
+  let tau := applyFourBlockPerm hn (by omega) sigma s endpointSwap
+  have h1 :
+      cyclicIndex n hn (cyclicIndex n hn s (n - 2)) 1 =
+        cyclicIndex n hn s (n - 1) := by
+    rw [cyclicIndex_add]
+    congr 1
+    omega
+  have h2 :
+      cyclicIndex n hn (cyclicIndex n hn s (n - 2)) 2 = s := by
+    rw [cyclicIndex_add]
+    have hoff : n - 2 + 2 = n := by omega
+    rw [hoff, cyclicIndex_modulus]
+  have h3 :
+      cyclicIndex n hn (cyclicIndex n hn s (n - 2)) 3 =
+        cyclicIndex n hn s 1 := by
+    rw [cyclicIndex_add]
+    have hoff : n - 2 + 3 = n + 1 := by omega
+    rw [hoff, cyclicIndex_modulus_add]
+  have hout0 :
+      tau (cyclicIndex n hn s (n - 2)) =
+        sigma (cyclicIndex n hn s (n - 2)) := by
+    exact applyFourBlockPerm_eq_outside
+      hn (by omega) sigma s endpointSwap
+      (cyclicIndex_offset_not_mem_fourBlockPositions
+        hn s (by omega) (by omega))
+  have hout1 :
+      tau (cyclicIndex n hn s (n - 1)) =
+        sigma (cyclicIndex n hn s (n - 1)) := by
+    exact applyFourBlockPerm_eq_outside
+      hn (by omega) sigma s endpointSwap
+      (cyclicIndex_offset_not_mem_fourBlockPositions
+        hn s (by omega) (by omega))
+  have hs :
+      tau s = sigma (cyclicIndex n hn s 3) := by
+    dsimp [tau]
+    simpa [cyclicIndex_zero] using
+      (apply_endpointSwap_local hn (by omega) sigma s).1
+  have hs1 :
+      tau (cyclicIndex n hn s 1) = sigma (cyclicIndex n hn s 1) := by
+    dsimp [tau]
+    exact (apply_endpointSwap_local hn (by omega) sigma s).2.1
+  rw [cyclicWindow_four_eq, h1, h2, h3, hout0, hout1, hs, hs1]
+
+/-- The s-1 boundary window under the endpoint swap is a single-element
+exchange: old s is replaced by old s+3. -/
+theorem endpointSwap_left_middle1_window_eq
+    {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h7n : 7 ≤ n)
+    (sigma : Fin n ≃ E) (s : Fin n) :
+    cyclicWindow 4 hn
+        (applyFourBlockPerm hn (by omega) sigma s endpointSwap)
+        (cyclicIndex n hn s (n - 1)) =
+      ({(sigma (cyclicIndex n hn s (n - 1)) : alpha),
+        (sigma (cyclicIndex n hn s 3) : alpha),
+        (sigma (cyclicIndex n hn s 1) : alpha),
+        (sigma (cyclicIndex n hn s 2) : alpha)} : Set alpha) := by
+  let tau := applyFourBlockPerm hn (by omega) sigma s endpointSwap
+  have h1 :
+      cyclicIndex n hn (cyclicIndex n hn s (n - 1)) 1 = s := by
+    rw [cyclicIndex_add]
+    have hoff : n - 1 + 1 = n := by omega
+    rw [hoff, cyclicIndex_modulus]
+  have h2 :
+      cyclicIndex n hn (cyclicIndex n hn s (n - 1)) 2 =
+        cyclicIndex n hn s 1 := by
+    rw [cyclicIndex_add]
+    have hoff : n - 1 + 2 = n + 1 := by omega
+    rw [hoff, cyclicIndex_modulus_add]
+  have h3 :
+      cyclicIndex n hn (cyclicIndex n hn s (n - 1)) 3 =
+        cyclicIndex n hn s 2 := by
+    rw [cyclicIndex_add]
+    have hoff : n - 1 + 3 = n + 2 := by omega
+    rw [hoff, cyclicIndex_modulus_add]
+  have hout0 :
+      tau (cyclicIndex n hn s (n - 1)) =
+        sigma (cyclicIndex n hn s (n - 1)) := by
+    exact applyFourBlockPerm_eq_outside
+      hn (by omega) sigma s endpointSwap
+      (cyclicIndex_offset_not_mem_fourBlockPositions
+        hn s (by omega) (by omega))
+  have hs :
+      tau s = sigma (cyclicIndex n hn s 3) := by
+    dsimp [tau]
+    simpa [cyclicIndex_zero] using
+      (apply_endpointSwap_local hn (by omega) sigma s).1
+  have hs1 :
+      tau (cyclicIndex n hn s 1) = sigma (cyclicIndex n hn s 1) := by
+    dsimp [tau]
+    exact (apply_endpointSwap_local hn (by omega) sigma s).2.1
+  have hs2 :
+      tau (cyclicIndex n hn s 2) = sigma (cyclicIndex n hn s 2) := by
+    dsimp [tau]
+    exact (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
+  rw [cyclicWindow_four_eq, h1, h2, h3, hout0, hs, hs1, hs2]
+
+/-- The s+1 boundary window under the endpoint swap is a single-element
+exchange: old s+3 is replaced by old s. -/
+theorem endpointSwap_right_middle1_window_eq
+    {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h7n : 7 ≤ n)
+    (sigma : Fin n ≃ E) (s : Fin n) :
+    cyclicWindow 4 hn
+        (applyFourBlockPerm hn (by omega) sigma s endpointSwap)
+        (cyclicIndex n hn s 1) =
+      ({(sigma (cyclicIndex n hn s 1) : alpha),
+        (sigma (cyclicIndex n hn s 2) : alpha),
+        (sigma s : alpha),
+        (sigma (cyclicIndex n hn s 4) : alpha)} : Set alpha) := by
+  let tau := applyFourBlockPerm hn (by omega) sigma s endpointSwap
+  have h1 :
+      cyclicIndex n hn (cyclicIndex n hn s 1) 1 =
+        cyclicIndex n hn s 2 := by
+    rw [cyclicIndex_add]
+  have h2 :
+      cyclicIndex n hn (cyclicIndex n hn s 1) 2 =
+        cyclicIndex n hn s 3 := by
+    rw [cyclicIndex_add]
+  have h3 :
+      cyclicIndex n hn (cyclicIndex n hn s 1) 3 =
+        cyclicIndex n hn s 4 := by
+    rw [cyclicIndex_add]
+  have hs1 :
+      tau (cyclicIndex n hn s 1) = sigma (cyclicIndex n hn s 1) := by
+    dsimp [tau]
+    exact (apply_endpointSwap_local hn (by omega) sigma s).2.1
+  have hs2 :
+      tau (cyclicIndex n hn s 2) = sigma (cyclicIndex n hn s 2) := by
+    dsimp [tau]
+    exact (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
+  have hs3 :
+      tau (cyclicIndex n hn s 3) = sigma s := by
+    dsimp [tau]
+    simpa [cyclicIndex_zero] using
+      (apply_endpointSwap_local hn (by omega) sigma s).2.2.2
+  have hout4 :
+      tau (cyclicIndex n hn s 4) =
+        sigma (cyclicIndex n hn s 4) := by
+    exact applyFourBlockPerm_eq_outside
+      hn (by omega) sigma s endpointSwap
+      (cyclicIndex_offset_not_mem_fourBlockPositions
+        hn s (by omega) (by omega))
+  rw [cyclicWindow_four_eq, h1, h2, h3, hs1, hs2, hs3, hout4]
+
+/-- The s+2 boundary window under the endpoint swap is a single-element
+exchange: old s+3 is replaced by old s. -/
+theorem endpointSwap_right_middle2_window_eq
+    {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h7n : 7 ≤ n)
+    (sigma : Fin n ≃ E) (s : Fin n) :
+    cyclicWindow 4 hn
+        (applyFourBlockPerm hn (by omega) sigma s endpointSwap)
+        (cyclicIndex n hn s 2) =
+      ({(sigma (cyclicIndex n hn s 2) : alpha),
+        (sigma s : alpha),
+        (sigma (cyclicIndex n hn s 4) : alpha),
+        (sigma (cyclicIndex n hn s 5) : alpha)} : Set alpha) := by
+  let tau := applyFourBlockPerm hn (by omega) sigma s endpointSwap
+  have h1 :
+      cyclicIndex n hn (cyclicIndex n hn s 2) 1 =
+        cyclicIndex n hn s 3 := by
+    rw [cyclicIndex_add]
+  have h2 :
+      cyclicIndex n hn (cyclicIndex n hn s 2) 2 =
+        cyclicIndex n hn s 4 := by
+    rw [cyclicIndex_add]
+  have h3 :
+      cyclicIndex n hn (cyclicIndex n hn s 2) 3 =
+        cyclicIndex n hn s 5 := by
+    rw [cyclicIndex_add]
+  have hs2 :
+      tau (cyclicIndex n hn s 2) = sigma (cyclicIndex n hn s 2) := by
+    dsimp [tau]
+    exact (apply_endpointSwap_local hn (by omega) sigma s).2.2.1
+  have hs3 :
+      tau (cyclicIndex n hn s 3) = sigma s := by
+    dsimp [tau]
+    simpa [cyclicIndex_zero] using
+      (apply_endpointSwap_local hn (by omega) sigma s).2.2.2
+  have hout4 :
+      tau (cyclicIndex n hn s 4) =
+        sigma (cyclicIndex n hn s 4) := by
+    exact applyFourBlockPerm_eq_outside
+      hn (by omega) sigma s endpointSwap
+      (cyclicIndex_offset_not_mem_fourBlockPositions
+        hn s (by omega) (by omega))
+  have hout5 :
+      tau (cyclicIndex n hn s 5) =
+        sigma (cyclicIndex n hn s 5) := by
+    exact applyFourBlockPerm_eq_outside
+      hn (by omega) sigma s endpointSwap
+      (cyclicIndex_offset_not_mem_fourBlockPositions
+        hn s (by omega) (by omega))
+  rw [cyclicWindow_four_eq, h1, h2, h3, hs2, hs3, hout4, hout5]
 
 /-- Under the endpoint swap, the extreme right affected four-window is the
 old consecutive three-window at s+4 plus the old element at s. -/
