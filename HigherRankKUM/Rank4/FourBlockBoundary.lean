@@ -69,9 +69,9 @@ theorem mem_fourBlockBoundaryStarts_of_overlap
       (s.val + (t.val + q.val)) % n =
         (s.val + r.val) % n
     exact congrArg Fin.val hidx
+  have hrn : r.val < n := by omega
   have hmod : (t.val + q.val) % n = r.val := by
-    rw [Nat.mod_eq_of_lt r.isLt] at hmodEq
-    exact hmodEq
+    simpa [Nat.ModEq, Nat.mod_eq_of_lt hrn] using hmodEq
   have hnear :=
     offset_le_three_or_ge_sub_three_of_mod_eq
       h7n t.isLt q.isLt r.isLt hmod
