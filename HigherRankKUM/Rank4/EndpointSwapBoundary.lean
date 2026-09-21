@@ -71,7 +71,7 @@ theorem swap03_plus_one_dep_forces_closure
         (insert (σ (cyclicIndex n hn s 3) : α) C) := by
     have h := hCBO (cyclicIndex n hn s 1)
     rw [original_window_plus_one_eq hn σ s] at h
-    simpa [C, pair_comm] using h
+    simpa [C, insert_comm, insert_left_comm] using h
   have ha1 :
       (σ s : α) ≠ (σ (cyclicIndex n hn s 1) : α) := by
     simpa [cyclicIndex_zero] using
@@ -92,7 +92,7 @@ theorem swap03_plus_one_dep_forces_closure
   have hdep' :
       M.Dep (insert (σ s : α) C) := by
     rw [swap03_window_plus_one_eq hn h7n σ s] at hdep
-    simpa [C, pair_comm] using hdep
+    simpa [C, insert_comm, insert_left_comm] using hdep
   exact LocalExchangeClosure.mem_closure_of_failed_base_exchange
     hB haC hdep'
 
@@ -157,7 +157,7 @@ theorem swap03_plus_two_dep_forces_closure
         (insert (σ (cyclicIndex n hn s 3) : α) C) := by
     have h := hCBO (cyclicIndex n hn s 2)
     rw [original_window_plus_two_eq hn σ s] at h
-    simpa [C, pair_comm] using h
+    simpa [C, insert_comm, insert_left_comm] using h
   have ha2 :
       (σ s : α) ≠ (σ (cyclicIndex n hn s 2) : α) := by
     simpa [cyclicIndex_zero] using
@@ -178,7 +178,7 @@ theorem swap03_plus_two_dep_forces_closure
   have hdep' :
       M.Dep (insert (σ s : α) C) := by
     rw [swap03_window_plus_two_eq hn h7n σ s] at hdep
-    simpa [C, pair_comm] using hdep
+    simpa [C, insert_comm, insert_left_comm] using hdep
   exact LocalExchangeClosure.mem_closure_of_failed_base_exchange
     hB haC hdep'
 
