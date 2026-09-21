@@ -17,6 +17,7 @@ Inside a deletion ground of size `4k+1`, a set of size `3k-1` leaves
 exactly `k+2` deletion elements outside. -/
 theorem saturated_rankThree_complement_ncard_eq_k_add_two
     {E X : Set α} {k : ℕ}
+    (hk : 1 ≤ k)
     (hEfin : E.Finite)
     (hEcard : E.ncard = 4 * k + 1)
     (hXsub : X ⊆ E)
@@ -35,6 +36,7 @@ positions.  This is the combinatorial interface suggested by the hard-state
 saturation experiments. -/
 theorem saturated_rankThree_complement_package
     {M : Matroid α} {E X : Set α} {k : ℕ}
+    (hk : 1 ≤ k)
     (hEfin : E.Finite)
     (hEcard : E.ncard = 4 * k + 1)
     (hXsub : X ⊆ E)
@@ -51,7 +53,7 @@ theorem saturated_rankThree_complement_package
       (σ (cyclicIndex (4 * k + 1) (by omega) i 3) : α) ∈ E \ X := by
   refine ⟨
     saturated_rankThree_complement_ncard_eq_k_add_two
-      hEfin hEcard hXsub hXcard,
+      hk hEfin hEcard hXsub hXcard,
     ?_⟩
   intro i
   have hhit :=
