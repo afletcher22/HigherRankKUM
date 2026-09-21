@@ -92,6 +92,7 @@ import HigherRankKUM.Rank4.FourBlockMove
 import HigherRankKUM.Rank4.FourBlockPerm
 import HigherRankKUM.Rank4.FourBlockBoundary
 import HigherRankKUM.Rank4.FourBlockFailure
+import HigherRankKUM.Rank4.PositionSwapRigidity
 import HigherRankKUM.Rank4.BlockerCycle
 import HigherRankKUM.Rank4.BlockerRuns
 import HigherRankKUM.Rank4.CyclicFlatCapacity
