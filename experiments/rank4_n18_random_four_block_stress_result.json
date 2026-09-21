@@ -1,0 +1,81 @@
+{
+  "matroids": 10,
+  "bad_states": 41,
+  "distance_histogram": {
+    "1": 36,
+    "2": 5
+  },
+  "maximum_observed_distance": 2,
+  "random_group": {
+    "matroids": 5,
+    "bad_states": 21,
+    "distance_histogram": {
+      "1": 20,
+      "2": 1
+    },
+    "profiles": [
+      [
+        3,
+        6,
+        11
+      ],
+      [
+        3,
+        7,
+        12
+      ],
+      [
+        4,
+        7,
+        12
+      ],
+      [
+        4,
+        7,
+        12
+      ],
+      [
+        3,
+        6,
+        12
+      ]
+    ]
+  },
+  "forced_four_parallel_group": {
+    "matroids": 5,
+    "bad_states": 20,
+    "distance_histogram": {
+      "1": 16,
+      "2": 4
+    },
+    "profiles": [
+      [
+        4,
+        8,
+        12
+      ],
+      [
+        4,
+        8,
+        12
+      ],
+      [
+        4,
+        7,
+        12
+      ],
+      [
+        4,
+        7,
+        12
+      ],
+      [
+        4,
+        8,
+        12
+      ]
+    ]
+  },
+  "interpretation": "All sampled unrelated n=18 t=0 bad states escape within two moves using arbitrary CBO-preserving four-position permutations and point pivots. The historical n=18 obstruction remains the hardest observed example, with seeded depth reaching three.",
+  "claim_level": "seeded finite computation; not exhaustive and not Lean certified"
+}
