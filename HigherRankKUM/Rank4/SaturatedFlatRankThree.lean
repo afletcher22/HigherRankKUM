@@ -66,7 +66,7 @@ theorem uniformlyDense_restrict_of_rankThree_ncard_three_mul
       _ = 3 * k := hHcard
   have hNat : A.ncard ≤ k * j := by
     interval_cases j <;> omega
-  rw [hAj]
+  rw [hAj, ← hAfin.cast_ncard_eq]
   exact_mod_cast hNat
 
 /-- Consequently every saturated rank-three subset carries a rank-three CBO.
