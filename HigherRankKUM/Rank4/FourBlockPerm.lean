@@ -90,6 +90,24 @@ theorem applyFourBlockPerm_apply
       σ (supportedFourBlockPerm hn h4n s π i) := by
   rfl
 
+/-- On one of the four moved local coordinates, explicit four-block
+permutation evaluation reduces to the corresponding local permutation. -/
+@[simp]
+theorem applyFourBlockPerm_apply_local
+    {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ : Fin n ≃ E) (s : Fin n)
+    (π : Equiv.Perm (Fin 4)) (q : Fin 4) :
+    applyFourBlockPerm hn h4n σ s π
+        (cyclicIndex n hn s q.val) =
+      σ (cyclicIndex n hn s (π q).val) := by
+  change
+    σ (supportedFourBlockPerm hn h4n s π
+      (fourBlockEmbedding hn h4n s q)) =
+      σ (fourBlockEmbedding hn h4n s (π q))
+  rw [supportedFourBlockPerm_apply_block]
+
+
 /-- Every explicitly supported `Fin 4` permutation is an abstract
 `FourBlockReorder`. -/
 theorem fourBlockReorder_applyFourBlockPerm
