@@ -197,6 +197,84 @@ Certificate:
 
 `experiments/rank4_n18_random_four_block_stress.py`
 
+## Saturation versus repair depth
+
+A new audit tracks, for each bad state, how many blocker triples have
+rank-three closure attaining the **maximum size allowed by the certified
+no-dangerous cap** after the omitted element is removed:
+
+`|cl(X) ∩ (E-e)| = 3k-1`.
+
+Certificate:
+
+`experiments/rank4_four_block_saturation_depth.py`.
+
+### Exact hard binary n=10 orbit
+
+For the 4,128-state orbit that contained the strongest earlier local-move
+obstruction, the exact all-four-block-plus-pivot distances are:
+
+- success: 1,856 states;
+- distance 1: 2,112;
+- distance 2: 128;
+- distance 3: 32.
+
+Among bad states, the number of saturated blocker closures shifts strongly
+with distance:
+
+| distance | saturated-blocker count -> states |
+|---:|---|
+| 1 | 1->128, 2->1024, 3->640, 4->192, 5->128 |
+| 2 | 4->96, 5->32 |
+| 3 | 5->32 |
+
+Every distance-three state has exactly five blockers and **all five blocker
+closures are saturated at `3k-1=5`**.  All 32 omit one of the two parallel
+copies of the same projective point.  Moreover, each such state has only one
+nonidentity CBO-preserving four-block permutation anywhere around the cycle.
+
+A shortest distance-three repair path first breaks one of these saturated
+closures, then increases local reorder flexibility, and only later creates the
+four-zero blocker run.
+
+### Historical n=18 witness
+
+For the 730 seeded bad type-states:
+
+| distance | possible numbers of saturated blockers |
+|---:|---|
+| 1 | 4 through 9 |
+| 2 | 6 through 9 |
+| 3 | 9 |
+
+The unique distance-three state has 12 blockers with deletion-ground closure
+sizes
+
+`5, 7, 7, 11, 11, 11, 11, 11, 11, 11, 11, 11`.
+
+Thus 9 blockers attain the exact t=0 cap `3k-1=11`.
+
+### Interpretation
+
+This is not a monotonicity theorem.  Saturation count itself should **not** be
+promoted to a descent potential.
+
+The useful structural reading is instead:
+
+> hard local states accumulate many rank-three flats that are already one
+> element below the forbidden dangerous threshold.
+
+A hypothetical component closed under all four-block repairs and pivots would
+therefore have to maintain a highly saturated family of blocker closures.
+The proof target should be to show that such persistent rigidity forces one
+more element into one of these rank-three closures, producing a `3k)-element
+set spanning the omitted element and contradicting the certified
+`3k-1` cap.
+
+This makes the desired implication more precise:
+
+`closed all-bad local rigidity -> over-saturation -> dangerous hyperplane`.
+
 ## Current conjecture
 
 The strongest useful move-based candidate now worth trying to falsify is:
