@@ -267,7 +267,7 @@ The useful structural reading is instead:
 A hypothetical component closed under all four-block repairs and pivots would
 therefore have to maintain a highly saturated family of blocker closures.
 The proof target should be to show that such persistent rigidity forces one
-more element into one of these rank-three closures, producing a `3k)-element
+more element into one of these rank-three closures, producing a `3k`-element
 set spanning the omitted element and contradicting the certified
 `3k-1` cap.
 
@@ -512,3 +512,145 @@ Exact n=10 companion certificate:
 with compact result:
 
 `experiments/rank4_binary_n10_fixed_e_seven_type_exact_result.json`.
+
+
+## September 21 local-rigidity split
+
+The local four-block analysis now separates cleanly into two different
+matroid mechanisms.
+
+### Transposition probes
+
+Five of the seven empirically sufficient move types are transpositions:
+the three adjacent swaps, the endpoint swap `(3,1,2,0)`, and the side swap
+`(0,3,2,1)`.
+
+Exact audits on the hard binary n=10 orbit show that these moves are often
+useful primarily as **structural probes**, not direct repairs.
+
+For omitted parallel labels 6 and 7:
+
+- endpoint swap: 2,160 attempts per label, zero CBO-preserving;
+  1,440 failures have an extreme-boundary witness and 720 are witnessed only
+  at internal single-exchange boundaries;
+- side swap: 2,160 attempts per label, zero CBO-preserving;
+  1,328 failures have an extreme changed-boundary witness and 832 are
+  internal-only.
+
+Thus the skip-one three-element cores in the internal boundary windows are
+genuinely necessary.  A proof using only the two consecutive-triple extreme
+boundaries is insufficient.
+
+Certificates:
+
+- `experiments/rank4_binary_n10_endpoint_swap_obstruction_exact.py`;
+- `experiments/rank4_binary_n10_endpoint_swap_obstruction_exact_result.json`;
+- `experiments/rank4_binary_n10_side_swap_obstruction_exact.py`;
+- `experiments/rank4_binary_n10_side_swap_obstruction_exact_result.json`.
+
+The explicit endpoint-swap six-boundary geometry is Lean-green on
+`rank4-seven-move-types` at `598b8257dd63d26b83c009a2e69ae875b8c849d8`
+(workflow `35632709670`).
+
+### Canonical 2+2 probes
+
+The two canonical patterns have genuine double-exchange obstructions.
+
+For the hard binary n=10 orbit:
+
+- pair shift `(2,3,0,1)`: every attempt from every bad state is invalid;
+- canonical twist `(2,3,1,0)`: some attempts are valid, including 120 per
+  hard omitted parallel label;
+- **both** patterns have failures witnessed only at the two double-exchange
+  boundary windows.
+
+Therefore single-element exchange/closure rigidity cannot close the
+four-block argument.  The rank-two contraction/common-base layer is
+mathematically necessary.
+
+Certificate:
+
+- `experiments/rank4_binary_n10_canonical_pairshift_obstruction_exact.py`;
+- `experiments/rank4_binary_n10_canonical_pairshift_obstruction_exact_result.json`.
+
+The generic four-element rigidity theorem already present in
+`LocalRepairClosure.unique_local_repair_forces_ambient_closure` is the right
+endpoint: uniqueness of the current common pair in the two boundary minors
+forces one of four ambient closure incidences.
+
+A finite wrapper reducing uniqueness to failure of the five explicit
+alternative pairs is Lean-green on `rank4-five-pair-rigidity` at
+`5b42fc9462486fe4f98e575c7272c0369bf10473`
+(workflow `35634898131`).
+
+## Saturated-flat constant defect
+
+The saturation experiments suggest sharpening
+`rigidity -> saturation -> oversaturation`.
+
+Suppose a rank-three set `X` in a `4k+1` deletion CBO spans the omitted
+element and attains the t=0 maximum
+
+`|X| = 3k-1`.
+
+Then its deletion-ground complement `C` has exactly
+
+`|C| = k+2`.
+
+Because `X` has rank at most three while every cyclic four-window is a
+rank-four basis, every four-window meets `C`.
+
+Now double-count incidences between complement positions and cyclic
+four-windows.  Each element of `C` lies in exactly four four-windows, so the
+total incidence count is
+
+`4(k+2) = 4k+8`.
+
+There are `4k+1` four-windows and each must contain at least one complement
+position.  Therefore the total excess above one complement point per window
+is exactly
+
+`(4k+8) - (4k+1) = 7`.
+
+Consequences:
+
+- at most **seven** four-window starts contain two or more complement points;
+- hence all but at most seven four-windows contain exactly one point outside
+  `X`;
+- in every such one-outside window, the other three entries are independent
+  and rank three, hence form a basis of the saturated rank-three flat.
+
+The equivalent cyclic-gap formulation is that runs inside `X` have length
+at most three and the total deficit from the ideal length-three gaps is
+exactly seven.
+
+The key feature is that the defect bound is **independent of k**.  This turns
+a potentially unbounded t=0 obstruction into a bounded exceptional
+neighborhood plus a long forced `3+1` regime.
+
+An isolated formalization is in progress on
+`rank4-saturated-complement-interface` (draft PR #41).  It exposes the
+rank-three-complement hits-every-four lemma, the exact `k+2` complement
+cardinality, and a proposed `multiHitStarts_ncard_le_seven` theorem.
+
+## Updated proof target
+
+The current strongest proof architecture is:
+
+1. work at fixed omitted element `e` in the no-dangerous t=0 deletion CBO;
+2. assume a bad four-block component has no favorable state;
+3. use the five transposition probes to extract single-exchange closure
+   incidences;
+4. use the two canonical 2+2 probes and five-pair common-base rigidity for
+   the genuinely double-exchange cases;
+5. force a blocker rank-three flat to the maximal allowed size `3k-1`;
+6. use the constant-seven saturated-complement structure to obtain a long
+   forced `3+1` regime;
+7. show local rigidity in that regime pulls one further deletion element into
+   the same rank-three closure;
+8. obtain a rank-three `3k`-element set spanning `e`, contradicting the
+   certified no-dangerous `3k-1` cap.
+
+This remains a research program, not yet a proof of t=0.  In particular,
+the missing theorem is still the propagation step from local move rigidity
+to one saturated flat and then to one further forced closure element.
