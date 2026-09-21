@@ -123,6 +123,61 @@ theorem mem_closure_iff_contractElem_dep
     simpa [Set.union_comm] using hambient.2
 
 
+
+/-- If a basis contains an independent set `T` that already spans `e`, then
+the fundamental circuit of `e` with respect to the basis is supported on
+`insert e T`. -/
+theorem fundCircuit_subset_insert_of_subset_of_mem_closure
+    {M : Matroid α} {B T : Set α} {e : α}
+    (hB : M.IsBase B)
+    (hTB : T ⊆ B)
+    (heT : e ∈ M.closure T)
+    (heTnot : e ∉ T) :
+    M.fundCircuit e B ⊆ insert e T := by
+  have hTInd : M.Indep T :=
+    hB.indep.subset hTB
+  have hCT : M.IsCircuit (M.fundCircuit e T) :=
+    hTInd.fundCircuit_isCircuit heT heTnot
+  have hCTsubB : M.fundCircuit e T ⊆ insert e B :=
+    (M.fundCircuit_subset_insert e T).trans
+      (Set.insert_subset_insert e hTB)
+  have hEq : M.fundCircuit e T = M.fundCircuit e B :=
+    hCT.eq_fundCircuit_of_subset hB.indep hCTsubB
+  rw [← hEq]
+  exact M.fundCircuit_subset_insert e T
+
+/-- If two bases contain the same set `T` and `T` spans `e`, then the
+fundamental circuit of `e` is identical in both bases.
+
+For consecutive rank-four basis windows, a blocker triple is such a common
+`T`; hence a blocker makes the fundamental circuit persist as the basis
+window slides by one position. -/
+theorem fundCircuit_eq_of_common_spanning_subset
+    {M : Matroid α} {B B' T : Set α} {e : α}
+    (hB : M.IsBase B)
+    (hB' : M.IsBase B')
+    (hTB : T ⊆ B)
+    (hTB' : T ⊆ B')
+    (heT : e ∈ M.closure T)
+    (heTnot : e ∉ T) :
+    M.fundCircuit e B = M.fundCircuit e B' := by
+  have hTInd : M.Indep T :=
+    hB.indep.subset hTB
+  have hCT : M.IsCircuit (M.fundCircuit e T) :=
+    hTInd.fundCircuit_isCircuit heT heTnot
+  have hsubB : M.fundCircuit e T ⊆ insert e B :=
+    (M.fundCircuit_subset_insert e T).trans
+      (Set.insert_subset_insert e hTB)
+  have hsubB' : M.fundCircuit e T ⊆ insert e B' :=
+    (M.fundCircuit_subset_insert e T).trans
+      (Set.insert_subset_insert e hTB')
+  have hEqB : M.fundCircuit e T = M.fundCircuit e B :=
+    hCT.eq_fundCircuit_of_subset hB.indep hsubB
+  have hEqB' : M.fundCircuit e T = M.fundCircuit e B' :=
+    hCT.eq_fundCircuit_of_subset hB'.indep hsubB'
+  exact hEqB.symm.trans hEqB'
+
+
 /-- Four closure constraints with empty common intersection are impossible for
 a nonloop. This is the abstract endpoint behind the rank-four fact that a
 blocker word cannot contain four consecutive blockers. -/
