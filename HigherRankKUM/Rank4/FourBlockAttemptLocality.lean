@@ -176,6 +176,44 @@ theorem cyclicBasisOrder_applyFourBlockPerm_iff_of_eq_on_attemptSupport
           hn h4n σ τ s π hEq hi
     rwa [hwin]
 
+
+/-- A remote four-block reorder does not change any entry on the attempt
+support of a candidate move whose support is disjoint from the moved block. -/
+theorem eq_on_attemptSupport_of_remote_fourBlockReorder
+    {E : Set α} {n : ℕ}
+    {hn : 0 < n} {σ τ : Fin n ≃ E} {u s : Fin n}
+    (hmove : FourBlockReorder hn σ τ u)
+    (hdis :
+      Disjoint (fourBlockAttemptSupport hn s) (fourBlockPositions hn u)) :
+    ∀ j : Fin n, j ∈ fourBlockAttemptSupport hn s → σ j = τ j := by
+  intro j hj
+  have hjout : j ∉ fourBlockPositions hn u := by
+    intro hju
+    exact (Set.disjoint_left.mp hdis) hj hju
+  exact (hmove.1 j hjout).symm
+
+/-- Remote-reorder invariance of a candidate four-block attempt.
+
+If the block changed by `σ -> τ` is disjoint from the support needed to
+decide the candidate move at `s`, then applying the same local permutation at
+`s` preserves the CBO for `σ` exactly when it preserves the CBO for `τ`.
+This is the abstract locality statement needed for mobility comparisons. -/
+theorem cyclicBasisOrder_applyFourBlockPerm_iff_of_remote_reorder
+    {M : Matroid α} {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ τ : Fin n ≃ E) (u s : Fin n)
+    (π : Equiv.Perm (Fin 4))
+    (hσ : CyclicBasisOrder M 4 hn σ)
+    (hτ : CyclicBasisOrder M 4 hn τ)
+    (hmove : FourBlockReorder hn σ τ u)
+    (hdis :
+      Disjoint (fourBlockAttemptSupport hn s) (fourBlockPositions hn u)) :
+    CyclicBasisOrder M 4 hn (applyFourBlockPerm hn h4n σ s π) ↔
+      CyclicBasisOrder M 4 hn (applyFourBlockPerm hn h4n τ s π) := by
+  exact cyclicBasisOrder_applyFourBlockPerm_iff_of_eq_on_attemptSupport
+    hn h4n σ τ s π hσ hτ
+    (eq_on_attemptSupport_of_remote_fourBlockReorder hmove hdis)
+
 end
 
 end Rank4FourBlockAttemptLocality
