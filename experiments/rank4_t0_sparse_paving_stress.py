@@ -127,20 +127,17 @@ def greedy_stable(seed, trials=10):
 def audit(H):
     failures = []
     max_nodes = 0
-    witnesses = {}
     for e in E:
         witness, nodes = find_favorable(H, e)
         max_nodes = max(max_nodes, nodes)
         if witness is None:
             failures.append(e)
-        else:
-            witnesses[str(e)] = witness
-    return failures, max_nodes, witnesses
+    return failures, max_nodes
 
 
 def main():
     extremal = sqs10()
-    sqs_failures, sqs_max_nodes, sqs_witnesses = audit(extremal)
+    sqs_failures, sqs_max_nodes = audit(extremal)
     assert sqs_failures == []
 
     size_hist = Counter()
@@ -149,7 +146,7 @@ def main():
     for j in range(1000):
         H = greedy_stable(100000 + j, trials=10)
         size_hist[len(H)] += 1
-        failures, max_nodes, _ = audit(H)
+        failures, max_nodes = audit(H)
         random_max_nodes = max(random_max_nodes, max_nodes)
         if failures:
             random_failure = {
@@ -167,7 +164,6 @@ def main():
             "circuit_hyperplanes": len(extremal),
             "bad_prescribed_elements": 0,
             "max_search_nodes": sqs_max_nodes,
-            "witnesses": sqs_witnesses,
         },
         "dense_random": {
             "samples": 1000,
