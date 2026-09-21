@@ -1,11 +1,65 @@
 # Rank-4 t=0 mobility-extremal program
 
+## Falsification update: local mobility extremality is false
+
+Further exact analysis of the explicit n=14 no-saturation witness falsifies the
+mobility-extremal saturation conjecture stated below.
+
+For the same binary matroid
+
+`(10,3,11,1,3,3,15,15,6,6,1,14,11,7)`
+
+with omitted label `e=12`, the deletion CBO
+
+`(0,3,6,1,9,2,10,4,11,8,7,5,13)`
+
+has blocker word
+
+`1001110100101`
+
+and seven-move mobility
+
+`mu7 = 14`.
+
+It is bad, has no favorable seven-type neighbor, and all fourteen valid
+seven-type attempts lead to bad states of mobility at most 14.  The neighbor
+score distribution is:
+
+- 3 attempts to mobility 14;
+- 7 attempts to mobility 12;
+- 3 attempts to mobility 11;
+- 1 attempt to mobility 9.
+
+Thus it is a genuine bad local maximum of `mu7`.
+
+Nevertheless the ambient matroid has rank-three flat profile maximum 8, so no
+9-point saturated rank-three flat through `e` exists.
+
+The state repairs in two seven-type moves, but every shortest repair begins by
+dropping mobility (one explicit score sequence is `14 -> 12 -> 15`, with the
+last state favorable).
+
+Therefore:
+
+- `bad local maximum of mu7 => saturation` is false;
+- `mu7` cannot be used as a monotone ascent potential;
+- the proposed local-extremal proof of the component dichotomy is retired.
+
+The Lean locality lemmas developed on `rank4-seven-mobility-locality` remain
+correct and potentially reusable, but they no longer support a mobility
+extremal endpoint.
+
+The live target reverts to the **full component-closure statement**: exploit
+the fact that *every state reachable in a hypothetical component is bad*, not
+the extremality of any scalar score.
+
+---
+
 Date: 2026-09-21.
 
 Branch: `rank4-t0-mobility-extremal`.
 
-Status: mathematical / computational research checkpoint.  No new endpoint in
-this note is Lean-certified.
+Status: **falsified research direction**.  The local mobility-extremal conjecture below is false; retained for audit history.
 
 ## Motivation
 
