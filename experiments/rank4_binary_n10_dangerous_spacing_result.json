@@ -1,0 +1,83 @@
+{
+  "scope": "dangerous-hyperplane spacing types in all CBOs of the three genuine eligible binary n=10 failures",
+  "possible_saturated_spacing_types_at_k2": [
+    [
+      1,
+      4,
+      4
+    ],
+    [
+      2,
+      3,
+      4
+    ],
+    [
+      3,
+      3,
+      3
+    ]
+  ],
+  "observed_failure_rows": [
+    {
+      "orbit_index": 10,
+      "omitted_label": 0,
+      "deletion_cbos": 224,
+      "dangerous_hyperplanes_containing_e": 3,
+      "spacing_type_histogram": {
+        "(1, 4, 4)": 480,
+        "(2, 3, 4)": 192
+      },
+      "joint_spacing_signature_histogram": {
+        "((1, 4, 4), (1, 4, 4), (1, 4, 4))": 128,
+        "((1, 4, 4), (2, 3, 4), (2, 3, 4))": 96
+      },
+      "total_number_of_spacing_4s_per_cbo": {
+        "4": 96,
+        "6": 128
+      }
+    },
+    {
+      "orbit_index": 18,
+      "omitted_label": 8,
+      "deletion_cbos": 224,
+      "dangerous_hyperplanes_containing_e": 2,
+      "spacing_type_histogram": {
+        "(1, 4, 4)": 320,
+        "(2, 3, 4)": 128
+      },
+      "joint_spacing_signature_histogram": {
+        "((1, 4, 4), (1, 4, 4))": 128,
+        "((1, 4, 4), (2, 3, 4))": 64,
+        "((2, 3, 4), (2, 3, 4))": 32
+      },
+      "total_number_of_spacing_4s_per_cbo": {
+        "2": 32,
+        "3": 64,
+        "4": 128
+      }
+    },
+    {
+      "orbit_index": 18,
+      "omitted_label": 9,
+      "deletion_cbos": 224,
+      "dangerous_hyperplanes_containing_e": 2,
+      "spacing_type_histogram": {
+        "(1, 4, 4)": 320,
+        "(2, 3, 4)": 128
+      },
+      "joint_spacing_signature_histogram": {
+        "((1, 4, 4), (1, 4, 4))": 128,
+        "((1, 4, 4), (2, 3, 4))": 64,
+        "((2, 3, 4), (2, 3, 4))": 32
+      },
+      "total_number_of_spacing_4s_per_cbo": {
+        "2": 32,
+        "3": 64,
+        "4": 128
+      }
+    }
+  ],
+  "balanced_333_occurrences": 0,
+  "interpretation": "Every dangerous hyperplane in every genuine failure CBO is unbalanced enough to contain a run of three consecutive H-points. The balanced saturated type (3,3,3), which has no dangerous blocker triple, never occurs.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
