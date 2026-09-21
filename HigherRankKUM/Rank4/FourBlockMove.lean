@@ -143,6 +143,30 @@ theorem cyclicBasisOrder_of_fourBlockReorder_of_affected_bases
     exact hσ i
   · exact hAffected i hdis
 
+/-- Sharpened certification interface: the central moved window is automatic,
+and disjoint windows are automatic.  Only overlapping boundary windows whose
+start differs from the moved-block start need to be rechecked. -/
+theorem cyclicBasisOrder_of_fourBlockReorder_of_boundary_bases
+    {M : Matroid α} {E : Set α} {n : ℕ}
+    {hn : 0 < n} {σ τ : Fin n ≃ E} {s : Fin n}
+    (hσ : CyclicBasisOrder M 4 hn σ)
+    (hmove : FourBlockReorder hn σ τ s)
+    (hBoundary :
+      ∀ i : Fin n,
+        i ≠ s →
+        ¬ Disjoint (cyclicPositionWindow 4 hn i) (fourBlockPositions hn s) →
+          M.IsBase (cyclicWindow 4 hn τ i)) :
+    CyclicBasisOrder M 4 hn τ := by
+  intro i
+  by_cases his : i = s
+  · subst i
+    exact isBase_cyclicWindow_four_at_fourBlock_start hσ hmove
+  by_cases hdis :
+      Disjoint (cyclicPositionWindow 4 hn i) (fourBlockPositions hn s)
+  · rw [cyclicWindow_four_eq_of_disjoint_fourBlockPositions hmove hdis]
+    exact hσ i
+  · exact hBoundary i his hdis
+
 /-- Equivalent packaging: after a four-block reorder, CBO certification reduces
 to checking only the windows whose position support meets the moved block. -/
 theorem cyclicBasisOrder_fourBlockReorder_iff_affected_bases
