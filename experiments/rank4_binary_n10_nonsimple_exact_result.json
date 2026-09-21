@@ -1,0 +1,188 @@
+{
+  "scope": "exact binary rank-4 n=10 represented multisets with two-deletion density robustness",
+  "claim_level": "exact finite computation; not Lean certification",
+  "qualifying_multiplicity_patterns": 28476,
+  "qualifying_by_number_of_doubled_projective_points": {
+    "0": 2163,
+    "1": 11025,
+    "2": 11760,
+    "3": 3360,
+    "4": 0,
+    "5": 168
+  },
+  "gl4_2_orbits": 16,
+  "prescribed_element_failures_on_orbit_representatives": 0,
+  "closed_all_bad_summary": {
+    "adjacent_swaps_plus_pivots": {
+      "orbits_with_closed_all_bad_components": 5,
+      "total_closed_all_bad_components": 104,
+      "counterexample_orbits": [
+        {
+          "orbit_index": 2,
+          "orbit_size": 5040,
+          "multiplicity_vector": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2
+          ],
+          "states": 4128,
+          "successful_states": 1856,
+          "components": 17,
+          "closed_components": 16,
+          "closed_component_size": 2
+        },
+        {
+          "orbit_index": 3,
+          "orbit_size": 840,
+          "multiplicity_vector": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2
+          ],
+          "states": 6528,
+          "successful_states": 2592,
+          "components": 49,
+          "closed_components": 48,
+          "closed_component_size": 6
+        },
+        {
+          "orbit_index": 10,
+          "orbit_size": 5040,
+          "multiplicity_vector": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2
+          ],
+          "states": 4960,
+          "successful_states": 2000,
+          "components": 9,
+          "closed_components": 8,
+          "closed_component_size": 2
+        },
+        {
+          "orbit_index": 11,
+          "orbit_size": 2520,
+          "multiplicity_vector": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "states": 4832,
+          "successful_states": 2208,
+          "components": 33,
+          "closed_components": 16,
+          "closed_component_size": 2
+        },
+        {
+          "orbit_index": 13,
+          "orbit_size": 2520,
+          "multiplicity_vector": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            2
+          ],
+          "states": 4768,
+          "successful_states": 2272,
+          "components": 33,
+          "closed_components": 16,
+          "closed_component_size": 2
+        }
+      ]
+    },
+    "all_single_transpositions_plus_pivots": {
+      "orbits_with_closed_all_bad_components": 1,
+      "counterexample": {
+        "orbit_index": 2,
+        "orbit_size": 5040,
+        "multiplicity_vector": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          2
+        ],
+        "states": 4128,
+        "successful_states": 1856,
+        "components": 9,
+        "closed_components": 8,
+        "closed_component_size": 4,
+        "nearest_successful_same_omitted_element_hamming_distance_observed": 4
+      }
+    }
+  },
+  "interpretation": [
+    "Every omitted label is favorable in every GL(4,2) orbit representative; the exact non-simple binary n=10 class contains no prescribed-element counterexample.",
+    "Closed all-bad components exist under adjacent swaps plus point pivots.",
+    "One orbit retains closed all-bad components even after every single transposition is allowed, so component-wise local escape is not a universal proof target."
+  ]
+}
