@@ -1,3 +1,4 @@
+import HigherRankKUM.StrictDensity
 import HigherRankKUM.Rank4.T0FixedELocalGeometry
 
 namespace HigherRankKUM
@@ -123,7 +124,7 @@ theorem threeBlockerRunStarts_ncard_le_k_sub_one
       (M := M) (hn := by omega) (h5n := by omega)
       hEsub σ e he heE hCBO hiR
   have heCl : e ∈ M.closure ({e} : Set α) := by
-    exact M.subset_closure (by simpa using he.mem_ground) (by simp)
+    exact (M.subset_closure ({e} : Set α) (by simpa using he.mem_ground)) (by simp)
   have heNotImg : e ∉ f '' R := by
     rintro ⟨i, -, hi⟩
     apply heE
