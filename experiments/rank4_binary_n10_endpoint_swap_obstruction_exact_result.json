@@ -1,0 +1,122 @@
+{
+  "scope": "exact hard binary n=10 GL(4,2) orbit index 2",
+  "orbit_size": 2520,
+  "columns": [
+    7,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    14,
+    15,
+    15
+  ],
+  "move": "endpoint swap (3,1,2,0), omitted element fixed",
+  "rows": [
+    {
+      "omitted_label": 0,
+      "deletion_cbos": 448,
+      "bad_states": 288,
+      "valid_endpoint_swap_attempts": 192,
+      "invalid_endpoint_swap_attempts": 2400,
+      "invalid_with_extreme_boundary_witness": 2240,
+      "invalid_with_internal_only_witness": 160
+    },
+    {
+      "omitted_label": 1,
+      "deletion_cbos": 512,
+      "bad_states": 320,
+      "valid_endpoint_swap_attempts": 192,
+      "invalid_endpoint_swap_attempts": 2688,
+      "invalid_with_extreme_boundary_witness": 2464,
+      "invalid_with_internal_only_witness": 224
+    },
+    {
+      "omitted_label": 2,
+      "deletion_cbos": 336,
+      "bad_states": 144,
+      "valid_endpoint_swap_attempts": 112,
+      "invalid_endpoint_swap_attempts": 1184,
+      "invalid_with_extreme_boundary_witness": 1128,
+      "invalid_with_internal_only_witness": 56
+    },
+    {
+      "omitted_label": 3,
+      "deletion_cbos": 336,
+      "bad_states": 144,
+      "valid_endpoint_swap_attempts": 112,
+      "invalid_endpoint_swap_attempts": 1184,
+      "invalid_with_extreme_boundary_witness": 1128,
+      "invalid_with_internal_only_witness": 56
+    },
+    {
+      "omitted_label": 4,
+      "deletion_cbos": 336,
+      "bad_states": 144,
+      "valid_endpoint_swap_attempts": 112,
+      "invalid_endpoint_swap_attempts": 1184,
+      "invalid_with_extreme_boundary_witness": 1128,
+      "invalid_with_internal_only_witness": 56
+    },
+    {
+      "omitted_label": 5,
+      "deletion_cbos": 336,
+      "bad_states": 144,
+      "valid_endpoint_swap_attempts": 112,
+      "invalid_endpoint_swap_attempts": 1184,
+      "invalid_with_extreme_boundary_witness": 1128,
+      "invalid_with_internal_only_witness": 56
+    },
+    {
+      "omitted_label": 6,
+      "deletion_cbos": 384,
+      "bad_states": 240,
+      "valid_endpoint_swap_attempts": 0,
+      "invalid_endpoint_swap_attempts": 2160,
+      "invalid_with_extreme_boundary_witness": 1440,
+      "invalid_with_internal_only_witness": 720
+    },
+    {
+      "omitted_label": 7,
+      "deletion_cbos": 384,
+      "bad_states": 240,
+      "valid_endpoint_swap_attempts": 0,
+      "invalid_endpoint_swap_attempts": 2160,
+      "invalid_with_extreme_boundary_witness": 1440,
+      "invalid_with_internal_only_witness": 720
+    },
+    {
+      "omitted_label": 8,
+      "deletion_cbos": 528,
+      "bad_states": 304,
+      "valid_endpoint_swap_attempts": 256,
+      "invalid_endpoint_swap_attempts": 2480,
+      "invalid_with_extreme_boundary_witness": 2288,
+      "invalid_with_internal_only_witness": 192
+    },
+    {
+      "omitted_label": 9,
+      "deletion_cbos": 528,
+      "bad_states": 304,
+      "valid_endpoint_swap_attempts": 256,
+      "invalid_endpoint_swap_attempts": 2480,
+      "invalid_with_extreme_boundary_witness": 2288,
+      "invalid_with_internal_only_witness": 192
+    }
+  ],
+  "hard_parallel_labels": [
+    6,
+    7
+  ],
+  "hard_parallel_label_summary": {
+    "bad_states_each": 240,
+    "endpoint_swap_attempts_each": 2160,
+    "valid_attempts_each": 0,
+    "invalid_extreme_witness_each": 1440,
+    "invalid_internal_only_witness_each": 720
+  },
+  "interpretation": "For the two omitted parallel labels supporting the deepest exact obstruction, endpoint swaps never preserve the deletion CBO. They act purely as structural probes. One third of their failed attempts have no extreme (-3 or +3) failed boundary window, so a proof based only on the two consecutive-triple extreme cores is insufficient; the four internal single-exchange cores are genuinely required.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
