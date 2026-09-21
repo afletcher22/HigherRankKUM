@@ -1,0 +1,119 @@
+{
+  "scope": "historical strict binary t=0 n=18 witness; parallel-type quotient",
+  "seeded_bad_type_states": 730,
+  "bad_states_by_omitted_type": {
+    "1": 100,
+    "2": 96,
+    "3": 53,
+    "4": 95,
+    "5": 62,
+    "6": 57,
+    "8": 99,
+    "9": 60,
+    "10": 54,
+    "12": 54
+  },
+  "two_canonical_patterns": {
+    "patterns": [
+      [
+        2,
+        3,
+        0,
+        1
+      ],
+      [
+        2,
+        3,
+        1,
+        0
+      ]
+    ],
+    "escape_depth_histogram": {
+      "1": 564,
+      "2": 148,
+      "3": 14,
+      "4": 1
+    },
+    "closed_all_bad_components": [
+      {
+        "omitted_type": 1,
+        "component_size": 8,
+        "representative": [
+          1,
+          2,
+          4,
+          9,
+          8,
+          6,
+          4,
+          5,
+          8,
+          2,
+          1,
+          4,
+          10,
+          2,
+          3,
+          12,
+          8
+        ]
+      },
+      {
+        "omitted_type": 4,
+        "component_size": 8,
+        "representative": [
+          1,
+          4,
+          10,
+          3,
+          1,
+          5,
+          8,
+          6,
+          2,
+          1,
+          8,
+          12,
+          2,
+          9,
+          4,
+          8,
+          2
+        ]
+      },
+      {
+        "omitted_type": 8,
+        "component_size": 8,
+        "representative": [
+          1,
+          4,
+          2,
+          8,
+          1,
+          5,
+          2,
+          8,
+          1,
+          4,
+          2,
+          10,
+          3,
+          12,
+          4,
+          6,
+          9
+        ]
+      }
+    ]
+  },
+  "all_four_block_permutations": {
+    "escape_depth_histogram": {
+      "1": 657,
+      "2": 72,
+      "3": 1
+    },
+    "failures_within_depth_4": 0,
+    "maximum_observed_depth": 3
+  },
+  "claim_level": "seeded finite computation; not exhaustive and not Lean certified"
+}
