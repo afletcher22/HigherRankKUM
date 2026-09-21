@@ -97,7 +97,7 @@ def saturatedIndexEquiv (k : ℕ) (hk : 2 ≤ k) :
     (saturatedBlockTailEquiv k hk).symm (Sum.inr r) =
       ⟨4 * (k - 2) + r.val, by omega⟩ := by
   apply Fin.ext
-  simp [saturatedBlockTailEquiv]
+  simp [saturatedBlockTailEquiv, Nat.mul_comm]
 
 @[simp] theorem saturatedIndexEquiv_prefix
     (k : ℕ) (hk : 2 ≤ k) (j : Fin (k - 2)) (r : Fin 4) :
@@ -131,10 +131,12 @@ def saturatedScheduleOrder
     (hHR : Disjoint H R)
     (flatOrder : Fin (3 * k) ≃ H)
     (outsideOrder : Fin (k + 2) ≃ R) :
-    Fin (4 * k + 2) ≃ (H ∪ R : Set α) :=
-  (saturatedIndexEquiv k hk).trans
-    ((Equiv.sumCongr flatOrder outsideOrder).trans
-      (Equiv.Set.union hHR).symm)
+    Fin (4 * k + 2) ≃ (H ∪ R : Set α) := by
+  classical
+  exact
+    (saturatedIndexEquiv k hk).trans
+      ((Equiv.sumCongr flatOrder outsideOrder).trans
+        (Equiv.Set.union hHR).symm)
 
 /-- Underlying ground element represented by a saturated schedule slot. -/
 def saturatedSlotValue
@@ -156,7 +158,9 @@ def saturatedSlotValue
         ⟨r.val + 4 * j.val, by omega⟩ : (H ∪ R : Set α)) : α) =
       saturatedSlotValue flatOrder outsideOrder
         (saturatedPrefixSlot j r) := by
-  simp [saturatedScheduleOrder, saturatedSlotValue]
+  classical
+  fin_cases r <;>
+    simp [saturatedScheduleOrder, saturatedSlotValue, saturatedPrefixSlot]
 
 @[simp] theorem saturatedScheduleOrder_tail
     {H R : Set α} {k : ℕ}
@@ -169,7 +173,9 @@ def saturatedSlotValue
         ⟨4 * (k - 2) + r.val, by omega⟩ : (H ∪ R : Set α)) : α) =
       saturatedSlotValue flatOrder outsideOrder
         (saturatedTailSlot hk r) := by
-  simp [saturatedScheduleOrder, saturatedSlotValue]
+  classical
+  fin_cases r <;>
+    simp [saturatedScheduleOrder, saturatedSlotValue, saturatedTailSlot]
 
 end
 
