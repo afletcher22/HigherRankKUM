@@ -51,7 +51,8 @@ theorem sum_fourHitCount_eq_four_mul_ncard
   have hbase :
       (∑ i : Fin n, if Good i then 1 else 0) =
         ({i | Good i} : Set (Fin n)).ncard := by
-    simpa only [Finset.sum_boole, Set.fintypeCard_eq_ncard]
+    rw [Finset.sum_boole, ← Set.toFinset_ofPred]
+    exact (Set.ncard_eq_toFinset_card' ({i | Good i} : Set (Fin n))).symm
   unfold fourHitCount
   rw [Finset.sum_comm]
   calc
@@ -127,7 +128,8 @@ theorem multiHitStarts_ncard_le_seven
     exact Finset.sum_le_sum (fun i _ => hpoint i)
   have hBsum :
       (∑ i : Fin n, if i ∈ B then 1 else 0) = B.ncard := by
-    simpa only [Finset.sum_boole, Set.fintypeCard_eq_ncard]
+    rw [Finset.sum_boole, ← Set.toFinset_ofPred]
+    simpa using (Set.ncard_eq_toFinset_card' B).symm
   have hleft :
       (∑ i : Fin n, (1 + (if i ∈ B then 1 else 0))) =
         n + B.ncard := by
