@@ -123,3 +123,5 @@ import HigherRankKUM.Rank4.SevenMoveTypes
 import HigherRankKUM.Rank4.EndpointSwapGeometry
 
 import HigherRankKUM.Rank4.T0SaturatedFlatExact
+
+import HigherRankKUM.Rank4.RankThreeFlatCore
