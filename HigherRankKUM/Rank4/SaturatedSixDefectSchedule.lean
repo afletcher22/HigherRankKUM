@@ -136,6 +136,15 @@ def saturatedScheduleOrder
     ((Equiv.sumCongr flatOrder outsideOrder).trans
       (Equiv.Set.union hHR).symm)
 
+/-- Underlying ground element represented by a saturated schedule slot. -/
+def saturatedSlotValue
+    {H R : Set α} {k : ℕ}
+    (flatOrder : Fin (3 * k) ≃ H)
+    (outsideOrder : Fin (k + 2) ≃ R) :
+    SaturatedSlots k → α
+  | Sum.inl i => (flatOrder i : α)
+  | Sum.inr j => (outsideOrder j : α)
+
 @[simp] theorem saturatedScheduleOrder_prefix
     {H R : Set α} {k : ℕ}
     (hk : 2 ≤ k)
@@ -143,12 +152,11 @@ def saturatedScheduleOrder
     (flatOrder : Fin (3 * k) ≃ H)
     (outsideOrder : Fin (k + 2) ≃ R)
     (j : Fin (k - 2)) (r : Fin 4) :
-    saturatedScheduleOrder hk hHR flatOrder outsideOrder
-        ⟨r.val + 4 * j.val, by omega⟩ =
-      ((Equiv.sumCongr flatOrder outsideOrder)
-        (saturatedPrefixSlot j r) :
-          (H ⊕ R)) := by
-  simp [saturatedScheduleOrder]
+    ((saturatedScheduleOrder hk hHR flatOrder outsideOrder
+        ⟨r.val + 4 * j.val, by omega⟩ : (H ∪ R : Set α)) : α) =
+      saturatedSlotValue flatOrder outsideOrder
+        (saturatedPrefixSlot j r) := by
+  simp [saturatedScheduleOrder, saturatedSlotValue]
 
 @[simp] theorem saturatedScheduleOrder_tail
     {H R : Set α} {k : ℕ}
@@ -157,12 +165,11 @@ def saturatedScheduleOrder
     (flatOrder : Fin (3 * k) ≃ H)
     (outsideOrder : Fin (k + 2) ≃ R)
     (r : Fin 10) :
-    saturatedScheduleOrder hk hHR flatOrder outsideOrder
-        ⟨4 * (k - 2) + r.val, by omega⟩ =
-      ((Equiv.sumCongr flatOrder outsideOrder)
-        (saturatedTailSlot hk r) :
-          (H ⊕ R)) := by
-  simp [saturatedScheduleOrder]
+    ((saturatedScheduleOrder hk hHR flatOrder outsideOrder
+        ⟨4 * (k - 2) + r.val, by omega⟩ : (H ∪ R : Set α)) : α) =
+      saturatedSlotValue flatOrder outsideOrder
+        (saturatedTailSlot hk r) := by
+  simp [saturatedScheduleOrder, saturatedSlotValue]
 
 end
 
