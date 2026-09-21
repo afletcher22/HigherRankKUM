@@ -70,6 +70,23 @@ theorem saturatedFullOrder_value
   rfl
 
 
+/-- Ambient value formula for the extended regular HHHR block region. -/
+theorem saturatedFullOrder_regular_block_value
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α))
+    (q : Fin (k - 1)) (r : Fin 4) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨r.val + 4 * q.val, by omega⟩ : α) =
+      saturatedSlotValue
+        (flatOrder.trans (restrictGroundEquiv M H))
+        outsideOrder
+        (saturatedRegularBlockSlot q r) := by
+  rw [saturatedFullOrder_value]
+  rw [saturatedIndexEquiv_regular_block]
+
 /-- The six exceptional starts of the fixed saturated-flat schedule. -/
 def saturatedDefectStarts (k : ℕ) (hk : 2 ≤ k) :
     Set (Fin (4 * k + 2)) :=
