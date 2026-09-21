@@ -1,0 +1,80 @@
+{
+  "n10_exact_hard_orbit": {
+    "states": 4128,
+    "distance_histogram": {
+      "0": 1856,
+      "1": 2112,
+      "2": 128,
+      "3": 32
+    },
+    "saturated_blockers_by_distance": {
+      "1": {
+        "1": 128,
+        "2": 1024,
+        "3": 640,
+        "4": 192,
+        "5": 128
+      },
+      "2": {
+        "4": 96,
+        "5": 32
+      },
+      "3": {
+        "5": 32
+      }
+    },
+    "distance_three_states": 32,
+    "distance_three_omitted_labels": {
+      "6": 16,
+      "7": 16
+    },
+    "distance_three_all_five_blockers_saturated": true
+  },
+  "n18_historical_seeded": {
+    "bad_states": 730,
+    "distance_histogram": {
+      "1": 657,
+      "2": 72,
+      "3": 1
+    },
+    "saturated_blockers_by_distance": {
+      "1": {
+        "4": 10,
+        "5": 123,
+        "6": 213,
+        "7": 86,
+        "8": 166,
+        "9": 59
+      },
+      "2": {
+        "6": 10,
+        "7": 7,
+        "8": 18,
+        "9": 37
+      },
+      "3": {
+        "9": 1
+      }
+    },
+    "unique_distance_three_state": {
+      "omitted_type": 4,
+      "blocker_closure_sizes_excluding_omitted": [
+        5,
+        7,
+        7,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11,
+        11
+      ],
+      "saturated_blockers": 9
+    }
+  },
+  "interpretation": "Greater four-block repair distance is strongly associated with more blocker closures attaining the certified no-dangerous rank-three cap 3k-1. The n10 distance-three states have every blocker saturated; the historical n18 depth-three state has nine saturated blockers. This supports rigidity-to-saturation, not a scalar monotonicity theorem.",
+  "claim_level": "finite computation; n10 exact for one complete orbit, n18 seeded"
+}
