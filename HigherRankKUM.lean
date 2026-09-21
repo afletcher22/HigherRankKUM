@@ -87,6 +87,7 @@ import HigherRankKUM.Rank4.T0Deletion
 import HigherRankKUM.Rank4.SixElementBoundary
 import HigherRankKUM.Rank4.DangerousCore
 import HigherRankKUM.Rank4.CyclicWindowFour
+import HigherRankKUM.Rank4.BlockerCycle
 import HigherRankKUM.Rank4.CyclicIndexArithmetic
 import HigherRankKUM.Rank4.CyclicPigeonhole
 import HigherRankKUM.Rank4.FiniteSchedule
