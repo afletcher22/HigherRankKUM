@@ -255,6 +255,91 @@ theorem three_consecutive_blockers_mem_closure_shared_singleton
 
   rwa [hEq] at hmem
 
+/-- Two consecutive blockers give a genuine small circuit through the
+omitted element: the fundamental circuit of `e` over the shared pair is
+contained in `e` together with that pair.
+
+This is the circuit-level form of the “triangle-or-parallel obstruction”
+associated to a blocker run of length two. -/
+theorem two_consecutive_blockers_fundCircuit_supported_shared_pair
+    {M : Matroid α} {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ : Fin n ≃ E) (e : α)
+    (heE : e ∉ E)
+    (hCBO : CyclicBasisOrder M 4 hn σ)
+    (i : Fin n)
+    (h0 : Rank4BlockerCycle.blockerAt M hn σ e i)
+    (h1 : Rank4BlockerCycle.blockerAt M hn σ e
+      (cyclicIndex n hn i 1)) :
+    M.IsCircuit
+        (M.fundCircuit e
+          (cyclicWindow 2 hn σ (cyclicIndex n hn i 1))) ∧
+      e ∈ M.fundCircuit e
+        (cyclicWindow 2 hn σ (cyclicIndex n hn i 1)) ∧
+      M.fundCircuit e
+          (cyclicWindow 2 hn σ (cyclicIndex n hn i 1)) ⊆
+        insert e (cyclicWindow 2 hn σ (cyclicIndex n hn i 1)) := by
+  let T := cyclicWindow 2 hn σ (cyclicIndex n hn i 1)
+  have hTsub :
+      T ⊆ cyclicWindow 4 hn σ i := by
+    dsimp [T]
+    rw [cyclicWindow_two_eq, cyclicWindow_four_eq]
+    intro x hx
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx ⊢
+    rcases hx with hx | hx
+    · exact Or.inr (Or.inl hx)
+    · exact Or.inr (Or.inr (Or.inl hx))
+  have hTind : M.Indep T :=
+    (hCBO i).indep.subset hTsub
+  have hTE : T ⊆ E := by
+    intro x hx
+    rcases hx with ⟨q, rfl⟩
+    exact (σ _).property
+  have heT : e ∉ T := fun heT => heE (hTE heT)
+  have hspan : e ∈ M.closure T := by
+    dsimp [T]
+    exact two_consecutive_blockers_mem_closure_shared_pair
+      hn h4n σ e hCBO i h0 h1
+  refine ⟨?_, M.mem_fundCircuit e T, ?_⟩
+  · exact hTind.fundCircuit_isCircuit hspan heT
+  · exact M.fundCircuit_subset_insert e T
+
+/-- Three consecutive blockers force the omitted nonloop to be parallel to
+the single entry common to the three blocker triples: together they form a
+two-element circuit.
+
+This packages the “parallel obstruction” represented by a blocker run of
+length three. -/
+theorem three_consecutive_blockers_isCircuit_pair
+    {M : Matroid α} {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h5n : 5 ≤ n)
+    (σ : Fin n ≃ E) (e : α)
+    (he : M.IsNonloop e)
+    (heE : e ∉ E)
+    (hCBO : CyclicBasisOrder M 4 hn σ)
+    (i : Fin n)
+    (h0 : Rank4BlockerCycle.blockerAt M hn σ e i)
+    (h1 : Rank4BlockerCycle.blockerAt M hn σ e
+      (cyclicIndex n hn i 1))
+    (h2 : Rank4BlockerCycle.blockerAt M hn σ e
+      (cyclicIndex n hn i 2)) :
+    M.IsCircuit
+      ({e, (σ (cyclicIndex n hn i 2) : α)} : Set α) := by
+  let x : α := (σ (cyclicIndex n hn i 2) : α)
+  have hspan : e ∈ M.closure ({x} : Set α) := by
+    simpa [x] using
+      three_consecutive_blockers_mem_closure_shared_singleton
+        hn h5n σ e hCBO i h0 h1 h2
+  have hex : e ≠ x := by
+    intro hEq
+    apply heE
+    rw [hEq]
+    exact (σ (cyclicIndex n hn i 2)).property
+  have hcl : M.closure {e} = M.closure {x} :=
+    he.closure_eq_of_mem_closure hspan
+  simpa [x] using
+    (he.closure_eq_closure_iff_isCircuit_of_ne hex).1 hcl
+
 end
 
 end Rank4BlockerRuns
