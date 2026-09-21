@@ -67,7 +67,7 @@ theorem cyclicWindow_four_dep_of_not_isBase
   have hground :
       cyclicWindow 4 hn σ i ⊆ M.E :=
     (cyclicWindow_subset_target hn σ i).trans hEsub
-  apply dep_of_not_indep ?_ hground
+  apply M.dep_of_not_indep ?_ hground
   intro hI
   apply hnot
   have hfin : (cyclicWindow 4 hn σ i).Finite :=
