@@ -1,0 +1,32 @@
+{
+  "scope": "exact preserved 10-element audit and exact 18-element repair component",
+  "criterion": "one-step relation-orientable escape OR strict closure-potential ascent",
+  "ten_element": {
+    "unorientable_states": 8,
+    "with_direct_orientable_repair": 8,
+    "with_strict_phi_ascent": 8,
+    "with_both": 8,
+    "direct_only": 0,
+    "ascent_only": 0,
+    "without_escape_or_ascent_repair": 0,
+    "without_productive_cross_repair": 0,
+    "minimum_productive_cross_boundary_score_histogram": {
+      "0": 8
+    }
+  },
+  "eighteen_element": {
+    "unorientable_states": 7680,
+    "with_direct_orientable_repair": 6912,
+    "with_strict_phi_ascent": 7680,
+    "with_both": 6912,
+    "direct_only": 0,
+    "ascent_only": 768,
+    "without_escape_or_ascent_repair": 0,
+    "without_productive_cross_repair": 0,
+    "minimum_productive_cross_boundary_score_histogram": {
+      "1": 4608,
+      "2": 3072
+    }
+  },
+  "status": "exact finite evidence for the refined escape-or-ascent dynamics; not a universal theorem"
+}

@@ -1,0 +1,308 @@
+{
+  "admissible_triples_checked": 241920,
+  "audits": [
+    {
+      "N": 5,
+      "complete": true,
+      "counts": {
+        "FAIL": 0,
+        "ascent_only": 0,
+        "both": 80,
+        "escape_only": 0,
+        "independently_checked_cross_escape_CBOs": 80,
+        "no_productive_cross": 0,
+        "not_strict": 0,
+        "strict": 80,
+        "unorientable": 80
+      },
+      "examples": {
+        "both": {
+          "CBO_labels": [
+            2,
+            0,
+            3,
+            1,
+            5,
+            4,
+            6,
+            7,
+            9,
+            8
+          ],
+          "boundary": 0,
+          "phi": 4,
+          "state": [
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              1,
+              14
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              6,
+              9
+            ]
+          ],
+          "target": [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              1,
+              14
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              6,
+              9
+            ]
+          ],
+          "target_phi": 4
+        }
+      },
+      "nonidentity_legal_move_occurrences_checked": 520,
+      "nonorientable_move_delta_histogram": {
+        "0": 40
+      },
+      "orientable_move_kinds": {
+        "cross_slack": 480
+      },
+      "dangerous_hyperplane_count_histogram": {
+        "1": 40,
+        "2": 40
+      },
+      "t0_closure_free_boundary_count_histogram": {},
+      "t0_without_closure_free_boundary": 0,
+      "t0_without_closure_free_cross_escape": 0
+    },
+    {
+      "N": 7,
+      "complete": true,
+      "counts": {
+        "FAIL": 0,
+        "ascent_only": 0,
+        "both": 24424,
+        "escape_only": 728,
+        "independently_checked_cross_escape_CBOs": 25152,
+        "no_productive_cross": 0,
+        "not_strict": 0,
+        "strict": 25152,
+        "unorientable": 25152
+      },
+      "examples": {
+        "both": {
+          "CBO_labels": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            9,
+            6,
+            8,
+            7,
+            11,
+            10,
+            12,
+            13
+          ],
+          "boundary": 3,
+          "phi": 12,
+          "state": [
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              1,
+              14
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              6,
+              9
+            ]
+          ],
+          "target": [
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              14
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              6,
+              9
+            ]
+          ],
+          "target_phi": 11
+        },
+        "escape_only": {
+          "CBO_labels": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            8,
+            7,
+            9,
+            6,
+            10,
+            11,
+            12,
+            13
+          ],
+          "boundary": 3,
+          "phi": 10,
+          "state": [
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              1,
+              14
+            ],
+            [
+              7,
+              11
+            ]
+          ],
+          "target": [
+            [
+              1,
+              2
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              1,
+              14
+            ],
+            [
+              7,
+              11
+            ]
+          ],
+          "target_phi": 9
+        }
+      },
+      "nonidentity_legal_move_occurrences_checked": 209216,
+      "nonorientable_move_delta_histogram": {
+        "0": 6496,
+        "2": 5264,
+        "4": 1232,
+        "6": 224,
+        "-2": 5264,
+        "-4": 1232,
+        "-6": 224
+      },
+      "orientable_move_kinds": {
+        "cross_slack": 173824,
+        "swap_slack": 15456
+      },
+      "dangerous_hyperplane_count_histogram": {
+        "0": 10760,
+        "1": 12488,
+        "2": 1848,
+        "3": 56
+      },
+      "t0_closure_free_boundary_count_histogram": {
+        "0": 224,
+        "1": 840,
+        "2": 3360,
+        "3": 3192,
+        "4": 952,
+        "5": 1848,
+        "7": 344
+      },
+      "t0_without_closure_free_boundary": 224,
+      "t0_without_closure_free_cross_escape": 448
+    }
+  ],
+  "scope": "normalized represented binary rank-four pair cycles only"
+}
