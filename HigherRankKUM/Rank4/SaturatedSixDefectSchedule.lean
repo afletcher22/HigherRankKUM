@@ -40,6 +40,17 @@ def saturatedTailSlot {k : ℕ} (hk : 2 ≤ k) :
     Sum.inr ⟨k, by omega⟩,
     Sum.inr ⟨k + 1, by omega⟩]
 
+/-- Uniform HHHR slot formula for the first k-1 four-blocks.
+
+The first k-2 blocks are the repeated prefix, while q=k-2 is the first
+HHHR block of the ten-position tail. -/
+def saturatedRegularBlockSlot {k : ℕ} (q : Fin (k - 1)) :
+    Fin 4 → SaturatedSlots k :=
+  ![Sum.inl ⟨3 * q.val, by omega⟩,
+    Sum.inl ⟨3 * q.val + 1, by omega⟩,
+    Sum.inl ⟨3 * q.val + 2, by omega⟩,
+    Sum.inr ⟨q.val, by omega⟩]
+
 /-- Regroup repeated HHHR blocks and the ten-position tail into the flat and
 complement slot families. -/
 def saturatedRegroupEquiv (k : ℕ) (hk : 2 ≤ k) :
@@ -122,6 +133,37 @@ def saturatedIndexEquiv (k : ℕ) (hk : 2 ≤ k) :
     apply (saturatedBlockTailEquiv k hk).symm.injective
     simp
   simp [saturatedIndexEquiv, hbt, saturatedRegroupEquiv]
+
+/-- The first k-1 blocks obey the uniform HHHR indexing formula, including
+the first four entries of the exceptional tail. -/
+@[simp] theorem saturatedIndexEquiv_regular_block
+    (k : ℕ) (hk : 2 ≤ k)
+    (q : Fin (k - 1)) (r : Fin 4) :
+    saturatedIndexEquiv k hk
+        ⟨r.val + 4 * q.val, by omega⟩ =
+      saturatedRegularBlockSlot q r := by
+  by_cases hq : q.val < k - 2
+  · let j : Fin (k - 2) := ⟨q.val, hq⟩
+    have hpos :
+        (⟨r.val + 4 * q.val, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨r.val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      rfl
+    rw [hpos, saturatedIndexEquiv_prefix]
+    fin_cases r <;>
+      simp [saturatedRegularBlockSlot, saturatedPrefixSlot, j]
+  · have hqeq : q.val = k - 2 := by omega
+    let rt : Fin 10 := ⟨r.val, by omega⟩
+    have hpos :
+        (⟨r.val + 4 * q.val, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨4 * (k - 2) + rt.val, by omega⟩ := by
+      apply Fin.ext
+      dsimp [rt]
+      omega
+    rw [hpos, saturatedIndexEquiv_tail]
+    fin_cases r <;>
+      simp [saturatedRegularBlockSlot, saturatedTailSlot, rt, hqeq]
+
 
 /-- Concrete interleaving of a flat order and complement order according to
 the six-defect schedule. -/
