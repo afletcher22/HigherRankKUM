@@ -1,0 +1,81 @@
+{
+  "scope": "all simple binary rank-4 n=8 matroids with universal single-deletion stability",
+  "qualifying_matroids": 3375,
+  "gl4_2_orbits": 3,
+  "rows": [
+    {
+      "representative": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        8,
+        9,
+        14
+      ],
+      "orbit_size": 840,
+      "states": 432,
+      "successful_states": 144,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "component_sizes": [
+        432
+      ],
+      "maximum_distance_to_success": 2
+    },
+    {
+      "representative": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        8,
+        10,
+        12
+      ],
+      "orbit_size": 2520,
+      "states": 384,
+      "successful_states": 96,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "component_sizes": [
+        384
+      ],
+      "maximum_distance_to_success": 1
+    },
+    {
+      "representative": [
+        1,
+        2,
+        4,
+        7,
+        8,
+        11,
+        13,
+        14
+      ],
+      "orbit_size": 15,
+      "states": 384,
+      "successful_states": 384,
+      "components": 8,
+      "closed_all_bad_components": 0,
+      "component_sizes": [
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "maximum_distance_to_success": 0
+    }
+  ],
+  "orbits_with_closed_all_bad_component": 0,
+  "maximum_distance_to_success": 2,
+  "interpretation": "The arbitrary-four-block-plus-pivot graph has no closed all-bad component in any of the three exact GL(4,2) orbits. The hardest orbit has repair radius two.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
