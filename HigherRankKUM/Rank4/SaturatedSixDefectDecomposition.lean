@@ -12,6 +12,22 @@ noncomputable section
 
 variable {α : Type*}
 
+/-- Ambient value formula for an explicit tail position. -/
+theorem saturatedFullOrder_tail_value
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α))
+    (r : Fin 10) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + r.val, by omega⟩ : α) =
+      saturatedSlotValue
+        (flatOrder.trans (restrictGroundEquiv M H))
+        outsideOrder
+        (saturatedTailSlot hk r) := by
+  rw [saturatedFullOrder_value]
+  rw [saturatedIndexEquiv_tail]
+
 @[simp] theorem saturatedFullOrder_regular_H0
     (M : Matroid α) {H : Set α} {k : ℕ}
     (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
