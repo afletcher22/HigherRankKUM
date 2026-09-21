@@ -1,0 +1,128 @@
+{
+  "scope": "exact hard binary n=10 GL(4,2) orbit index 2",
+  "orbit_size": 2520,
+  "columns": [
+    7,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    14,
+    15,
+    15
+  ],
+  "move": "side swap (0,3,2,1), omitted element fixed",
+  "changed_boundary_offsets": [
+    -2,
+    -1,
+    2,
+    3
+  ],
+  "rows": [
+    {
+      "omitted_label": 0,
+      "deletion_cbos": 448,
+      "bad_states": 288,
+      "valid_side_swap_attempts": 256,
+      "invalid_side_swap_attempts": 2336,
+      "invalid_with_extreme_boundary_witness": 2112,
+      "invalid_with_internal_only_witness": 224
+    },
+    {
+      "omitted_label": 1,
+      "deletion_cbos": 512,
+      "bad_states": 320,
+      "valid_side_swap_attempts": 256,
+      "invalid_side_swap_attempts": 2624,
+      "invalid_with_extreme_boundary_witness": 2400,
+      "invalid_with_internal_only_witness": 224
+    },
+    {
+      "omitted_label": 2,
+      "deletion_cbos": 336,
+      "bad_states": 144,
+      "valid_side_swap_attempts": 80,
+      "invalid_side_swap_attempts": 1216,
+      "invalid_with_extreme_boundary_witness": 1152,
+      "invalid_with_internal_only_witness": 64
+    },
+    {
+      "omitted_label": 3,
+      "deletion_cbos": 336,
+      "bad_states": 144,
+      "valid_side_swap_attempts": 80,
+      "invalid_side_swap_attempts": 1216,
+      "invalid_with_extreme_boundary_witness": 1152,
+      "invalid_with_internal_only_witness": 64
+    },
+    {
+      "omitted_label": 4,
+      "deletion_cbos": 336,
+      "bad_states": 144,
+      "valid_side_swap_attempts": 80,
+      "invalid_side_swap_attempts": 1216,
+      "invalid_with_extreme_boundary_witness": 1152,
+      "invalid_with_internal_only_witness": 64
+    },
+    {
+      "omitted_label": 5,
+      "deletion_cbos": 336,
+      "bad_states": 144,
+      "valid_side_swap_attempts": 80,
+      "invalid_side_swap_attempts": 1216,
+      "invalid_with_extreme_boundary_witness": 1152,
+      "invalid_with_internal_only_witness": 64
+    },
+    {
+      "omitted_label": 6,
+      "deletion_cbos": 384,
+      "bad_states": 240,
+      "valid_side_swap_attempts": 0,
+      "invalid_side_swap_attempts": 2160,
+      "invalid_with_extreme_boundary_witness": 1328,
+      "invalid_with_internal_only_witness": 832
+    },
+    {
+      "omitted_label": 7,
+      "deletion_cbos": 384,
+      "bad_states": 240,
+      "valid_side_swap_attempts": 0,
+      "invalid_side_swap_attempts": 2160,
+      "invalid_with_extreme_boundary_witness": 1328,
+      "invalid_with_internal_only_witness": 832
+    },
+    {
+      "omitted_label": 8,
+      "deletion_cbos": 528,
+      "bad_states": 304,
+      "valid_side_swap_attempts": 208,
+      "invalid_side_swap_attempts": 2528,
+      "invalid_with_extreme_boundary_witness": 2288,
+      "invalid_with_internal_only_witness": 240
+    },
+    {
+      "omitted_label": 9,
+      "deletion_cbos": 528,
+      "bad_states": 304,
+      "valid_side_swap_attempts": 208,
+      "invalid_side_swap_attempts": 2528,
+      "invalid_with_extreme_boundary_witness": 2288,
+      "invalid_with_internal_only_witness": 240
+    }
+  ],
+  "hard_parallel_labels": [
+    6,
+    7
+  ],
+  "hard_parallel_label_summary": {
+    "bad_states_each": 240,
+    "side_swap_attempts_each": 2160,
+    "valid_attempts_each": 0,
+    "invalid_extreme_witness_each": 1328,
+    "invalid_internal_only_witness_each": 832
+  },
+  "interpretation": "For omitted parallel labels 6 and 7, every side-swap attempt from a bad state is invalid. More than one third are witnessed only at the internal skip-one boundaries, so the internal three-element exchange cores are essential structural data.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
