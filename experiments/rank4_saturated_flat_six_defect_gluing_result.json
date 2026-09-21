@@ -1,0 +1,412 @@
+{
+  "skeleton_formula": "(HHHR)^(k-2) HHHR HR HH RR",
+  "skeleton_encoding": "H=0, R=1",
+  "structural_check": {
+    "for_tested_k": [
+      2,
+      4
+    ],
+    "rank_four_windows_have_R_count": [
+      1,
+      2
+    ],
+    "two_R_windows": 6
+  },
+  "n10": {
+    "scope": "exact hard binary n=10 orbit index 2",
+    "k": 2,
+    "columns": [
+      7,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      14,
+      15,
+      15
+    ],
+    "saturated_flats": 5,
+    "all_fixed_skeleton_success": true,
+    "rows": [
+      {
+        "flat_labels": [
+          0,
+          1,
+          2,
+          5,
+          6,
+          7
+        ],
+        "rank3_cbo_count_rotation_normalized": 8,
+        "h_order": [
+          0,
+          2,
+          6,
+          1,
+          5,
+          7
+        ],
+        "r_order": [
+          4,
+          8,
+          3,
+          9
+        ],
+        "full_order": [
+          0,
+          2,
+          6,
+          4,
+          1,
+          8,
+          5,
+          7,
+          3,
+          9
+        ]
+      },
+      {
+        "flat_labels": [
+          0,
+          1,
+          3,
+          4,
+          6,
+          7
+        ],
+        "rank3_cbo_count_rotation_normalized": 8,
+        "h_order": [
+          0,
+          3,
+          6,
+          1,
+          4,
+          7
+        ],
+        "r_order": [
+          5,
+          8,
+          2,
+          9
+        ],
+        "full_order": [
+          0,
+          3,
+          6,
+          5,
+          1,
+          8,
+          4,
+          7,
+          2,
+          9
+        ]
+      },
+      {
+        "flat_labels": [
+          0,
+          1,
+          6,
+          7,
+          8,
+          9
+        ],
+        "rank3_cbo_count_rotation_normalized": 8,
+        "h_order": [
+          6,
+          8,
+          1,
+          7,
+          9,
+          0
+        ],
+        "r_order": [
+          2,
+          4,
+          5,
+          3
+        ],
+        "full_order": [
+          6,
+          8,
+          1,
+          2,
+          7,
+          4,
+          9,
+          0,
+          5,
+          3
+        ]
+      },
+      {
+        "flat_labels": [
+          2,
+          3,
+          6,
+          7,
+          8,
+          9
+        ],
+        "rank3_cbo_count_rotation_normalized": 8,
+        "h_order": [
+          6,
+          8,
+          3,
+          7,
+          9,
+          2
+        ],
+        "r_order": [
+          1,
+          5,
+          4,
+          0
+        ],
+        "full_order": [
+          6,
+          8,
+          3,
+          1,
+          7,
+          5,
+          9,
+          2,
+          4,
+          0
+        ]
+      },
+      {
+        "flat_labels": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "rank3_cbo_count_rotation_normalized": 8,
+        "h_order": [
+          6,
+          8,
+          5,
+          7,
+          9,
+          4
+        ],
+        "r_order": [
+          1,
+          3,
+          2,
+          0
+        ],
+        "full_order": [
+          6,
+          8,
+          5,
+          1,
+          7,
+          3,
+          9,
+          4,
+          2,
+          0
+        ]
+      }
+    ]
+  },
+  "n18": {
+    "scope": "historical binary n=18 depth-three state",
+    "k": 4,
+    "omitted_type": 1,
+    "bad_order": [
+      1,
+      2,
+      4,
+      12,
+      9,
+      10,
+      1,
+      4,
+      8,
+      2,
+      3,
+      4,
+      8,
+      5,
+      2,
+      6,
+      8
+    ],
+    "saturated_flats": 3,
+    "all_fixed_skeleton_success": true,
+    "rows": [
+      {
+        "flat_multiplicities": {
+          "1": 3,
+          "2": 3,
+          "3": 1,
+          "4": 3,
+          "5": 1,
+          "6": 1
+        },
+        "rank3_cbo_count_rotation_normalized": 336,
+        "complement_permutations": 120,
+        "h_order": [
+          1,
+          2,
+          4,
+          1,
+          2,
+          4,
+          1,
+          2,
+          5,
+          3,
+          4,
+          6
+        ],
+        "r_order": [
+          8,
+          8,
+          8,
+          10,
+          9,
+          12
+        ],
+        "full_order": [
+          1,
+          2,
+          4,
+          8,
+          1,
+          2,
+          4,
+          8,
+          1,
+          2,
+          5,
+          8,
+          3,
+          10,
+          4,
+          6,
+          9,
+          12
+        ]
+      },
+      {
+        "flat_multiplicities": {
+          "1": 3,
+          "4": 3,
+          "5": 1,
+          "8": 3,
+          "9": 1,
+          "12": 1
+        },
+        "rank3_cbo_count_rotation_normalized": 336,
+        "complement_permutations": 120,
+        "h_order": [
+          1,
+          4,
+          8,
+          1,
+          4,
+          8,
+          1,
+          4,
+          9,
+          5,
+          8,
+          12
+        ],
+        "r_order": [
+          2,
+          2,
+          2,
+          6,
+          3,
+          10
+        ],
+        "full_order": [
+          1,
+          4,
+          8,
+          2,
+          1,
+          4,
+          8,
+          2,
+          1,
+          4,
+          9,
+          2,
+          5,
+          6,
+          8,
+          12,
+          3,
+          10
+        ]
+      },
+      {
+        "flat_multiplicities": {
+          "1": 3,
+          "2": 3,
+          "3": 1,
+          "8": 3,
+          "9": 1,
+          "10": 1
+        },
+        "rank3_cbo_count_rotation_normalized": 336,
+        "complement_permutations": 120,
+        "h_order": [
+          1,
+          2,
+          8,
+          1,
+          2,
+          8,
+          1,
+          2,
+          9,
+          3,
+          8,
+          10
+        ],
+        "r_order": [
+          4,
+          4,
+          4,
+          6,
+          5,
+          12
+        ],
+        "full_order": [
+          1,
+          2,
+          8,
+          4,
+          1,
+          2,
+          8,
+          4,
+          1,
+          2,
+          9,
+          4,
+          3,
+          6,
+          8,
+          10,
+          5,
+          12
+        ]
+      }
+    ]
+  },
+  "interpretation": "Every saturated flat tested can be solved directly by first choosing a rank-three CBO of H and then interleaving its complement with the same six-defect skeleton. This supports replacing the terminal 'saturation then oversaturate' strategy by a constructive saturated-flat gluing theorem. The only non-periodic obligations are the six 2H+2R windows.",
+  "claim_level": "n10 exact for all five saturated flats in the hard orbit; n18 finite audit for all three saturated flats of the recorded historical depth-three state; not Lean certified"
+}
