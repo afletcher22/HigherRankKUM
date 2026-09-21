@@ -98,6 +98,108 @@ whose own closure is saturated.  This remains useful evidence for a common
 direct mechanism, but the complete binary n=10 census shows that it is not
 universal.
 
+
+## Universal three-probe reduction
+
+The blocker-word part of the one-step problem collapses much further.
+
+Let `b_i` be the cyclic blocker word of a bad deletion CBO.  The cycle has
+odd length `4k+1`, contains both 0 and 1, has no `0000` because the state
+is bad, and has no `1111` by the certified blocker theorem.
+
+A simple run-length argument shows that at least one of the following local
+patterns occurs:
+
+1. `0010`;
+2. `0110`;
+3. `01?10`, where `?` is arbitrary.
+
+Indeed, if some 1-run has length two we get (2); if some 1-run has length
+three we get (3) with `?=1`; otherwise all 1-runs are singletons.  Then,
+unless a zero-run has length at least two, the word alternates 0 and 1 around
+an odd cycle, impossible.  A zero-run of length at least two followed by a
+singleton 1 gives (1).
+
+Each pattern has a concrete four-block permutation which, **if it preserves
+the deletion CBO**, is forced to create four consecutive nonblockers.
+
+### Probe A: pattern 0010
+
+Suppose the old triple starts `s+1,s+2,s+3,s+4` have statuses
+`0,0,1,0`.
+
+Apply local permutation
+
+`(0,1,3,2)`,
+
+i.e. swap local positions 2 and 3.
+
+The new triple starts `s+1` and `s+2` are the same old triples.  The new
+triple at `s+3` shares the pair `{x4,x5}` with the old blocker at
+`s+3`; if it were also a blocker, closure-intersection inside the old basis
+would force `e in cl({x4,x5})`, contradicting that the old triple at
+`s+4` is a nonblocker.  The start `s+4` is unchanged.  Thus a valid probe
+creates `0000`.
+
+Only two rank-four windows change as sets, at starts `s-1` and `s+3`,
+and each is a single-element exchange.
+
+### Probe B: pattern 0110
+
+Suppose starts `s-1,s,s+1,s+2` have statuses `0,1,1,0`.
+
+Apply
+
+`(1,0,3,2)`,
+
+simultaneously swapping the first pair and the last pair of the four-position
+block.
+
+The target starts `s-1,s,s+1,s+2` become nonblockers: the extreme two are
+unchanged as sets, while the middle two are ruled out by
+closure-intersection against the neighboring old nonblockers.
+
+Exactly four rank-four boundary windows change as sets, at starts
+`s-3,s-1,s+1,s+3`.  Each differs from an old basis by one element.
+
+### Probe C: pattern 01?10
+
+Suppose starts `s,s+1,s+3,s+4` have statuses `0,1,1,0`; the status at
+`s+2` is irrelevant.
+
+Apply the local right rotation
+
+`(3,0,1,2)`.
+
+The target starts `s+1,s+2,s+3,s+4` are forced nonblockers.  The two
+interior new triples are excluded by closure-intersection with the old
+blockers at `s+1` and `s+3`, using the old nonblockers at `s` and
+`s+4`.
+
+All six noncentral boundary windows change, but again **every one is only a
+single-element exchange** from an old basis.
+
+### Consequence for a one-step-rigid state
+
+For every one-step-rigid bad state, one of Probes A--C applies and must fail
+to preserve the deletion CBO.  Since every changed boundary window for these
+three probes is a one-element exchange, the existing theorem
+
+`LocalExchangeClosure.mem_closure_of_failed_base_exchange`
+
+turns the failure into an explicit rank-three closure incidence.
+
+This is a substantial simplification over the earlier seven-move / 2+2
+program: the proof of the one-step saturation dichotomy can, in principle,
+be carried out using only **three probes and single-exchange closure
+geometry**.  The common-base rank-two machinery is not needed for this
+reduction.
+
+The symbolic reduction was exhaustively checked on every abstract bad blocker
+word up to cyclic reversal for lengths 9, 13, and 17.  The run-length proof
+above removes the size restriction.
+
+
 ## A local blocker-push lemma
 
 Write the local deletion order as
