@@ -135,6 +135,52 @@ samples also showed no prescribed-element failure.
 Taken together, the current evidence for the t=0-specific theorem is much
 broader than representable simple matroids.
 
+## Exact n=10 danger-versus-failure census
+
+A further exact audit now tests the proposed structural theorem directly over
+the complete strict binary non-simple n=10 class.
+
+The certificate
+
+`experiments/rank4_binary_n10_dangerous_failure_audit.py`
+
+enumerates all **191,436** strict multiplicity patterns and their **37**
+`GL(4,2)` orbits.  The orbit profiles are:
+
+| profile | orbits |
+|---|---:|
+| `(1,3,6)` | 3 |
+| `(2,4,6)` | 13 |
+| `(1,3,7)` | 1 |
+| `(2,4,7)` | 20 |
+
+Thus 21 orbit types contain a dangerous 7-element rank-three flat and 16 are
+t=0 at rank three.
+
+Across all 370 labelled pointed orbit representatives:
+
+- 280 are favorable;
+- 87 have **no deletion CBO** at all;
+- only **3** are genuine eligible insertion failures.
+
+Each of those three genuine failures has exactly 224 deletion CBOs, all
+noninsertable.  All three lie in profile `(2,4,7)` matroids, and the omitted
+element lies in **every** dangerous hyperplane of its matroid.
+
+Consequently, in the complete strict binary n=10 represented class,
+
+> eligible prescribed-element insertion failure implies existence of a
+> dangerous hyperplane.
+
+No t=0 orbit has a genuine eligible failure.
+
+This is particularly relevant because it distinguishes two phenomena that
+should not be conflated: most apparent `g=0` cases in the larger strict
+class are simply deletions for which no CBO exists; the true insertion
+obstruction is much rarer.
+
+The result is exact finite computation, not a proof for arbitrary matroids.
+
 ## Updated proof-strategy lesson
 
 The strongest computationally supported t=0 statement is now:
