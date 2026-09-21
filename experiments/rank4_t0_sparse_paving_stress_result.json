@@ -1,0 +1,26 @@
+{
+  "claim_level": "finite computation; SQS case exact, random family seeded",
+  "dense_random": {
+    "bad_matroids": 0,
+    "circuit_hyperplane_count_histogram": {
+      "20": 26,
+      "21": 342,
+      "22": 461,
+      "23": 134,
+      "24": 31,
+      "25": 4,
+      "26": 1,
+      "27": 1
+    },
+    "greedy_trials_per_sample": 10,
+    "max_search_nodes": 62,
+    "samples": 1000
+  },
+  "extremal_sqs10": {
+    "bad_prescribed_elements": 0,
+    "circuit_hyperplanes": 30,
+    "max_search_nodes": 34
+  },
+  "interpretation": "No prescribed-element lifting failure was found. The 30-block SQS(10) is the extremal stable circuit-hyperplane family; the random sample stresses many dense non-coordinate sparse-paving systems.",
+  "scope": "rank-4 sparse-paving matroids on 10 labelled elements"
+}
