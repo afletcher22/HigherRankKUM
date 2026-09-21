@@ -360,11 +360,6 @@ theorem endpointSwap_right_extreme_window_eq
   rw [cyclicWindow_four_eq, cyclicWindow_three_eq]
   rw [h1, h2, h3, hs3, hout4, hout5, hout6]
   simp only [cyclicIndex_add]
-  have h45 : 4 + 1 = 5 := by omega
-  have h46 : 4 + 2 = 6 := by omega
-  rw [h45, h46]
-  ext x
-  simp [or_comm, or_left_comm, or_assoc]
 
 
 /-- If the extreme left endpoint-swap boundary becomes dependent, the incoming
