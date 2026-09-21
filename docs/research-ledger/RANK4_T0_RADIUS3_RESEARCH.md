@@ -4,8 +4,9 @@ Date: 2026-09-21.
 
 Branch: `rank4-t0-radius3-research`.
 
-Status: mathematical / computational research checkpoint.  Radius two is
-**false**.  Radius three remains only a falsification target, not a theorem.
+Status: mathematical / computational research checkpoint.  **All constant-radius
+shortcuts tested here are false.**  Explicit no-saturation witnesses now have
+exact repair distances 3, 4, 5, 6, and 8 as k grows from 3 to 7.
 
 ## Motivation
 
@@ -66,96 +67,68 @@ Thus
 
 is false.
 
-## Radius three: current evidence only
+## Radius three and constant-radius variants: false
 
-Radius three has not been falsified in the no-saturation regime.
+The radius-three strengthening also fails.
 
-The following evidence is currently available.
+Starting from the radius-two counterexample and repeatedly adjoining a
+four-element basis block while preserving the t=0 caps produced the following
+explicit binary witnesses:
 
-### Existing repository evidence
+| k | n=4k+2 | exact fixed-e four-block distance | ambient flat profile |
+|---:|---:|---:|---:|
+| 3 | 14 | 3 | (3,5,9) |
+| 4 | 18 | 4 | (4,7,12) |
+| 5 | 22 | 5 | (5,9,15) |
+| 6 | 26 | 6 | (6,11,17) |
+| 7 | 30 | 8 | (6,12,20) |
 
-- Exact hard binary n=10 orbit:
-  every distance-3 state has all blocker closures saturated.
-- Historical binary n=18 stress:
-  the unique distance-3 sampled state has nine saturated blocker closures.
-- Historical binary n=14 stress:
-  the unique sampled distance-3 state omits an element lying on a 9-point
-  rank-three flat.
-- Odd-field n=10 no-saturation pointed audits:
-  every bad state was one-step repairable.
-- Sparse-paving n=14 no-saturation-style stress:
-  every sampled bad state was one-step repairable.
+For every row:
 
-### New mutation stress
+- the displayed deletion order is a rank-four CBO;
+- every two-element deletion retains rank four;
+- the two-deletion density caps `(k,2k,3k)` hold;
+- the omitted element lies on **no** saturated `3k`-point rank-three flat;
+- the distance is exact under arbitrary CBO-preserving permutations of four
+  consecutive positions with the omitted element fixed.
 
-Starting from the explicit n=14 no-saturation witnesses and mutating one to
-three columns while retaining the binary rank-4/two-deletion caps:
+The n=30 witness in particular survives seven layers of bad states and first
+reaches success at distance eight.
 
-- first sweep: 3,461 qualifying matroids, 667 bad states, 52 one-step-rigid
-  states, one state surviving depth two, zero states surviving depth three;
-- second sweep: 6,199 qualifying matroids, 1,263 bad states, 130 one-step-rigid
-  states, five states surviving depth two, zero states surviving depth three.
+Executable certificate:
 
-Combined:
+`experiments/rank4_t0_growing_radius_witnesses.py`.
 
-- 9,660 qualifying nearby matroids;
-- 1,930 bad sampled states;
-- 182 one-step-rigid states;
-- six states requiring at least three moves;
-- **zero** observed no-saturation states requiring more than three moves.
+These data do not yet prove an unbounded family, but they decisively eliminate
+radius 3 and make any universal constant-radius theorem implausible.
 
-This is meaningful falsification evidence, but nowhere near a proof.
+## Structural interpretation
 
-## Why radius three would be valuable
+The witnesses are obtained by extending a hard state with remote four-element
+basis blocks.  Transient rigidity can therefore be **stacked**: a local repair
+must propagate through several separated regions before any four-zero blocker
+run appears.
 
-If the following were true,
+This is exactly the phenomenon a true component proof must tolerate.  A
+bounded-depth theorem cannot replace the component hypothesis.
 
-> every bad t=0 deletion CBO with no saturated `3k`-point rank-three flat
-> through e reaches a favorable state in at most three arbitrary four-block
-> moves,
+The next research question is whether this extension mechanism can be proved
+as an infinite family:
 
-then Astra's full component dichotomy would follow immediately.
+> given a no-saturation witness of distance d, can one adjoin a four-element
+> basis gadget preserving strict/two-deletion robustness and force distance at
+> least d+1?
 
-More importantly, a three-step theorem is still local enough to attack by
-explicit boundary geometry:
+Even a partial extension lemma would be useful diagnostically, but it is not
+needed for the rank-4 proof itself.
 
-- one move changes a bounded neighborhood;
-- two moves involve only a bounded union of neighborhoods;
-- three failed repair layers produce a finite family of failed boundary
-  basis tests;
-- the existing closure-intersection and rank-two common-base lemmas can turn
-  those failures into closure incidences.
+## Live proof target
 
-This is materially more concrete than an arbitrary-component theorem.
+Return to Astra's component-level statement:
 
-## Caution
+> in the no-dangerous t=0 branch, a fixed-e four-block component that contains
+> no favorable state forces a saturated rank-three flat through e.
 
-Do not promote radius three to a formal target yet.
+The growing-radius family shows why the proof must use **closure under the
+whole component**, not any bounded neighborhood of one state.
 
-Earlier research repeatedly found finite-radius statements that survived broad
-sampling before failing on structured examples.  The correct next step is
-adversarial falsification, especially:
-
-1. mutate the new distance-3 witness while preserving no saturation;
-2. search cap-heavy binary n=18 instances;
-3. search representable odd-field n=14/n=18 instances with parallel classes;
-4. search sparse-paving/nonrepresentable instances designed to suppress local
-   four-block freedom.
-
-Only if radius three survives those tests should we spend Lean effort on a
-three-layer local theorem.
-
-## Relation to the full component theorem
-
-Even if radius three eventually fails, these witnesses are useful.
-
-They show a hierarchy:
-
-- one-step rigidity can be transient;
-- two-step rigidity can also be transient;
-- each additional layer of transient rigidity appears to require more
-  saturated/near-saturated closure geometry.
-
-That supports Astra's component-level intuition: persistent rigidity across an
-entire component should force saturation, even though any fixed shallow layer
-may fail.
