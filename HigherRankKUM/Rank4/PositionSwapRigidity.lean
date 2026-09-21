@@ -298,6 +298,57 @@ theorem exists_closure_obstruction_of_not_cyclicBasisOrder_swapPositions
             exact (hq hq').elim)]
       exact hCBO i
 
+
+/-- Local four-block transposition form of global failed-swap rigidity.
+
+Any failed local transposition of two coordinates in a four-block has a
+one-sided affected basis window, and the element moved into that window lies
+in the closure of its unchanged three-element core. -/
+theorem exists_closure_obstruction_of_not_cyclicBasisOrder_applyFourBlockPerm_swap
+    {M : Matroid alpha} {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (hEsub : E ⊆ M.E)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (sigma : Fin n ≃ E) (s : Fin n) (a b : Fin 4)
+    (hCBO : CyclicBasisOrder M 4 hn sigma)
+    (hfail :
+      ¬ CyclicBasisOrder M 4 hn
+        (Rank4FourBlockMove.applyFourBlockPerm
+          hn h4n sigma s (Equiv.swap a b))) :
+    ∃ i : Fin n,
+      ((cyclicIndex n hn s a.val) ∈
+          Rank4FourBlockMove.cyclicPositionWindow 4 hn i ∧
+       (cyclicIndex n hn s b.val) ∉
+          Rank4FourBlockMove.cyclicPositionWindow 4 hn i ∧
+       (sigma (cyclicIndex n hn s b.val) : alpha) ∈
+         M.closure
+           (cyclicWindow 4 hn sigma i \
+             {(sigma (cyclicIndex n hn s a.val) : alpha)})) ∨
+      ((cyclicIndex n hn s b.val) ∈
+          Rank4FourBlockMove.cyclicPositionWindow 4 hn i ∧
+       (cyclicIndex n hn s a.val) ∉
+          Rank4FourBlockMove.cyclicPositionWindow 4 hn i ∧
+       (sigma (cyclicIndex n hn s a.val) : alpha) ∈
+         M.closure
+           (cyclicWindow 4 hn sigma i \
+             {(sigma (cyclicIndex n hn s b.val) : alpha)})) := by
+  have hfail' :
+      ¬ CyclicBasisOrder M 4 hn
+        (swapPositions sigma
+          (cyclicIndex n hn s a.val)
+          (cyclicIndex n hn s b.val)) := by
+    intro h
+    apply hfail
+    rw [applyFourBlockPerm_swap_eq_swapPositions
+      hn h4n sigma s a b]
+    exact h
+  exact
+    exists_closure_obstruction_of_not_cyclicBasisOrder_swapPositions
+      hn h4n hEsub hRank sigma
+      (cyclicIndex n hn s a.val)
+      (cyclicIndex n hn s b.val)
+      hCBO hfail'
+
 end
 
 end Rank4PositionSwapRigidity
