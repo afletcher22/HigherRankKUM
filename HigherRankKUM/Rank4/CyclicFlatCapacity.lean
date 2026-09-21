@@ -110,6 +110,47 @@ theorem ncard_good_ge_k_add_one_of_hits_every_four
   dsimp [n, G] at htotal ⊢
   omega
 
+/-- A rank-at-most-three set cannot contain a full rank-four basis window.
+
+Equivalently, along any rank-four cyclic basis ordering, the complement of a
+rank-at-most-three set hits every four consecutive positions.  This is the
+local window-hitting interface behind all later capacity and saturation
+arguments. -/
+theorem rankThree_complement_hits_every_four_of_cyclicBasisOrder
+    {M : Matroid α} {E H : Set α} {n : ℕ}
+    (hn : 0 < n)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hHrank : M.eRk H ≤ (3 : ℕ∞))
+    (σ : Fin n ≃ E)
+    (hCBO : CyclicBasisOrder M 4 hn σ) :
+    ∀ i : Fin n,
+      (σ i : α) ∉ H ∨
+      (σ (cyclicIndex n hn i 1) : α) ∉ H ∨
+      (σ (cyclicIndex n hn i 2) : α) ∉ H ∨
+      (σ (cyclicIndex n hn i 3) : α) ∉ H := by
+  intro i
+  by_contra hnone
+  push Not at hnone
+  have hBsub : cyclicWindow 4 hn σ i ⊆ H := by
+    rw [cyclicWindow_four_eq]
+    intro x hx
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+    rcases hx with hx | hx | hx | hx
+    · subst x
+      exact hnone.1
+    · subst x
+      exact hnone.2.1
+    · subst x
+      exact hnone.2.2.1
+    · subst x
+      exact hnone.2.2.2
+  have hmono := M.eRk_mono hBsub
+  have hbase := hCBO i
+  rw [hbase.eRk_eq_eRank, hRank] at hmono
+  have : (4 : ℕ∞) ≤ (3 : ℕ∞) :=
+    hmono.trans hHrank
+  norm_num at this
+
 /-- A rank-at-most-three subset of a rank-four cyclic basis ordering on
 `4k+1` elements contains at most `3k` elements.
 
@@ -134,28 +175,11 @@ theorem rankThree_ncard_le_three_mul_of_cyclicBasisOrder
         Good (cyclicIndex (4 * k + 1) (by omega) i 1) ∨
         Good (cyclicIndex (4 * k + 1) (by omega) i 2) ∨
         Good (cyclicIndex (4 * k + 1) (by omega) i 3) := by
-    intro i
-    by_contra hnone
-    push Not at hnone
-    have hBsub : cyclicWindow 4 (by omega) σ i ⊆ H := by
-      rw [cyclicWindow_four_eq]
-      intro x hx
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
-      rcases hx with hx | hx | hx | hx
-      · subst x
-        simpa [Good] using hnone.1
-      · subst x
-        simpa [Good] using hnone.2.1
-      · subst x
-        simpa [Good] using hnone.2.2.1
-      · subst x
-        simpa [Good] using hnone.2.2.2
-    have hmono := M.eRk_mono hBsub
-    have hbase := hCBO i
-    rw [hbase.eRk_eq_eRank, hRank] at hmono
-    have : (4 : ℕ∞) ≤ (3 : ℕ∞) :=
-      hmono.trans hHrank
-    norm_num at this
+    simpa [Good] using
+      (rankThree_complement_hits_every_four_of_cyclicBasisOrder
+        (M := M) (H := H) (hn := by omega)
+        hRank hHrank σ hCBO)
+
 
   have hGood :=
     ncard_good_ge_k_add_one_of_hits_every_four Good hHit
