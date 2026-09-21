@@ -1,4 +1,5 @@
 import Mathlib.Combinatorics.Matroid.Closure
+import Mathlib.Combinatorics.Matroid.Loop
 
 namespace HigherRankKUM
 namespace BlockerClosure
