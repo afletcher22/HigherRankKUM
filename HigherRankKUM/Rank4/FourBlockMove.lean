@@ -67,7 +67,7 @@ theorem cyclicWindow_four_eq_of_disjoint_fourBlockPositions
       intro hjmove
       exact hdis hjpos hjmove
     have heq : τ j = σ j := hmove.1 j hjout
-    exact congrArg Subtype.val heq
+    exact congrArg Subtype.val heq.symm
   · rintro ⟨q, rfl⟩
     refine ⟨q, ?_⟩
     let j := cyclicIndex n hn i q.val
@@ -77,7 +77,7 @@ theorem cyclicWindow_four_eq_of_disjoint_fourBlockPositions
       intro hjmove
       exact hdis hjpos hjmove
     have heq : τ j = σ j := hmove.1 j hjout
-    exact congrArg Subtype.val heq.symm
+    exact congrArg Subtype.val heq
 
 /-- A four-block reorder preserves a rank-four cyclic basis ordering once the
 finitely many rank-four windows meeting the moved position block have been
