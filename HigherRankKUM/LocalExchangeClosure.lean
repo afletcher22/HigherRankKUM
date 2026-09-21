@@ -29,12 +29,17 @@ theorem indep_insert_of_not_mem_closure_of_base
     {M : Matroid α} {C : Set α} {a d : α}
     (hB : M.IsBase (insert a C))
     (hdC : d ∉ C)
+    (hdE : d ∈ M.E)
     (hdcl : d ∉ M.closure C) :
     M.Indep (insert d C) := by
   have hC : M.Indep C :=
     hB.indep.subset (Set.subset_insert a C)
-  rw [← hC.mem_closure_iff_of_notMem hdC] at hdcl
-  exact indep_of_not_dep hdcl
+  have hnotDep : ¬ M.Dep (insert d C) := by
+    intro hdep
+    apply hdcl
+    exact (hC.mem_closure_iff_of_notMem hdC).2 hdep
+  exact M.indep_of_not_dep hnotDep
+    (Set.insert_subset hdE hC.subset_ground)
 
 end LocalExchangeClosure
 end HigherRankKUM
