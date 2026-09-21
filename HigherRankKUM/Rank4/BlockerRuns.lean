@@ -243,12 +243,15 @@ theorem three_consecutive_blockers_mem_closure_shared_singleton
         simpa using hx
       subst x
       refine ⟨⟨?_, ?_⟩, ?_⟩
-      · rw [cyclicWindow_three_eq]
+      · dsimp [W]
+        rw [cyclicWindow_three_eq]
         exact Or.inr (Or.inr rfl)
-      · rw [cyclicWindow_three_eq]
-        simp [X, cyclicIndex_add]
-      · rw [cyclicWindow_three_eq]
-        simp [Y, cyclicIndex_zero]
+      · dsimp [X]
+        rw [cyclicWindow_three_eq]
+        simp [cyclicIndex_add]
+      · dsimp [Y]
+        rw [cyclicWindow_three_eq]
+        simp [cyclicIndex_zero]
 
   rwa [hEq] at hmem
 
