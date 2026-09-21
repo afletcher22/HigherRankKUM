@@ -157,6 +157,74 @@ theorem nonblocker_ncard_ge_k_add_one_of_cbo
   exact nonblocker_hit_every_four_of_cbo
     (M := M) (hn := by omega) (h6n := by omega) σ e he hCBO
 
+/-- Blocker and nonblocker positions partition the cyclic index set. -/
+theorem blocker_ncard_add_nonblocker_ncard
+    {M : Matroid α} {E : Set α} {n : ℕ}
+    (hn : 0 < n) (σ : Fin n ≃ E) (e : α) :
+    (blockerPositions M hn σ e).ncard +
+      (nonblockerPositions M hn σ e).ncard = n := by
+  have h :=
+    Set.ncard_add_ncard_compl (blockerPositions M hn σ e)
+  have hcomp :
+      (blockerPositions M hn σ e)ᶜ =
+        nonblockerPositions M hn σ e := by
+    ext i
+    simp [blockerPositions, nonblockerPositions]
+  rw [hcomp] at h
+  simpa using h
+
+/-- On a bad `4k+1` rank-four CBO with `k ≥ 2`, blocker positions occupy
+at most `3k` starts. -/
+theorem blocker_ncard_le_three_mul_of_cbo
+    {M : Matroid α} {E : Set α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (σ : Fin (4 * k + 1) ≃ E) (e : α)
+    (he : M.IsNonloop e)
+    (hCBO : CyclicBasisOrder M 4 (by omega) σ) :
+    (blockerPositions M (by omega) σ e).ncard ≤ 3 * k := by
+  have hnon :=
+    nonblocker_ncard_ge_k_add_one_of_cbo
+      (M := M) hk σ e he hCBO
+  have hsum :=
+    blocker_ncard_add_nonblocker_ncard
+      (M := M) (hn := by omega) σ e
+  omega
+
+/-- If the state is bad, nonblocker positions also occupy at most `3k`
+starts, because blockers hit every four consecutive positions. -/
+theorem nonblocker_ncard_le_three_mul_of_not_favorable
+    {M : Matroid α} {E : Set α} {k : ℕ}
+    (σ : Fin (4 * k + 1) ≃ E) (e : α)
+    (hbad : ¬ Favorable M (by omega) σ e) :
+    (nonblockerPositions M (by omega) σ e).ncard ≤ 3 * k := by
+  have hblk :=
+    blocker_ncard_ge_k_add_one_of_not_favorable
+      (M := M) σ e hbad
+  have hsum :=
+    blocker_ncard_add_nonblocker_ncard
+      (M := M) (hn := by omega) σ e
+  omega
+
+/-- Every bad rank-four `4k+1` state in the t=0 range has both blocker and
+nonblocker populations between `k+1` and `3k`. -/
+theorem bad_state_blocker_nonblocker_bounds
+    {M : Matroid α} {E : Set α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (σ : Fin (4 * k + 1) ≃ E) (e : α)
+    (he : M.IsNonloop e)
+    (hCBO : CyclicBasisOrder M 4 (by omega) σ)
+    (hbad : ¬ Favorable M (by omega) σ e) :
+    k + 1 ≤ (blockerPositions M (by omega) σ e).ncard ∧
+    (blockerPositions M (by omega) σ e).ncard ≤ 3 * k ∧
+    k + 1 ≤ (nonblockerPositions M (by omega) σ e).ncard ∧
+    (nonblockerPositions M (by omega) σ e).ncard ≤ 3 * k := by
+  exact ⟨
+    blocker_ncard_ge_k_add_one_of_not_favorable (M := M) σ e hbad,
+    blocker_ncard_le_three_mul_of_cbo (M := M) hk σ e he hCBO,
+    nonblocker_ncard_ge_k_add_one_of_cbo (M := M) hk σ e he hCBO,
+    nonblocker_ncard_le_three_mul_of_not_favorable (M := M) σ e hbad
+  ⟩
+
 end
 
 end Rank4FixedEState
