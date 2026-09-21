@@ -93,9 +93,10 @@ Replaying the existing 70 fixed-e sampled bad states:
 - for the two omitted labels in that sample having no such saturated flat,
   all sampled bad states are one-step repairable.
 
-Moreover, every one of the seven rigid states has at least one **blocker
-triple whose own closure is saturated**, supporting the stronger blocker form
-rather than merely existence of an unrelated saturated flat.
+Moreover, every one of the seven rigid states has at least one blocker triple
+whose own closure is saturated.  This remains useful evidence for a common
+direct mechanism, but the complete binary n=10 census shows that it is not
+universal.
 
 ## A local blocker-push lemma
 
@@ -170,9 +171,11 @@ profile or, in a periodic best configuration, forces a tight structural set.
 The local lemma above gives an analogous mechanism for the t=0 lifting
 problem.  In a closed all-bad four-block component, a valid probe cannot
 escape to success, so it transports a blocker.  An invalid probe emits a
-rank-three closure incidence.  The proposed global proof should propagate
-these incidences until one blocker flat reaches the certified maximum
-`3k-1` deletion elements.
+rank-three closure incidence.  The proposed global proof should propagate these incidences until either
+(a) one blocker flat reaches the certified maximum, or (b) the blocker pattern
+falls into a periodic indirect-saturation configuration such as
+`001001001`, from which a saturated flat through `e` is forced by a
+different combination of local incidences.
 
 This avoids the scalar potentials already falsified in
 `RANK4_FOUR_BLOCK_STATE_RESEARCH.md`.
@@ -193,6 +196,11 @@ each bad state:
 2. an ambient closure incidence attached to a specific blocker flat.
 
 Then prove that a periodic push sequence with no favorable state forces one
-blocker closure to have complement at most `k+2`.  The certified
-no-dangerous cap gives the reverse inequality, hence complement exactly
-`k+2` and blocker-flat size exactly `3k-1`.
+of two endpoints:
+
+1. a blocker closure is saturated; or
+2. a periodic indirect-saturation pattern forces some other rank-three flat
+   through `e` to have size `3k`.
+
+The second endpoint is essential: the binary period-three witness shows the
+first endpoint alone is false.
