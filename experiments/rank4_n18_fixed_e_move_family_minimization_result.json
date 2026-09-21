@@ -1,0 +1,98 @@
+{
+  "scope": "historical strict binary t=0 n=18 witness; 730 seeded bad parallel-type states",
+  "state_constraint": "omitted element fixed; no point pivots",
+  "baseline_move_types": {
+    "adjacent_transpositions": [
+      [
+        1,
+        0,
+        2,
+        3
+      ],
+      [
+        0,
+        2,
+        1,
+        3
+      ],
+      [
+        0,
+        1,
+        3,
+        2
+      ]
+    ],
+    "nonadjacent_patterns": [
+      [
+        2,
+        3,
+        0,
+        1
+      ],
+      [
+        2,
+        3,
+        1,
+        0
+      ],
+      [
+        3,
+        1,
+        2,
+        0
+      ]
+    ],
+    "failures_within_depth_8": 5,
+    "distance_histogram_for_repaired_states": {
+      "1": 369,
+      "2": 194,
+      "3": 89,
+      "4": 45,
+      "5": 20,
+      "6": 4,
+      "7": 2,
+      "8": 2
+    }
+  },
+  "single_extra_candidates_tested": 17,
+  "working_single_extras": [
+    [
+      0,
+      3,
+      2,
+      1
+    ],
+    [
+      2,
+      1,
+      0,
+      3
+    ]
+  ],
+  "working_extra_full_audits": {
+    "(0, 3, 2, 1)": {
+      "maximum_depth": 6,
+      "distance_histogram": {
+        "1": 410,
+        "2": 207,
+        "3": 78,
+        "4": 27,
+        "5": 7,
+        "6": 1
+      }
+    },
+    "(2, 1, 0, 3)": {
+      "maximum_depth": 6,
+      "distance_histogram": {
+        "1": 410,
+        "2": 207,
+        "3": 78,
+        "4": 27,
+        "5": 7,
+        "6": 1
+      }
+    }
+  },
+  "interpretation": "All 23 nonidentity S4 permutations are unnecessary on this historical stress set. Starting from the six-type baseline, exactly two symmetric involutions work as a single additional move type; either gives a seven-type fixed-e family repairing all 730 seeded bad states within depth at most 6.",
+  "claim_level": "seeded finite computation; not exhaustive and not Lean certified"
+}
