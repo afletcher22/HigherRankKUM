@@ -178,6 +178,49 @@ theorem fundCircuit_eq_of_common_spanning_subset
   exact hEqB.symm.trans hEqB'
 
 
+
+/-- Converse to `fundCircuit_eq_of_common_spanning_subset`: if the same
+outside element has the same fundamental circuit with respect to two bases,
+then it is spanned by their intersection.
+
+For consecutive rank-four basis windows this identifies a blocker triple
+exactly with persistence of the fundamental circuit as the window slides. -/
+theorem mem_closure_inter_of_fundCircuit_eq
+    {M : Matroid α} {B B' : Set α} {e : α}
+    (hB : M.IsBase B) (hB' : M.IsBase B')
+    (heE : e ∈ M.E) (heB : e ∉ B) (heB' : e ∉ B')
+    (hEq : M.fundCircuit e B = M.fundCircuit e B') :
+    e ∈ M.closure (B ∩ B') := by
+  let C := M.fundCircuit e B
+  have hC : M.IsCircuit C := hB.fundCircuit_isCircuit heE heB
+  have heC : e ∈ C := by
+    dsimp [C]
+    exact M.mem_fundCircuit e B
+  have hCB : C ⊆ insert e B := by
+    dsimp [C]
+    exact M.fundCircuit_subset_insert e B
+  have hCB' : C ⊆ insert e B' := by
+    dsimp [C]
+    rw [hEq]
+    exact M.fundCircuit_subset_insert e B'
+  have hsub : C \\ {e} ⊆ B ∩ B' := by
+    intro x hx
+    have hxC : x ∈ C := hx.1
+    have hxe : x ≠ e := by
+      simpa using hx.2
+    have hxB : x ∈ B := by
+      rcases hCB hxC with hxe' | hxB
+      · exact (hxe hxe').elim
+      · exact hxB
+    have hxB' : x ∈ B' := by
+      rcases hCB' hxC with hxe' | hxB'
+      · exact (hxe hxe').elim
+      · exact hxB'
+    exact ⟨hxB, hxB'⟩
+  have heSmall : e ∈ M.closure (C \\ {e}) :=
+    hC.subset_closure_sdiff_singleton e heC
+  exact M.closure_subset_closure hsub heSmall
+
 /-- Four closure constraints with empty common intersection are impossible for
 a nonloop. This is the abstract endpoint behind the rank-four fact that a
 blocker word cannot contain four consecutive blockers. -/
