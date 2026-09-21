@@ -97,7 +97,9 @@ theorem ncard_good_ge_k_add_one_of_hits_every_four
 
   have hUpper :
       (((G ∪ A1) ∪ A2) ∪ A3).ncard ≤ 4 * G.ncard := by
-    rw [hA1card, hA2card, hA3card] at h01 h012 h0123
+    rw [hA1card] at h01
+    rw [hA2card] at h012
+    rw [hA3card] at h0123
     omega
 
   have huniv : (Set.univ : Set (Fin n)).ncard = n := by
@@ -141,13 +143,13 @@ theorem rankThree_ncard_le_three_mul_of_cyclicBasisOrder
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
       rcases hx with hx | hx | hx | hx
       · subst x
-        exact hnone.1
+        simpa [Good] using hnone.1
       · subst x
-        exact hnone.2.1
+        simpa [Good] using hnone.2.1
       · subst x
-        exact hnone.2.2.1
+        simpa [Good] using hnone.2.2.1
       · subst x
-        exact hnone.2.2.2
+        simpa [Good] using hnone.2.2.2
     have hmono := M.eRk_mono hBsub
     have hbase := hCBO i
     rw [hbase.eRk_eq_eRank, hRank] at hmono
