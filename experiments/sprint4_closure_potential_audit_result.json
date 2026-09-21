@@ -1,0 +1,49 @@
+{
+  "scope": "two preserved binary rank-four finite witnesses; candidate-potential audit only",
+  "potential": "sum_i (|B_(i+1) intersect cl(B_(i-1))| + |B_i intersect cl(B_(i+2))|)",
+  "ten_element": {
+    "admissible_pair_cycles": 576,
+    "unorientable_pair_cycles": 8,
+    "orientable_pair_cycles": 568,
+    "closure_score_histogram_unorientable": {
+      "4": 8
+    },
+    "closure_score_histogram_orientable": {
+      "4": 40,
+      "5": 208,
+      "6": 272,
+      "7": 48
+    },
+    "unorientable_without_score_increasing_repartition": 0,
+    "score_increasing_path_to_orientable_histogram": {
+      "1": 8
+    }
+  },
+  "eighteen_element": {
+    "component_vertices": 30720,
+    "unorientable_vertices": 7680,
+    "orientable_vertices": 23040,
+    "closure_score_histogram_unorientable": {
+      "18": 3072,
+      "20": 4608
+    },
+    "closure_score_histogram_orientable": {
+      "21": 9216,
+      "22": 4608,
+      "23": 9216
+    },
+    "closure_saturated_boundary_count_histogram_unorientable": {
+      "9": 7680
+    },
+    "closure_saturated_boundary_count_histogram_orientable": {
+      "8": 4608,
+      "9": 18432
+    },
+    "unorientable_without_score_increasing_repartition": 0,
+    "score_increasing_path_to_orientable_histogram": {
+      "1": 6912,
+      "2": 768
+    }
+  },
+  "status": "exact finite evidence for a closure-ascent repair heuristic; not a universal monotonicity theorem"
+}
