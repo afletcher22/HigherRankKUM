@@ -1,0 +1,92 @@
+{
+  "cbo_counts_by_omitted_label": [
+    14592,
+    14592,
+    14592,
+    14592,
+    9136,
+    4672,
+    4096,
+    4096,
+    4672,
+    4096,
+    4096,
+    3840
+  ],
+  "claim_level": "exact finite computation; not Lean certification",
+  "fixed_e0_adjacent_only": {
+    "closed_all_bad_components": 232,
+    "closed_all_bad_states": 368,
+    "component_class_histogram": {
+      "(1, False)": 168,
+      "(1, True)": 24,
+      "(2, False)": 32,
+      "(2, True)": 64,
+      "(4, False)": 24,
+      "(5, False)": 8,
+      "(5, True)": 40,
+      "(40, True)": 24,
+      "(12912, True)": 1
+    },
+    "components": 385,
+    "reachable_max_distance_to_success": 12,
+    "states": 14592,
+    "successful_states": 3272
+  },
+  "interpretation": "Adjacent swaps alone leave many closed all-bad components for a fixed omitted element, but adding omitted-element pivots makes the entire 97,072-state graph connected and puts every state within five moves of a successful state.",
+  "joint_graph": {
+    "adjacent_swap_edges": 136064,
+    "closed_all_bad_states": 0,
+    "connected": true,
+    "distance_distribution": {
+      "0": 27952,
+      "1": 47184,
+      "2": 17488,
+      "3": 3760,
+      "4": 656,
+      "5": 32
+    },
+    "max_distance_to_success": 5,
+    "omitted_element_pivot_edges": 120864,
+    "states": 97072,
+    "successful_states": 27952,
+    "total_edges": 256928
+  },
+  "labelled_values": [
+    1,
+    1,
+    2,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    12
+  ],
+  "projective_multiplicities": [
+    2,
+    2,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0
+  ],
+  "scope": "exact fixed binary strict n=12 representative",
+  "strict_profile": [
+    2,
+    5,
+    8
+  ]
+}
