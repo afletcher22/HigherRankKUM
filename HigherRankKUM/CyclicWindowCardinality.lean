@@ -70,12 +70,14 @@ theorem cyclicWindow_four_dep_of_not_isBase
   apply M.dep_of_not_indep ?_ hground
   intro hI
   apply hnot
-  have hfin : (cyclicWindow 4 hn σ i).Finite :=
-    Set.toFinite _
+  have hfin : (cyclicWindow 4 hn σ i).Finite := by
+    unfold cyclicWindow
+    exact Set.finite_range _
   apply hI.isBase_of_eRk_ge hfin
   have henc :
       (cyclicWindow 4 hn σ i).encard = (4 : ℕ∞) := by
     rw [← hfin.cast_ncard_eq, cyclicWindow_ncard_eq hn h4n σ i]
+    norm_num
   rw [hRank, hI.eRk_eq_encard, henc]
 
 end
