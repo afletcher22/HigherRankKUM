@@ -275,6 +275,54 @@ This makes the desired implication more precise:
 
 `closed all-bad local rigidity -> over-saturation -> dangerous hyperplane`.
 
+## Fixed-e t=0 strengthening
+
+A stronger t=0-specific experiment removes point pivots entirely.
+
+For the complete binary represented n=10 class satisfying the exact
+two-deletion caps (2,4,6):
+
+- 28,476 multiplicity patterns;
+- 16 GL(4,2) orbits;
+- all 160 labelled pointed orbit representatives checked;
+- move set: **only** arbitrary CBO-preserving permutations of four consecutive
+  positions;
+- omitted element held fixed throughout;
+- **zero closed all-bad fixed-e components**;
+- exact worst fixed-e distance to success: **4**.
+
+So point pivots shorten some repair paths but are not needed for existence in
+this entire exact class.
+
+The dedicated certificate is:
+
+`experiments/rank4_binary_n10_fixed_e_four_block_exact.py`
+
+with compact result:
+
+`experiments/rank4_binary_n10_fixed_e_four_block_exact_result.json`.
+
+The same no-pivot formulation survived additional t=0 stress:
+
+- n=14: 50 sampled bad states, distances 1:41 and 2:9;
+- n=18: 35 sampled bad states, distances 1:28, 2:6, 3:1.
+
+These larger-size checks are sampled, not exhaustive.
+
+This suggests the t=0 branch may admit the stronger theorem:
+
+> Fix any eligible omitted element e. Every connected component of the
+> deletion-CBO graph under CBO-preserving four-block reorders contains a
+> state into which e can be inserted.
+
+Equivalently, no change of omitted element is needed.
+
+This strengthening cannot hold uniformly for strict 4k: the strict binary
+n=8 example already has prescribed elements with g(M,e)=0. Therefore the
+**global existential favorable-state theorem may still unify strict 4k and
+t=0, but the most promising move-based proof mechanism now appears
+branch-specific**.
+
 ## Current conjecture
 
 The strongest useful move-based candidate now worth trying to falsify is:
