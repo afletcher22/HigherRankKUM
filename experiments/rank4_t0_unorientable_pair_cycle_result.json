@@ -1,0 +1,105 @@
+{
+  "scope": "exact fixed GF(2) N=7 labelled rank-four witness",
+  "witness": [
+    [
+      4,
+      12
+    ],
+    [
+      10,
+      11
+    ],
+    [
+      4,
+      6
+    ],
+    [
+      10,
+      15
+    ],
+    [
+      6,
+      11
+    ],
+    [
+      7,
+      15
+    ],
+    [
+      3,
+      14
+    ]
+  ],
+  "rank": 4,
+  "adjacent_pair_unions_are_bases": true,
+  "strict_density_caps": {
+    "rank1": 3,
+    "rank2": 6,
+    "rank3": 10
+  },
+  "rank1_max_occupancy": 2,
+  "rank2_max_flat_occupancy": 6,
+  "rank3_max_flat_occupancy": 9,
+  "dangerous_hyperplane_count": 0,
+  "forced_relation_bits": [
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1
+  ],
+  "all_local_relations_bijections": true,
+  "relation_parity_odd": true,
+  "relation_orientable": false,
+  "legal_repartition_occurrences": 14,
+  "direct_orientable_repartition_occurrences": 6,
+  "example_direct_orientable_repair": {
+    "boundary": 4,
+    "left": [
+      6,
+      7
+    ],
+    "right": [
+      11,
+      15
+    ],
+    "state": [
+      [
+        4,
+        12
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        10,
+        15
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        11,
+        15
+      ],
+      [
+        3,
+        14
+      ]
+    ]
+  },
+  "refutes": "unorientable admissible pair cycle implies existence of a dangerous hyperplane",
+  "does_not_refute": [
+    "KUM",
+    "existence of another orientable admissible pair cycle",
+    "one-step repair under the t=0 hypothesis"
+  ]
+}
