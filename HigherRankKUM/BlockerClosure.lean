@@ -140,7 +140,7 @@ theorem fundCircuit_subset_insert_of_subset_of_mem_closure
     hTInd.fundCircuit_isCircuit heT heTnot
   have hCTsubB : M.fundCircuit e T ⊆ insert e B :=
     (M.fundCircuit_subset_insert e T).trans
-      (Set.insert_subset_insert e hTB)
+      (Set.insert_subset_insert hTB)
   have hEq : M.fundCircuit e T = M.fundCircuit e B :=
     hCT.eq_fundCircuit_of_subset hB.indep hCTsubB
   rw [← hEq]
@@ -167,10 +167,10 @@ theorem fundCircuit_eq_of_common_spanning_subset
     hTInd.fundCircuit_isCircuit heT heTnot
   have hsubB : M.fundCircuit e T ⊆ insert e B :=
     (M.fundCircuit_subset_insert e T).trans
-      (Set.insert_subset_insert e hTB)
+      (Set.insert_subset_insert hTB)
   have hsubB' : M.fundCircuit e T ⊆ insert e B' :=
     (M.fundCircuit_subset_insert e T).trans
-      (Set.insert_subset_insert e hTB')
+      (Set.insert_subset_insert hTB')
   have hEqB : M.fundCircuit e T = M.fundCircuit e B :=
     hCT.eq_fundCircuit_of_subset hB.indep hsubB
   have hEqB' : M.fundCircuit e T = M.fundCircuit e B' :=
