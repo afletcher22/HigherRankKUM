@@ -27,8 +27,10 @@ theorem cyclicWindow_three_union_next_eq_four
         cyclicWindow 3 hn σ (cyclicIndex n hn i 1) =
       cyclicWindow 4 hn σ i := by
   rw [cyclicWindow_three_eq, cyclicWindow_three_eq, cyclicWindow_four_eq]
-  simp only [cyclicIndex_add]
-  simp [Nat.add_assoc]
+  ext x
+  simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff,
+    cyclicIndex_add]
+  tauto
 
 /-- In a cycle of length at least six, a length-three window is disjoint from
 the length-three window starting three steps later. -/
@@ -70,9 +72,8 @@ theorem four_successive_triples_inter_empty
   have hdis :=
     cyclicWindow_three_disjoint_shift_three hn h6n σ i
   rw [Set.disjoint_left] at hdis
-  ext x
-  simp only [Set.mem_inter_iff, Set.not_mem_empty, iff_false]
-  intro hx
+  refine Set.eq_empty_iff_forall_notMem.2 ?_
+  intro x hx
   exact hdis hx.1.1.1 hx.2
 
 /-- Four consecutive blockers are impossible along a rank-four cyclic basis
