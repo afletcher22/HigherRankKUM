@@ -162,7 +162,7 @@ the first four entries of the exceptional tail. -/
       omega
     rw [hpos, saturatedIndexEquiv_tail]
     fin_cases r <;>
-      simp [saturatedRegularBlockSlot, saturatedTailSlot, rt, hqeq]
+      simp [saturatedRegularBlockSlot, saturatedTailSlot, rt, hqeq] <;> omega
 
 
 /-- Concrete interleaving of a flat order and complement order according to
@@ -189,6 +189,27 @@ def saturatedSlotValue
   | Sum.inl i => (flatOrder i : α)
   | Sum.inr j => (outsideOrder j : α)
 
+/-- The underlying ground value of the concrete schedule order is obtained by
+first decoding the position through the schedule index equivalence and then
+reading the corresponding flat/complement slot. -/
+@[simp] theorem saturatedScheduleOrder_value
+    {H R : Set α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (hHR : Disjoint H R)
+    (flatOrder : Fin (3 * k) ≃ H)
+    (outsideOrder : Fin (k + 2) ≃ R)
+    (i : Fin (4 * k + 2)) :
+    ((saturatedScheduleOrder hk hHR flatOrder outsideOrder i :
+        (H ∪ R : Set α)) : α) =
+      saturatedSlotValue flatOrder outsideOrder
+        (saturatedIndexEquiv k hk i) := by
+  classical
+  rcases hslot : saturatedIndexEquiv k hk i with a | b
+  · simp [saturatedScheduleOrder, saturatedSlotValue, hslot,
+      Equiv.Set.union_symm_apply_left]
+  · simp [saturatedScheduleOrder, saturatedSlotValue, hslot,
+      Equiv.Set.union_symm_apply_right]
+
 @[simp] theorem saturatedScheduleOrder_prefix
     {H R : Set α} {k : ℕ}
     (hk : 2 ≤ k)
@@ -200,9 +221,8 @@ def saturatedSlotValue
         ⟨r.val + 4 * j.val, by omega⟩ : (H ∪ R : Set α)) : α) =
       saturatedSlotValue flatOrder outsideOrder
         (saturatedPrefixSlot j r) := by
-  classical
-  fin_cases r <;>
-    simp [saturatedScheduleOrder, saturatedSlotValue, saturatedPrefixSlot]
+  rw [saturatedScheduleOrder_value,
+    saturatedIndexEquiv_prefix]
 
 @[simp] theorem saturatedScheduleOrder_tail
     {H R : Set α} {k : ℕ}
@@ -215,9 +235,8 @@ def saturatedSlotValue
         ⟨4 * (k - 2) + r.val, by omega⟩ : (H ∪ R : Set α)) : α) =
       saturatedSlotValue flatOrder outsideOrder
         (saturatedTailSlot hk r) := by
-  classical
-  fin_cases r <;>
-    simp [saturatedScheduleOrder, saturatedSlotValue, saturatedTailSlot]
+  rw [saturatedScheduleOrder_value,
+    saturatedIndexEquiv_tail]
 
 end
 
