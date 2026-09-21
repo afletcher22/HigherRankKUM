@@ -114,6 +114,54 @@ Coordinate isomorphisms and permutations of parallel copies transport these
 witnesses across the entire exact class.  Thus every prescribed element is
 favorable in every binary strict rank-four matroid on 12 elements.
 
+## Joint-state graph on a hard saturated representative
+
+A second exact certificate,
+
+`experiments/rank4_strict4k_n12_joint_state_audit.py`,
+
+examines the strict profile-`(2,5,8)` representative with projective
+multiplicities
+
+`(2,2,1,1,1,1,0,1,1,1,0,1,0,0,0)`.
+
+This example is deliberately outside two-deletion robustness and has many bad
+deletion CBOs.
+
+For omitted label 0, there are **14,592** deletion CBOs modulo rotation, only
+**3,272** of which are directly successful.  Under cyclic adjacent
+CBO-preserving swaps alone, the fixed-element graph splits into **385**
+components.  It contains **232 closed all-bad components**, totaling 368
+states.  Thus a proof that fixes `e` and only swaps adjacent entries cannot
+work even in this favorable `n=12` example.
+
+When omitted-element pivots are added, the full joint state graph over all
+`(e,sigma)` has:
+
+- **97,072** states;
+- **27,952** successful states;
+- 136,064 adjacent-swap edges;
+- 120,864 omitted-element-pivot edges;
+- 256,928 total edges;
+- one connected component;
+- no closed all-bad states.
+
+Moreover every state is within five legal moves of success.  Exact distance
+distribution is:
+
+| distance to success | states |
+|---:|---:|
+| 0 | 27,952 |
+| 1 | 47,184 |
+| 2 | 17,488 |
+| 3 | 3,760 |
+| 4 | 656 |
+| 5 | 32 |
+
+This is strong evidence that omitted-element exchange is not merely a useful
+convenience but an essential part of the right state-space proof.
+
+
 ## Interpretation
 
 This is stronger than the corresponding `t=0` binary result in one important
