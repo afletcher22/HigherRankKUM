@@ -368,6 +368,61 @@ Separate green branches now provide the local ingredients:
 The last endpoint is green on `rank4-t0-saturated-cap` at
 `1354f0bf4c25f35fffdd95607c3f50421321ed05`.
 
+## Modular-cut interpretation and another dead potential
+
+Fix an omitted element `e` and write `D = M \ e`.
+
+Classically, the single-element extension from `D` back to `M` is encoded
+by a modular cut: the flats `F` of `D` such that `e in cl_M(F)`.
+This is the standard Crapo/Oxley correspondence between modular cuts and
+single-element extensions (see Oxley, *Matroid Theory*, 2nd ed., §7.2).
+
+In this language:
+
+- a blocker triple is a consecutive independent triple whose closure lies in
+  the modular cut;
+- two overlapping blockers collapse to their shared pair because the relevant
+  flats form a modular pair inside a basis window;
+- three overlapping blockers collapse to the shared singleton;
+- four would force the empty flat into the cut, i.e. make `e` a loop.
+
+Thus the already-certified closure-intersection lemmas are exactly the local
+modular-cut axioms needed by the proof, even though mathlib has no
+`ModularCut` API.  There is currently no reason to build a full modular-cut
+library; closure language is enough.
+
+A second potential has now been falsified.
+
+On the exact binary n=10 class, consider the multiset of sizes of the closures
+of all blocker triples.  Bad states can be strict local maxima for:
+
+- lexicographically sorted blocker-closure sizes;
+- total blocker-closure size;
+- number of maximum-size blocker closures followed by total size.
+
+There are more than one thousand such bad local maxima in the exact orbit
+audit.
+
+The hardest fixed-e orbit gives a particularly clear example.  A distance-four
+state has blocker word
+
+`101110001`
+
+and all five blocker closures have the maximum no-dangerous size 6.  Along a
+shortest repair path the closure-size profile must first drop:
+
+`(6,6,6,6,6) -> (6,6,6,6,4) -> ... -> success`.
+
+So neither blocker count, run profile, nor blocker-closure concentration is a
+universal monotone potential.
+
+What survives is structural: long blocker runs encode very small spanning
+sets.  In particular, a three-blocker run should be read as a parallel
+obstruction (`e` is spanned by the single common element), and a two-blocker
+run as a triangle-or-parallel obstruction (`e` is spanned by the common
+pair).  This run-to-small-circuit classification is the next local geometry
+worth exposing explicitly in Lean.
+
 ## Suggested proof shape
 
 Do **not** return to a scalar monotone potential.
