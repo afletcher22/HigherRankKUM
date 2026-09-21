@@ -1,0 +1,18 @@
+{
+  "matroids": 20,
+  "bad_states": 200,
+  "canonical_four_block_distance_histogram": {
+    "1": 161,
+    "2": 34,
+    "3": 3,
+    "4": 2
+  },
+  "all_four_permutations_distance_histogram": {
+    "1": 188,
+    "2": 12
+  },
+  "maximum_canonical_distance": 4,
+  "maximum_all_four_distance": 2,
+  "interpretation": "The two canonical repairs remain effective but require distance four on two sampled strict-n12 states. Allowing all CBO-preserving permutations of a consecutive four-block repairs all 200 sampled bad states within two moves.",
+  "claim_level": "seeded finite computation; not exhaustive and not Lean certified"
+}
