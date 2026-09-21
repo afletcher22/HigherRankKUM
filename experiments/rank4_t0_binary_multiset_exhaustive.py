@@ -233,7 +233,6 @@ def main():
 
     failures = []
     pointed_orbit_checks = 0
-    witnesses = []
     for orbit_index, (config, orbit_size) in enumerate(reps):
         values, projective_points = config_to_labelled_values(config)
         for omitted in range(N):
@@ -246,15 +245,6 @@ def main():
                     "config": list(config),
                     "omitted_label": omitted,
                     "omitted_projective_point": projective_points[omitted],
-                })
-            elif len(witnesses) < 16:
-                # Store a small regression sample, not every witness.
-                witnesses.append({
-                    "orbit_index": orbit_index,
-                    "orbit_size": orbit_size,
-                    "omitted_label": omitted,
-                    "omitted_projective_point": projective_points[omitted],
-                    **witness,
                 })
 
     assert failures == []
@@ -279,7 +269,6 @@ def main():
         "pointed_checks_on_orbit_representatives": pointed_orbit_checks,
         "prescribed_element_failure_orbits": 0,
         "existential_failure_orbits": 0,
-        "sample_witnesses": witnesses,
         "interpretation": (
             "Every labelled omitted element is favorable on every GL(4,2) "
             "orbit representative. Coordinate isomorphisms and permutations "
