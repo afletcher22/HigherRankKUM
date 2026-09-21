@@ -26,15 +26,16 @@ def saturatedFullOrder
     Fin (4 * k + 2) ≃ M.E := by
   let left : Fin (3 * k) ≃ H :=
     flatOrder.trans (restrictGroundEquiv M H)
-  let local : Fin (4 * k + 2) ≃
+  let localOrder : Fin (4 * k + 2) ≃
       (H ∪ (M.E \ H) : Set α) :=
     saturatedScheduleOrder hk Set.disjoint_sdiff_right left outsideOrder
-  exact local.trans (Equiv.setCongr (Set.union_sdiff_cancel hHsub))
+  exact localOrder.trans (Equiv.setCongr (Set.union_sdiff_cancel hHsub))
 
 /-- The automatic basis theorem for an ordinary 3H+1R window, stated
 directly with a cyclic rank-three window of the flat order. -/
 theorem isBase_insert_outside_cyclicWindow_three
     {M : Matroid α} {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k)
     (hGroundFin : M.E.Finite)
     (hRank : M.eRank = (4 : ℕ∞))
     (hHsub : H ⊆ M.E)
@@ -67,7 +68,12 @@ theorem saturatedFullOrder_value
         (flatOrder.trans (restrictGroundEquiv M H))
         outsideOrder
         (saturatedIndexEquiv k hk i) := by
-  rfl
+  simpa only [saturatedFullOrder, Equiv.trans_apply,
+    Equiv.setCongr_apply, restrictGroundEquiv_apply_coe] using
+    (saturatedScheduleOrder_value
+      hk Set.disjoint_sdiff_right
+      (flatOrder.trans (restrictGroundEquiv M H))
+      outsideOrder i)
 
 
 /-- Ambient value formula for the extended regular HHHR block region. -/
@@ -157,7 +163,7 @@ theorem cyclicBasisOrder_of_saturated_six_defect_decomposition
     rw [hwin]
     exact
       isBase_insert_outside_cyclicWindow_three
-        hGroundFin hRank hHsub hHflat hHrank
+        hk hGroundFin hRank hHsub hHflat hHrank
         flatOrder hFlatCBO
         (outsideOrder iR : α) (outsideOrder iR).property iH
 
