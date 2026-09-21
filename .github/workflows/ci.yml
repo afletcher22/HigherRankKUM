@@ -156,6 +156,6 @@ jobs:
           python3 experiments/density_slack_deletion_certificate.py > /tmp/density-slack-deletion-result.json
           diff -u experiments/density_slack_deletion_result.json /tmp/density-slack-deletion-result.json
       - name: Build four-block attempt locality
-        run: lake build +HigherRankKUM.Rank4.FourBlockAttemptLocality
+        run: lake build +HigherRankKUM.Rank4.FourBlockAttemptLocality +HigherRankKUM.Rank4.Swap23BlockerLocality
       - name: Build
         run: lake build
