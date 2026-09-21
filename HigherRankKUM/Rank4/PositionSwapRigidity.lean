@@ -90,6 +90,56 @@ theorem cyclicWindow_swapPositions_eq_insert_sdiff_of_mem_notMem
       rw [hswap]
       exact hr
 
+/-- If a position window contains either both swapped positions or neither,
+swapping those positions leaves the window unchanged as a set of ground
+elements. -/
+theorem cyclicWindow_swapPositions_eq_of_mem_iff
+    {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (sigma : Fin n ≃ E)
+    (p q i : Fin n)
+    (hiff :
+      p ∈ Rank4FourBlockMove.cyclicPositionWindow 4 hn i ↔
+      q ∈ Rank4FourBlockMove.cyclicPositionWindow 4 hn i) :
+    cyclicWindow 4 hn (swapPositions sigma p q) i =
+      cyclicWindow 4 hn sigma i := by
+  let P := Rank4FourBlockMove.cyclicPositionWindow 4 hn i
+  have hpres :
+      ∀ {z : Fin n}, z ∈ P → Equiv.swap p q z ∈ P := by
+    intro z hz
+    by_cases hzp : z = p
+    · subst z
+      simpa [P] using hiff.mp (by simpa [P] using hz)
+    by_cases hzq : z = q
+    · subst z
+      simpa [P] using hiff.mpr (by simpa [P] using hz)
+    · rw [Equiv.swap_apply_of_ne_of_ne hzp hzq]
+      exact hz
+  ext x
+  constructor
+  · rintro ⟨r, rfl⟩
+    let z := cyclicIndex n hn i r.val
+    have hzP : z ∈ P := by
+      exact ⟨r, rfl⟩
+    have hswP := hpres hzP
+    rcases hswP with ⟨r', hr'⟩
+    refine ⟨r', ?_⟩
+    change
+      (sigma (Equiv.swap p q z) : alpha) =
+        (sigma (cyclicIndex n hn i r'.val) : alpha)
+    rw [hr']
+  · rintro ⟨r, rfl⟩
+    let z := cyclicIndex n hn i r.val
+    have hzP : z ∈ P := by
+      exact ⟨r, rfl⟩
+    have hswP := hpres hzP
+    rcases hswP with ⟨r', hr'⟩
+    refine ⟨r', ?_⟩
+    change
+      (sigma (Equiv.swap p q (cyclicIndex n hn i r'.val)) : alpha) =
+        (sigma z : alpha)
+    rw [hr']
+    simp
+
 /-- A dependent window produced by a one-sided position swap gives a closure
 obstruction on the unchanged three-element core. -/
 theorem mem_closure_of_dep_swap_window
