@@ -1,0 +1,856 @@
+import HigherRankKUM.Rank4.DangerousBranchT3Geometry
+import HigherRankKUM.Rank4.CyclicWindowFour
+import HigherRankKUM.Rank4.CyclicIndexArithmetic
+import HigherRankKUM.Rank4.FiniteSchedule
+
+namespace HigherRankKUM
+namespace Rank4DangerousBranches
+
+open Set
+open scoped Matroid
+open Rank4GcdTwoDeletion
+
+noncomputable section
+
+variable {α : Type*}
+
+set_option maxHeartbeats 800000
+
+/-- Every window beginning before the six-element tail of the t=3 pattern
+is ordinary, provided the prefix follows the repeating A,B,C,G class pattern.
+
+The hypothesis is deliberately stated as a residue-class invariant.  It
+covers all complete ABCG blocks and the first three tail entries pA,pB,pC,
+which continue residues 0,1,2 after the final G. -/
+theorem dangerous_triple_ordinary_prefix_windows
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂)
+    (σ : Fin (4 * k + 2) ≃ M.E)
+    (hA : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 0 →
+      (σ t : α) ∈ M.E \ H₀)
+    (hB : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 1 →
+      (σ t : α) ∈ M.E \ H₁)
+    (hC : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 2 →
+      (σ t : α) ∈ M.E \ H₂)
+    (hG : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 3 →
+      (σ t : α) ∈ (H₀ ∩ H₁) ∩ H₂) :
+    let hn : 0 < 4 * k + 2 := by omega
+    ∀ i : Fin (4 * k + 2), i.val < 4 * (k - 1) →
+      M.IsBase (cyclicWindow 4 hn σ i) := by
+  let hn : 0 < 4 * k + 2 := by omega
+  dsimp only
+  intro i hi
+  have hi3 : i.val + 3 < 4 * k + 2 := by omega
+  let i1 : Fin (4 * k + 2) := ⟨i.val + 1, by omega⟩
+  let i2 : Fin (4 * k + 2) := ⟨i.val + 2, by omega⟩
+  let i3 : Fin (4 * k + 2) := ⟨i.val + 3, by omega⟩
+  have hcy1 :
+      cyclicIndex (4 * k + 2) hn i 1 = i1 := by
+    simpa [i1] using
+      cyclicIndex_eq_mk_add_of_lt (4 * k + 2) hn i 1 (by omega)
+  have hcy2 :
+      cyclicIndex (4 * k + 2) hn i 2 = i2 := by
+    simpa [i2] using
+      cyclicIndex_eq_mk_add_of_lt (4 * k + 2) hn i 2 (by omega)
+  have hcy3 :
+      cyclicIndex (4 * k + 2) hn i 3 = i3 := by
+    simpa [i3] using
+      cyclicIndex_eq_mk_add_of_lt (4 * k + 2) hn i 3 hi3
+  rw [cyclicWindow_four_eq, hcy1, hcy2, hcy3]
+
+  have hrem : i.val % 4 < 4 := Nat.mod_lt _ (by omega)
+  interval_cases hr : i.val % 4
+  · have ha : (σ i : α) ∈ M.E \ H₀ :=
+      hA i (by omega) hr
+    have hb : (σ i1 : α) ∈ M.E \ H₁ :=
+      hB i1 (by simp [i1]; omega) (by simp [i1]; omega)
+    have hc : (σ i2 : α) ∈ M.E \ H₂ :=
+      hC i2 (by simp [i2]; omega) (by simp [i2]; omega)
+    have hg : (σ i3 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
+      hG i3 (by simp [i3]; omega) (by simp [i3]; omega)
+    have hbase := dangerous_triple_one_each_isBase
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      hg ha hb hc
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  · have hb : (σ i : α) ∈ M.E \ H₁ :=
+      hB i (by omega) hr
+    have hc : (σ i1 : α) ∈ M.E \ H₂ :=
+      hC i1 (by simp [i1]; omega) (by simp [i1]; omega)
+    have hg : (σ i2 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
+      hG i2 (by simp [i2]; omega) (by simp [i2]; omega)
+    have ha : (σ i3 : α) ∈ M.E \ H₀ :=
+      hA i3 (by simp [i3]; omega) (by simp [i3]; omega)
+    have hbase := dangerous_triple_one_each_isBase
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      hg ha hb hc
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  · have hc : (σ i : α) ∈ M.E \ H₂ :=
+      hC i (by omega) hr
+    have hg : (σ i1 : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
+      hG i1 (by simp [i1]; omega) (by simp [i1]; omega)
+    have ha : (σ i2 : α) ∈ M.E \ H₀ :=
+      hA i2 (by simp [i2]; omega) (by simp [i2]; omega)
+    have hb : (σ i3 : α) ∈ M.E \ H₁ :=
+      hB i3 (by simp [i3]; omega) (by simp [i3]; omega)
+    have hbase := dangerous_triple_one_each_isBase
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      hg ha hb hc
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  · have hg : (σ i : α) ∈ (H₀ ∩ H₁) ∩ H₂ :=
+      hG i (by omega) hr
+    have ha : (σ i1 : α) ∈ M.E \ H₀ :=
+      hA i1 (by simp [i1]; omega) (by simp [i1]; omega)
+    have hb : (σ i2 : α) ∈ M.E \ H₁ :=
+      hB i2 (by simp [i2]; omega) (by simp [i2]; omega)
+    have hc : (σ i3 : α) ∈ M.E \ H₂ :=
+      hC i3 (by simp [i3]; omega) (by simp [i3]; omega)
+    have hbase := dangerous_triple_one_each_isBase
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      hg ha hb hc
+    convert hbase using 1
+    ext z
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+
+/-- The six exceptional windows of the explicit t=3 schedule are bases.
+
+The schedule is normalized so the first ordinary ABC entries are
+qA,qB,qC, while the final six entries are
+pA,pB,pC,dA,dB,dC. Thus the duplicated pairs are exactly
+{pX,dX} inside the tail and {dX,qX} across the wrap. -/
+theorem dangerous_triple_six_exceptional_windows
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂)
+    (σ : Fin (4 * k + 2) ≃ M.E)
+    {qA pA dA qB pB dB qC pC dC : α}
+    (hqA : qA ∈ M.E \ H₀) (hpA : pA ∈ M.E \ H₀) (hdA : dA ∈ M.E \ H₀)
+    (hqB : qB ∈ M.E \ H₁) (hpB : pB ∈ M.E \ H₁) (hdB : dB ∈ M.E \ H₁)
+    (hqC : qC ∈ M.E \ H₂) (hpC : pC ∈ M.E \ H₂) (hdC : dC ∈ M.E \ H₂)
+    (hpAdA : pA ≠ dA) (hdAqA : dA ≠ qA)
+    (hpBdB : pB ≠ dB) (hdBqB : dB ≠ qB)
+    (hpCdC : pC ≠ dC) (hdCqC : dC ≠ qC)
+    (hpdA : M.Indep ({pA, dA} : Set α))
+    (hdqA : M.Indep ({dA, qA} : Set α))
+    (hpdB : M.Indep ({pB, dB} : Set α))
+    (hdqB : M.Indep ({dB, qB} : Set α))
+    (hpdC : M.Indep ({pC, dC} : Set α))
+    (hdqC : M.Indep ({dC, qC} : Set α))
+    (hσ0 : (σ ⟨0, by omega⟩ : α) = qA)
+    (hσ1 : (σ ⟨1, by omega⟩ : α) = qB)
+    (hσ2 : (σ ⟨2, by omega⟩ : α) = qC)
+    (hσpA : (σ ⟨4 * (k - 1), by omega⟩ : α) = pA)
+    (hσpB : (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = pB)
+    (hσpC : (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = pC)
+    (hσdA : (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = dA)
+    (hσdB : (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = dB)
+    (hσdC : (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = dC) :
+    let hn : 0 < 4 * k + 2 := by omega
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1), by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 1, by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 2, by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 3, by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 4, by omega⟩) ∧
+    M.IsBase (cyclicWindow 4 hn σ ⟨4 * (k - 1) + 5, by omega⟩) := by
+  let hn : 0 < 4 * k + 2 := by omega
+
+  have hidx (r s : ℕ) (hrs : r + s < 6) :
+      cyclicIndex (4 * k + 2) hn
+          ⟨4 * (k - 1) + r, by omega⟩ s =
+        ⟨4 * (k - 1) + r + s, by omega⟩ := by
+    have hlt :
+        (⟨4 * (k - 1) + r, by omega⟩ : Fin (4 * k + 2)).val + s <
+          4 * k + 2 := by
+      simp only [Fin.val_mk]
+      omega
+    exact cyclicIndex_eq_mk_add_of_lt
+      (4 * k + 2) hn ⟨4 * (k - 1) + r, by omega⟩ s hlt
+
+  have hwrap (r s : ℕ) (hr : r < 6) (hge : 6 ≤ r + s)
+      (hlt : r + s < 12) :
+      cyclicIndex (4 * k + 2) hn
+          ⟨4 * (k - 1) + r, by omega⟩ s =
+        ⟨r + s - 6, by omega⟩ := by
+    have hge' :
+        4 * k + 2 ≤
+          (⟨4 * (k - 1) + r, by omega⟩ : Fin (4 * k + 2)).val + s := by
+      simp only [Fin.val_mk]
+      omega
+    have hlt' :
+        (⟨4 * (k - 1) + r, by omega⟩ : Fin (4 * k + 2)).val + s <
+          2 * (4 * k + 2) := by
+      simp only [Fin.val_mk]
+      omega
+    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (4 * k + 2) hn ⟨4 * (k - 1) + r, by omega⟩ s hge' hlt'
+    rw [h]
+    apply Fin.ext
+    change (4 * (k - 1) + r + s - (4 * k + 2)) = r + s - 6
+    omega
+
+  have hbaseA_pd : M.IsBase ({pA, pB, pC, dA} : Set α) := by
+    have h := dangerous_triple_side_pair_isBase
+      (M := M) (k := k) (H₀ := H₀) (H₁ := H₁) (H₂ := H₂)
+      (x := pA) (y := dA) (b := pB) (c := pC)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict
+      hH₀ hH₁ hH₂ h01 h02 h12 hpA hdA hpAdA hpdA hpB hpC
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbaseB_pd : M.IsBase ({pB, pC, dA, dB} : Set α) := by
+    have h := dangerous_triple_side_pair_isBase
+      (M := M) (k := k) (H₀ := H₁) (H₁ := H₂) (H₂ := H₀)
+      (x := pB) (y := dB) (b := pC) (c := dA)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict
+      hH₁ hH₂ hH₀ h12 h01.symm h02.symm
+      hpB hdB hpBdB hpdB hpC hdA
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbaseC_pd : M.IsBase ({pC, dA, dB, dC} : Set α) := by
+    have h := dangerous_triple_side_pair_isBase
+      (M := M) (k := k) (H₀ := H₂) (H₁ := H₀) (H₂ := H₁)
+      (x := pC) (y := dC) (b := dA) (c := dB)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict
+      hH₂ hH₀ hH₁ h02.symm h12.symm h01
+      hpC hdC hpCdC hpdC hdA hdB
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbaseA_dq : M.IsBase ({dA, dB, dC, qA} : Set α) := by
+    have h := dangerous_triple_side_pair_isBase
+      (M := M) (k := k) (H₀ := H₀) (H₁ := H₁) (H₂ := H₂)
+      (x := dA) (y := qA) (b := dB) (c := dC)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict
+      hH₀ hH₁ hH₂ h01 h02 h12 hdA hqA hdAqA hdqA hdB hdC
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbaseB_dq : M.IsBase ({dB, dC, qA, qB} : Set α) := by
+    have h := dangerous_triple_side_pair_isBase
+      (M := M) (k := k) (H₀ := H₁) (H₁ := H₂) (H₂ := H₀)
+      (x := dB) (y := qB) (b := dC) (c := qA)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict
+      hH₁ hH₂ hH₀ h12 h01.symm h02.symm
+      hdB hqB hdBqB hdqB hdC hqA
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  have hbaseC_dq : M.IsBase ({dC, qA, qB, qC} : Set α) := by
+    have h := dangerous_triple_side_pair_isBase
+      (M := M) (k := k) (H₀ := H₂) (H₁ := H₀) (H₂ := H₁)
+      (x := dC) (y := qC) (b := qA) (c := qB)
+      (by omega : 1 ≤ k) hE hRank hEcard hStrict
+      hH₂ hH₀ hH₁ h02.symm h12.symm h01
+      hdC hqC hdCqC hdqC hqA hqB
+    convert h using 1 <;> ext z <;>
+      simp [Set.mem_insert_iff, or_comm, or_left_comm, or_assoc]
+
+  dsimp only
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 :
+        cyclicIndex (4 * k + 2) hn ⟨4 * (k - 1), by omega⟩ 1 =
+          ⟨4 * (k - 1) + 1, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 1 (by omega)
+    have h1 :
+        cyclicIndex (4 * k + 2) hn ⟨4 * (k - 1), by omega⟩ 2 =
+          ⟨4 * (k - 1) + 2, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 2 (by omega)
+    have h2 :
+        cyclicIndex (4 * k + 2) hn ⟨4 * (k - 1), by omega⟩ 3 =
+          ⟨4 * (k - 1) + 3, by omega⟩ := by
+      simpa only [Nat.add_zero, zero_add] using hidx 0 3 (by omega)
+    rw [h0, h1, h2, hσpA, hσpB, hσpC, hσdA]
+    exact hbaseA_pd
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 1 1 (by omega)
+    have h1 := hidx 1 2 (by omega)
+    have h2 := hidx 1 3 (by omega)
+    rw [h0, h1, h2, hσpB, hσpC, hσdA, hσdB]
+    exact hbaseB_pd
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 2 1 (by omega)
+    have h1 := hidx 2 2 (by omega)
+    have h2 := hidx 2 3 (by omega)
+    rw [h0, h1, h2, hσpC, hσdA, hσdB, hσdC]
+    exact hbaseC_pd
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 3 1 (by omega)
+    have h1 := hidx 3 2 (by omega)
+    have h2 := hwrap 3 3 (by omega) (by omega) (by omega)
+    rw [h0, h1, h2, hσdA, hσdB, hσdC, hσ0]
+    exact hbaseA_dq
+  constructor
+  · rw [cyclicWindow_four_eq]
+    have h0 := hidx 4 1 (by omega)
+    have h1 := hwrap 4 2 (by omega) (by omega) (by omega)
+    have h2 := hwrap 4 3 (by omega) (by omega) (by omega)
+    rw [h0, h1, h2, hσdB, hσdC, hσ0, hσ1]
+    exact hbaseB_dq
+  · rw [cyclicWindow_four_eq]
+    have h0 := hwrap 5 1 (by omega) (by omega) (by omega)
+    have h1 := hwrap 5 2 (by omega) (by omega) (by omega)
+    have h2 := hwrap 5 3 (by omega) (by omega) (by omega)
+    rw [h0, h1, h2, hσdC, hσ0, hσ1, hσ2]
+    exact hbaseC_dq
+
+
+/-- A normalized t=3 schedule is a cyclic basis ordering.
+
+The prefix follows A,B,C,G by residue mod four through the first pA,pB,pC
+tail entries; the last six entries are pA,pB,pC,dA,dB,dC and the first three
+entries are qA,qB,qC.  The two selected pairs through dX certify all six
+exceptional windows. -/
+theorem dangerous_triple_cbo_of_normalized_schedule
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂)
+    (σ : Fin (4 * k + 2) ≃ M.E)
+    (hA : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 0 →
+      (σ t : α) ∈ M.E \ H₀)
+    (hB : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 1 →
+      (σ t : α) ∈ M.E \ H₁)
+    (hC : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 2 →
+      (σ t : α) ∈ M.E \ H₂)
+    (hG : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 3 →
+      (σ t : α) ∈ (H₀ ∩ H₁) ∩ H₂)
+    {qA pA dA qB pB dB qC pC dC : α}
+    (hqA : qA ∈ M.E \ H₀) (hpA : pA ∈ M.E \ H₀) (hdA : dA ∈ M.E \ H₀)
+    (hqB : qB ∈ M.E \ H₁) (hpB : pB ∈ M.E \ H₁) (hdB : dB ∈ M.E \ H₁)
+    (hqC : qC ∈ M.E \ H₂) (hpC : pC ∈ M.E \ H₂) (hdC : dC ∈ M.E \ H₂)
+    (hpAdA : pA ≠ dA) (hdAqA : dA ≠ qA)
+    (hpBdB : pB ≠ dB) (hdBqB : dB ≠ qB)
+    (hpCdC : pC ≠ dC) (hdCqC : dC ≠ qC)
+    (hpdA : M.Indep ({pA, dA} : Set α))
+    (hdqA : M.Indep ({dA, qA} : Set α))
+    (hpdB : M.Indep ({pB, dB} : Set α))
+    (hdqB : M.Indep ({dB, qB} : Set α))
+    (hpdC : M.Indep ({pC, dC} : Set α))
+    (hdqC : M.Indep ({dC, qC} : Set α))
+    (hσ0 : (σ ⟨0, by omega⟩ : α) = qA)
+    (hσ1 : (σ ⟨1, by omega⟩ : α) = qB)
+    (hσ2 : (σ ⟨2, by omega⟩ : α) = qC)
+    (hσpA : (σ ⟨4 * (k - 1), by omega⟩ : α) = pA)
+    (hσpB : (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = pB)
+    (hσpC : (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = pC)
+    (hσdA : (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = dA)
+    (hσdB : (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = dB)
+    (hσdC : (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = dC) :
+    CyclicBasisOrder M 4 (by omega) σ := by
+  let hn : 0 < 4 * k + 2 := by omega
+  have hOrd :=
+    dangerous_triple_ordinary_prefix_windows
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      σ hA hB hC hG
+  have hExc :=
+    dangerous_triple_six_exceptional_windows
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+      σ hqA hpA hdA hqB hpB hdB hqC hpC hdC
+      hpAdA hdAqA hpBdB hdBqB hpCdC hdCqC
+      hpdA hdqA hpdB hdqB hpdC hdqC
+      hσ0 hσ1 hσ2 hσpA hσpB hσpC hσdA hσdB hσdC
+  intro i
+  by_cases hi : i.val < 4 * (k - 1)
+  · simpa [hn] using hOrd i hi
+  have hilow : 4 * (k - 1) ≤ i.val := Nat.le_of_not_gt hi
+  have hiup : i.val < 4 * (k - 1) + 6 := by
+    have := i.isLt
+    omega
+  have hcases :
+      i.val = 4 * (k - 1) ∨
+      i.val = 4 * (k - 1) + 1 ∨
+      i.val = 4 * (k - 1) + 2 ∨
+      i.val = 4 * (k - 1) + 3 ∨
+      i.val = 4 * (k - 1) + 4 ∨
+      i.val = 4 * (k - 1) + 5 := by
+    omega
+  rcases hExc with ⟨h0, h1, h2, h3, h4, h5⟩
+  rcases hcases with h | h | h | h | h | h
+  · have hi' : i = ⟨4 * (k - 1), by omega⟩ := Fin.ext h
+    simpa [hi', hn] using h0
+  · have hi' : i = ⟨4 * (k - 1) + 1, by omega⟩ := Fin.ext h
+    simpa [hi', hn] using h1
+  · have hi' : i = ⟨4 * (k - 1) + 2, by omega⟩ := Fin.ext h
+    simpa [hi', hn] using h2
+  · have hi' : i = ⟨4 * (k - 1) + 3, by omega⟩ := Fin.ext h
+    simpa [hi', hn] using h3
+  · have hi' : i = ⟨4 * (k - 1) + 4, by omega⟩ := Fin.ext h
+    simpa [hi', hn] using h4
+  · have hi' : i = ⟨4 * (k - 1) + 5, by omega⟩ := Fin.ext h
+    simpa [hi', hn] using h5
+
+
+/-- Local enumerations of the four t=3 parts, with the three distinguished
+side slots normalized, interleave to a cyclic basis ordering. -/
+theorem dangerous_triple_cbo_of_local_orders
+    {M : Matroid α} {k : ℕ} {H₀ H₁ H₂ : Set α}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂)
+    (eA : Fin (k + 1) ≃ (M.E \ H₀ : Set α))
+    (eB : Fin (k + 1) ≃ (M.E \ H₁ : Set α))
+    (eC : Fin (k + 1) ≃ (M.E \ H₂ : Set α))
+    (eG : Fin (k - 1) ≃ (((H₀ ∩ H₁) ∩ H₂ : Set α)))
+    {qA pA dA qB pB dB qC pC dC : α}
+    (heA0 : (eA ⟨0, by omega⟩ : α) = qA)
+    (heAp : (eA ⟨k - 1, by omega⟩ : α) = pA)
+    (heAd : (eA ⟨k, by omega⟩ : α) = dA)
+    (heB0 : (eB ⟨0, by omega⟩ : α) = qB)
+    (heBp : (eB ⟨k - 1, by omega⟩ : α) = pB)
+    (heBd : (eB ⟨k, by omega⟩ : α) = dB)
+    (heC0 : (eC ⟨0, by omega⟩ : α) = qC)
+    (heCp : (eC ⟨k - 1, by omega⟩ : α) = pC)
+    (heCd : (eC ⟨k, by omega⟩ : α) = dC)
+    (hpAdA : pA ≠ dA) (hdAqA : dA ≠ qA)
+    (hpBdB : pB ≠ dB) (hdBqB : dB ≠ qB)
+    (hpCdC : pC ≠ dC) (hdCqC : dC ≠ qC)
+    (hpdA : M.Indep ({pA, dA} : Set α))
+    (hdqA : M.Indep ({dA, qA} : Set α))
+    (hpdB : M.Indep ({pB, dB} : Set α))
+    (hdqB : M.Indep ({dB, qB} : Set α))
+    (hpdC : M.Indep ({pC, dC} : Set α))
+    (hdqC : M.Indep ({dC, qC} : Set α)) :
+    ∃ σ : Fin (4 * k + 2) ≃ M.E,
+      CyclicBasisOrder M 4 (by omega) σ := by
+  let eSlots :
+      FiniteSchedule.T3Slots k ≃
+        ((M.E \ H₀ : Set α) ⊕ (M.E \ H₁ : Set α)) ⊕
+          ((M.E \ H₂ : Set α) ⊕ (((H₀ ∩ H₁) ∩ H₂ : Set α))) :=
+    Equiv.sumCongr (Equiv.sumCongr eA eB) (Equiv.sumCongr eC eG)
+  let eGround :=
+    dangerous_triple_parts_equiv_ground
+      hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+  let σ : Fin (4 * k + 2) ≃ M.E :=
+    (FiniteSchedule.t3IndexEquiv k hk).trans (eSlots.trans eGround)
+
+  have hslotA (a : Fin (k + 1)) :
+      (eGround (Sum.inl (Sum.inl (eA a))) : α) = (eA a : α) := by
+    simp [eGround, dangerous_triple_parts_equiv_ground]
+  have hslotB (b : Fin (k + 1)) :
+      (eGround (Sum.inl (Sum.inr (eB b))) : α) = (eB b : α) := by
+    simp [eGround, dangerous_triple_parts_equiv_ground]
+  have hslotC (cc : Fin (k + 1)) :
+      (eGround (Sum.inr (Sum.inl (eC cc))) : α) = (eC cc : α) := by
+    simp [eGround, dangerous_triple_parts_equiv_ground]
+  have hslotG (g : Fin (k - 1)) :
+      (eGround (Sum.inr (Sum.inr (eG g))) : α) = (eG g : α) := by
+    simp [eGround, dangerous_triple_parts_equiv_ground]
+
+  have hprefixA (j : Fin (k - 1)) :
+      (σ ⟨4 * j.val, by omega⟩ : α) = (eA ⟨j.val, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * j.val, by omega⟩)) : α) = (eA ⟨j.val, by omega⟩ : α)
+    have hpos :
+        (⟨4 * j.val, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(0 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+      omega
+    rw [hpos, FiniteSchedule.t3IndexEquiv_prefix]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨j.val, by omega⟩))) : α) = (eA ⟨j.val, by omega⟩ : α)
+    exact hslotA _
+
+  have hprefixB (j : Fin (k - 1)) :
+      (σ ⟨4 * j.val + 1, by omega⟩ : α) = (eB ⟨j.val, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * j.val + 1, by omega⟩)) : α) = (eB ⟨j.val, by omega⟩ : α)
+    have hpos :
+        (⟨4 * j.val + 1, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(1 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+      omega
+    rw [hpos, FiniteSchedule.t3IndexEquiv_prefix]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨j.val, by omega⟩))) : α) = (eB ⟨j.val, by omega⟩ : α)
+    exact hslotB _
+
+  have hprefixC (j : Fin (k - 1)) :
+      (σ ⟨4 * j.val + 2, by omega⟩ : α) = (eC ⟨j.val, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * j.val + 2, by omega⟩)) : α) = (eC ⟨j.val, by omega⟩ : α)
+    have hpos :
+        (⟨4 * j.val + 2, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(2 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+      omega
+    rw [hpos, FiniteSchedule.t3IndexEquiv_prefix]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨j.val, by omega⟩))) : α) = (eC ⟨j.val, by omega⟩ : α)
+    exact hslotC _
+
+  have hprefixG (j : Fin (k - 1)) :
+      (σ ⟨4 * j.val + 3, by omega⟩ : α) = (eG j : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * j.val + 3, by omega⟩)) : α) = (eG j : α)
+    have hpos :
+        (⟨4 * j.val + 3, by omega⟩ : Fin (4 * k + 2)) =
+          ⟨(3 : Fin 4).val + 4 * j.val, by omega⟩ := by
+      apply Fin.ext
+      simp
+      omega
+    rw [hpos, FiniteSchedule.t3IndexEquiv_prefix]
+    change (eGround (Sum.inr (Sum.inr (eG j))) : α) = (eG j : α)
+    exact hslotG _
+
+  have htailA0 :
+      (σ ⟨4 * (k - 1), by omega⟩ : α) = (eA ⟨k - 1, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1), by omega⟩)) : α) = (eA ⟨k - 1, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨k - 1, by omega⟩))) : α) = (eA ⟨k - 1, by omega⟩ : α)
+    exact hslotA _
+
+  have htailB0 :
+      (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = (eB ⟨k - 1, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 1, by omega⟩)) : α) = (eB ⟨k - 1, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨k - 1, by omega⟩))) : α) = (eB ⟨k - 1, by omega⟩ : α)
+    exact hslotB _
+
+  have htailC0 :
+      (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = (eC ⟨k - 1, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 2, by omega⟩)) : α) = (eC ⟨k - 1, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨k - 1, by omega⟩))) : α) = (eC ⟨k - 1, by omega⟩ : α)
+    exact hslotC _
+
+  have htailA1 :
+      (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = (eA ⟨k, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 3, by omega⟩)) : α) = (eA ⟨k, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inl (Sum.inl (eA ⟨k, by omega⟩))) : α) = (eA ⟨k, by omega⟩ : α)
+    exact hslotA _
+
+  have htailB1 :
+      (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = (eB ⟨k, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 4, by omega⟩)) : α) = (eB ⟨k, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inl (Sum.inr (eB ⟨k, by omega⟩))) : α) = (eB ⟨k, by omega⟩ : α)
+    exact hslotB _
+
+  have htailC1 :
+      (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = (eC ⟨k, by omega⟩ : α) := by
+    change
+      (eGround
+        (eSlots
+          (FiniteSchedule.t3IndexEquiv k hk
+            ⟨4 * (k - 1) + 5, by omega⟩)) : α) = (eC ⟨k, by omega⟩ : α)
+    rw [FiniteSchedule.t3IndexEquiv_tail]
+    change (eGround (Sum.inr (Sum.inl (eC ⟨k, by omega⟩))) : α) = (eC ⟨k, by omega⟩ : α)
+    exact hslotC _
+
+  have hA : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 0 →
+      (σ t : α) ∈ M.E \ H₀ := by
+    intro t ht hmod
+    by_cases hpref : t.val < 4 * (k - 1)
+    · let j : Fin (k - 1) := ⟨t.val / 4, by omega⟩
+      have hdecomp : t.val = 4 * j.val := by
+        dsimp [j]
+        have hm := Nat.mod_add_div t.val 4
+        omega
+      have htEq : t = ⟨4 * j.val, by omega⟩ := by
+        apply Fin.ext
+        exact hdecomp
+      rw [htEq, hprefixA j]
+      exact (eA ⟨j.val, by omega⟩).property
+    · have htval : t.val = 4 * (k - 1) := by
+        have h4 : (4 * (k - 1)) % 4 = 0 := by simp
+        omega
+      have htEq : t = ⟨4 * (k - 1), by omega⟩ := by
+        apply Fin.ext
+        exact htval
+      rw [htEq, htailA0]
+      exact (eA ⟨k - 1, by omega⟩).property
+
+  have hB : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 1 →
+      (σ t : α) ∈ M.E \ H₁ := by
+    intro t ht hmod
+    by_cases hpref : t.val < 4 * (k - 1)
+    · let j : Fin (k - 1) := ⟨t.val / 4, by omega⟩
+      have hdecomp : t.val = 4 * j.val + 1 := by
+        dsimp [j]
+        have hm := Nat.mod_add_div t.val 4
+        omega
+      have htEq : t = ⟨4 * j.val + 1, by omega⟩ := by
+        apply Fin.ext
+        exact hdecomp
+      rw [htEq, hprefixB j]
+      exact (eB ⟨j.val, by omega⟩).property
+    · have htval : t.val = 4 * (k - 1) + 1 := by omega
+      have htEq : t = ⟨4 * (k - 1) + 1, by omega⟩ := by
+        apply Fin.ext
+        exact htval
+      rw [htEq, htailB0]
+      exact (eB ⟨k - 1, by omega⟩).property
+
+  have hC : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 2 →
+      (σ t : α) ∈ M.E \ H₂ := by
+    intro t ht hmod
+    by_cases hpref : t.val < 4 * (k - 1)
+    · let j : Fin (k - 1) := ⟨t.val / 4, by omega⟩
+      have hdecomp : t.val = 4 * j.val + 2 := by
+        dsimp [j]
+        have hm := Nat.mod_add_div t.val 4
+        omega
+      have htEq : t = ⟨4 * j.val + 2, by omega⟩ := by
+        apply Fin.ext
+        exact hdecomp
+      rw [htEq, hprefixC j]
+      exact (eC ⟨j.val, by omega⟩).property
+    · have htval : t.val = 4 * (k - 1) + 2 := by omega
+      have htEq : t = ⟨4 * (k - 1) + 2, by omega⟩ := by
+        apply Fin.ext
+        exact htval
+      rw [htEq, htailC0]
+      exact (eC ⟨k - 1, by omega⟩).property
+
+  have hG : ∀ t : Fin (4 * k + 2),
+      t.val < 4 * (k - 1) + 3 → t.val % 4 = 3 →
+      (σ t : α) ∈ (H₀ ∩ H₁) ∩ H₂ := by
+    intro t ht hmod
+    have hpref : t.val < 4 * (k - 1) := by omega
+    let j : Fin (k - 1) := ⟨t.val / 4, by omega⟩
+    have hdecomp : t.val = 4 * j.val + 3 := by
+      dsimp [j]
+      have hm := Nat.mod_add_div t.val 4
+      omega
+    have htEq : t = ⟨4 * j.val + 3, by omega⟩ := by
+      apply Fin.ext
+      exact hdecomp
+    rw [htEq, hprefixG j]
+    exact (eG j).property
+
+  have hσ0 : (σ ⟨0, by omega⟩ : α) = qA := by
+    calc
+      (σ ⟨0, by omega⟩ : α) = (eA ⟨0, by omega⟩ : α) := by
+        simpa using hprefixA ⟨0, by omega⟩
+      _ = qA := heA0
+  have hσ1 : (σ ⟨1, by omega⟩ : α) = qB := by
+    calc
+      (σ ⟨1, by omega⟩ : α) = (eB ⟨0, by omega⟩ : α) := by
+        simpa using hprefixB ⟨0, by omega⟩
+      _ = qB := heB0
+  have hσ2 : (σ ⟨2, by omega⟩ : α) = qC := by
+    calc
+      (σ ⟨2, by omega⟩ : α) = (eC ⟨0, by omega⟩ : α) := by
+        simpa using hprefixC ⟨0, by omega⟩
+      _ = qC := heC0
+
+  have hσpA : (σ ⟨4 * (k - 1), by omega⟩ : α) = pA :=
+    htailA0.trans heAp
+  have hσpB : (σ ⟨4 * (k - 1) + 1, by omega⟩ : α) = pB :=
+    htailB0.trans heBp
+  have hσpC : (σ ⟨4 * (k - 1) + 2, by omega⟩ : α) = pC :=
+    htailC0.trans heCp
+  have hσdA : (σ ⟨4 * (k - 1) + 3, by omega⟩ : α) = dA :=
+    htailA1.trans heAd
+  have hσdB : (σ ⟨4 * (k - 1) + 4, by omega⟩ : α) = dB :=
+    htailB1.trans heBd
+  have hσdC : (σ ⟨4 * (k - 1) + 5, by omega⟩ : α) = dC :=
+    htailC1.trans heCd
+
+  have hqA' : qA ∈ M.E \ H₀ := by
+    rw [← heA0]
+    exact (eA ⟨0, by omega⟩).property
+  have hpA' : pA ∈ M.E \ H₀ := by
+    rw [← heAp]
+    exact (eA ⟨k - 1, by omega⟩).property
+  have hdA' : dA ∈ M.E \ H₀ := by
+    rw [← heAd]
+    exact (eA ⟨k, by omega⟩).property
+  have hqB' : qB ∈ M.E \ H₁ := by
+    rw [← heB0]
+    exact (eB ⟨0, by omega⟩).property
+  have hpB' : pB ∈ M.E \ H₁ := by
+    rw [← heBp]
+    exact (eB ⟨k - 1, by omega⟩).property
+  have hdB' : dB ∈ M.E \ H₁ := by
+    rw [← heBd]
+    exact (eB ⟨k, by omega⟩).property
+  have hqC' : qC ∈ M.E \ H₂ := by
+    rw [← heC0]
+    exact (eC ⟨0, by omega⟩).property
+  have hpC' : pC ∈ M.E \ H₂ := by
+    rw [← heCp]
+    exact (eC ⟨k - 1, by omega⟩).property
+  have hdC' : dC ∈ M.E \ H₂ := by
+    rw [← heCd]
+    exact (eC ⟨k, by omega⟩).property
+
+  refine ⟨σ, ?_⟩
+  exact dangerous_triple_cbo_of_normalized_schedule
+    hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+    σ hA hB hC hG
+    hqA' hpA' hdA' hqB' hpB' hdB' hqC' hpC' hdC'
+    hpAdA hdAqA hpBdB hdBqB hpCdC hdCqC
+    hpdA hdqA hpdB hdqB hpdC hdqC
+    hσ0 hσ1 hσ2 hσpA hσpB hσpC hσdA hσdB hσdC
+
+
+/-- Three distinct dangerous hyperplanes directly yield a rank-four cyclic
+basis ordering.  This is the complete formal t=3 branch. -/
+theorem exists_cyclicBasisOrder_of_three_dangerous
+    {M : Matroid α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (hE : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hEcard : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    {H₀ H₁ H₂ : Set α}
+    (hH₀ : DangerousHyperplane M k H₀)
+    (hH₁ : DangerousHyperplane M k H₁)
+    (hH₂ : DangerousHyperplane M k H₂)
+    (h01 : H₀ ≠ H₁) (h02 : H₀ ≠ H₂) (h12 : H₁ ≠ H₂) :
+    ∃ σ : Fin (4 * k + 2) ≃ M.E,
+      CyclicBasisOrder M 4 (by omega) σ := by
+  obtain ⟨qA, pA, dA, hqA, hpA, hdA,
+      hqpA, hqdA, hpdAne, hdqA, hdpA⟩ :=
+    dangerous_triple_side_exists_tail_triple
+      (M := M) (k := k) (H₀ := H₀) (H₁ := H₁) (H₂ := H₂)
+      hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+
+  obtain ⟨qB, pB, dB, hqB, hpB, hdB,
+      hqpB, hqdB, hpdBne, hdqB, hdpB⟩ :=
+    dangerous_triple_side_exists_tail_triple
+      (M := M) (k := k) (H₀ := H₁) (H₁ := H₀) (H₂ := H₂)
+      hk hE hRank hEcard hStrict hH₁ hH₀ hH₂
+      h01.symm h12 h02
+
+  obtain ⟨qC, pC, dC, hqC, hpC, hdC,
+      hqpC, hqdC, hpdCne, hdqC, hdpC⟩ :=
+    dangerous_triple_side_exists_tail_triple
+      (M := M) (k := k) (H₀ := H₂) (H₁ := H₀) (H₂ := H₁)
+      hk hE hRank hEcard hStrict hH₂ hH₀ hH₁
+      h02.symm h12.symm h01
+
+  have hAfin : (M.E \ H₀).Finite := hE.sdiff
+  have hBfin : (M.E \ H₁).Finite := hE.sdiff
+  have hCfin : (M.E \ H₂).Finite := hE.sdiff
+  have hAcard : (M.E \ H₀).ncard = k + 1 :=
+    dangerous_complement_ncard_eq hE hEcard hH₀
+  have hBcard : (M.E \ H₁).ncard = k + 1 :=
+    dangerous_complement_ncard_eq hE hEcard hH₁
+  have hCcard : (M.E \ H₂).ncard = k + 1 :=
+    dangerous_complement_ncard_eq hE hEcard hH₂
+
+  obtain ⟨eA, heA0, heAp, heAd⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_three_prescribed
+      hk hAfin hAcard hqA hpA hdA hqpA hqdA hpdAne
+  obtain ⟨eB, heB0, heBp, heBd⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_three_prescribed
+      hk hBfin hBcard hqB hpB hdB hqpB hqdB hpdBne
+  obtain ⟨eC, heC0, heCp, heCd⟩ :=
+    FiniteSchedule.exists_fin_equiv_with_three_prescribed
+      hk hCfin hCcard hqC hpC hdC hqpC hqdC hpdCne
+
+  have hGdata := dangerous_triple_core
+    hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+  have hGfin : ((H₀ ∩ H₁) ∩ H₂).Finite :=
+    hE.subset hGdata.1.subset_ground
+  letI : Finite (↥((H₀ ∩ H₁) ∩ H₂)) := hGfin.to_subtype
+  have hGnatCard : Nat.card (↥((H₀ ∩ H₁) ∩ H₂)) = k - 1 := by
+    simpa [Nat.card_coe_set_eq] using hGdata.2.2
+  let eG : Fin (k - 1) ≃ (↥((H₀ ∩ H₁) ∩ H₂)) :=
+    (Finite.equivFinOfCardEq hGnatCard).symm
+
+  have hpdA : M.Indep ({pA, dA} : Set α) := by
+    simpa [Set.pair_comm] using hdpA
+  have hpdB : M.Indep ({pB, dB} : Set α) := by
+    simpa [Set.pair_comm] using hdpB
+  have hpdC : M.Indep ({pC, dC} : Set α) := by
+    simpa [Set.pair_comm] using hdpC
+
+  exact dangerous_triple_cbo_of_local_orders
+    hk hE hRank hEcard hStrict hH₀ hH₁ hH₂ h01 h02 h12
+    eA eB eC eG
+    heA0 heAp heAd heB0 heBp heBd heC0 heCp heCd
+    hpdAne hqdA.symm hpdBne hqdB.symm hpdCne hqdC.symm
+    hpdA hdqA hpdB hdqB hpdC hdqC
+
+end
+
+end Rank4DangerousBranches
+end HigherRankKUM
