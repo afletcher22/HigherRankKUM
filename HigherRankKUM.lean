@@ -57,6 +57,7 @@ import HigherRankKUM.AdjacentRepair
 import HigherRankKUM.LocalRepairRigidity
 import HigherRankKUM.LocalRepairBoundary
 import HigherRankKUM.LocalRepairClosure
+import HigherRankKUM.LocalExchangeClosure
 import HigherRankKUM.PotentialAscent
 import HigherRankKUM.Rank4.ThreePairDualBase
 import HigherRankKUM.Rank4.ThreePairDual
