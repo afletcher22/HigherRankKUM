@@ -107,9 +107,9 @@ theorem fourBlockReorder_applyFourBlockPerm
     · rintro ⟨q, rfl⟩
       refine ⟨π q, ?_⟩
       change
-        σ (supportedFourBlockPerm hn h4n s π
-          (fourBlockEmbedding hn h4n s q)) =
-        σ (fourBlockEmbedding hn h4n s (π q))
+        σ (fourBlockEmbedding hn h4n s (π q)) =
+          σ (supportedFourBlockPerm hn h4n s π
+            (fourBlockEmbedding hn h4n s q))
       rw [supportedFourBlockPerm_apply_block]
     · rintro ⟨q, rfl⟩
       refine ⟨π.symm q, ?_⟩
