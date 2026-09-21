@@ -1,0 +1,62 @@
+{
+  "scope": "exact binary rank-4 n=10 two-deletion-robust represented multisets",
+  "gl4_2_orbits": 16,
+  "four_block_patterns": [
+    [
+      2,
+      3,
+      0,
+      1
+    ],
+    [
+      2,
+      3,
+      1,
+      0
+    ]
+  ],
+  "move_interpretation": [
+    "[a,b,c,d] -> [c,d,a,b]",
+    "[a,b,c,d] -> [c,d,b,a]"
+  ],
+  "all_state_graphs_connected": true,
+  "orbits_with_closed_all_bad_component": 0,
+  "states_by_orbit": [
+    3584,
+    5376,
+    4128,
+    6528,
+    3840,
+    3712,
+    4032,
+    6144,
+    4224,
+    3584,
+    4960,
+    4832,
+    8704,
+    4768,
+    8208,
+    8800
+  ],
+  "successful_states_by_orbit": [
+    1920,
+    2688,
+    1856,
+    2592,
+    3840,
+    2432,
+    1920,
+    3840,
+    1920,
+    1760,
+    2000,
+    2208,
+    3456,
+    2272,
+    3396,
+    4200
+  ],
+  "interpretation": "Adjacent CBO-preserving swaps plus point pivots were previously insufficient, and even arbitrary single transpositions left closed all-bad components. Adding only the two listed consecutive four-position 2+2-scale repairs makes every exact orbit representative connected, hence every state can reach a successful state in this finite class.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
