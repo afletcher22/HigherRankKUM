@@ -4,8 +4,69 @@ Date: 2026-09-21.
 
 Branch: `rank4-t0-one-step-saturation-research`.
 
-Status: mathematical / computational research checkpoint.  The conjectures in
-this note are **not Lean-certified** unless explicitly stated otherwise.
+Status: mathematical / computational research checkpoint.  The original
+one-step saturation conjecture proposed on this branch is **false**.  The
+component-level four-block dichotomy remains the live target.
+
+## Falsification of the one-step conjecture
+
+There is an explicit binary n=14 counterexample with labelled columns
+
+`(10,3,11,1,3,3,15,15,6,6,1,14,11,7)`
+
+and omitted label `e=12` (projective point 11).  The deletion CBO
+
+`(4,11,8,7,5,13,0,6,3,1,9,2,10)`
+
+has blocker word
+
+`1001001001110`
+
+(up to cyclic/reversal canonicalization: `0010010010111`).
+
+It satisfies all of the intended t=0 hypotheses:
+
+- ambient rank 4;
+- strict n=14 density, with flat profile `(3,5,8)`;
+- no dangerous 10-point rank-three flat;
+- every two-element deletion retains rank 4;
+- every two-element deletion satisfies the 12/4 density caps.
+
+Yet:
+
+- the state is not favorable;
+- it has eight distinct CBO-preserving fixed-e four-block neighbors;
+- none of those neighbors is favorable;
+- every rank-three flat through e has at most eight elements, so there is no
+  saturated 9-point rank-three flat through e.
+
+Thus
+
+`one-step rigid => saturated flat through e`
+
+is false even under the full strict/no-dangerous/universal-two-deletion
+package.
+
+The same state reaches a favorable order in exactly **two** fixed-e
+four-block moves.  Therefore this does **not** refute Astra's component-level
+dichotomy.
+
+Executable certificate:
+
+`experiments/rank4_binary_n14_one_step_saturation_counterexample.py`.
+
+## Live target: component-level dichotomy
+
+Return to the statement suggested by Astra:
+
+> For a fixed omitted element e, every deletion-CBO component under
+> CBO-preserving four-block permutations either contains an e-insertable
+> order, or M contains a rank-three flat of size 3k containing e.
+
+The n=14 counterexample explains why the component hypothesis is materially
+stronger than one-step rigidity: local rigidity can be transient.  A first
+four-block move may remain bad while changing the local closure pattern enough
+to permit a second repair.
 
 ## Why this branch exists
 
@@ -31,8 +92,9 @@ favorable for e**, then some blocker triple `T` of `sigma` satisfies
 Under the already-certified no-dangerous cap this says that
 `cl_M(T)` is a rank-three flat of exactly `3k` elements containing `e`.
 
-This is stronger than the four-block component dichotomy: a closed all-bad
-four-block component automatically has no favorable one-step neighbor.
+This was proposed as a stronger route to the component theorem, but the n=14
+counterexample above falsifies it.  The remaining value of the section is as
+diagnostic evidence for local mechanisms inside a component.
 
 ## Falsification evidence
 
@@ -403,3 +465,38 @@ weaker geometric saturation conjecture survived.
 The remaining 40 exact-binary states require alternate local cores; many
 already have a saturated current blocker closure.  No claim of a universal
 single skip-triple template is made.
+
+
+## Updated mathematical interpretation
+
+The exact binary n=10 census had made the one-step statement look unusually
+strong: 2,264 of 2,268 one-step-rigid states already expose a saturated blocker
+closure, and the remaining four period-three states force saturation
+indirectly.  The n=14 witness shows that this phenomenon does not persist.
+
+The correct proof architecture must exploit **closure of an entire all-bad
+component**, not rigidity of one state.  In particular, a local move should be
+viewed as one of two things:
+
+1. an escape edge that changes the obstruction geometry while staying in the
+   bad component; or
+2. a failed probe that emits a closure incidence.
+
+The desired contradiction must accumulate information across every state
+reachable inside a hypothetical closed all-bad component.
+
+This is now much closer to the van-den-Heuvel--Thomasse maximal-push paradigm:
+a single non-improving placement is not enough; one needs a maximal/closed
+family under pushes before the structural tight set is forced.
+
+## Exactly next research task
+
+Take the explicit n=14 two-step counterexample as a model of **transient
+rigidity**.  Compare its initial state with the intermediate bad state on a
+shortest repair path and identify a quantity/structure that necessarily changes
+on the first move.
+
+Then formulate a component invariant/propagation statement that cannot cycle
+indefinitely without producing a 3k-point rank-three flat through e.
+
+Do not return to a one-step theorem.
