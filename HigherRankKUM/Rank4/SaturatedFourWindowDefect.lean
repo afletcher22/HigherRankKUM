@@ -89,9 +89,15 @@ theorem multiHitStarts_ncard_le_seven
   have hcount_ge_one : ∀ i : Fin n, 1 ≤ fourHitCount hn Good i := by
     intro i
     have hi := hHit i
-    unfold fourHitCount
-    fin_cases hi with
-    | _ => simp_all
+    rcases hi with h0 | h1 | h2 | h3
+    · unfold fourHitCount
+      simp [h0]
+    · unfold fourHitCount
+      simp [h1]
+    · unfold fourHitCount
+      simp [h2]
+    · unfold fourHitCount
+      simp [h3]
   have hpoint :
       ∀ i : Fin n,
         1 + (if i ∈ B then 1 else 0) ≤ fourHitCount hn Good i := by
