@@ -1,0 +1,71 @@
+{
+  "scope": "complete binary represented n=10 class satisfying exact two-deletion flat caps (2,4,6)",
+  "moves": "arbitrary CBO-preserving permutations of four consecutive positions; omitted element fixed; no pivots",
+  "bad_states": 43124,
+  "distance_histogram": {
+    "1": 40856,
+    "2": 2028,
+    "3": 208,
+    "4": 32
+  },
+  "one_step_rigid_bad_states": 2268,
+  "one_step_rigid_cyclic_reversal_word_types": 15,
+  "one_step_rigid_word_distribution": {
+    "000100011": 24,
+    "000100101": 184,
+    "000101011": 16,
+    "000110111": 624,
+    "001001001": 208,
+    "001001011": 48,
+    "001010011": 40,
+    "001010101": 112,
+    "001010111": 432,
+    "001011011": 128,
+    "001011101": 64,
+    "001100111": 96,
+    "010101011": 36,
+    "010110111": 224,
+    "011011011": 32
+  },
+  "word_type_count_by_distance": {
+    "1": 19,
+    "2": 15,
+    "3": 4,
+    "4": 1
+  },
+  "distance_three_word_distribution": {
+    "000100101": 16,
+    "000110111": 64,
+    "001010101": 96,
+    "001011101": 32
+  },
+  "distance_four_word_distribution": {
+    "000110111": 32
+  },
+  "distance_four_cases": [
+    {
+      "orbit_index": 2,
+      "omitted_label": 6,
+      "word": "000110111"
+    },
+    {
+      "orbit_index": 2,
+      "omitted_label": 7,
+      "word": "000110111"
+    }
+  ],
+  "one_step_rigid_by_orbit": {
+    "1": 384,
+    "2": 256,
+    "3": 480,
+    "6": 192,
+    "8": 192,
+    "9": 96,
+    "10": 304,
+    "11": 96,
+    "13": 64,
+    "14": 204
+  },
+  "interpretation": "Four-block rigidity collapses the exact bad-state universe to a small finite set of blocker-word types. Only four cyclic/reversal types occur at distance three, and the exact distance-four states all have the single type 000110111. This word contains both a three-blocker run and a two-blocker run, hence the certified run-geometry lemmas expose a parallel pair and a second small circuit in every worst state.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
