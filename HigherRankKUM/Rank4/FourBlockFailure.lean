@@ -1,4 +1,5 @@
 import HigherRankKUM.Rank4.FourBlockBoundary
+import HigherRankKUM.CyclicWindowCardinality
 
 namespace HigherRankKUM
 namespace Rank4FourBlockFailure
@@ -78,6 +79,34 @@ theorem exists_nonbase_boundary_of_not_cyclicBasisOrder_fourBlockReorder
     simp [fourBlockBoundaryStarts]
   · apply hnone
     simp [fourBlockBoundaryStarts]
+
+
+/-- Under the ambient rank-four and ground-set hypotheses, a failed explicit
+four-block repair has a genuinely dependent witness among the same six
+boundary windows. -/
+theorem exists_dep_boundary_of_not_cyclicBasisOrder_applyFourBlockPerm
+    {M : Matroid α} {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h7n : 7 ≤ n)
+    (hEsub : E ⊆ M.E)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (σ : Fin n ≃ E) (s : Fin n)
+    (π : Equiv.Perm (Fin 4))
+    (hσ : CyclicBasisOrder M 4 hn σ)
+    (hfail :
+      ¬ CyclicBasisOrder M 4 hn
+        (applyFourBlockPerm hn (by omega) σ s π)) :
+    ∃ i : Fin n,
+      i ∈ fourBlockBoundaryStarts hn s ∧
+      M.Dep
+        (cyclicWindow 4 hn
+          (applyFourBlockPerm hn (by omega) σ s π) i) := by
+  obtain ⟨i, hi, hnot⟩ :=
+    exists_nonbase_boundary_of_not_cyclicBasisOrder_applyFourBlockPerm
+      hn h7n σ s π hσ hfail
+  refine ⟨i, hi, ?_⟩
+  exact cyclicWindow_four_dep_of_not_isBase
+    hn (by omega) hEsub hRank
+    (applyFourBlockPerm hn (by omega) σ s π) i hnot
 
 end
 
