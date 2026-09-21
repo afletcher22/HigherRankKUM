@@ -1,5 +1,6 @@
 import Mathlib.Combinatorics.Matroid.Closure
 import Mathlib.Combinatorics.Matroid.Loop
+import Mathlib.Combinatorics.Matroid.Minor.Contract
 
 namespace HigherRankKUM
 namespace BlockerClosure
@@ -92,6 +93,35 @@ theorem mem_closure_fourfold_inter_of_adjacent_indep
     tauto
   rw [hinter] at h
   exact h
+
+
+/-- For an independent set avoiding a nonloop `e`, being a blocker for `e`
+is exactly being dependent after contracting `e`.
+
+This is the formal bridge from the deletion-CBO blocker word to ordinary
+rank-three dependence geometry in `M / e`. -/
+theorem mem_closure_iff_contractElem_dep
+    {M : Matroid α} {T : Set α} {e : α}
+    (he : M.IsNonloop e)
+    (hT : M.Indep T)
+    (heT : e ∉ T) :
+    e ∈ M.closure T ↔ (M ／ ({e} : Set α)).Dep T := by
+  constructor
+  · intro hcl
+    have hdepInsert : M.Dep (insert e T) :=
+      (hT.mem_closure_iff_of_notMem heT).1 hcl
+    have hdis : Disjoint T ({e} : Set α) := by
+      rw [Set.disjoint_singleton_right]
+      exact heT
+    apply he.indep.contract_dep_iff.2
+    refine ⟨hdis, ?_⟩
+    simpa [Set.union_comm] using hdepInsert
+  · intro hdepContract
+    have hambient :=
+      he.indep.contract_dep_iff.1 hdepContract
+    apply (hT.mem_closure_iff_of_notMem heT).2
+    simpa [Set.union_comm] using hambient.2
+
 
 /-- Four closure constraints with empty common intersection are impossible for
 a nonloop. This is the abstract endpoint behind the rank-four fact that a
