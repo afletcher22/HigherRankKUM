@@ -1,0 +1,101 @@
+{
+  "scope": "normalized four-block GF(2)^4 local audit; not a global matroid search",
+  "fixed_A": [
+    1,
+    2
+  ],
+  "fixed_B": [
+    4,
+    8
+  ],
+  "forced_neighbor_local_configurations": 256,
+  "valid_repartition_count_histogram": {
+    "1": 79,
+    "2": 102,
+    "3": 40,
+    "4": 30,
+    "5": 5
+  },
+  "rigid_closure_side_histogram": {
+    "both": 33,
+    "left_only": 23,
+    "right_only": 23
+  },
+  "left_only_rigid_example": {
+    "C": [
+      1,
+      2
+    ],
+    "D": [
+      5,
+      9
+    ],
+    "left_relation": [
+      [
+        false,
+        true
+      ],
+      [
+        true,
+        false
+      ]
+    ],
+    "right_relation": [
+      [
+        false,
+        true
+      ],
+      [
+        true,
+        false
+      ]
+    ],
+    "valid_repartitions": [
+      [
+        0,
+        1
+      ]
+    ],
+    "left_closure_count": 2,
+    "right_closure_count": 0
+  },
+  "right_only_rigid_example": {
+    "C": [
+      5,
+      6
+    ],
+    "D": [
+      4,
+      8
+    ],
+    "left_relation": [
+      [
+        false,
+        true
+      ],
+      [
+        true,
+        false
+      ]
+    ],
+    "right_relation": [
+      [
+        false,
+        true
+      ],
+      [
+        true,
+        false
+      ]
+    ],
+    "valid_repartitions": [
+      [
+        0,
+        1
+      ]
+    ],
+    "left_closure_count": 0,
+    "right_closure_count": 2
+  },
+  "status": "exact finite anti-overgeneralization certificate"
+}
