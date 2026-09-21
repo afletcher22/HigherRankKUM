@@ -90,6 +90,7 @@ import HigherRankKUM.Rank4.CyclicWindowFour
 import HigherRankKUM.Rank4.FourBlockMove
 import HigherRankKUM.Rank4.FourBlockPerm
 import HigherRankKUM.Rank4.SevenMoveTypes
+import HigherRankKUM.Rank4.EndpointSwapGeometry
 import HigherRankKUM.Rank4.FourBlockBoundary
 import HigherRankKUM.Rank4.BlockerCycle
 import HigherRankKUM.Rank4.BlockerRuns
