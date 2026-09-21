@@ -1,3 +1,4 @@
+import HigherRankKUM.LocalExchangeClosure
 import HigherRankKUM.CyclicIndex
 import HigherRankKUM.Density
 import HigherRankKUM.CyclicOrder
@@ -92,6 +93,7 @@ import HigherRankKUM.Rank4.FourBlockPerm
 import HigherRankKUM.Rank4.FourBlockOffsets
 import HigherRankKUM.Rank4.SevenTypeMoves
 import HigherRankKUM.Rank4.EndpointSwapValues
+import HigherRankKUM.Rank4.EndpointSwapBoundary
 import HigherRankKUM.Rank4.FourBlockBoundary
 import HigherRankKUM.Rank4.BlockerCycle
 import HigherRankKUM.Rank4.BlockerRuns
