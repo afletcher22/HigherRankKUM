@@ -35,7 +35,7 @@ theorem parallel_class_ncard_le_k
     hGroundFin.subset hclSub
   have hclNonempty : (M.closure ({e} : Set α)).Nonempty := by
     refine ⟨e, ?_⟩
-    exact M.subset_closure (by simpa using he.mem_ground) (by simp)
+    exact M.subset_closure ({e} : Set α) (by simpa using he.mem_ground) (by simp)
   have hclRank : M.eRk (M.closure ({e} : Set α)) = (1 : ℕ∞) := by
     rw [M.eRk_closure_eq, he.eRk_eq]
   have hclProper : M.closure ({e} : Set α) ≠ M.E := by
@@ -90,7 +90,7 @@ theorem threeRunCenter_mem_parallel_class
   have hxGround : x ∈ M.E :=
     hEsub (σ (cyclicIndex n hn i 2)).property
   have hxSelf : x ∈ M.closure ({x} : Set α) :=
-    M.subset_closure (by simpa using hxGround) (by simp)
+    M.subset_closure ({x} : Set α) (by simpa using hxGround) (by simp)
   rw [hclEq]
   exact hxSelf
 
