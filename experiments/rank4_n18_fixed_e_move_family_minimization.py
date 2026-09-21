@@ -95,7 +95,7 @@ def sampled_bad_states():
     return bad
 
 
-def audit(bad, patterns, maxdepth=8):
+def audit(bad, patterns, maxdepth=8, stop_after_failures=None):
     hist = Counter()
     failures = []
     for e, S in bad.items():
@@ -103,6 +103,9 @@ def audit(bad, patterns, maxdepth=8):
             d = distance_to_success((e, s), patterns, maxdepth=maxdepth)
             if d is None:
                 failures.append((e, s))
+                if (stop_after_failures is not None and
+                        len(failures) >= stop_after_failures):
+                    return hist, failures
             else:
                 hist[d] += 1
     return hist, failures
@@ -116,24 +119,22 @@ def main():
 
     candidates = [p for p in ALL4 if p not in baseline]
     working = []
-    rows = []
     for p in candidates:
-        h, failures = audit(bad, baseline + (p,))
-        row = {
-            "permutation": list(p),
-            "failures_within_depth_8": len(failures),
-        }
+        _, failures = audit(
+            bad, baseline + (p,), stop_after_failures=1)
         if not failures:
-            row["maximum_depth"] = max(h)
-            row["distance_histogram"] = dict(sorted(h.items()))
             working.append(p)
-        rows.append(row)
 
     assert tuple(working) == WORKING_EXTRAS
+    working_audits = {}
     for p in working:
         h, failures = audit(bad, baseline + (p,))
         assert not failures
         assert max(h) == 6
+        working_audits[str(p)] = {
+            "maximum_depth": max(h),
+            "distance_histogram": dict(sorted(h.items())),
+        }
 
     print(json.dumps({
         "scope": (
@@ -147,8 +148,9 @@ def main():
             "failures_within_depth_8": len(f0),
             "distance_histogram_for_repaired_states": dict(sorted(h0.items())),
         },
-        "single_extra_search": rows,
+        "single_extra_candidates_tested": len(candidates),
         "working_single_extras": [list(p) for p in working],
+        "working_extra_full_audits": working_audits,
         "interpretation": (
             "All 23 nonidentity S4 permutations are unnecessary on this "
             "historical stress set. Starting from the six-type baseline, "
