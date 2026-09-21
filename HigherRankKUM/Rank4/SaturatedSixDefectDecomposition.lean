@@ -28,6 +28,128 @@ theorem saturatedFullOrder_tail_value
   rw [saturatedFullOrder_value]
   rw [saturatedIndexEquiv_tail]
 
+
+/-- Explicit values of the ten-position tail HHHR HR HH RR. -/
+@[simp] theorem saturatedFullOrder_tail_H0
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2), by omega⟩ : α) =
+      (flatOrder ⟨3 * k - 6, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (0 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_H1
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 1, by omega⟩ : α) =
+      (flatOrder ⟨3 * k - 5, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (1 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_H2
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 2, by omega⟩ : α) =
+      (flatOrder ⟨3 * k - 4, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (2 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_R3
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 3, by omega⟩ : α) =
+      (outsideOrder ⟨k - 2, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (3 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_H4
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 4, by omega⟩ : α) =
+      (flatOrder ⟨3 * k - 3, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (4 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_R5
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 5, by omega⟩ : α) =
+      (outsideOrder ⟨k - 1, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (5 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_H6
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 6, by omega⟩ : α) =
+      (flatOrder ⟨3 * k - 2, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (6 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_H7
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 7, by omega⟩ : α) =
+      (flatOrder ⟨3 * k - 1, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (7 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_R8
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 8, by omega⟩ : α) =
+      (outsideOrder ⟨k, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (8 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
+@[simp] theorem saturatedFullOrder_tail_R9
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+        ⟨4 * (k - 2) + 9, by omega⟩ : α) =
+      (outsideOrder ⟨k + 1, by omega⟩ : α) := by
+  have h := saturatedFullOrder_tail_value
+    M hk hHsub flatOrder outsideOrder (9 : Fin 10)
+  simpa [saturatedTailSlot, saturatedSlotValue] using h
+
 @[simp] theorem saturatedFullOrder_regular_H0
     (M : Matroid α) {H : Set α} {k : ℕ}
     (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
@@ -364,6 +486,257 @@ theorem saturated_regular_region_window_decomposition
     dsimp [iH, iR, qn]
     ext x
     simp [or_comm, or_left_comm, or_assoc]
+
+
+/-- Nondefect tail start p+1 has the automatic 3H+1R form. -/
+theorem saturated_tail_p1_window_decomposition
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 1, by omega⟩ =
+      insert (outsideOrder ⟨k - 2, by omega⟩ : α)
+        (cyclicWindow 3 (by omega) flatOrder
+          ⟨3 * k - 5, by omega⟩) := by
+  let i : Fin (4 * k + 2) := ⟨4 * (k - 2) + 1, by omega⟩
+  rw [cyclicWindow_four_eq]
+  have g1 : cyclicIndex (4 * k + 2) (by omega) i 1 =
+      ⟨4 * (k - 2) + 2, by omega⟩ := by
+    dsimp [i]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (4 * k + 2) (by omega) i 1 (by omega)
+  have g2 : cyclicIndex (4 * k + 2) (by omega) i 2 =
+      ⟨4 * (k - 2) + 3, by omega⟩ := by
+    dsimp [i]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (4 * k + 2) (by omega) i 2 (by omega)
+  have g3 : cyclicIndex (4 * k + 2) (by omega) i 3 =
+      ⟨4 * (k - 2) + 4, by omega⟩ := by
+    dsimp [i]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (4 * k + 2) (by omega) i 3 (by omega)
+  rw [g1, g2, g3,
+    saturatedFullOrder_tail_H1,
+    saturatedFullOrder_tail_H2,
+    saturatedFullOrder_tail_R3,
+    saturatedFullOrder_tail_H4]
+  rw [cyclicWindow_three_eq]
+  let iH : Fin (3 * k) := ⟨3 * k - 5, by omega⟩
+  have h1 : cyclicIndex (3 * k) (by omega) iH 1 =
+      ⟨3 * k - 4, by omega⟩ := by
+    dsimp [iH]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (3 * k) (by omega) iH 1 (by omega)
+  have h2 : cyclicIndex (3 * k) (by omega) iH 2 =
+      ⟨3 * k - 3, by omega⟩ := by
+    dsimp [iH]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (3 * k) (by omega) iH 2 (by omega)
+  rw [h1, h2]
+  dsimp [i, iH]
+  ext x
+  simp [or_comm, or_left_comm, or_assoc]
+
+/-- Nondefect tail start p+4 has the automatic 3H+1R form. -/
+theorem saturated_tail_p4_window_decomposition
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 4, by omega⟩ =
+      insert (outsideOrder ⟨k - 1, by omega⟩ : α)
+        (cyclicWindow 3 (by omega) flatOrder
+          ⟨3 * k - 3, by omega⟩) := by
+  let i : Fin (4 * k + 2) := ⟨4 * (k - 2) + 4, by omega⟩
+  rw [cyclicWindow_four_eq]
+  have g1 : cyclicIndex (4 * k + 2) (by omega) i 1 =
+      ⟨4 * (k - 2) + 5, by omega⟩ := by
+    dsimp [i]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (4 * k + 2) (by omega) i 1 (by omega)
+  have g2 : cyclicIndex (4 * k + 2) (by omega) i 2 =
+      ⟨4 * (k - 2) + 6, by omega⟩ := by
+    dsimp [i]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (4 * k + 2) (by omega) i 2 (by omega)
+  have g3 : cyclicIndex (4 * k + 2) (by omega) i 3 =
+      ⟨4 * (k - 2) + 7, by omega⟩ := by
+    dsimp [i]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (4 * k + 2) (by omega) i 3 (by omega)
+  rw [g1, g2, g3,
+    saturatedFullOrder_tail_H4,
+    saturatedFullOrder_tail_R5,
+    saturatedFullOrder_tail_H6,
+    saturatedFullOrder_tail_H7]
+  rw [cyclicWindow_three_eq]
+  let iH : Fin (3 * k) := ⟨3 * k - 3, by omega⟩
+  have h1 : cyclicIndex (3 * k) (by omega) iH 1 =
+      ⟨3 * k - 2, by omega⟩ := by
+    dsimp [iH]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (3 * k) (by omega) iH 1 (by omega)
+  have h2 : cyclicIndex (3 * k) (by omega) iH 2 =
+      ⟨3 * k - 1, by omega⟩ := by
+    dsimp [iH]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (3 * k) (by omega) iH 2 (by omega)
+  rw [h1, h2]
+  dsimp [i, iH]
+  ext x
+  simp [or_comm, or_left_comm, or_assoc]
+
+/-- The wraparound nondefect start p+9 has the automatic 3H+1R form. -/
+theorem saturated_tail_p9_window_decomposition
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α)) :
+    cyclicWindow 4 (by omega)
+        (saturatedFullOrder M hk hHsub flatOrder outsideOrder)
+        ⟨4 * (k - 2) + 9, by omega⟩ =
+      insert (outsideOrder ⟨k + 1, by omega⟩ : α)
+        (cyclicWindow 3 (by omega) flatOrder ⟨0, by omega⟩) := by
+  let i : Fin (4 * k + 2) := ⟨4 * (k - 2) + 9, by omega⟩
+  rw [cyclicWindow_four_eq]
+  have g1 : cyclicIndex (4 * k + 2) (by omega) i 1 =
+      ⟨0, by omega⟩ := by
+    apply Fin.ext
+    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (4 * k + 2) (by omega) i 1 (by omega) (by omega)
+    have hv := congrArg Fin.val h
+    dsimp [i] at hv ⊢
+    omega
+  have g2 : cyclicIndex (4 * k + 2) (by omega) i 2 =
+      ⟨1, by omega⟩ := by
+    apply Fin.ext
+    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (4 * k + 2) (by omega) i 2 (by omega) (by omega)
+    have hv := congrArg Fin.val h
+    dsimp [i] at hv ⊢
+    omega
+  have g3 : cyclicIndex (4 * k + 2) (by omega) i 3 =
+      ⟨2, by omega⟩ := by
+    apply Fin.ext
+    have h := cyclicIndex_eq_mk_sub_of_ge_of_lt_two_mul
+      (4 * k + 2) (by omega) i 3 (by omega) (by omega)
+    have hv := congrArg Fin.val h
+    dsimp [i] at hv ⊢
+    omega
+  let q0 : Fin (k - 1) := ⟨0, by omega⟩
+  have h0 :
+      (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+          ⟨0, by omega⟩ : α) = (flatOrder ⟨0, by omega⟩ : α) := by
+    simpa [q0] using
+      (saturatedFullOrder_regular_H0
+        M hk hHsub flatOrder outsideOrder q0)
+  have h1v :
+      (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+          ⟨1, by omega⟩ : α) = (flatOrder ⟨1, by omega⟩ : α) := by
+    simpa [q0] using
+      (saturatedFullOrder_regular_H1
+        M hk hHsub flatOrder outsideOrder q0)
+  have h2v :
+      (saturatedFullOrder M hk hHsub flatOrder outsideOrder
+          ⟨2, by omega⟩ : α) = (flatOrder ⟨2, by omega⟩ : α) := by
+    simpa [q0] using
+      (saturatedFullOrder_regular_H2
+        M hk hHsub flatOrder outsideOrder q0)
+  rw [g1, g2, g3, saturatedFullOrder_tail_R9, h0, h1v, h2v]
+  rw [cyclicWindow_three_eq]
+  let iH : Fin (3 * k) := ⟨0, by omega⟩
+  have hh1 : cyclicIndex (3 * k) (by omega) iH 1 =
+      ⟨1, by omega⟩ := by
+    dsimp [iH]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (3 * k) (by omega) iH 1 (by omega)
+  have hh2 : cyclicIndex (3 * k) (by omega) iH 2 =
+      ⟨2, by omega⟩ := by
+    dsimp [iH]
+    simpa using cyclicIndex_eq_mk_add_of_lt
+      (3 * k) (by omega) iH 2 (by omega)
+  rw [hh1, hh2]
+  dsimp [i, iH]
+  ext x
+  simp [or_comm, or_left_comm, or_assoc]
+
+/-- Full nondefect decomposition for the explicit saturated schedule.
+
+For every start outside the six named defect starts, the rank-four window is
+one complement element plus one cyclic rank-three window of the flat order. -/
+theorem saturated_nondefect_window_decomposition
+    (M : Matroid α) {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k) (hHsub : H ⊆ M.E)
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α))
+    (i : Fin (4 * k + 2))
+    (hi : i ∉ saturatedDefectStarts k hk) :
+    ∃ iH : Fin (3 * k), ∃ iR : Fin (k + 2),
+      cyclicWindow 4 (by omega)
+          (saturatedFullOrder M hk hHsub flatOrder outsideOrder) i =
+        insert (outsideOrder iR : α)
+          (cyclicWindow 3 (by omega) flatOrder iH) := by
+  by_cases hreg : i.val < 4 * (k - 2) + 1
+  · exact saturated_regular_region_window_decomposition
+      M hk hHsub flatOrder outsideOrder i hreg
+  have hn2 : i.val ≠ 4 * (k - 2) + 2 := by
+    intro hv
+    apply hi
+    simp [saturatedDefectStarts, Fin.ext_iff, hv]
+  have hn3 : i.val ≠ 4 * (k - 2) + 3 := by
+    intro hv
+    apply hi
+    simp [saturatedDefectStarts, Fin.ext_iff, hv]
+  have hn5 : i.val ≠ 4 * (k - 2) + 5 := by
+    intro hv
+    apply hi
+    simp [saturatedDefectStarts, Fin.ext_iff, hv]
+  have hn6 : i.val ≠ 4 * (k - 2) + 6 := by
+    intro hv
+    apply hi
+    simp [saturatedDefectStarts, Fin.ext_iff, hv]
+  have hn7 : i.val ≠ 4 * (k - 2) + 7 := by
+    intro hv
+    apply hi
+    simp [saturatedDefectStarts, Fin.ext_iff, hv]
+  have hn8 : i.val ≠ 4 * (k - 2) + 8 := by
+    intro hv
+    apply hi
+    simp [saturatedDefectStarts, Fin.ext_iff, hv]
+  have hcases :
+      i.val = 4 * (k - 2) + 1 ∨
+      i.val = 4 * (k - 2) + 4 ∨
+      i.val = 4 * (k - 2) + 9 := by
+    omega
+  rcases hcases with h1 | h4 | h9
+  · have hiEq :
+        i = ⟨4 * (k - 2) + 1, by omega⟩ := by
+      apply Fin.ext
+      exact h1
+    rw [hiEq]
+    exact ⟨⟨3 * k - 5, by omega⟩, ⟨k - 2, by omega⟩,
+      saturated_tail_p1_window_decomposition
+        M hk hHsub flatOrder outsideOrder⟩
+  · have hiEq :
+        i = ⟨4 * (k - 2) + 4, by omega⟩ := by
+      apply Fin.ext
+      exact h4
+    rw [hiEq]
+    exact ⟨⟨3 * k - 3, by omega⟩, ⟨k - 1, by omega⟩,
+      saturated_tail_p4_window_decomposition
+        M hk hHsub flatOrder outsideOrder⟩
+  · have hiEq :
+        i = ⟨4 * (k - 2) + 9, by omega⟩ := by
+      apply Fin.ext
+      exact h9
+    rw [hiEq]
+    exact ⟨⟨0, by omega⟩, ⟨k + 1, by omega⟩,
+      saturated_tail_p9_window_decomposition
+        M hk hHsub flatOrder outsideOrder⟩
 
 end
 
