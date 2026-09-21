@@ -122,6 +122,47 @@ theorem closure_ncard_eq_three_mul_of_saturated
   rw [Set.ncard_insert_of_notMem heX hXfin, hXcard]
   omega
 
+
+/-- A t=0-saturated blocker flat is itself a solved divisible rank-three
+instance.
+
+Under the actual deletion identity, its closure is exactly X ∪ {e}, has
+cardinality 3k and rank three, and therefore inherits uniform density from
+strict rank-four density.  The frozen Rank3KUM theorem supplies a cyclic
+basis order of the restriction. -/
+theorem exists_cyclicBasisOrder_saturated_closure
+    {M : Matroid α} {k : ℕ} {E X : Set α} {e : α}
+    (hk : 0 < k)
+    (hGroundFin : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4)
+    (hNoDangerous :
+      ∀ H : Set α, ¬ Rank4GcdTwoDeletion.DangerousHyperplane M k H)
+    (hEfin : E.Finite)
+    (hEcard : E.ncard = 4 * k + 1)
+    (hEeq : E = M.E \ {e})
+    (heE : e ∈ M.E)
+    (hXsub : X ⊆ E)
+    (hXrank : M.eRk X = (3 : ℕ∞))
+    (hecl : e ∈ M.closure X)
+    (hXcard : X.ncard = 3 * k - 1)
+    (σ : Fin (4 * k + 1) ≃ E)
+    (hCBO : CyclicBasisOrder M 4 (by omega) σ) :
+    ∃ order : Fin (3 * k) ≃ (M ↾ M.closure X).E,
+      CyclicBasisOrder (M ↾ M.closure X) 3 (by omega) order := by
+  have hclCard :
+      (M.closure X).ncard = 3 * k :=
+    closure_ncard_eq_three_mul_of_saturated
+      hGroundFin hRank hStrict hNoDangerous
+      hEfin hEcard hEeq heE hXsub hXrank hecl hXcard σ hCBO
+  have hclRank :
+      M.eRk (M.closure X) = (3 : ℕ∞) := by
+    rw [M.eRk_closure_eq, hXrank]
+  exact
+    Rank4SaturatedFlatRankThree.exists_cyclicBasisOrder_restrict_of_rankThree_ncard_three_mul
+      hk hGroundFin hRank hStrict
+      (M.closure_subset_ground X) hclRank hclCard
+
 end
 
 end Rank4T0SaturatedFlatExact
