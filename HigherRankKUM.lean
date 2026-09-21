@@ -95,6 +95,7 @@ import HigherRankKUM.Rank4.CyclicFlatCapacity
 import HigherRankKUM.Rank4.T0SaturatedCap
 import HigherRankKUM.Rank4.T0FixedEState
 import HigherRankKUM.Rank4.T0FixedELocalGeometry
+import HigherRankKUM.Rank4.T0FixedEThreeRunCap
 import HigherRankKUM.Rank4.CyclicIndexArithmetic
 import HigherRankKUM.Rank4.CyclicPigeonhole
 import HigherRankKUM.Rank4.FiniteSchedule
