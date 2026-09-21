@@ -287,8 +287,8 @@ theorem two_consecutive_blockers_fundCircuit_supported_shared_pair
     intro x hx
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx ⊢
     rcases hx with hx | hx
-    · exact Or.inr (Or.inl hx)
-    · exact Or.inr (Or.inr (Or.inl hx))
+    · exact Or.inr (Or.inl (by simpa [cyclicIndex_add] using hx))
+    · exact Or.inr (Or.inr (Or.inl (by simpa [cyclicIndex_add] using hx)))
   have hTind : M.Indep T :=
     (hCBO i).indep.subset hTsub
   have hTE : T ⊆ E := by
