@@ -1,4 +1,5 @@
 import HigherRankKUM.Rank4.CyclicWindowFour
+import Mathlib.Logic.Equiv.Fintype
 
 namespace HigherRankKUM
 namespace Rank4FourBlockMove
@@ -78,6 +79,100 @@ theorem cyclicWindow_four_eq_of_disjoint_fourBlockPositions
       exact hdis hjpos hjmove
     have heq : τ j = σ j := hmove.1 j hjout
     exact congrArg Subtype.val heq
+
+/-- The embedding of `Fin 4` into the four consecutive cyclic positions
+beginning at `s`. -/
+def fourBlockEmbedding
+    {n : ℕ} (hn : 0 < n) (h4n : 4 ≤ n) (s : Fin n) :
+    Fin 4 ↪ Fin n where
+  toFun q := cyclicIndex n hn s q.val
+  inj' := by
+    intro a b hab
+    apply Fin.ext
+    exact cyclicIndex_injective_offsets n hn s
+      (by omega) (by omega) hab
+
+@[simp] theorem fourBlockEmbedding_apply
+    {n : ℕ} (hn : 0 < n) (h4n : 4 ≤ n) (s : Fin n) (q : Fin 4) :
+    fourBlockEmbedding hn h4n s q = cyclicIndex n hn s q.val := rfl
+
+theorem range_fourBlockEmbedding
+    {n : ℕ} (hn : 0 < n) (h4n : 4 ≤ n) (s : Fin n) :
+    Set.range (fourBlockEmbedding hn h4n s) = fourBlockPositions hn s := by
+  rfl
+
+/-- Extend a permutation of the four local slots to the full cyclic position
+set, fixing every position outside the chosen four-block. -/
+def fourBlockPositionPerm
+    {n : ℕ} (hn : 0 < n) (h4n : 4 ≤ n) (s : Fin n)
+    (p : Equiv.Perm (Fin 4)) :
+    Equiv.Perm (Fin n) :=
+  p.viaFintypeEmbedding (fourBlockEmbedding hn h4n s)
+
+@[simp] theorem fourBlockPositionPerm_apply_local
+    {n : ℕ} (hn : 0 < n) (h4n : 4 ≤ n) (s : Fin n)
+    (p : Equiv.Perm (Fin 4)) (q : Fin 4) :
+    fourBlockPositionPerm hn h4n s p (cyclicIndex n hn s q.val) =
+      cyclicIndex n hn s (p q).val := by
+  exact Equiv.Perm.viaFintypeEmbedding_apply_image
+    p (fourBlockEmbedding hn h4n s) q
+
+theorem fourBlockPositionPerm_apply_outside
+    {n : ℕ} (hn : 0 < n) (h4n : 4 ≤ n) (s : Fin n)
+    (p : Equiv.Perm (Fin 4)) (i : Fin n)
+    (hi : i ∉ fourBlockPositions hn s) :
+    fourBlockPositionPerm hn h4n s p i = i := by
+  apply Equiv.Perm.viaFintypeEmbedding_apply_notMem_range
+  simpa [range_fourBlockEmbedding hn h4n s] using hi
+
+/-- The concrete order obtained by applying a local `S₄` permutation to the
+four cyclic positions beginning at `s`. -/
+def reorderFourBlock
+    {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ : Fin n ≃ E) (s : Fin n) (p : Equiv.Perm (Fin 4)) :
+    Fin n ≃ E :=
+  (fourBlockPositionPerm hn h4n s p).trans σ
+
+@[simp] theorem reorderFourBlock_apply_local
+    {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ : Fin n ≃ E) (s : Fin n) (p : Equiv.Perm (Fin 4))
+    (q : Fin 4) :
+    reorderFourBlock hn h4n σ s p (cyclicIndex n hn s q.val) =
+      σ (cyclicIndex n hn s (p q).val) := by
+  simp [reorderFourBlock, fourBlockPositionPerm_apply_local]
+
+theorem reorderFourBlock_apply_outside
+    {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ : Fin n ≃ E) (s : Fin n) (p : Equiv.Perm (Fin 4))
+    (i : Fin n) (hi : i ∉ fourBlockPositions hn s) :
+    reorderFourBlock hn h4n σ s p i = σ i := by
+  simp [reorderFourBlock,
+    fourBlockPositionPerm_apply_outside hn h4n s p i hi]
+
+/-- Every concrete local permutation induces the abstract four-block reorder
+relation. -/
+theorem reorderFourBlock_isFourBlockReorder
+    {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ : Fin n ≃ E) (s : Fin n) (p : Equiv.Perm (Fin 4)) :
+    FourBlockReorder hn σ (reorderFourBlock hn h4n σ s p) s := by
+  refine ⟨?_, ?_⟩
+  · intro i hi
+    exact reorderFourBlock_apply_outside hn h4n σ s p i hi
+  · ext x
+    constructor
+    · rintro ⟨q, rfl⟩
+      refine ⟨p q, ?_⟩
+      exact congrArg Subtype.val
+        (reorderFourBlock_apply_local hn h4n σ s p q)
+    · rintro ⟨q, rfl⟩
+      refine ⟨p.symm q, ?_⟩
+      have h :=
+        reorderFourBlock_apply_local hn h4n σ s p (p.symm q)
+      simpa using congrArg Subtype.val h
 
 /-- A four-block reorder preserves a rank-four cyclic basis ordering once the
 finitely many rank-four windows meeting the moved position block have been
