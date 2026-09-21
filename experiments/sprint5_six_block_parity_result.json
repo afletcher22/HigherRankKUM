@@ -1,0 +1,25 @@
+{
+  "complete": true,
+  "counts": {
+    "forced_parity_flips": 0,
+    "forced_preserving_moves": 5120,
+    "legal_nonidentity_moves": 74752,
+    "six_block_contexts": 65536,
+    "slack_created": 69632
+  },
+  "first_parity_flip": null,
+  "forced_preserving_local_phi_delta_histogram": {
+    "0": 1816,
+    "2": 1248,
+    "4": 368,
+    "6": 32,
+    "8": 4,
+    "-2": 1248,
+    "-4": 368,
+    "-6": 32,
+    "-8": 4
+  },
+  "left_contexts": 256,
+  "right_contexts": 256,
+  "scope": "all normalized binary rank-four forced six-block contexts"
+}
