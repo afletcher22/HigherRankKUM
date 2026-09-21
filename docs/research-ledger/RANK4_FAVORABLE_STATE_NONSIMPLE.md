@@ -45,6 +45,34 @@ conjecture survives the complete non-simple binary n=10 represented class.
 This strictly extends the earlier simple-binary census: parallel pairs and
 larger allowed parallel structure are now included.
 
+## Exact binary n=12 strict-4k census
+
+The same branch now also contains
+
+`experiments/rank4_binary_n12_nonsimple_exact.py`.
+
+For n=12, universal one-element deletion robustness is exactly the integral
+flat-cap profile
+
+- rank 1: at most 2;
+- rank 2: at most 5;
+- rank 3: at most 8.
+
+Allowing arbitrary binary parallel multiplicities consistent with these caps
+gives **610,295** multiplicity patterns.  They collapse to exactly **85**
+`GL(4,2)` orbits.
+
+Every one of the 12 labelled omitted elements was checked on every orbit
+representative, for 1,020 pointed orbit-representative checks.  Every check
+produced and directly verified a favorable deletion CBO.
+
+Thus the unified favorable-state conjecture survives the complete binary
+represented n=12 class even after dropping simplicity.  In fact the stronger
+prescribed-element statement also survives this entire class, despite being
+false at n=8.
+
+This is exact finite computation, not Lean certification.
+
 ## Closed all-bad components exist
 
 The same 16 orbit representatives were exhaustively audited as joint state
