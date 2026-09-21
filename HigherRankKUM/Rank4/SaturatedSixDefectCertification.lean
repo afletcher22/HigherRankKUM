@@ -69,6 +69,81 @@ theorem saturatedFullOrder_value
         (saturatedIndexEquiv k hk i) := by
   rfl
 
+
+/-- The six exceptional starts of the fixed saturated-flat schedule. -/
+def saturatedDefectStarts (k : ℕ) (hk : 2 ≤ k) :
+    Set (Fin (4 * k + 2)) :=
+  let p := 4 * (k - 2)
+  ({⟨p + 2, by omega⟩,
+    ⟨p + 3, by omega⟩,
+    ⟨p + 5, by omega⟩,
+    ⟨p + 6, by omega⟩,
+    ⟨p + 7, by omega⟩,
+    ⟨p + 8, by omega⟩} : Set (Fin (4 * k + 2)))
+
+/-- Abstract six-defect certification theorem.
+
+Once every nonexceptional rank-four window is identified as one outside
+element plus a cyclic rank-three basis window of H, the only remaining
+matroid obligations are the six explicitly named defect windows. -/
+theorem cyclicBasisOrder_of_saturated_six_defect_decomposition
+    {M : Matroid α} {H : Set α} {k : ℕ}
+    (hk : 2 ≤ k)
+    (hGroundFin : M.E.Finite)
+    (hRank : M.eRank = (4 : ℕ∞))
+    (hHsub : H ⊆ M.E)
+    (hHflat : M.IsFlat H)
+    (hHrank : M.eRk H = (3 : ℕ∞))
+    (flatOrder : Fin (3 * k) ≃ (M ↾ H).E)
+    (outsideOrder : Fin (k + 2) ≃ (M.E \ H : Set α))
+    (fullOrder : Fin (4 * k + 2) ≃ M.E)
+    (hFlatCBO :
+      CyclicBasisOrder (M ↾ H) 3 (by omega) flatOrder)
+    (hAuto :
+      ∀ i : Fin (4 * k + 2),
+        i ∉ saturatedDefectStarts k hk →
+        ∃ iH : Fin (3 * k), ∃ iR : Fin (k + 2),
+          cyclicWindow 4 (by omega) fullOrder i =
+            insert (outsideOrder iR : α)
+              (cyclicWindow 3 (by omega) flatOrder iH))
+    (h2 :
+      M.IsBase (cyclicWindow 4 (by omega) fullOrder
+        ⟨4 * (k - 2) + 2, by omega⟩))
+    (h3 :
+      M.IsBase (cyclicWindow 4 (by omega) fullOrder
+        ⟨4 * (k - 2) + 3, by omega⟩))
+    (h5 :
+      M.IsBase (cyclicWindow 4 (by omega) fullOrder
+        ⟨4 * (k - 2) + 5, by omega⟩))
+    (h6 :
+      M.IsBase (cyclicWindow 4 (by omega) fullOrder
+        ⟨4 * (k - 2) + 6, by omega⟩))
+    (h7 :
+      M.IsBase (cyclicWindow 4 (by omega) fullOrder
+        ⟨4 * (k - 2) + 7, by omega⟩))
+    (h8 :
+      M.IsBase (cyclicWindow 4 (by omega) fullOrder
+        ⟨4 * (k - 2) + 8, by omega⟩)) :
+    CyclicBasisOrder M 4 (by omega) fullOrder := by
+  intro i
+  by_cases hi : i ∈ saturatedDefectStarts k hk
+  · simp only [saturatedDefectStarts, Set.mem_insert_iff,
+      Set.mem_singleton_iff] at hi
+    rcases hi with hi | hi | hi | hi | hi | hi
+    · simpa [hi] using h2
+    · simpa [hi] using h3
+    · simpa [hi] using h5
+    · simpa [hi] using h6
+    · simpa [hi] using h7
+    · simpa [hi] using h8
+  · obtain ⟨iH, iR, hwin⟩ := hAuto i hi
+    rw [hwin]
+    exact
+      isBase_insert_outside_cyclicWindow_three
+        hGroundFin hRank hHsub hHflat hHrank
+        flatOrder hFlatCBO
+        (outsideOrder iR : α) (outsideOrder iR).property iH
+
 end
 
 end Rank4SaturatedSixDefectCertification
