@@ -1,0 +1,32 @@
+{
+  "all_multiplicity_vectors_sum_10": 531531,
+  "claim_level": "exact finite computation; not Lean certification",
+  "existential_failure_orbits": 0,
+  "gl42_orbit_size_distribution": {
+    "105": 1,
+    "168": 2,
+    "315": 1,
+    "420": 2,
+    "840": 3,
+    "1680": 1,
+    "2520": 3,
+    "5040": 3
+  },
+  "gl42_orbits": 16,
+  "interpretation": "Every labelled omitted element is favorable on every GL(4,2) orbit representative. Coordinate isomorphisms and permutations of parallel copies transport these witnesses to the full exact family.",
+  "pointed_checks_on_orbit_representatives": 160,
+  "prescribed_element_failure_orbits": 0,
+  "robust_duplicate_class_counts": {
+    "0": 2163,
+    "1": 11025,
+    "2": 11760,
+    "3": 3360,
+    "5": 168
+  },
+  "robust_profile_counts": {
+    "(1, 3, 6)": 2163,
+    "(2, 4, 6)": 26313
+  },
+  "scope": "all binary n=10 multiplicity<=2 representations on PG(3,2) satisfying universal two-deletion robustness",
+  "two_deletion_robust_configs": 28476
+}
