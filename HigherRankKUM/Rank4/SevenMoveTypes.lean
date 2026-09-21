@@ -67,6 +67,66 @@ theorem sideSwap_table :
     sideSwap 2 = 2 ∧ sideSwap 3 = 1 := by
   native_decide
 
+@[simp] theorem endpointSwap_zero : endpointSwap 0 = 3 := by native_decide
+@[simp] theorem endpointSwap_one : endpointSwap 1 = 1 := by native_decide
+@[simp] theorem endpointSwap_two : endpointSwap 2 = 2 := by native_decide
+@[simp] theorem endpointSwap_three : endpointSwap 3 = 0 := by native_decide
+
+@[simp] theorem sideSwap_zero : sideSwap 0 = 0 := by native_decide
+@[simp] theorem sideSwap_one : sideSwap 1 = 3 := by native_decide
+@[simp] theorem sideSwap_two : sideSwap 2 = 2 := by native_decide
+@[simp] theorem sideSwap_three : sideSwap 3 = 1 := by native_decide
+
+/-- Concrete action of the endpoint swap on the four moved cyclic positions. -/
+theorem apply_endpointSwap_local
+    {alpha : Type*} {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (sigma : Fin n ≃ E) (s : Fin n) :
+    applyFourBlockPerm hn h4n sigma s endpointSwap
+        (cyclicIndex n hn s 0) = sigma (cyclicIndex n hn s 3) ∧
+    applyFourBlockPerm hn h4n sigma s endpointSwap
+        (cyclicIndex n hn s 1) = sigma (cyclicIndex n hn s 1) ∧
+    applyFourBlockPerm hn h4n sigma s endpointSwap
+        (cyclicIndex n hn s 2) = sigma (cyclicIndex n hn s 2) ∧
+    applyFourBlockPerm hn h4n sigma s endpointSwap
+        (cyclicIndex n hn s 3) = sigma (cyclicIndex n hn s 0) := by
+  constructor
+  · simpa using
+      (applyFourBlockPerm_apply_local hn h4n sigma s endpointSwap (0 : Fin 4))
+  constructor
+  · simpa using
+      (applyFourBlockPerm_apply_local hn h4n sigma s endpointSwap (1 : Fin 4))
+  constructor
+  · simpa using
+      (applyFourBlockPerm_apply_local hn h4n sigma s endpointSwap (2 : Fin 4))
+  · simpa using
+      (applyFourBlockPerm_apply_local hn h4n sigma s endpointSwap (3 : Fin 4))
+
+/-- Concrete action of the side swap on the four moved cyclic positions. -/
+theorem apply_sideSwap_local
+    {alpha : Type*} {E : Set alpha} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (sigma : Fin n ≃ E) (s : Fin n) :
+    applyFourBlockPerm hn h4n sigma s sideSwap
+        (cyclicIndex n hn s 0) = sigma (cyclicIndex n hn s 0) ∧
+    applyFourBlockPerm hn h4n sigma s sideSwap
+        (cyclicIndex n hn s 1) = sigma (cyclicIndex n hn s 3) ∧
+    applyFourBlockPerm hn h4n sigma s sideSwap
+        (cyclicIndex n hn s 2) = sigma (cyclicIndex n hn s 2) ∧
+    applyFourBlockPerm hn h4n sigma s sideSwap
+        (cyclicIndex n hn s 3) = sigma (cyclicIndex n hn s 1) := by
+  constructor
+  · simpa using
+      (applyFourBlockPerm_apply_local hn h4n sigma s sideSwap (0 : Fin 4))
+  constructor
+  · simpa using
+      (applyFourBlockPerm_apply_local hn h4n sigma s sideSwap (1 : Fin 4))
+  constructor
+  · simpa using
+      (applyFourBlockPerm_apply_local hn h4n sigma s sideSwap (2 : Fin 4))
+  · simpa using
+      (applyFourBlockPerm_apply_local hn h4n sigma s sideSwap (3 : Fin 4))
+
 /-- The seven local permutation types retained by the current fixed-e
 research program. This is a proof-design family, not part of the final
 mathematical conjecture. -/
