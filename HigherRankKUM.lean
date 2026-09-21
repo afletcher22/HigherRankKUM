@@ -87,6 +87,7 @@ import HigherRankKUM.Rank4.T0Deletion
 import HigherRankKUM.Rank4.SixElementBoundary
 import HigherRankKUM.Rank4.DangerousCore
 import HigherRankKUM.Rank4.CyclicWindowFour
+import HigherRankKUM.Rank4.CyclicLocalRepairRigidity
 import HigherRankKUM.Rank4.FourBlockMove
 import HigherRankKUM.Rank4.BlockerCycle
 import HigherRankKUM.Rank4.CyclicFlatCapacity
