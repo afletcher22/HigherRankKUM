@@ -1,4 +1,5 @@
 import HigherRankKUM.LocalRepairRigidity
+import HigherRankKUM.LocalRepairClosure
 import Mathlib.Data.Set.Card
 import Mathlib.Tactic
 
@@ -153,6 +154,77 @@ theorem no_five_alternative_common_pairs_forces_boundary_loop
       L R✶ hb hc hdisj hLE hREdual hLB hRdualB
       h00 h01 h10 h11 hcc
   simpa [Matroid.IsColoop] using h
+
+
+/-- Ambient-closure form of the five-explicit-pairs rigidity theorem.
+
+The local ground is the four moved elements. If the current pair is a common
+base of the left boundary minor and the dual right boundary minor, while none
+of the five other pairs is a common base, then one moved element is spanned by
+the unchanged core on one side. -/
+theorem no_five_alternative_local_repairs_forces_ambient_closure
+    (M : Matroid α) {CL CR : Set α} {b₀ b₁ c₀ c₁ : α}
+    (hb : b₀ ≠ b₁) (hc : c₀ ≠ c₁)
+    (hdisj : Disjoint ({b₀, b₁} : Set α) ({c₀, c₁} : Set α))
+    (hc₀L : c₀ ∈ (M.contract CL).E)
+    (hc₁L : c₁ ∈ (M.contract CL).E)
+    (hb₀R : b₀ ∈ (M.contract CR).E)
+    (hb₁R : b₁ ∈ (M.contract CR).E)
+    (hLB : (LocalRepairClosure.boundaryMinor M CL
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α))).IsBase {b₀, b₁})
+    (hRdualB : (LocalRepairClosure.boundaryMinor M CR
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α)))✶.IsBase {b₀, b₁})
+    (h00 : ¬ ((LocalRepairClosure.boundaryMinor M CL
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α))).IsBase {b₀, c₀} ∧
+      (LocalRepairClosure.boundaryMinor M CR
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α)))✶.IsBase {b₀, c₀}))
+    (h01 : ¬ ((LocalRepairClosure.boundaryMinor M CL
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α))).IsBase {b₀, c₁} ∧
+      (LocalRepairClosure.boundaryMinor M CR
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α)))✶.IsBase {b₀, c₁}))
+    (h10 : ¬ ((LocalRepairClosure.boundaryMinor M CL
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α))).IsBase {b₁, c₀} ∧
+      (LocalRepairClosure.boundaryMinor M CR
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α)))✶.IsBase {b₁, c₀}))
+    (h11 : ¬ ((LocalRepairClosure.boundaryMinor M CL
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α))).IsBase {b₁, c₁} ∧
+      (LocalRepairClosure.boundaryMinor M CR
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α)))✶.IsBase {b₁, c₁}))
+    (hcc : ¬ ((LocalRepairClosure.boundaryMinor M CL
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α))).IsBase {c₀, c₁} ∧
+      (LocalRepairClosure.boundaryMinor M CR
+      (({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α)))✶.IsBase {c₀, c₁})) :
+    c₀ ∈ M.closure CL ∨ c₁ ∈ M.closure CL ∨
+      b₀ ∈ M.closure CR ∨ b₁ ∈ M.closure CR := by
+  let U : Set α := ({b₀, b₁} : Set α) ∪ ({c₀, c₁} : Set α)
+  let L := LocalRepairClosure.boundaryMinor M CL U
+  let R := LocalRepairClosure.boundaryMinor M CR U
+  have hloop :
+      L.IsLoop c₀ ∨ L.IsLoop c₁ ∨ R.IsLoop b₀ ∨ R.IsLoop b₁ := by
+    apply no_five_alternative_common_pairs_forces_boundary_loop
+      L R hb hc hdisj
+    · simp [L, U, LocalRepairClosure.boundaryMinor]
+    · simp [R, U, LocalRepairClosure.boundaryMinor]
+    · simpa [L, U] using hLB
+    · simpa [R, U] using hRdualB
+    · simpa [L, R, U] using h00
+    · simpa [L, R, U] using h01
+    · simpa [L, R, U] using h10
+    · simpa [L, R, U] using h11
+    · simpa [L, R, U] using hcc
+  rcases hloop with h | h | h | h
+  · exact Or.inl
+      (LocalRepairClosure.mem_closure_of_boundaryMinor_isLoop
+        M hc₀L (by simpa [L, U] using h))
+  · exact Or.inr (Or.inl
+      (LocalRepairClosure.mem_closure_of_boundaryMinor_isLoop
+        M hc₁L (by simpa [L, U] using h)))
+  · exact Or.inr (Or.inr (Or.inl
+      (LocalRepairClosure.mem_closure_of_boundaryMinor_isLoop
+        M hb₀R (by simpa [R, U] using h))))
+  · exact Or.inr (Or.inr (Or.inr
+      (LocalRepairClosure.mem_closure_of_boundaryMinor_isLoop
+        M hb₁R (by simpa [R, U] using h))))
 
 end LocalRepairFivePairRigidity
 end HigherRankKUM
