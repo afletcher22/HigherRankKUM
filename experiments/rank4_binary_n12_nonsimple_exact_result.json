@@ -1,0 +1,32 @@
+{
+  "scope": "exact binary rank-4 n=12 one-deletion-robust represented multisets",
+  "qualifying_multiplicity_patterns": 610295,
+  "qualifying_by_number_of_doubled_projective_points": {
+    "0": 455,
+    "1": 15015,
+    "2": 117495,
+    "3": 264600,
+    "4": 187110,
+    "5": 25200,
+    "6": 420
+  },
+  "gl4_2_orbits": 85,
+  "orbit_size_histogram": {
+    "35": 1,
+    "210": 1,
+    "315": 2,
+    "420": 2,
+    "840": 3,
+    "1260": 3,
+    "1680": 1,
+    "2520": 13,
+    "3360": 7,
+    "5040": 18,
+    "10080": 23,
+    "20160": 11
+  },
+  "orbit_representative_pointed_deletions_checked": 1020,
+  "prescribed_element_failures": 0,
+  "interpretation": "Every omitted label has a directly verified favorable deletion CBO in every GL(4,2) orbit representative.",
+  "claim_level": "exact finite computation; not Lean certification"
+}
