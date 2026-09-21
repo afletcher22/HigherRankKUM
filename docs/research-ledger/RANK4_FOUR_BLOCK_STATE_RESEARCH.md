@@ -454,3 +454,53 @@ Formalize the **four-block move support** only:
 - package a predicate saying the four-block reorder preserves the deletion CBO.
 
 Do not formalize radius three, component success, or a monotone potential yet.
+
+
+## Historical n=18 fixed-e move-family minimization
+
+The fixed-e version of the historical n=18 witness was also used to ask
+whether the proof really needs every nonidentity permutation in S4.
+
+A six-type baseline was tested:
+
+- the three adjacent transpositions inside a four-position block;
+- `(2,3,0,1)`: `[a,b,c,d] -> [c,d,a,b]`;
+- `(2,3,1,0)`: `[a,b,c,d] -> [c,d,b,a]`;
+- `(3,1,2,0)`: `[a,b,c,d] -> [d,b,c,a]`.
+
+With the omitted element fixed and no point pivots, this baseline repairs
+725 of the 730 seeded bad type-states within depth 8 and leaves five failures.
+
+Each of the remaining 17 S4 move types was then tested as one additional
+generator. Exactly two symmetric involutions individually eliminate every
+failure:
+
+- `(0,3,2,1)`: `[a,b,c,d] -> [a,d,c,b]`;
+- `(2,1,0,3)`: `[a,b,c,d] -> [c,b,a,d]`.
+
+Using either one gives a seven-type fixed-e move family for which all 730
+seeded bad states reach success, with maximum observed distance 6.
+
+For either working seven-type family the repair histogram is:
+
+- distance 1: 410;
+- distance 2: 207;
+- distance 3: 78;
+- distance 4: 27;
+- distance 5: 7;
+- distance 6: 1.
+
+This does **not** justify replacing the arbitrary-S4 conjecture by the
+seven-type statement yet; it is only a proof-design simplification supported
+by the hardest historical stress example. In particular, the safest theorem
+statement remains closure under arbitrary CBO-preserving four-block
+permutations. But a constructive proof may only need adjacent exchanges plus
+four nonadjacent local patterns.
+
+Certificate:
+
+`experiments/rank4_n18_fixed_e_move_family_minimization.py`
+
+with compact result:
+
+`experiments/rank4_n18_fixed_e_move_family_minimization_result.json`.
