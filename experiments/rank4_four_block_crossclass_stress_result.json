@@ -1,0 +1,252 @@
+{
+  "sqs10_exact": [
+    {
+      "omitted": 0,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 1,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 2,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 3,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 4,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 5,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 6,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 7,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 8,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    },
+    {
+      "omitted": 9,
+      "states": 9024,
+      "successful_states": 8496,
+      "components": 1,
+      "closed_all_bad_components": 0,
+      "largest_components": [
+        9024
+      ]
+    }
+  ],
+  "odd_field_samples": [
+    {
+      "field": 3,
+      "seed": 12345,
+      "sample_index": 0,
+      "parallel_required": false,
+      "max_multiplicity": 1,
+      "omitted": 0,
+      "states": 1428,
+      "successful_states": 1160,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 3,
+      "seed": 12345,
+      "sample_index": 1,
+      "parallel_required": false,
+      "max_multiplicity": 1,
+      "omitted": 0,
+      "states": 3312,
+      "successful_states": 2028,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 3,
+      "seed": 12345,
+      "sample_index": 2,
+      "parallel_required": false,
+      "max_multiplicity": 1,
+      "omitted": 0,
+      "states": 1856,
+      "successful_states": 1196,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 5,
+      "seed": 54321,
+      "sample_index": 0,
+      "parallel_required": false,
+      "max_multiplicity": 1,
+      "omitted": 0,
+      "states": 8240,
+      "successful_states": 7580,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 5,
+      "seed": 54321,
+      "sample_index": 1,
+      "parallel_required": false,
+      "max_multiplicity": 1,
+      "omitted": 0,
+      "states": 2952,
+      "successful_states": 2680,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 5,
+      "seed": 54321,
+      "sample_index": 2,
+      "parallel_required": false,
+      "max_multiplicity": 1,
+      "omitted": 0,
+      "states": 7624,
+      "successful_states": 6512,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 3,
+      "seed": 7777,
+      "sample_index": 0,
+      "parallel_required": true,
+      "max_multiplicity": 2,
+      "omitted": 0,
+      "states": 1112,
+      "successful_states": 984,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 3,
+      "seed": 7777,
+      "sample_index": 1,
+      "parallel_required": true,
+      "max_multiplicity": 2,
+      "omitted": 0,
+      "states": 460,
+      "successful_states": 420,
+      "components": 10,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 3,
+      "seed": 7777,
+      "sample_index": 2,
+      "parallel_required": true,
+      "max_multiplicity": 2,
+      "omitted": 1,
+      "states": 2604,
+      "successful_states": 1104,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 5,
+      "seed": 8888,
+      "sample_index": 0,
+      "parallel_required": true,
+      "max_multiplicity": 2,
+      "omitted": 0,
+      "states": 1112,
+      "successful_states": 1064,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 5,
+      "seed": 8888,
+      "sample_index": 1,
+      "parallel_required": true,
+      "max_multiplicity": 2,
+      "omitted": 0,
+      "states": 2304,
+      "successful_states": 2144,
+      "components": 1,
+      "closed_all_bad_components": 0
+    },
+    {
+      "field": 5,
+      "seed": 8888,
+      "sample_index": 2,
+      "parallel_required": true,
+      "max_multiplicity": 2,
+      "omitted": 0,
+      "states": 1120,
+      "successful_states": 1108,
+      "components": 1,
+      "closed_all_bad_components": 0
+    }
+  ],
+  "interpretation": "The two canonical four-block repairs have no closed all-bad fixed-e component in the extremal SQS(10) or in these deterministic GF(3)/GF(5) samples. Fixed-e connectivity is not universal: one GF(3) parallel-pair sample has 10 components, but every component contains a successful state.",
+  "claim_level": "SQS(10) fixed-e graphs exact; odd-field samples deterministic finite computation"
+}
