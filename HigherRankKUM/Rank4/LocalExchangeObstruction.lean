@@ -46,5 +46,29 @@ theorem not_exchange_isBase_iff_mem_closure
   rw [exchange_isBase_iff_notMem_closure hB hxB hyE hyB]
   simp
 
+/-- Two simultaneous opposite basis exchanges fail exactly when at least one
+of the two retained triples spans the incoming element.
+
+This is the abstract algebraic form of the middle-swap obstruction: the left
+boundary replaces `x` by `y`, while the right boundary replaces `y` by
+`x`. -/
+theorem not_both_exchange_bases_iff_closure_obstruction
+    {M : Matroid α} {B L : Set α} {x y : α}
+    (hB : M.IsBase B)
+    (hL : M.IsBase L)
+    (hxB : x ∈ B)
+    (hyB : y ∉ B)
+    (hyL : y ∈ L)
+    (hxL : x ∉ L) :
+    (¬ (M.IsBase (insert y (B \ {x})) ∧
+        M.IsBase (insert x (L \ {y})))) ↔
+      y ∈ M.closure (B \ {x}) ∨
+      x ∈ M.closure (L \ {y}) := by
+  have hxE : x ∈ M.E := hB.subset_ground hxB
+  have hyE : y ∈ M.E := hL.subset_ground hyL
+  rw [exchange_isBase_iff_notMem_closure hB hxB hyE hyB,
+    exchange_isBase_iff_notMem_closure hL hyL hxE hxL]
+  tauto
+
 end Rank4LocalExchangeObstruction
 end HigherRankKUM
