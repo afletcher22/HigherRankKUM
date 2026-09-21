@@ -308,3 +308,98 @@ of two endpoints:
 
 The second endpoint is essential: the binary period-three witness shows the
 first endpoint alone is false.
+
+
+## Fundamental-circuit reformulation
+
+Let `B_i` be the cyclic rank-four basis window beginning at `i`, and let
+
+`C_i = fundCircuit_M(e,B_i)`.
+
+The blocker triple at start `i` is exactly the common overlap
+
+`T_i = B_{i-1} ∩ B_i`.
+
+The existing theorem
+`BlockerClosure.fundCircuit_eq_of_common_spanning_subset`
+already gives
+
+`blocker at i -> C_{i-1} = C_i`.
+
+The converse is representation-free and should also hold:
+
+`C_{i-1} = C_i -> blocker at i`.
+
+Indeed the common circuit is contained in both `insert e B_{i-1}` and
+`insert e B_i`, hence all of its elements other than `e` lie in
+`T_i`.  Since it is a circuit containing the nonloop `e`, its other
+elements span `e`; monotonicity then gives `e in cl(T_i)`.
+
+Thus the blocker word is precisely the **equality/change word** of the cyclic
+fundamental-circuit sequence:
+
+`b_i = 1 <-> C_{i-1}=C_i`.
+
+This is potentially a better propagation object than the blocker triples
+themselves.  A run of blockers is a run of identical fundamental circuits;
+a nonblocker is an actual circuit transition.
+
+## Dual cocircuit target
+
+A saturated rank-three flat `H` of size `3k` containing `e` is
+equivalent to a cocircuit
+
+`D = E(M) \ H`
+
+of size `k+2` avoiding `e`.
+
+For a sliding basis `B_i` and `x in B_i`, the fundamental cocircuit
+`D_{B_i}(x)` is the set of elements that can replace `x` in `B_i`
+(together with `x`).  Its complement is the hyperplane
+`cl(B_i-{x})`.
+
+The failed single-element exchanges emitted by Probes A--C are therefore
+exactly statements that specified elements do **not** belong to a particular
+fundamental cocircuit.  This suggests a dual proof target:
+
+> one-step rigidity forces some fundamental cocircuit avoiding `e` to have
+> at most `k+2` elements.
+
+The certified no-dangerous cap gives the reverse bound for any hyperplane
+through `e`, so this would force equality and hence the desired saturated
+flat.
+
+This dual formulation is attractive because it turns repeated failed probes
+into **exclusions from a cocircuit**, rather than trying to grow a closure by
+a scalar potential.
+
+## The period-three indirect exception is locally visible
+
+The four exact binary n=10 one-step-rigid states with no saturated blocker
+closure have blocker word
+
+`001001001`
+
+up to rotation/reversal.  Their saturated flats are nevertheless generated
+by skip triples adjacent to the `0010` probes.
+
+For a Probe-A occurrence at start `s`, the canonical skip triple is
+
+`{x_{s+3}, x_{s+5}, x_{s+6}}`,
+
+i.e. the sliding basis `B_{s+3}` with `x_{s+4}` removed.
+
+In a representative period-three state the three cyclic occurrences of
+Probe A produce exactly the three saturated 6-point rank-three flats through
+`e`.  Equivalently, they produce the minimum-size fundamental cocircuits
+of size `k+2=4`.
+
+Across the complete binary n=10 one-step-rigid census, canonical local
+skip-triple/fundamental-cocircuit templates already expose a minimum cocircuit
+in 2,228 of the 2,268 rigid states.  This is empirical evidence only, but it
+explains why the blocker-specific saturation conjecture failed while the
+weaker geometric saturation conjecture survived.
+
+The remaining 40 exact-binary states require alternate local cores; many
+already have a saturated current blocker closure.  No claim of a universal
+single skip-triple template is made.
