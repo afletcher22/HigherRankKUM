@@ -124,6 +124,64 @@ theorem applyFourBlockPerm_eq_outside
   simp [applyFourBlockPerm,
     supportedFourBlockPerm_apply_outside hn h4n s π hi]
 
+/-- Applying the supported inverse local permutation cancels the original
+supported permutation at every cyclic position. -/
+theorem supportedFourBlockPerm_symm_cancel
+    {n : ℕ} (hn : 0 < n) (h4n : 4 ≤ n)
+    (s : Fin n) (π : Equiv.Perm (Fin 4)) (i : Fin n) :
+    supportedFourBlockPerm hn h4n s π
+        (supportedFourBlockPerm hn h4n s π.symm i) = i := by
+  by_cases hi : i ∈ fourBlockPositions hn s
+  · rw [← range_fourBlockEmbedding_eq_fourBlockPositions hn h4n s] at hi
+    rcases hi with ⟨q, rfl⟩
+    simp
+  · rw [supportedFourBlockPerm_apply_outside hn h4n s π.symm hi,
+      supportedFourBlockPerm_apply_outside hn h4n s π hi]
+
+/-- Reordering a four-block by `π` and then by `π⁻¹` returns the original
+cyclic enumeration. -/
+theorem applyFourBlockPerm_symm_cancel
+    {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ : Fin n ≃ E) (s : Fin n)
+    (π : Equiv.Perm (Fin 4)) :
+    applyFourBlockPerm hn h4n
+        (applyFourBlockPerm hn h4n σ s π) s π.symm = σ := by
+  ext i
+  simp only [applyFourBlockPerm_apply]
+  rw [supportedFourBlockPerm_symm_cancel hn h4n s π i]
+
+/-- Concrete one-step four-block move relation on cyclic enumerations. -/
+def FourBlockMove
+    {E : Set α} {n : ℕ}
+    (hn : 0 < n) (h4n : 4 ≤ n)
+    (σ τ : Fin n ≃ E) : Prop :=
+  ∃ (s : Fin n) (π : Equiv.Perm (Fin 4)),
+    τ = applyFourBlockPerm hn h4n σ s π
+
+/-- The concrete four-block move relation is undirected: the inverse local
+permutation gives the reverse move. -/
+theorem FourBlockMove.symm
+    {E : Set α} {n : ℕ}
+    {hn : 0 < n} {h4n : 4 ≤ n}
+    {σ τ : Fin n ≃ E}
+    (h : FourBlockMove hn h4n σ τ) :
+    FourBlockMove hn h4n τ σ := by
+  rcases h with ⟨s, π, rfl⟩
+  refine ⟨s, π.symm, ?_⟩
+  exact (applyFourBlockPerm_symm_cancel hn h4n σ s π).symm
+
+/-- Every concrete move is an abstract four-block reorder at its witnessing
+start position. -/
+theorem FourBlockMove.exists_reorder
+    {E : Set α} {n : ℕ}
+    {hn : 0 < n} {h4n : 4 ≤ n}
+    {σ τ : Fin n ≃ E}
+    (h : FourBlockMove hn h4n σ τ) :
+    ∃ s : Fin n, FourBlockReorder hn σ τ s := by
+  rcases h with ⟨s, π, rfl⟩
+  exact ⟨s, fourBlockReorder_applyFourBlockPerm hn h4n σ s π⟩
+
 /-- The existing boundary-only certification theorem specializes immediately
 to an explicit local `S₄` permutation. -/
 theorem cyclicBasisOrder_applyFourBlockPerm_of_boundary_bases
