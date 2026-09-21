@@ -1,0 +1,68 @@
+{
+  "matroids": 10,
+  "bad_states": 100,
+  "distance_histogram": {
+    "1": 92,
+    "2": 7,
+    "3": 1
+  },
+  "maximum_observed_distance": 3,
+  "sample_groups": {
+    "random_qualifying": 5,
+    "forced_three_element_parallel_class": 5
+  },
+  "observed_profiles": [
+    [
+      2,
+      4,
+      8
+    ],
+    [
+      2,
+      5,
+      9
+    ],
+    [
+      2,
+      6,
+      9
+    ],
+    [
+      2,
+      5,
+      8
+    ],
+    [
+      2,
+      5,
+      9
+    ],
+    [
+      3,
+      5,
+      8
+    ],
+    [
+      3,
+      6,
+      9
+    ],
+    [
+      3,
+      6,
+      9
+    ],
+    [
+      3,
+      6,
+      9
+    ],
+    [
+      3,
+      5,
+      9
+    ]
+  ],
+  "interpretation": "All sampled n=14 t=0 bad states escape within three moves using adjacent swaps, point pivots, and arbitrary CBO-preserving permutations of four consecutive positions. This includes forced triple parallel classes and cap-saturating profile (3,6,9).",
+  "claim_level": "seeded finite computation; not exhaustive and not Lean certified"
+}
