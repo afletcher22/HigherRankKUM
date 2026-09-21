@@ -9,6 +9,14 @@ noncomputable section
 
 variable {α : Type*}
 
+/-- One full cyclic period returns to the starting position. -/
+@[simp]
+theorem cyclicIndex_period
+    {n : ℕ} (hn : 0 < n) (s : Fin n) :
+    cyclicIndex n hn s n = s := by
+  apply Fin.ext
+  simp [cyclicIndex, Nat.mod_eq_of_lt s.isLt]
+
 /-- A cyclic position at offset at least four from the moved start is outside
 the supported four-position block, provided the offset is still below the
 cycle length. -/
