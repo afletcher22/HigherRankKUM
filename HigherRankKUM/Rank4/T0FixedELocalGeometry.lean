@@ -27,16 +27,13 @@ theorem mem_closure_of_parallel_pair_of_mem_closure
     subst x
     have hsingle : M.IsCircuit ({e} : Set α) := by
       simpa using hpair
-    exact he.not_isLoop hsingle.isLoop
+    exact he.indep.not_dep hsingle.dep
   have hclEq : M.closure {e} = M.closure {x} :=
     (he.closure_eq_closure_iff_isCircuit_of_ne hex).2 hpair
   have hxGround : x ∈ M.E :=
     hpair.subset_ground (by simp)
   have hxSelf : x ∈ M.closure ({x} : Set α) :=
-    M.subset_closure (by
-      intro y hy
-      simpa using hy.trans hxGround)
-      (by simp)
+    M.subset_closure ({x} : Set α) (by simpa using hxGround) (by simp)
   have hxE : x ∈ M.closure ({e} : Set α) := by
     rw [hclEq]
     exact hxSelf
@@ -82,8 +79,8 @@ theorem three_run_parallel_mate_mem_closure_two_run_shared_pair
     dsimp [P]
     exact Rank4BlockerRuns.two_consecutive_blockers_mem_closure_shared_pair
       hn (by omega) σ e hCBO j hj0 hj1
-  dsimp [x, P]
-  exact mem_closure_of_parallel_pair_of_mem_closure he hpair heP
+  simpa [x, P] using
+    (mem_closure_of_parallel_pair_of_mem_closure he hpair heP)
 
 /-- If the parallel mate from a three-blocker run is not itself in the shared
 pair of a two-blocker run, then that mate together with the pair is dependent.
