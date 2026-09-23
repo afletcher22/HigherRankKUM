@@ -111,6 +111,7 @@ def main():
     min_max_size = 100
     counterexamples = []
     no_type1 = []
+    threshold_cases = []
     by_orbit = Counter()
 
     for oi, (counts, _orbit_size) in enumerate(reps):
@@ -155,6 +156,25 @@ def main():
                 else:
                     max_color_hist["both"] += 1
 
+                if m == 5:
+                    maxg = [x for x in gates if x["hyperplane_size"] == m]
+                    threshold_cases.append({
+                        "orbit_index": oi,
+                        "omitted_label": e,
+                        "word": rigid.word_string(
+                            rigid.canonical_word(rigid.blocker_word(columns,e,order))
+                        ),
+                        "order": list(order),
+                        "max_gate_colors": sorted(set(
+                            "red" if x["red"] else "balanced" for x in maxg
+                        )),
+                        "max_gate_boundary_starts":
+                            sorted(set(x["boundary_start"] for x in maxg)),
+                        "max_gate_hyperplanes": sorted({
+                            tuple(sorted(x["hyperplane"])) for x in maxg
+                        }),
+                    })
+
                 if m < 5:
                     counterexamples.append({
                         "orbit_index": oi,
@@ -168,6 +188,7 @@ def main():
     assert not no_type1
     assert not counterexamples
     assert min_max_size >= 5
+    assert len(threshold_cases) == 4
 
     out = {
         "scope": (
@@ -182,6 +203,7 @@ def main():
         "max_gate_color_histogram": dict(sorted(max_color_hist.items())),
         "one_step_rigid_by_orbit": dict(sorted(by_orbit.items())),
         "states_with_no_failed_favorable_type1_gate": len(no_type1),
+        "threshold_cases": threshold_cases,
         "counterexamples": counterexamples,
         "interpretation": (
             "Every one-step-rigid state in the complete binary n=10 class "
