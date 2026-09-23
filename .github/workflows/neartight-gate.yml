@@ -16,3 +16,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Exact n10 near-tight favorable gate audit
         run: python3 experiments/rank4_binary_n10_neartight_favorable_gate_exact.py
+      - name: Seeded n18 near-tight favorable gate stress
+        run: python3 experiments/rank4_n18_neartight_favorable_gate_stress.py
