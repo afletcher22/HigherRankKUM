@@ -1,0 +1,18 @@
+name: Near-tight gate audit
+
+on:
+  push:
+    branches:
+      - rank4-t0-neartight-gate-research
+
+concurrency:
+  group: neartight-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact n10 near-tight favorable gate audit
+        run: python3 experiments/rank4_binary_n10_neartight_favorable_gate_exact.py
