@@ -278,3 +278,203 @@ Then:
 Before Lean formalization, test this dichotomy on the exact binary n=10 class,
 the historical n=18 witness, the growing n=14..30 family, GF(3)/GF(5), and
 sparse-paving examples.
+
+
+## 11. Balanced 3k hyperplane inside an existing deletion CBO
+
+Let `K` be a neutral rank-three hyperplane of `D=M\e` with
+`|K|=3k`, and let `R=D.E-K`, so `|R|=k+1`.
+
+Because every rank-four deletion window is a basis, every four-position
+window meets `R`.  If `g_j in {0,1,2,3}` is the number of K-elements
+between consecutive R-elements, then
+
+`sum_j (3-g_j) = 4(k+1)-(4k+1) = 3`.
+
+Hence the gap-defect partition is exactly one of
+
+- `3`;
+- `2+1`;
+- `1+1+1`.
+
+This is a three-defect decomposition of the existing deletion CBO.
+
+Delete the R-elements and retain the inherited cyclic order of the 3k
+K-elements.  A triple of consecutive K-elements can fail to be certified
+independent only when it crosses two R-positions.  Therefore the inherited
+K-order has at most
+
+- two exceptional triples in defect type 3;
+- one exceptional triple in type 2+1;
+- zero exceptional triples in type 1+1+1.
+
+Thus every balanced 3k hyperplane comes with an **almost rank-three CBO with
+at most two local defects**, directly from the deletion order.
+
+### Regular KKKR cells
+
+In a regular region
+
+`a b c r d e f`
+
+with six K-elements and one R-element, the KKK triples `abc` and `def`
+are automatic nonblockers.  If the deletion state is bad, at least one of
+
+`b c r`, `c r d`, `r d e`
+
+must be a blocker.  Equivalently, for at least one nearby core pair
+`P in {{b,c},{c,d},{d,e}}`,
+
+`r || e in M/P`.
+
+So the periodic sea is a finite-width routing system of e-parallel-class
+gates.
+
+## 12. Full-ground completion: do not require a perfect core CBO
+
+The failed fixed six-defect selector imposed too much structure: it first
+chose a perfect rank-three CBO of K and then tried to glue the complement.
+
+A more flexible construction keeps the inherited cyclic K-order from the
+deletion CBO.  Add one extra complement slot for e.  Since adding an outside
+slot can only separate K-elements further, every new 3K+1C window uses a
+K-triple that was already contained in an old deletion basis window.  Hence
+every 3K+1C window is automatic for **any** outside label.
+
+The only obligations are windows containing at least two complement
+elements.  Their total four-window incidence excess is six.
+
+This makes it legitimate to trade a controlled defect in the K-order for
+better complement-pair geometry.
+
+### Exact binary k=2 audit
+
+Across all 16 GL(4,2) orbit representatives in the complete binary n=10
+two-deletion-robust class:
+
+- 153,232 labelled `(e,sigma,K)` cases with neutral six-point K were
+  audited;
+- these collapse to 5,488 type-level signatures;
+- 5,394 signatures admit completion by cyclically rephasing the inherited
+  K-order, adding one complement slot, and permuting the four complement
+  labels;
+- 94 signatures need one cyclic adjacent K-swap if this pair-only completion
+  family is used;
+- none needs two swaps.
+
+However, all 94 hard pair-only signatures have full complement rank exactly
+three, and all 94 are solved **without any K-swap** by the replacement
+schedule
+
+`(KKKC)^(k-1) KKKCCC`.
+
+Thus the union of the pair-only completion family and the CCC-tail replacement
+family covers all 5,488 exact binary k=2 signatures while preserving the
+inherited cyclic K-order up to phase.
+
+This is exact finite computation, not Lean certification.
+
+## 13. Rank-three complement replacement selector
+
+Assume the full complement
+
+`C = M.E-K`
+
+has rank three.  The replacement schedule has four exceptional windows.  If
+the CCC tail is bracketed by core elements `h3,h1'`, with adjacent core
+pairs `P0,P1`, the four obligations are
+
+- `P0 union {r1,r2}` is a basis;
+- `{h3,r1,r2,r3}` is a basis;
+- `{r1,r2,r3,h1'}` is a basis;
+- `P1 union {r2,r3}` is a basis.
+
+If `Q={r1,r2,r3}` is a basis of `M|C` and
+`h3,h1' notin cl_M(C)`, the two 1K+3C windows are automatic.
+
+The remaining selector is the following abstract rank-three theorem.
+
+### Rank-three two-minor basis-path lemma (paper proof found)
+
+Let `R` be a loopless rank-three matroid on E.  Let `N0,N1` be loopless
+rank-two matroids on the same ground set, and assume parallelism in R only
+coarsens under each Ni:
+
+if x,y are parallel in R, then they are parallel in Ni.
+
+Then there exist distinct `a,b,c` such that
+
+- `{a,b,c}` is a basis of R;
+- `{a,b}` is a basis of N0;
+- `{b,c}` is a basis of N1.
+
+For simple R, put
+
+`Ai(b)={x : {b,x} is a basis of Ni}`.
+
+Assume no such triple exists.  For each b, either
+
+1. `A0(b)=A1(b)={x}`, or
+2. `A0(b) union A1(b)` lies on one R-line through b.
+
+The singleton case contradicts rank three: in each Ni all elements other
+than x are parallel to b, so x has every other element as a partner; extend
+x to an R-basis.
+
+In the line case choose x outside that line.  Then x is parallel to b in both
+N0 and N1, so it has the same partner sets.  Those partner sets must therefore
+lie on both a line through b and a line through x.  Two distinct partners
+force the two R-lines equal, impossible because x is outside the first line;
+one partner is the forbidden singleton case.
+
+For nonsimple R, pass to the simplification.  The coarsening hypothesis makes
+N0,N1 descend to loopless rank-two matroids on the parallel classes, so the
+simple argument applies.
+
+In the KUM application,
+
+`R=M|C`,
+`Ni=(M/Pi)|C`.
+
+Contraction cannot turn an R-dependent pair into an independent pair, so the
+parallel-coarsening hypothesis is automatic.  When Pi is a good core pair,
+the existing saturated-flat geometry gives rank two and looplessness.
+
+## 14. Good-cut criterion for the CCC-tail schedule
+
+Let `tau` be the inherited cyclic K-order.  A cut edge `u|v` is
+**CCC-good** when
+
+1. `u,v notin cl_M(C)`; and
+2. every exceptional/bad cyclic K-triple of tau is one of the two K-triples
+   crossing the cut.
+
+There are at most two bad K-triples by the three-defect theorem.
+
+If a CCC-good cut exists, phase tau so that the cut is the wraparound edge,
+use the replacement schedule, and apply the rank-three two-minor basis-path
+lemma above.  This gives a full rank-four CBO.
+
+Therefore the rank-three complement case is reduced to:
+
+- CCC-good cut -> replacement schedule solves;
+- no CCC-good cut -> use the pair-only completion geometry.
+
+The exact k=2 data show these two branches are complementary: every pair-only
+failure has a CCC-good replacement completion, while replacement failures are
+already pair-only solvable.
+
+## Updated next task
+
+Prove the **no-CCC-good-cut => pair-completion** implication representation-
+freely.
+
+The relevant data are now constant-width:
+
+- the cyclic K-order has at most two bad triples;
+- every good K-triple meets `K-cl(C)`;
+- the deletion K/R skeleton has only three gap-defect units;
+- pair-only completion has only six multi-complement window obligations.
+
+This should be attacked as a finite local classification plus the existing
+rank-two common-base/path lemmas, not as another global potential.
