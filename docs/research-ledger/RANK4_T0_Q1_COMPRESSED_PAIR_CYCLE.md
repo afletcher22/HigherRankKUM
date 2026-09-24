@@ -262,3 +262,38 @@ both segment endpoints under strict/no-dangerous density.
 
 If that endpoint theorem fails, fall back to the weaker prescribed slack-seed
 extension conjecture.
+
+
+## 11. Correction: endpoint-only repair is false
+
+An exact enumeration in the old binary N=7 unorientable witness kills the
+strong endpoint theorem.
+
+Fix the two parallel copies in compressed +2-segment block positions 0 and 2.
+Among the compressed admissible pair cycles with this fixed indexing, there is
+an unorientable state
+
+`
+((0,1),(2,3),(4,5),(6,7),(12,13),(10,11),(8,9))
+`
+
+(in the labelled version of the old witness) for which no orienting adjacent
+repartition exists in either segment-endpoint neighborhood.
+
+However, orienting adjacent repartitions do exist farther around the outside
+arc (at physical boundaries 3,4,5).
+
+So the exact two-class endpoint certificate remains mathematically correct,
+but a third-class bypass need not be locally accessible at the segment
+endpoint.  It may have to be routed through the complementary arc first.
+
+The live repair strengthening is therefore only:
+
+> every compressed-segment unorientable pair cycle admits *some* orienting
+> adjacent repartition.
+
+This weaker statement survives the exact N=7 compressed enumeration performed
+here, but is not proved and should be stress-tested further.
+
+The prescribed slack-seed extension conjecture is unaffected by this
+counterexample and remains the cleaner existential target.
