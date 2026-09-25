@@ -55,6 +55,18 @@ The SAT scripts need the `python-sat` package (`pip install python-sat`).
 | `theorem_g.py`, `run_theorem_g.py SEED` | Theorem G pipeline with the paper choice lemma, verified end to end |
 | `theorem_pl.py`, `run_theorem_pl.py SEED` | Pipelines for k-points and 2k-lines, with the base chosen by search |
 
+## Remaining flat types, n=10, and the light regime (ledger §8–9)
+
+| Script | What it does |
+|---|---|
+| `analyze_sat_cx.py`, `base_sat_minimal.py` | Inspect the 10-element base counterexamples, and find the minimal base conditions (strictness) under which the lemmas hold |
+| `kum_4_10_sat.py [strict]` | **Direct SAT proof of rank-4 KUM on 10 elements**, UNSAT with and without `strict` |
+| `choice_general.py`, `run_choice_general.py SEED` | Base choice by search, plus the full construction, for k-points, 2k-lines, (2k-1)-lines and (3k-1)-planes (159/159) |
+| `light_block.py`, `run_light_block.py SEED` | Exhaustive DFS for fully blocked contiguous insertions in light GF(3)/GF(5) matroids |
+| `run_U_binary.py` | Exact binary test of Conjecture U at n=14 and n=18. It finds 12 light blocked matroids at n=18 |
+| `run_U_basis_rule.py` | Classifies every basis of the light blocked matroids. It uses `blocked_n18.json`, the exhaustive list of the 360 blocked binary matroids at n=18 |
+| `run_U_minimal.py SEED` | Blocked-insertion search for matroids that are light except for one heavy feature |
+
 ## Scripts from the earlier session: `bsi/`
 
 `bsi/block_exhaust.py M` exhaustively lists the cyclic orders of `M\D`, with `D={1,2,4,8}`, into

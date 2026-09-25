@@ -367,3 +367,152 @@ Next steps:
 2. 14-element base lemmas for (3k-1)-planes, (2k-1)-lines and (k-1)-points. This probably
    needs SAT with lazy (CEGAR) site clauses.
 3. The remaining light class.
+
+
+## 8. Other heavy flats, the n=10 case, and the two regimes
+
+### 8.1 Choice lemmas as density conditions
+A basis `B` of `M` with `B∩F` a basis of `F` is exactly a basis of the direct sum
+`N_F = M|F ⊕ M/F`. So DP only needs a 10-element set `E0` such that:
+
+* `M|E0` is uniformly dense, plus the extra base conditions below;
+* `N_F|(E-E0)` is uniformly dense at the integral ratio `k-2`. By Edmonds this makes it split
+  into `k-2` bases of `N_F`.
+
+### 8.2 Minimal extra base conditions (SAT, `base_sat_minimal.py`)
+
+| Base flat | Extra condition on the 10-element base |
+|---|---|
+| 6-plane | none |
+| 7-plane | none |
+| 2-point | none |
+| 4-line | none |
+| 5-plane | holds exactly under **no 7-plane and no 5-line** (fails with either condition alone) |
+| 3-line | holds under **no 7-plane** alone (fails with "no 5-line" alone) |
+
+The two failures of §7 at `n0=10` therefore come only from non-strict bases.
+
+### 8.3 Theorem L4 (2k-lines; paper + SAT)
+Every strict rank-4 matroid with t=0 on `4k+2` elements that has a line with `2k` elements has a
+CBO.
+
+*Proof.* If `M` has a 3k-plane, Theorem G applies. Otherwise every class of `M/L` has at most
+`k-1` elements. For `k=2` the base is `M` itself. For `k>=3`, choose `L0 ⊆ L` with `|L0|=4`
+and `X0 ⊆ X=E-L` with `|X0|=6` satisfying:
+
+* (L-a) each point `p` of `L`: `|p|-(k-2) <= |p∩L0| <= 2`;
+* (X-a) each `M/L`-class `Q`: `|Q|-(k-2) <= |Q∩X0| <= 3`;
+* (X-b) each point of `M` inside `X` has at most 2 elements in `X0`;
+* (X-c) `r(X0) >= 3`;
+* (LX) if `r(X0)=3`, then `cl(X0)` contains at most one element of `L0`.
+
+These conditions give uniform density of `M|E0`:
+
+* A line coplanar with `L` has at most 2+3 elements of `E0`.
+* A skew line misses at least one element of `X0`.
+* A plane through `L` has at most 4+3 elements of `E0`.
+* Any other plane has at most 2 elements of `L0`, and it contains all of `X0` only if it
+  equals `cl(X0)`; then (LX) applies.
+
+They also give the `N_L` partition: each point of `L` and each class of `X` retains at most
+half of the remainder.
+
+Existence:
+
+* **Capacities.** The capacities `min(3, Σ_q min(2,|q|))` over classes sum to at least 6,
+  because there are at least 3 classes, and 2 big classes force at least 4 singleton classes.
+* **Collinear `X0`.** If `X0` lies on a skew line, one swap fixes it. A skew line meets each
+  class in at most one point, and the elements that are sole representatives of heavy classes
+  number at most 4, which is less than 6.
+* **(LX) fails.** Then `cl(X0)` meets `L` in a k-point, and density gives `X ⊄ cl(X0)`.
+  Replacing a non-coloop, non-essential `y ∈ X0` by some `x ∉ cl(X0)` makes `r(X0)=4`. This
+  needs the facts that `X0` has at most 1 coloop and that `x`'s point is disjoint from `X0`.
+* **`L0`.** It then exists: the requirements sum to at most 4 and the capacities to at least 4.
+
+### 8.4 Rank-4 KUM on 10 elements (SAT)
+The encoding forbids all 181,440 cyclic orders.
+
+* `kum_4_10_sat.py strict` is UNSAT (192 s): every strict rank-4 matroid with t=0 on 10
+  elements has a CBO.
+* `kum_4_10_sat.py`, with no strictness, is UNSAT (519 s): **every uniformly dense rank-4
+  matroid on 10 elements has a CBO**. This is a direct, representation-free computer proof that
+  depends on no other result.
+
+The result also follows from the base lemmas plus McGuinness: a matroid either has a parallel
+pair (point lemma), or has a line with at least 3 points (line lemmas), or is paving.
+Non-strict cases on 10 elements follow from tight gluing, and t>0 from the dangerous-core
+constructions. So **rank-4 KUM holds for all 10-element matroids**; `(4,10)` was the smallest
+open parameter in the Sprint 0 coverage table.
+
+### 8.5 The two regimes
+DP needs a flat of bounded slack, since the base size grows linearly with the slack. After
+Theorems G and L4, and the point, 5-plane and 3-line cases (choice lemmas under test in
+`choice_general.py`), the uncovered strict t=0 class is **points <= k-1, lines <= 2k-2,
+planes <= 3k-2**.
+
+* Base lemmas at 14 elements would shift this to points <= k-2, lines <= 2k-4,
+  planes <= 3k-5. No fixed ladder of base sizes can cover every matroid.
+* The other extreme, paving matroids, is McGuinness's theorem. McGuinness proves it with
+  basis deletion and universal contiguous reinsertion.
+
+**Key question:** does universal (or suitably chosen) contiguous basis reinsertion hold once
+every flat has slack at least some **constant** `s0`, independent of `k`? If it does, finitely
+many base lemmas (up to size about `(4/3)(s0+5)`) together with such a light-regime theorem
+would close strict rank-4 KUM.
+
+
+## 9. The light regime: universal reinsertion for every basis is false
+
+### 9.1 Conjecture U and its exact refutation
+**Conjecture U.** Let `M` be light: strict, t=0, points <= k-1, lines <= 2k-2,
+planes <= 3k-2. Then every basis `B` inserts contiguously into every CBO of `M\B`. For light `M`,
+`M\B` is automatically uniformly dense.
+
+**Evidence for U:**
+
+* `run_light_block.py` ran an exhaustive DFS for fully blocked orders on light GF(3)/GF(5)
+  matroids with the most degenerate bases sampled. It covered 36 cases at k=4 and 24 at k=5 and
+  found **0 blocked orders**.
+* Both blocked examples of the earlier basis-splice session are heavy.
+
+**Exact binary test** (`run_U_binary.py`). For binary matroids the standard basis is WLOG, and
+`bsi/block_exhaust.py` lists every fully blocked `(M, D={1,2,4,8}, σ')`.
+
+* n=14: 48 blocked matroids, **all heavy** (each has a (2k-1)-line and a plane of size at
+  least 3k-1). U holds exactly for binary n=14.
+* n=18: 360 blocked matroids; 348 are heavy and **12 are light**, all with profile
+  `(3,6,10)`. **U is false.** Example: columns
+  `(1,1,2,2,3,3,4,4,5,5,8,8,9,10,12,15,15,15)`.
+
+### 9.2 Which basis fails (`run_U_basis_rule.py`, exact)
+In each of the 12 light blocked matroids there are 131 basis types and exactly **one** is not
+universal: `{1,2,4,8}`.
+
+* Every element of that basis has a parallel mate. This does not characterize it: 276 universal
+  basis types have the same property.
+* The distinguishing feature is that `15 = 1+2+4+8` is the unique parallel class of size
+  `k-1 = 3`. The bad basis is exactly the one that misses it, with `15` in general position with
+  respect to it.
+
+**Refined target (Conjecture U\*, evidence only).** In a light matroid, a basis meeting every
+parallel class of size `k-1` inserts universally.
+
+Caveats:
+
+* All 12 counterexamples to U belong to one structural family, so this evidence is thin.
+* For small `k` there can be more than four classes of size `k-1`, so the selection rule may have
+  to be weakened. For example, it could hit near-tight flats in the sense of Rank3KUM's
+  hitting-basis lemma.
+
+**Consequence for the programme.** Once the three pending choice lemmas are proved, strict t=0
+rank-4 KUM on `4k+2` reduces to **one** selection-plus-insertion theorem for light matroids. This
+is the rank-4 analogue of Rank3KUM's "near-tight hitting basis + two-gap insertion". On the
+paving side, McGuinness's argument uses paving only in circuit elimination between two 4-circuits.
+In general matroids that step gains one extra alternative, which arises only from small circuits
+through pairs of `B`-elements (§8.5 key question).
+
+### 9.3 Choice lemmas: evidence
+`run_choice_general.py` searches for a 10-element base with the required density and strictness
+and then runs the full construction. It gave **159/159 successes** for k-points, 2k-lines,
+(2k-1)-lines and (3k-1)-planes at k=3,4,5 over GF(2)/GF(3)/GF(5), with the base lemma never
+failing.
