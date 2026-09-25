@@ -32,8 +32,9 @@ theorem loopless_restrict {N : Matroid α} (hL : N.Loopless) {R : Set α} (hR : 
 theorem weightBounded_restrict {N : Matroid α} {ω : α → ℕ} {D : ℕ} (hW : WeightBounded N ω D)
     {R : Set α} (hR : R ⊆ N.E) : WeightBounded (N ↾ R) ω D := by
   intro A hA
-  rw [Matroid.restrict_eRk_eq _ hA]
-  exact hW A (hA.trans hR)
+  have hAR : (A : Set α) ⊆ R := hA
+  rw [Matroid.restrict_eRk_eq N hAR]
+  exact hW A (hAR.trans hR)
 
 /-- **van den Heuvel–Thomassé, Theorem 2.1**, direction (b) ⇒ (a). -/
 theorem statement : Statement α := by

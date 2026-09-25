@@ -253,8 +253,9 @@ theorem core (hE : M.E.Finite) (hL : M.Loopless) (hW : WeightBounded M ω D)
     · exact h (hUss.subset heU)
   have hWU : WeightBounded (M ↾ U) ω D := by
     intro A hA
-    rw [Matroid.restrict_eRk_eq _ hA]
-    exact hW A (hA.trans hUss.subset)
+    have hAU : (A : Set α) ⊆ U := hA
+    rw [Matroid.restrict_eRk_eq M hAU]
+    exact hW A (hAU.trans hUss.subset)
   obtain ⟨φU, hφU⟩ := ih (M ↾ U) hUss hLU hWU
   refine ⟨fun a => if a ∈ U then φU a else η a, fun x => ?_⟩
   have hsplit : arcSet M (fun a => if a ∈ U then φU a else η a) ω x =
