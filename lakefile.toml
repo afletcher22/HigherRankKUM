@@ -13,3 +13,9 @@ srcDir = "vendor/Rank3KUM"
 
 [[lean_lib]]
 name = "HigherRankKUM"
+
+# vHT development probes (probe branches only; not part of the default target)
+[[lean_lib]]
+name = "Probe"
+srcDir = "probes"
+globs = ["Probe.+"]

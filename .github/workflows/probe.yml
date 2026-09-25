@@ -1,0 +1,51 @@
+name: Palomar kernel probe
+
+# Measurement-only workflow for Phase 0 of the Palomar plan.  It builds only the modules under
+# probes/ (not the HigherRankKUM library), records elaboration/kernel time and peak memory, replays
+# the resulting .olean files with leanchecker, and fails if a forbidden axiom appears.
+
+on:
+  push:
+    branches:
+      - 'probe/**'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch pinned dependencies
+        run: lake update
+      - name: Verify dependency lock
+        run: git diff --exit-code -- lake-manifest.json
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build and replay probe modules
+        shell: bash
+        env:
+          PROBE_MODULES: VHT.Statement
+        run: |
+          for m in $PROBE_MODULES; do
+            echo "::group::$m"
+            /usr/bin/time -v lake build Probe.$m 2>&1 | tee $m.log || echo "BUILD FAILED: $m"
+            /usr/bin/time -v lake env leanchecker Probe.$m 2>&1 | tee $m-replay.log || echo "REPLAY FAILED: $m"
+            echo "::endgroup::"
+          done
+      - name: Axiom guard
+        shell: bash
+        run: |
+          grep -h "depends on axioms" *.log || true
+          if grep -hE "ofReduceBool|sorryAx|trustCompiler" *.log; then
+            echo "Forbidden axiom found"; exit 1
+          fi
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-logs
+          path: '*.log'
