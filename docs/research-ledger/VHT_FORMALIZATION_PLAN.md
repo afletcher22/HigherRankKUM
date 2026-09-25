@@ -123,3 +123,45 @@ That proof uses the paper's fairness rule, which is not round-robin: push the fi
 element and move it to the back of the list. The state is (mapping on `E`, list ordering of `E`),
 which lies in a finite space, so pigeonhole gives a cycle. Round-robin scheduling does not give
 fairness, because an element can stop being pushable before its turn comes.
+
+## Status: Theorem 2.1 fully formalized (2026-09-25)
+
+On `probe/vht`, the following theorem depends only on `[propext, Classical.choice, Quot.sound]`:
+
+* `HigherRankKUM.VHT.statement : Statement α`, which is Theorem 2.1, direction (b) ⇒ (a).
+
+So does its main consequence:
+
+* `HigherRankKUM.VHT.coprime_kum' : Nat.Coprime r m → SolvesKUMAtRankSize α r m`, coprime KUM at
+  every rank, unconditionally.
+
+`edmonds_partition` and `double_cover` (in `Covers.lean`) also become unconditional once
+`statement` is supplied.
+
+The fairness mechanism differs from the paper (steps 3–4). There is no ordered push sequence.
+Instead the proof picks a state `η`, reachable from a best mapping, whose own reachable set is as
+small as possible. That makes `η` part of a sink component of the push graph: every state it
+reaches can reach it back. Then:
+
+* "bounded" means never pushable in the component, so Claim 2 holds by definition;
+* an unbounded element visits every point along a closed walk (`visits`);
+* Claim 5 and the combination step become a single statement, `indep_union`: the bounded part of
+  any point set, together with any independent set of unbounded elements, is independent. No
+  contraction matroid is needed.
+
+| Module | Contents |
+|---|---|
+| `Statement.lean` | `arcSet`, `WeightBounded`, `Statement`, `card_arc` |
+| `Push.lean` | pushes, `closure_push`, `exists_start` (walking back), `exists_pushable` |
+| `Best.lean` | the potential, `exists_isBest`, `push_closure_eq`, `push_isBest`, `sum_ncard_arcSet` |
+| `Reach.lean` | the push graph, `finite_reach`, `exists_sink`, `reach_values`, `visits` |
+| `Core.lean` | `bounded_fixed`, `claim3`, `indep_union`, `unbounded_ne_ground`, `core` |
+| `Main.lean` | reductions for weights `0` and `D`, strong induction, `statement`, `coprime_kum'` |
+| `Coprime.lean`, `Covers.lean` | Theorem 3.1, Edmonds' partition, double covers |
+
+Next:
+
+1. Move these modules into `HigherRankKUM/VHT/`.
+2. Derive full rank-3 KUM (`SolvesKUMAtRank α 3`: the vendored divisible solver plus `coprime_kum'`),
+   which removes the explicit rank-3 hypothesis of the dangerous-hyperplane theorem.
+3. Derive odd-size rank-2 KUM, which makes the gcd-two tight reduction unconditional.
