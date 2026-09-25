@@ -1,0 +1,44 @@
+name: Toolchain upgrade probe
+
+# Measurement only: rebuild the whole project on the Palomar-eligible toolchain and report every
+# module that fails, including vendored Rank3KUM files.  The regenerated manifest is uploaded so
+# the upgrade can be adopted later without running Lean locally.
+
+on:
+  push:
+    branches:
+      - 'probe/**'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Resolve dependencies for the new toolchain
+        run: lake update
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build everything, continuing past failures
+        continue-on-error: true
+        shell: bash
+        run: lake build 2>&1 | tee build.log
+      - name: Summarize failures
+        if: always()
+        shell: bash
+        run: |
+          echo "Failed modules:"; grep -E "^✖|error: .*failed|^error:" build.log | head -100 || true
+          echo "Error count: $(grep -c '^error:' build.log || true)"
+          echo "Vendored errors: $(grep -c 'vendor/Rank3KUM' build.log || true)"
+      - name: Upload build log and regenerated manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: toolchain-probe
+          path: |
+            build.log
+            lake-manifest.json
