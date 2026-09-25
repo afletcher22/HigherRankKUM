@@ -105,7 +105,8 @@ theorem sum_card_arcs {m : ℕ} [NeZero m] (S : Finset α) (φ : α → ZMod m) 
   rw [Finset.sum_congr rfl h, Finset.sum_const, smul_eq_mul]
 
 /-- The elements covering `x` are the fibres of `φ` over the `r` points ending at `x`. -/
-theorem card_arc_filter {m r : ℕ} [NeZero m] (hrm : r ≤ m) (S : Finset α) (φ : α → ZMod m)
+theorem card_arc_filter [DecidableEq α] {m r : ℕ} [NeZero m] (hrm : r ≤ m) (S : Finset α)
+    (φ : α → ZMod m)
     (x : ZMod m) :
     (S.filter fun e => (x - φ e).val < r).card =
       ∑ j ∈ Finset.range r, (S.filter fun e => φ e = x - j).card := by
@@ -187,10 +188,14 @@ theorem coprime_kum (hV : Statement α) {r m : ℕ} (hcop : Nat.Coprime r m) :
   let F : ZMod m → ℕ := fun y => (S.filter fun e => φ e = y).card
   have hF : ∀ x : ZMod m, ∑ j ∈ Finset.range r, F (x - j) = r := by
     intro x
-    rw [← heq x, card_arc_filter hrm S φ x]
+    have h := card_arc_filter hrm S φ x
+    rw [heq x] at h
+    exact h.symm
   have hsumF : ∑ y, F y = m := by
-    rw [← hScard]
-    exact (Finset.card_eq_sum_card_fiberwise (fun e _ => Finset.mem_univ (φ e))).symm
+    have h := Finset.card_eq_sum_card_fiberwise (f := φ) (s := S) (t := Finset.univ)
+      (fun e _ => Finset.mem_univ (φ e))
+    rw [hScard] at h
+    exact h.symm
   have hF1 := eq_one_of_window_sums hr hcop F hF hsumF
   have hinj : Function.Injective (fun e : M.E => φ e) := by
     intro a b hab
@@ -200,8 +205,8 @@ theorem coprime_kum (hV : Statement α) {r m : ℕ} (hcop : Nat.Coprime r m) :
     exact Subtype.ext (Finset.card_le_one.1 (hF1 (φ a)).le _ ha _ hb)
   have hsurj : Function.Surjective (fun e : M.E => φ e) := by
     intro y
-    obtain ⟨e, he⟩ := Finset.card_pos.1 (by rw [show (S.filter fun e => φ e = y).card = 1 from
-      hF1 y]; exact Nat.one_pos)
+    have hcard : (S.filter fun e => φ e = y).card = 1 := hF1 y
+    obtain ⟨e, he⟩ := Finset.card_pos.1 (by omega : 0 < (S.filter fun e => φ e = y).card)
     simp only [Finset.mem_filter, hS, Set.Finite.mem_toFinset] at he
     exact ⟨⟨e, he.1⟩, he.2⟩
   let ι : Fin m ≃ ZMod m := Equiv.ofBijective (fun i : Fin m => ((i : ℕ) : ZMod m))
