@@ -122,8 +122,7 @@ theorem solvesDivisibleKUMAtRank_four (hext : ∀ N, 8 ≤ N → Rank4Extension 
       exact (σ _).2
     have hEeq : cyclicWindow 4 (Nat.mul_pos hr hk) σ i = M.E :=
       hE.eq_of_subset_of_encard_le' hsub (by
-        rw [encard_cyclicWindow _ (by norm_num) σ i, hEcard]
-        norm_num)
+        rw [encard_cyclicWindow _ (by norm_num) σ i, hEcard])
     rw [hEeq]
     have hind : M.Indep M.E := by
       rw [Matroid.indep_iff_eRk_eq_encard_of_finite hE, M.eRk_ground, hRank4, hEcard]
@@ -135,7 +134,7 @@ theorem solvesDivisibleKUMAtRank_four (hext : ∀ N, 8 ≤ N → Rank4Extension 
       have h := hDense X hX
       calc ((4 : ℕ) : ℕ∞) * X.encard ≤ ((4 : ℕ) : ℕ∞) * (((2 : ℕ) : ℕ∞) * M.eRk X) := by gcongr
         _ = ((8 : ℕ) : ℕ∞) * M.eRk X := by push_cast; ring
-    obtain ⟨order, horder⟩ := h8 M hr (by norm_num) hE hRank (by rw [hEcard]; norm_num) hDense8
+    obtain ⟨order, horder⟩ := h8 M hr (by norm_num) hE hRank (by rw [hEcard]) hDense8
     exact exists_cyclicBasisOrder_congr M (by norm_num) rfl ⟨order, horder⟩
   · -- `k ≥ 3`: delete one basis of an Edmonds partition, order the rest, and extend
     haveI : NeZero k := ⟨by omega⟩
