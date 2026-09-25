@@ -5,3 +5,6 @@
 # Python bytecode
 __pycache__/
 *.pyc
+
+# SAT certificates (large, regenerable with cert_measure.py)
+experiments/rank4_heavy_flat_splice/certs/
