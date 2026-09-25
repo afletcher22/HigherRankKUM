@@ -12,20 +12,16 @@ set_option maxHeartbeats 0
 set_option maxRecDepth 100000
 set_option profiler true
 
-/-- `S` (positions `0..3`) and the eight cyclic 4-windows of `e_0, …, e_7`. -/
-def bases : List ℕ :=
-  15 :: (List.range 8).map fun i => (List.range 4).foldl (fun acc t => acc ||| 1 <<< (4 + (i + t) % 8)) 0
-
 lrat_refutation cert (include_str "../data/xcyc8.cnf") (include_str "../data/xcyc8.lrat")
 
 ext_witnesses ws (include_str "../data/xcyc8.wit")
 
-theorem ws_valid : ws.all (validX 12 true bases) = true := by decide +kernel
+theorem ws_valid : ws.all (validX 12 true (basesCyc 8)) = true := by decide +kernel
 
 theorem fmla_eq : (cert.fmla : List (List Sat.Literal)) = ws.map (genX true) :=
   fmlaBEq_eq (by decide +kernel)
 
-theorem no_model (m : RankModelX 12 true bases) : False :=
+theorem no_model (m : RankModelX 12 true (basesCyc 8)) : False :=
   no_modelX m cert.fmla cert.refute ws fmla_eq ws_valid
 
 #print axioms no_model

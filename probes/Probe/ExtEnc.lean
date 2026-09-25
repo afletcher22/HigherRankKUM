@@ -105,6 +105,16 @@ def validX (n : ℕ) (cyc : Bool) (bases : List ℕ) : WX → Bool
 
 end
 
+/-- `S` (positions `0..3`) and the `N` cyclic 4-windows of `e_0, …, e_{N-1}` (positions `4..`). -/
+def basesCyc (N : ℕ) : List ℕ :=
+  15 :: (List.range N).map fun i =>
+    (List.range 4).foldl (fun acc t => acc ||| 1 <<< (4 + (i + t) % N)) 0
+
+/-- `S` and the `L - 3` linear 4-windows of `e_0, …, e_{L-1}`. -/
+def basesLin (L : ℕ) : List ℕ :=
+  15 :: (List.range (L - 3)).map fun i =>
+    (List.range 4).foldl (fun acc t => acc ||| 1 <<< (4 + i + t)) 0
+
 /-- An abstract rank function with the properties the extension clauses use. -/
 structure RankModelX (n : ℕ) (cyc : Bool) (bases : List ℕ) where
   r : ℕ → ℕ
