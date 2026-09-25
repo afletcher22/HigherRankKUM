@@ -31,7 +31,7 @@ jobs:
       - name: Build and replay probe modules
         shell: bash
         env:
-          PROBE_MODULES: Kum8Core Cyc8Core
+          PROBE_MODULES: Enc EncKum6 EncKum8
         run: |
           for m in $PROBE_MODULES; do
             echo "::group::$m"
