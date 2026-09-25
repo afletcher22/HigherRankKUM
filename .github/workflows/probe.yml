@@ -28,7 +28,7 @@ jobs:
       - name: Build and replay probe modules
         shell: bash
         env:
-          PROBE_MODULES: VHT.Best
+          PROBE_MODULES: VHT.Best VHT.Reach VHT.Core
         run: |
           for m in $PROBE_MODULES; do
             echo "::group::$m"

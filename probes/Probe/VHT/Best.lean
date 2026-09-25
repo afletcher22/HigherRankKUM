@@ -63,7 +63,8 @@ theorem exists_isBest (hE : M.E.Finite) (ω : α → ℕ) : ∃ φ : α → ZMod
     Finite.exists_max fun g : M.E → ZMod D => potential M (extendGround M g fun _ => 0) ω
   refine ⟨extendGround M g₀ fun _ => 0, fun ψ => ?_⟩
   have h : potential M ψ ω = potential M (extendGround M (fun e : M.E => ψ e) fun _ => 0) ω :=
-    potential_congr fun e he => (extendGround_apply he).symm
+    potential_congr fun e he =>
+      (extendGround_apply (g := fun e : M.E => ψ e) (d := fun _ => 0) he).symm
   rw [h]
   exact hg₀ fun e : M.E => ψ e
 
