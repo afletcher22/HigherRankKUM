@@ -40,17 +40,32 @@ theorem potential_congr {φ ψ : α → ZMod D} (h : ∀ e ∈ M.E, φ e = ψ e)
   unfold potential
   exact Finset.sum_congr rfl fun x _ => by rw [arcSet_congr h x]
 
+open Classical in
+/-- Extend a mapping on the ground set by `d` outside it. -/
+noncomputable def extendGround (M : Matroid α) (g : M.E → ZMod D) (d : α → ZMod D) :
+    α → ZMod D :=
+  fun a => if h : a ∈ M.E then g ⟨a, h⟩ else d a
+
+open Classical in
+theorem extendGround_apply {g : M.E → ZMod D} {d : α → ZMod D} {a : α} (ha : a ∈ M.E) :
+    extendGround M g d a = g ⟨a, ha⟩ :=
+  dif_pos ha
+
+open Classical in
+theorem extendGround_apply_not_mem {g : M.E → ZMod D} {d : α → ZMod D} {a : α} (ha : a ∉ M.E) :
+    extendGround M g d a = d a :=
+  dif_neg ha
+
 /-- A best mapping exists. -/
 theorem exists_isBest (hE : M.E.Finite) (ω : α → ℕ) : ∃ φ : α → ZMod D, IsBest M φ ω := by
-  classical
   haveI : Finite M.E := hE.to_subtype
-  let ext : (M.E → ZMod D) → α → ZMod D := fun g a => if h : a ∈ M.E then g ⟨a, h⟩ else 0
-  obtain ⟨g₀, hg₀⟩ := Finite.exists_max fun g : M.E → ZMod D => potential M (ext g) ω
-  refine ⟨ext g₀, fun ψ => ?_⟩
-  have h : potential M ψ ω = potential M (ext fun e : M.E => ψ e) ω :=
-    potential_congr fun e he => by simp [ext, he]
+  obtain ⟨g₀, hg₀⟩ :=
+    Finite.exists_max fun g : M.E → ZMod D => potential M (extendGround M g fun _ => 0) ω
+  refine ⟨extendGround M g₀ fun _ => 0, fun ψ => ?_⟩
+  have h : potential M ψ ω = potential M (extendGround M (fun e : M.E => ψ e) fun _ => 0) ω :=
+    potential_congr fun e he => (extendGround_apply he).symm
   rw [h]
-  exact hg₀ _
+  exact hg₀ fun e : M.E => ψ e
 
 theorem closure_finite (hE : M.E.Finite) (φ : α → ZMod D) (x : ZMod D) :
     (M.closure (arcSet M φ ω x)).Finite :=
