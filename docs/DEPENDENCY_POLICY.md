@@ -15,7 +15,7 @@ In particular:
 
 ## Frozen local rank-three base
 
-The completed rank-three theorem is available through a vendored immutable source snapshot at `vendor/Rank3KUM/`.
+The completed rank-three theorem is available through a vendored frozen source snapshot at `vendor/Rank3KUM/`.
 
 The snapshot was copied byte-for-byte from:
 
@@ -42,10 +42,12 @@ Thus all lower-rank inputs required by the divisible rank-four proper-tight redu
 
 ## Integrity checks
 
-The vendored directory is treated as immutable legacy source.
+The vendored directory is treated as frozen legacy source. The only permitted edits are
+toolchain patches that change no statement or proof idea. Each is recorded as a patch file under
+`vendor/Rank3KUM/patches/` and listed in `vendor/Rank3KUM/PATCHES.md`.
 
 - `vendor/Rank3KUM/SOURCE.md` records its exact origin.
-- `vendor/Rank3KUM/SHA256SUMS` records hashes for all vendored Lean files.
+- `vendor/Rank3KUM/SHA256SUMS` records hashes for all vendored Lean files, as patched.
 - CI verifies those hashes.
 - CI rejects `Rank3KUM` imports anywhere in `HigherRankKUM/` except `LowRank/RankThree.lean`.
 - CI rejects a live Git dependency on Rank3KUM.
@@ -56,7 +58,7 @@ If the vendored base is ever intentionally upgraded, it should be done as an exp
 
 The build's external dependency surface is Lean/mathlib:
 
-- Lean: `v4.33.0-rc2`;
-- mathlib input revision: `v4.33.0-rc2`.
+- Lean: `v4.35.0-rc3`;
+- mathlib input revision: `v4.35.0-rc3`.
 
 `lake-manifest.json` records the exact resolved transitive package commits.

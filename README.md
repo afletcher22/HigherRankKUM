@@ -18,13 +18,13 @@ The repository currently contains:
 - generic tight-factor reduction;
 - the theorem reducing every divisible rank-`r` instance with a nonempty proper tight set to solved lower ranks;
 - internal divisible KUM solvers at ranks 1 and 2;
-- an internal rank-3 solver backed by an immutable vendored copy of the Rank3KUM version-3 proof.
+- an internal rank-3 solver backed by a frozen vendored copy of the Rank3KUM version-3 proof.
 
 The migration source and declaration-level policy are recorded in `docs/PROVENANCE.md`, `docs/MIGRATION_MANIFEST.md`, and `docs/DEPENDENCY_POLICY.md`.
 
 ## Vendored rank-three theorem
 
-`vendor/Rank3KUM/` is a byte-for-byte Lean-source snapshot of:
+`vendor/Rank3KUM/` is a Lean-source snapshot of the following commit. It is byte-for-byte except for toolchain patches, which are listed in `vendor/Rank3KUM/PATCHES.md`:
 
 - source repository: `afletcher22/Rank3KUM`;
 - source branch at selection time: `version-3`;
@@ -33,7 +33,7 @@ The migration source and declaration-level policy are recorded in `docs/PROVENAN
 
 The snapshot is a local Lake library, not a Git dependency. `HigherRankKUM/LowRank/RankThree.lean` is the only HigherRankKUM module allowed to import it and exposes the narrow theorem `solvesDivisibleKUMAtRank_three`.
 
-`vendor/Rank3KUM/SHA256SUMS` records checksums for the frozen Lean source. CI verifies those checksums and the exact source commit recorded in `vendor/Rank3KUM/SOURCE.md`.
+`vendor/Rank3KUM/SHA256SUMS` records checksums for the vendored Lean source as patched. CI verifies those checksums and the exact source commit recorded in `vendor/Rank3KUM/SOURCE.md`.
 
 ## Rank-four program
 
@@ -59,8 +59,13 @@ HigherRankKUM is intended to remain stable on its own even if Rank3KUM later cha
 
 ## Toolchain
 
-The initial migration preserves:
+The project is pinned to:
 
-- Lean `v4.33.0-rc2`;
-- mathlib `v4.33.0-rc2`;
+- Lean `v4.35.0-rc3`;
+- mathlib `v4.35.0-rc3`;
 - the exact resolved transitive dependency graph in `lake-manifest.json`.
+
+The initial migration used `v4.33.0-rc2`. The upgrade to `v4.35.0-rc3` meets the Palomar Registry
+toolchain floor (`v4.35.0-rc2`). It needed only the Mathlib rename `Equiv.setCongr` →
+`Set.equivOfEq`, which touches 8 sites in HigherRankKUM and 13 in the vendored snapshot (see
+`vendor/Rank3KUM/PATCHES.md`).

@@ -68,12 +68,12 @@ theorem exists_cyclicBasisOrder3_of_flat_ordering
     Set.sdiff_union_of_subset hXflat.subset_ground
   let order : Fin (3 * k) ≃ M.E :=
     (interleaveOneTwo hPX points pairs).trans
-      (Equiv.setCongr hUnion)
+      (Set.equivOfEq hUnion)
   refine ⟨order, ?_⟩
   intro i
   have hi := hLocal i
   simpa only [order, Equiv.trans_apply,
-    Equiv.setCongr_apply] using hi
+    Set.equivOfEq_apply] using hi
 
 /--
 A uniformly dense rank-two flat of size `2k`, with a complement of size `k`,

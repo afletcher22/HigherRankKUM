@@ -1,0 +1,120 @@
+diff --git a/vendor/Rank3KUM/Rank3KUM/BalancedGluing.lean b/vendor/Rank3KUM/Rank3KUM/BalancedGluing.lean
+index 206e725..a238568 100644
+--- a/vendor/Rank3KUM/Rank3KUM/BalancedGluing.lean
++++ b/vendor/Rank3KUM/Rank3KUM/BalancedGluing.lean
+@@ -50,22 +50,22 @@ theorem exists_cyclicBasisOrder3_of_point_pair_gluing_clean
+       ext x
+       simp [or_comm, or_left_comm]
+   let order : Fin (3 * k) ≃ M.E :=
+-    localOrder.trans (Equiv.setCongr hUnion)
++    localOrder.trans (Set.equivOfEq hUnion)
+   refine ⟨order, ?_⟩
+   intro i
+   have hi := hLocal i
+   simpa only [order, localOrder, Equiv.trans_apply,
+-    Equiv.setCongr_apply] using hi
++    Set.equivOfEq_apply] using hi
+ 
+ /-- The contraction ground is definitionally the complement of the contracted set. -/
+ def gluingContractGroundEquivClean (M : Matroid α) (X : Set α) :
+     (Matroid.contract M X).E ≃ (M.E \ X : Set α) :=
+-  Equiv.setCongr (by simp)
++  Set.equivOfEq (by simp)
+ 
+ /-- The restriction ground is the restricted set. -/
+ def gluingRestrictGroundEquivClean (M : Matroid α) (X : Set α) :
+     (Matroid.restrict M X).E ≃ X :=
+-  Equiv.setCongr (by simp)
++  Set.equivOfEq (by simp)
+ 
+ /--
+ Balanced-gluing activation for the complete nonempty proper tight branch in
+diff --git a/vendor/Rank3KUM/Rank3KUM/ContractInterleave.lean b/vendor/Rank3KUM/Rank3KUM/ContractInterleave.lean
+index a3a040f..eec7154 100644
+--- a/vendor/Rank3KUM/Rank3KUM/ContractInterleave.lean
++++ b/vendor/Rank3KUM/Rank3KUM/ContractInterleave.lean
+@@ -170,12 +170,12 @@ theorem exists_cyclicBasisOrder3_of_contract_ordering
+     Set.union_sdiff_cancel hXsubset
+   let order : Fin (3 * k) ≃ M.E :=
+     (interleaveOneTwo hDisjoint points pairs).trans
+-      (Equiv.setCongr hUnion)
++      (Set.equivOfEq hUnion)
+   refine ⟨order, ?_⟩
+   intro i
+   have hi := hLocal i
+   simpa only [order, Equiv.trans_apply,
+-    Equiv.setCongr_apply] using hi
++    Set.equivOfEq_apply] using hi
+ 
+ #print axioms Rank3KUM.isBase_insert_pair_of_contract_isBase_rank3
+ #print axioms Rank3KUM.contractGroundEquiv_trans_apply_coe
+diff --git a/vendor/Rank3KUM/Rank3KUM/Interleave.lean b/vendor/Rank3KUM/Rank3KUM/Interleave.lean
+index 950b679..a14b695 100644
+--- a/vendor/Rank3KUM/Rank3KUM/Interleave.lean
++++ b/vendor/Rank3KUM/Rank3KUM/Interleave.lean
+@@ -511,12 +511,12 @@ theorem exists_cyclicBasisOrder3_of_sortedEnumeration_flat
+         M hk hRank hRestrictRank hPX Set.sdiff_subset
+         hXflat points D
+   let order : Fin (3 * k) ≃ M.E :=
+-    localOrder.trans (Equiv.setCongr hUnion)
++    localOrder.trans (Set.equivOfEq hUnion)
+   refine ⟨order, ?_⟩
+   intro i
+   have hi := hLocal i
+   simpa only [order, Equiv.trans_apply,
+-    Equiv.setCongr_apply] using hi
++    Set.equivOfEq_apply] using hi
+ 
+ 
+ #print axioms Rank3KUM.exists_cyclicBasisOrder3_of_sortedEnumeration_flat
+diff --git a/vendor/Rank3KUM/Rank3KUM/Splicing.lean b/vendor/Rank3KUM/Rank3KUM/Splicing.lean
+index 6ab8fcc..72148b0 100644
+--- a/vendor/Rank3KUM/Rank3KUM/Splicing.lean
++++ b/vendor/Rank3KUM/Rank3KUM/Splicing.lean
+@@ -183,11 +183,11 @@ theorem contiguousBasisSplicing
+         (by simpa [b, ib] using h₃)
+         (by simpa [b, c, ib, ic] using h₄)
+     let order : Fin (m + 3) ≃ M.E :=
+-      (appendBlockOrder hED small block).trans (Equiv.setCongr hUnion)
++      (appendBlockOrder hED small block).trans (Set.equivOfEq hUnion)
+     refine ⟨order, ?_⟩
+     intro i
+     have hi := hApp i
+-    simpa only [order, Equiv.trans_apply, Equiv.setCongr_apply] using hi
++    simpa only [order, Equiv.trans_apply, Set.equivOfEq_apply] using hi
+   · rcases hSecond with ⟨block, h₁, h₂, h₃, h₄⟩
+     let rotated : Fin m ≃ (Matroid.delete M D).E :=
+       rotateOneOrder (by omega) small
+@@ -247,11 +247,11 @@ theorem contiguousBasisSplicing
+           rw [hrotZero, hrotOne]
+           exact h₄)
+     let order : Fin (m + 3) ≃ M.E :=
+-      (appendBlockOrder hED rotated block).trans (Equiv.setCongr hUnion)
++      (appendBlockOrder hED rotated block).trans (Set.equivOfEq hUnion)
+     refine ⟨order, ?_⟩
+     intro i
+     have hi := hApp i
+-    simpa only [order, Equiv.trans_apply, Equiv.setCongr_apply] using hi
++    simpa only [order, Equiv.trans_apply, Set.equivOfEq_apply] using hi
+ 
+ #print axioms Rank3KUM.contiguousBasisSplicing
+ 
+diff --git a/vendor/Rank3KUM/Rank3KUM/TightFlatAutomatic.lean b/vendor/Rank3KUM/Rank3KUM/TightFlatAutomatic.lean
+index af9b1d1..eab4d5d 100644
+--- a/vendor/Rank3KUM/Rank3KUM/TightFlatAutomatic.lean
++++ b/vendor/Rank3KUM/Rank3KUM/TightFlatAutomatic.lean
+@@ -68,12 +68,12 @@ theorem exists_cyclicBasisOrder3_of_flat_ordering
+     Set.sdiff_union_of_subset hXflat.subset_ground
+   let order : Fin (3 * k) ≃ M.E :=
+     (interleaveOneTwo hPX points pairs).trans
+-      (Equiv.setCongr hUnion)
++      (Set.equivOfEq hUnion)
+   refine ⟨order, ?_⟩
+   intro i
+   have hi := hLocal i
+   simpa only [order, Equiv.trans_apply,
+-    Equiv.setCongr_apply] using hi
++    Set.equivOfEq_apply] using hi
+ 
+ /--
+ A uniformly dense rank-two flat of size `2k`, with a complement of size `k`,

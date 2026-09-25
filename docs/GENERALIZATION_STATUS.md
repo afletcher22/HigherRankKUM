@@ -33,7 +33,7 @@ The rational layer was added without replacing the older divisible interface. In
 
 - Rank 1 divisible KUM: **formalized internally**.
 - Rank 2 divisible KUM: **formalized internally** through the native HalfWeave-style implementation.
-- Rank 3 divisible KUM: **formalized internally through a frozen vendored proof**. `vendor/Rank3KUM/` is an exact source snapshot of Rank3KUM version-3 commit `eff642a2e01fac4fc1f6f76e592eeea46c3152c9`; `HigherRankKUM/LowRank/RankThree.lean` is the narrow adapter into the generic solver interface.
+- Rank 3 divisible KUM: **formalized internally through a frozen vendored proof**. `vendor/Rank3KUM/` is a source snapshot of Rank3KUM version-3 commit `eff642a2e01fac4fc1f6f76e592eeea46c3152c9`. It is exact apart from the toolchain patches listed in `vendor/Rank3KUM/PATCHES.md`; `HigherRankKUM/LowRank/RankThree.lean` is the narrow adapter into the generic solver interface.
 
 HigherRankKUM does **not** currently contain a full formal proof of arbitrary-size rank-two KUM or a formalization of the van den Heuvel–Thomassé coprime theorem. Odd-size rank-two instances may therefore appear as explicit hypotheses even when they are settled mathematically in the literature.
 

@@ -29,7 +29,7 @@ def dangerous_hyperplane_parts_equiv_ground
     (Equiv.Set.union hd).symm
   have hEq : (M.E \ H) ∪ H = M.E := by
     rw [sdiff_union_self, union_eq_self_of_subset_right hH.subset_ground]
-  exact e.trans (Equiv.setCongr hEq)
+  exact e.trans (Set.equivOfEq hEq)
 
 @[simp] theorem dangerous_hyperplane_parts_equiv_ground_left
     {M : Matroid α} {k : ℕ} {H : Set α}
@@ -51,7 +51,7 @@ def dangerousCoreEquiv
     {M : Matroid α} {H : Set α} {n : ℕ}
     (order : Fin n ≃ (M.restrict H).E) :
     Fin n ≃ (H : Set α) :=
-  order.trans (Equiv.setCongr (by simp [Matroid.restrict_ground_eq]))
+  order.trans (Set.equivOfEq (by simp [Matroid.restrict_ground_eq]))
 
 @[simp] theorem dangerousCoreEquiv_coe
     {M : Matroid α} {H : Set α} {n : ℕ}

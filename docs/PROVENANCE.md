@@ -26,7 +26,7 @@ The completed rank-three proof is separately vendored from the publication/Palom
 - exact source `Rank3KUM/` subtree: `a73e2f94c811a4f2f072e197d1a03656bc53f616`;
 - source root `Rank3KUM.lean` blob: `d5772bbc9f798d202ddd41af84b928dab67e91d4`.
 
-The directory `vendor/Rank3KUM/Rank3KUM/` has the same Git tree SHA `a73e2f94c811a4f2f072e197d1a03656bc53f616`, providing direct Git-level confirmation that the Lean source subtree is byte-for-byte identical to the selected v3 source. The root source and license were copied alongside it.
+When it was vendored, the directory `vendor/Rank3KUM/Rank3KUM/` had the same Git tree SHA `a73e2f94c811a4f2f072e197d1a03656bc53f616`. This gave direct Git-level confirmation that the Lean source subtree was byte-for-byte identical to the selected v3 source. The root source and license were copied alongside it. The toolchain patches in `vendor/Rank3KUM/PATCHES.md` have changed that tree since. Reversing them (`git apply -R`) restores the original tree.
 
 `vendor/Rank3KUM/SOURCE.md` and `vendor/Rank3KUM/SHA256SUMS` make this origin and integrity independently auditable inside HigherRankKUM.
 

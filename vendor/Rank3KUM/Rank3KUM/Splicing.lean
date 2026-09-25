@@ -183,11 +183,11 @@ theorem contiguousBasisSplicing
         (by simpa [b, ib] using h₃)
         (by simpa [b, c, ib, ic] using h₄)
     let order : Fin (m + 3) ≃ M.E :=
-      (appendBlockOrder hED small block).trans (Equiv.setCongr hUnion)
+      (appendBlockOrder hED small block).trans (Set.equivOfEq hUnion)
     refine ⟨order, ?_⟩
     intro i
     have hi := hApp i
-    simpa only [order, Equiv.trans_apply, Equiv.setCongr_apply] using hi
+    simpa only [order, Equiv.trans_apply, Set.equivOfEq_apply] using hi
   · rcases hSecond with ⟨block, h₁, h₂, h₃, h₄⟩
     let rotated : Fin m ≃ (Matroid.delete M D).E :=
       rotateOneOrder (by omega) small
@@ -247,11 +247,11 @@ theorem contiguousBasisSplicing
           rw [hrotZero, hrotOne]
           exact h₄)
     let order : Fin (m + 3) ≃ M.E :=
-      (appendBlockOrder hED rotated block).trans (Equiv.setCongr hUnion)
+      (appendBlockOrder hED rotated block).trans (Set.equivOfEq hUnion)
     refine ⟨order, ?_⟩
     intro i
     have hi := hApp i
-    simpa only [order, Equiv.trans_apply, Equiv.setCongr_apply] using hi
+    simpa only [order, Equiv.trans_apply, Set.equivOfEq_apply] using hi
 
 #print axioms Rank3KUM.contiguousBasisSplicing
 

@@ -170,12 +170,12 @@ theorem exists_cyclicBasisOrder3_of_contract_ordering
     Set.union_sdiff_cancel hXsubset
   let order : Fin (3 * k) ≃ M.E :=
     (interleaveOneTwo hDisjoint points pairs).trans
-      (Equiv.setCongr hUnion)
+      (Set.equivOfEq hUnion)
   refine ⟨order, ?_⟩
   intro i
   have hi := hLocal i
   simpa only [order, Equiv.trans_apply,
-    Equiv.setCongr_apply] using hi
+    Set.equivOfEq_apply] using hi
 
 #print axioms Rank3KUM.isBase_insert_pair_of_contract_isBase_rank3
 #print axioms Rank3KUM.contractGroundEquiv_trans_apply_coe
