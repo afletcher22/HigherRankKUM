@@ -18,4 +18,4 @@ name = "HigherRankKUM"
 [[lean_lib]]
 name = "Probe"
 srcDir = "probes"
-roots = ["Probe.ChallengeDraft", "Probe.Kum6", "Probe.Kum8"]
+roots = ["Probe.ChallengeDraft", "Probe.Kum6", "Probe.Kum8", "Probe.Kum8Core", "Probe.Cyc8Core"]

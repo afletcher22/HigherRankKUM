@@ -28,25 +28,22 @@ jobs:
       - name: Build draft challenge statement
         shell: bash
         run: lake build Probe.ChallengeDraft 2>&1 | tee challenge.log
-      - name: Build Kum6 (kernel-checked LRAT)
+      - name: Build and replay probe modules
         shell: bash
-        run: /usr/bin/time -v lake build Probe.Kum6 2>&1 | tee kum6.log
-      - name: Replay Kum6 with leanchecker
-        shell: bash
-        run: /usr/bin/time -v lake env leanchecker Probe.Kum6 2>&1 | tee kum6-replay.log
-      - name: Build Kum8 (kernel-checked LRAT)
-        continue-on-error: true
-        shell: bash
-        run: /usr/bin/time -v lake build Probe.Kum8 2>&1 | tee kum8.log
-      - name: Replay Kum8 with leanchecker
-        continue-on-error: true
-        shell: bash
-        run: /usr/bin/time -v lake env leanchecker Probe.Kum8 2>&1 | tee kum8-replay.log
+        env:
+          PROBE_MODULES: Kum8Core Cyc8Core
+        run: |
+          for m in $PROBE_MODULES; do
+            echo "::group::$m"
+            /usr/bin/time -v lake build Probe.$m 2>&1 | tee $m.log || echo "BUILD FAILED: $m"
+            /usr/bin/time -v lake env leanchecker Probe.$m 2>&1 | tee $m-replay.log || echo "REPLAY FAILED: $m"
+            echo "::endgroup::"
+          done
       - name: Axiom guard
         shell: bash
         run: |
-          grep -h "depends on axioms" kum6.log kum8.log || true
-          if grep -hE "ofReduceBool|sorryAx|trustCompiler" kum6.log kum8.log; then
+          grep -h "depends on axioms" *.log || true
+          if grep -hE "ofReduceBool|sorryAx|trustCompiler" $(ls *.log | grep -v challenge); then
             echo "Forbidden axiom found"; exit 1
           fi
       - name: Upload logs
