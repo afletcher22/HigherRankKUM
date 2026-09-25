@@ -1,4 +1,5 @@
 import Probe.VHT.Core
+import Probe.VHT.Coprime
 import HigherRankKUM.TightContraction
 
 /-!
@@ -99,7 +100,7 @@ theorem statement : Statement α := by
       have h := hNW {e, f} hcoe
       rw [Finset.sum_pair hfe.symm, Finset.coe_pair] at h
       have h' : ((ω e + ω f : ℕ) : ℕ∞) ≤ (D : ℕ∞) :=
-        (h.trans (mul_le_mul_left' hrk _)).trans_eq (mul_one _)
+        (h.trans (by gcongr)).trans_eq (mul_one _)
       have h'' : ω e + ω f ≤ D := by exact_mod_cast h'
       have := h0 f hfE
       omega
