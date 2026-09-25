@@ -84,7 +84,7 @@ elab "clause_witnesses " n:ident ppSpace src:term:max : command => do
           | _, _ => throwError "bad witness line: {line}"
         ws := ws.push e
     if ws.isEmpty then throwError "no witnesses"
-    let ty := mkConst ``Probe.Enc.W
+    let ty : Expr := Lean.mkConst ``Probe.Enc.W
     addDecl <| Declaration.defnDecl {
       name, levelParams := [], type := mkApp (mkConst ``List [levelZero]) ty
       value := balancedList ty ws 0 ws.size
