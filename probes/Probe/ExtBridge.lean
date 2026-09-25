@@ -71,7 +71,9 @@ theorem rank4Extension_of_cert {N : ℕ} (hN0 : 0 < N)
     · rw [hf_lt a ha, hf_ge b hb] at hab'
       exact absurd (hab' ▸ (sEnum _).2) (σ _).2.2
     · rw [hf_ge a ha, hf_lt b hb] at hab'
-      exact absurd (hab' ▸ (sEnum _).2) (by rw [← hab']; exact (σ _).2.2)
+      have h1 := (sEnum ⟨b, hb⟩).2
+      rw [← hab'] at h1
+      exact absurd h1 (σ _).2.2
     · rw [hf_ge a ha, hf_ge b hb] at hab'
       have := σ.injective (Subtype.ext hab')
       have h2 := congrArg Fin.val this
