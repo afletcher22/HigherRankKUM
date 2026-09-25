@@ -98,7 +98,7 @@ theorem gen_sound {N : ℕ} (m : RankModel N) : ∀ w, valid N w = true → (val
     obtain ⟨i, hi, hr⟩ := m.noCBO s hv.1 hv.2
     refine (satisfies_map_neg (val m) (List.range N) (fun i => idx (window s i) 4)).2 ?_
     intro hall
-    have := (val_idx m (by omega : 1 ≤ 4) le_rfl (window s i)).1 (hall i (List.mem_range.2 hi))
+    have := (val_idx m (by omega : 1 ≤ 4) (Nat.le_refl 4) (window s i)).1 (hall i (List.mem_range.2 hi))
     omega
 
 /-- A kernel-checked refutation of a formula regenerated from valid witnesses rules out every
