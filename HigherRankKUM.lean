@@ -101,3 +101,13 @@ import HigherRankKUM.Rank4.DangerousScheduleNormalization
 import HigherRankKUM.Rank4.DangerousScheduleSymbolicBasis
 import HigherRankKUM.Rank4.DangerousScheduleSymbolicDistanceTwo
 import HigherRankKUM.Rank4.DangerousScheduleSymbolicEndpoint
+import HigherRankKUM.VHT.Statement
+import HigherRankKUM.VHT.Push
+import HigherRankKUM.VHT.Best
+import HigherRankKUM.VHT.Reach
+import HigherRankKUM.VHT.Core
+import HigherRankKUM.VHT.Coprime
+import HigherRankKUM.VHT.Covers
+import HigherRankKUM.VHT.Theorem21
+import HigherRankKUM.PrimeRank
+import HigherRankKUM.Rank4.Unconditional
