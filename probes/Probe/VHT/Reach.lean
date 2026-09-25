@@ -52,6 +52,7 @@ theorem finite_reach (hE : M.E.Finite) (φ : α → ZMod D) : {ψ | Reach M ω �
   haveI : Finite M.E := hE.to_subtype
   refine (Set.finite_range fun g : M.E → ZMod D => extendGround M g φ).subset fun ψ hψ => ?_
   refine ⟨fun e => ψ e, funext fun a => ?_⟩
+  show extendGround M (fun e : M.E => ψ e) φ a = ψ a
   by_cases ha : a ∈ M.E
   · exact extendGround_apply ha
   · rw [extendGround_apply_not_mem ha, reach_off_ground hψ a ha]
