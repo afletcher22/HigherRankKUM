@@ -13,3 +13,9 @@ srcDir = "vendor/Rank3KUM"
 
 [[lean_lib]]
 name = "HigherRankKUM"
+
+# Encoding-layer probes (probe branches only; not part of the default target)
+[[lean_lib]]
+name = "Probe"
+srcDir = "probes"
+roots = ["Probe.ChallengeDraft", "Probe.Enc", "Probe.EncSound", "Probe.EncKum6", "Probe.EncKum6Sound", "Probe.EncBridge", "Probe.EncKum6Final"]
