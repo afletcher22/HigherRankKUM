@@ -22,6 +22,17 @@ def formula(name):
     if name == "kum10":
         from kum_4_10_sat import build
         return build(False)[0]
+    if name == "baseG":
+        # Theorem G base lemma: 6-point plane in 10 elements has a site-CBO (all r(C))
+        from base_sat import build
+        return build(None)[0]
+    if name.startswith("baseG_r"):
+        from base_sat import build
+        return build(int(name[7:]))[0]
+    if name == "baseL4":
+        # Theorem L4 base lemma: 4-point line in 10 elements has a site-CBO
+        from base_sat_general import build
+        return build(2, 4)[0]
     if name == "kum10s":
         # strict t=0 only; the tight and t>0 cases at n=10 are covered by the Lean reductions
         from kum_4_10_sat import build

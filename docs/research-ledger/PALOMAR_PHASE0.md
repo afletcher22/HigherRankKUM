@@ -59,6 +59,14 @@ Additional measurement:
   DRUP lemmas (4.7M lemma literals), about a third of the full n=10 proof. Its LRAT size is
   pending.
 
+SAT base lemmas for Theorems G and L4, which replace the n=14 hitting SAT at k=3 (decision of
+2026-09-25):
+
+| Claim | Clauses | DRUP lemmas | LRAT steps | LRAT hints | Core clauses | Verdict |
+|---|---|---|---|---|---|---|
+| L4 base: 4-point line, n0=10 (`baseL4`) | 259,074 | 64,906 | 27,023 | 826,338 | 27,073 | at the ceiling; needs a case split or a smaller proof |
+| G base: 6-point plane, n0=10 (`baseG`, all r(C)) | 138,106 | 159,158 | pending | | | |
+
 The core is small. The proofs use only 3% of the X' formula's clauses, and a third of KUM(8)'s.
 Re-solving the core shrinks the proof modestly and inconsistently: KUM(8) went from 371k to 293k
 hints, and X'(8) from 342k to 237k.
@@ -105,10 +113,22 @@ matroid counterexample would satisfy the formula. The design, in `probe/lrat-ker
   use. `gen_sound` shows that every valid witness yields a clause satisfied by `r(X) ≥ v`.
   Therefore `no_model` shows that no rank model exists, whenever a refutation is available.
 
-The remaining bridge (a uniformly dense matroid with no cyclic basis ordering yields a
-`RankModel`) is ordinary Mathlib work. It needs no computation.
+The bridge (`probes/Probe/EncBridge.lean`, branch `probe/encoding`, on the `v4.35.0-rc3`
+toolchain) turns a counterexample matroid into a `RankModel`, which the certificate then rules out:
 
-**Status: working end to end for n=6.** `Probe.Enc.Kum6.no_rank_model : RankModel 6 → False`
+* number the ground set, and read a bitmask `X` as `maskSet σ X`;
+* take `r X = (M.eRk (maskSet σ X)).toNat`;
+* derive each rank-model property from a Mathlib lemma: `eRk_le_encard`, uniform density,
+  `eRk_mono`, `eRk_insert_le_add_one` and `eRk_inter_add_eRk_union_le`;
+* turn every cyclic list into a numbering `Fin N ≃ M.E` whose windows are the list's windows.
+
+**End-to-end result:**
+`Probe.Enc.Kum6.solves : HigherRankKUM.SolvesKUMAtRankSize α 4 6`. It is rank-4 KUM on 6
+elements, stated in the repository's own solver interface, and depends only on
+`[propext, Classical.choice, Quot.sound]`.
+
+**Status: working end to end for n=6** (the refutation-to-rank-model part; the full matroid
+theorem is below). `Probe.Enc.Kum6.no_rank_model : RankModel 6 → False`
 builds and depends only on `[propext, Quot.sound]`. The whole path from the LRAT certificate to
 "no abstract rank model exists" is kernel-checked.
 
