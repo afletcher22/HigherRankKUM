@@ -597,3 +597,20 @@ search) is needed to finish it.
 * 14-element base lemmas for the configurations in §10.3;
 * the light regime, where a selection rule (R1 or R2) plus universal insertion is the target.
   "Every basis" is false (§9).
+
+
+## 11. Superseded by the extension theorem (2026-09-25)
+
+See `RANK4_EXTENSION_THEOREM.md`. Contiguous reinsertion (§9–10) is the wrong target:
+**non-contiguous** reinsertion of a basis into a CBO of `M\S` always succeeds once
+`|E-S| >= 7`, in every rank-4 matroid (SAT-certified). This gives:
+
+* the divisible case `n=4k` outright, via Edmonds;
+* the strict t=0 gcd-two case, via Theorems G and L4 of this note together with a new hitting
+  lemma (Lemma H).
+
+The open items of §10.5 are therefore no longer needed:
+
+* the choice lemmas for k-points, (2k-1)-lines and (3k-1)-planes;
+* the 14-element base lemmas;
+* the light-regime selection rules.

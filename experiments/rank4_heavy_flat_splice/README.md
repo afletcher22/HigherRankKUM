@@ -77,3 +77,21 @@ The SAT scripts need the `python-sat` package (`pip install python-sat`).
 which `D` cannot be inserted contiguously at any gap. It is binary only. `bsi/block_bin.py` is its
 helper module. These are the natural starting point for the light-class falsification task in §6
 of the ledger note.
+
+## Extension theorem and the reduction of rank-4 KUM (`RANK4_EXTENSION_THEOREM.md`)
+
+| Script | What it does |
+|---|---|
+| `ext.py` | Non-contiguous extension of a deletion CBO by a basis (memoised DFS) |
+| `nonext.py` | Adversarial search for deletion CBOs with no extension, with interior-extension pruning |
+| `ext_crosscheck.py` | Validates `ext.extend` and `nonext.py` against brute-force CBO enumeration (n=10) |
+| `ext_blocked.py`, `ext_blocked18.py` | Every fully blocked binary order at n=14 and n=18 extends; lists the shapes used |
+| `ext_bin_exhaust.py M [strict]` | Exhaustive binary check of the extension theorem (non-extendable CBOs exist only at n=10, with t=3) |
+| `ext_local_bin.py`, `ext_local_verify.py` | Exact binary threshold 14 for the local form, plus an independent brute-force check |
+| `local_sat.py L` | **SAT proof of the local form (Theorem X)**: SAT for L<=13, UNSAT for L=14 |
+| `cyclic_sat.py N [block\|full]` | **SAT proof of the cyclic form (Theorem X')**: SAT for N=6, UNSAT for N=7..14 |
+| `local_sat_controls.py`, `cyclic_sat_controls.py`, `cyclic_sat_more.py` | Thresholds, second and third solvers, full-rank-function encoding, real-matroid consistency |
+| `run_nonext_real.py SEED N` | Adversarial non-extension search on GF(3)/GF(5)/GF(7) and sparse paving matroids |
+| `kum_small_sat.py N [nodensity]` | Direct SAT proof of rank-4 KUM on N<=9 elements (used for N=6 and 8), with a no-density control |
+| `lemma_h.py` | Runs the Lemma H construction from every adversarial starting basis and asserts each step |
+| `hit_general.py` | Random evidence for a unified hitting lemma, with 3k-planes and 2k-lines present |
