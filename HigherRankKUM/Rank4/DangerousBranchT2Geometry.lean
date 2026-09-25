@@ -180,7 +180,7 @@ def dangerous_two_parts_equiv_ground
     (Equiv.sumCongr eAB (Equiv.refl G)).trans (Equiv.Set.union hABG).symm
   have hEq : ((A ∪ B) ∪ G : Set α) = M.E := by
     simpa [A, B, G, Set.union_assoc] using hpart.1.symm
-  exact eU.trans (Equiv.setCongr hEq)
+  exact eU.trans (Set.equivOfEq hEq)
 
 end
 

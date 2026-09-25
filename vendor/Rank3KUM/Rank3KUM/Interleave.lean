@@ -511,12 +511,12 @@ theorem exists_cyclicBasisOrder3_of_sortedEnumeration_flat
         M hk hRank hRestrictRank hPX Set.sdiff_subset
         hXflat points D
   let order : Fin (3 * k) ≃ M.E :=
-    localOrder.trans (Equiv.setCongr hUnion)
+    localOrder.trans (Set.equivOfEq hUnion)
   refine ⟨order, ?_⟩
   intro i
   have hi := hLocal i
   simpa only [order, Equiv.trans_apply,
-    Equiv.setCongr_apply] using hi
+    Set.equivOfEq_apply] using hi
 
 
 #print axioms Rank3KUM.exists_cyclicBasisOrder3_of_sortedEnumeration_flat

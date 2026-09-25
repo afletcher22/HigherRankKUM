@@ -40,7 +40,7 @@ def partsEquivGround
     (Equiv.Set.union hd).symm
   have hEq : (M.E \ H) ∪ H = M.E := by
     rw [sdiff_union_self, union_eq_self_of_subset_right hH.subset_ground]
-  exact e.trans (Equiv.setCongr hEq)
+  exact e.trans (Set.equivOfEq hEq)
 
 @[simp] theorem partsEquivGround_left
     {M : Matroid α} {k : ℕ} {H : Set α}

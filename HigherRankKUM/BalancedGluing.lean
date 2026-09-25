@@ -85,7 +85,7 @@ theorem exists_cyclicBasisOrder_of_balanced_restrict_contract
   have hUnion : X ∪ (M.E \ X) = M.E :=
     Set.union_sdiff_cancel hX
   let order : Fin ((s + t) * k) ≃ M.E :=
-    localOrder.trans (Equiv.setCongr hUnion)
+    localOrder.trans (Set.equivOfEq hUnion)
   refine ⟨order, ?_⟩
   apply cyclicBasisOrder_of_restrict_contract_window_decomposition
     M hX (Nat.mul_pos (by omega) hk)
@@ -97,7 +97,7 @@ theorem exists_cyclicBasisOrder_of_balanced_restrict_contract
       hs ht hk hDisjoint left right p
   refine ⟨iS, iT, ?_⟩
   simpa only [order, localOrder, left, right,
-    cyclicWindow, Equiv.trans_apply, Equiv.setCongr_apply,
+    cyclicWindow, Equiv.trans_apply, Set.equivOfEq_apply,
     restrictGroundEquiv_apply_coe,
     contractGroundEquiv_apply_coe] using hp
 

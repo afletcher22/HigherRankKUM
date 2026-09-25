@@ -22,6 +22,10 @@ def formula(name):
     if name == "kum10":
         from kum_4_10_sat import build
         return build(False)[0]
+    if name == "kum10s":
+        # strict t=0 only; the tight and t>0 cases at n=10 are covered by the Lean reductions
+        from kum_4_10_sat import build
+        return build(True)[0]
     if name.startswith("hit14"):
         from hit_sat14 import build
         import itertools

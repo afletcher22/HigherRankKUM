@@ -7,7 +7,8 @@ sensible for moderate proofs).  Output files go to certs/ (gitignored); one JSON
 is appended to certs/measure.jsonl.
 
 Usage: python cert_measure.py [check] NAME...
-NAMEs as in certify.py: cyc8 cyc10 cyc12 lin14 kum6 kum8 kum10 hit14plane hit14line
+NAMEs as in certify.py: cyc8 cyc10 cyc12 lin14 kum6 kum8 kum10 hit14plane hit14line.  Any other
+NAME re-solves the existing certs/NAME.cnf (for example a core written by lrat_core.py).
 """
 import json, os, shutil, sys, time
 import pysat.solvers as PS
@@ -56,8 +57,13 @@ def write_dimacs(path, cls):
 def measure(name, do_check):
     os.makedirs(OUT, exist_ok=True)
     t0 = time.time()
-    cls = formula(name)
     cnf_path = os.path.join(OUT, f"{name}.cnf")
+    try:
+        cls = formula(name)
+    except ValueError:
+        # not a named claim: re-solve an existing CNF, e.g. a core from lrat_core.py
+        from lrat_emit import read_dimacs
+        cls = read_dimacs(cnf_path)
     nv = write_dimacs(cnf_path, cls)
     rec = {"name": name, "solver": "Cadical195", "vars": nv, "clauses": len(cls),
            "literals": sum(len(c) for c in cls), "cnf_bytes": os.path.getsize(cnf_path),

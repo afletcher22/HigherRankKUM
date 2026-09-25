@@ -242,7 +242,7 @@ def dangerous_triple_parts_equiv_ground
     (Equiv.sumCongr eAB eCG).trans (Equiv.Set.union hABCG).symm
   have hEq : ((A ∪ B) ∪ (C ∪ G) : Set α) = M.E := by
     simpa [A, B, C, G] using hpart.1.symm
-  exact eU.trans (Equiv.setCongr hEq)
+  exact eU.trans (Set.equivOfEq hEq)
 
 
 /-- Generic rank-four nested-flat extension lemma used by all three dangerous

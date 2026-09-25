@@ -45,7 +45,7 @@ theorem exists_cyclicBasisOrder_of_periodic_restrict_contract
   have hUnion : X ∪ (M.E \ X) = M.E :=
     Set.union_sdiff_cancel hX
   let order : Fin ((a + b) * p) ≃ M.E :=
-    localOrder.trans (Equiv.setCongr hUnion)
+    localOrder.trans (Set.equivOfEq hUnion)
   refine ⟨order, ?_⟩
   have hCore :
       CyclicBasisOrder M (a * q + b * q)
@@ -61,7 +61,7 @@ theorem exists_cyclicBasisOrder_of_periodic_restrict_contract
     refine ⟨iL, iR, ?_⟩
     rw [← Nat.add_mul]
     simpa only [order, localOrder, left, right,
-      cyclicWindow, Equiv.trans_apply, Equiv.setCongr_apply,
+      cyclicWindow, Equiv.trans_apply, Set.equivOfEq_apply,
       restrictGroundEquiv_apply_coe,
       contractGroundEquiv_apply_coe] using hz
   simpa [Nat.add_mul] using hCore

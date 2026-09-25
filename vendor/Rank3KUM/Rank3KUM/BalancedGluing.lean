@@ -50,22 +50,22 @@ theorem exists_cyclicBasisOrder3_of_point_pair_gluing_clean
       ext x
       simp [or_comm, or_left_comm]
   let order : Fin (3 * k) ≃ M.E :=
-    localOrder.trans (Equiv.setCongr hUnion)
+    localOrder.trans (Set.equivOfEq hUnion)
   refine ⟨order, ?_⟩
   intro i
   have hi := hLocal i
   simpa only [order, localOrder, Equiv.trans_apply,
-    Equiv.setCongr_apply] using hi
+    Set.equivOfEq_apply] using hi
 
 /-- The contraction ground is definitionally the complement of the contracted set. -/
 def gluingContractGroundEquivClean (M : Matroid α) (X : Set α) :
     (Matroid.contract M X).E ≃ (M.E \ X : Set α) :=
-  Equiv.setCongr (by simp)
+  Set.equivOfEq (by simp)
 
 /-- The restriction ground is the restricted set. -/
 def gluingRestrictGroundEquivClean (M : Matroid α) (X : Set α) :
     (Matroid.restrict M X).E ≃ X :=
-  Equiv.setCongr (by simp)
+  Set.equivOfEq (by simp)
 
 /--
 Balanced-gluing activation for the complete nonempty proper tight branch in
