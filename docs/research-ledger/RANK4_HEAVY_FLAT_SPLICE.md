@@ -516,3 +516,84 @@ through pairs of `B`-elements (§8.5 key question).
 and then runs the full construction. It gave **159/159 successes** for k-points, 2k-lines,
 (2k-1)-lines and (3k-1)-planes at k=3,4,5 over GF(2)/GF(3)/GF(5), with the base lemma never
 failing.
+
+
+## 10. Session wrap-up (selection rules, cascade gaps, 14-element bases)
+
+### 10.1 Anatomy of the light counterexamples to U (`analyze_light_block.py`)
+Take the binary n=18 example with the blocked basis `B={1,2,4,8}`. The blocked order
+`σ' = [1,10,4,3,15,5,2,9,15,3,8,5,15,12]` has this structure:
+
+* The three copies of `15` sit 4 apart. Each has full support on `B`: its fundamental circuit
+  uses all of `B`.
+* Every other element has support at most 2, meaning it lies on one of the six lines spanned by
+  pairs of `B`.
+* Every gap is flanked by low-support elements, so all 24 orders fail.
+
+In a paving matroid every element outside `B` has support at least 3, so this mechanism cannot
+occur. That is why McGuinness's insertion works there.
+
+### 10.2 Tetrahedral family search (`tetra_family.py`)
+The instances are light, with `B = e1..e4`, most other elements on the pair-lines of `B`, and a
+full-support point of multiplicity `k-1`.
+
+| Field, k | Instances | Blocked |
+|---|---|---|
+| GF(2), k=4 | 12 | 1 |
+| GF(2), k=5 | 12 | 1 (2 searches hit the node budget) |
+| GF(3), k=4 | 12 | 0 |
+| GF(3), k=5 | 12 | 0 |
+
+For every blocked instance, exactly one of 131 basis types fails. Both candidate selection rules
+are consistent with the data:
+
+* **R1:** the basis meets every parallel class of size `k-1`.
+* **R2:** the basis minimises the number of elements on its pair-lines. The bad basis has 11
+  (k=4) or 14 (k=5) such elements, against a minimum of 6.
+
+### 10.3 Gaps in the 10-element cascade
+The choice lemmas for (3k-1)-planes and (2k-1)-lines cannot always be met with a 10-element base.
+
+* **(3k-1)-plane, k>=5.** If the complement (`k+3` elements) is collinear, every base contains 5
+  collinear points, which violates the "no 5-line" condition.
+* **(2k-1)-line.** If the complement of the line lies in a single plane, which density allows at
+  k>=5, every base contains 7 coplanar points.
+
+Such configurations need 14-element base lemmas, or a different flat of the same matroid.
+
+### 10.4 14-element base lemmas by lazy SAT (`base_cegar.py`)
+This is SAT with lazily generated clauses (counterexample-guided refinement).
+
+1. Solve over rank functions.
+2. Extract a candidate matroid.
+3. Run an exhaustive site-anchored search for a site-CBO.
+4. If one is found, forbid it, together with random relabellings inside `F0` and `X0`.
+5. If none exists, report a genuine counterexample.
+
+**Validation (`cegar_check10.py`).** It reproduces the three known 10-element results: holds after
+about 216 learned orders, the counterexample, and holds under strictness after about 496.
+
+**The 14-element run.** The case was an 8-point plane in a base strict at level 3 (points <=3,
+lines <=6, planes <=9). The run was stopped after about 3.6 h and about 5,400 learned orders,
+with **no counterexample** but no proof either; iterations had slowed to about 13 s each. This
+is inconclusive. Better engineering (symmetry breaking, stronger learned clauses, a faster site
+search) is needed to finish it.
+
+### 10.5 Status at wrap-up
+**Proved (paper + SAT):**
+
+* Theorem G (3k-planes);
+* Theorem L4 (2k-lines);
+* rank-4 KUM on 10 elements.
+
+**Strong evidence (159/159 pipelines):**
+
+* k-points;
+* (2k-1)-lines and (3k-1)-planes, except for the configurations in §10.3.
+
+**Open:**
+
+* paper choice lemmas for k-points, (2k-1)-lines and (3k-1)-planes;
+* 14-element base lemmas for the configurations in §10.3;
+* the light regime, where a selection rule (R1 or R2) plus universal insertion is the target.
+  "Every basis" is false (§9).

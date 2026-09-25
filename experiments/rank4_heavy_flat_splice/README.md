@@ -66,6 +66,10 @@ The SAT scripts need the `python-sat` package (`pip install python-sat`).
 | `run_U_binary.py` | Exact binary test of Conjecture U at n=14 and n=18. It finds 12 light blocked matroids at n=18 |
 | `run_U_basis_rule.py` | Classifies every basis of the light blocked matroids. It uses `blocked_n18.json`, the exhaustive list of the 360 blocked binary matroids at n=18 |
 | `run_U_minimal.py SEED` | Blocked-insertion search for matroids that are light except for one heavy feature |
+| `analyze_light_block.py` | Gap-by-gap anatomy of a light blocked insertion (binary n=18) |
+| `tetra_family.py SEED N` | Tetrahedral light families over GF(2) and GF(3), testing the basis-selection rules R1 and R2 on every basis type |
+| `base_cegar.py RHO F CAPS` | Lazy-clause SAT for base lemmas on 14 elements. The 8-point-plane run was stopped undecided |
+| `cegar_check10.py` | Validates `base_cegar.py` against the known 10-element results |
 
 ## Scripts from the earlier session: `bsi/`
 
