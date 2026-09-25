@@ -28,7 +28,7 @@ jobs:
       - name: Build and replay probe modules
         shell: bash
         env:
-          PROBE_MODULES: ExtBridge ExtCyc8 ExtCyc10 ExtCyc12 ExtCycFinal
+          PROBE_MODULES: ExtBridge ExtCyc8 ExtCyc10 ExtCyc12 ExtLin14 EncKum8Final ExtFinal
         run: |
           for m in $PROBE_MODULES; do
             echo "::group::$m"

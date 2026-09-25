@@ -91,7 +91,7 @@ def genX (cyc : Bool) : WX → List Sat.Literal
 abbrev interOK (n : ℕ) (cyc : Bool) (bases : List ℕ) (q : List ℕ) : Prop :=
   q.length = n ∧ (∀ x < n, x ∈ q) ∧ (∀ x ∈ q, x < n) ∧
     (∀ j ∈ starts cyc q, hasS q j = false → window q j ∈ bases) ∧
-    (cyc = false → q.take 3 = [4, 5, 6] ∧ q.drop (n - 3) = [n - 3, n - 2, n - 1])
+    (cyc = false → ∀ k < 3, q.getD k 0 = k + 4 ∧ q.getD (n - 3 + k) 0 = n - 3 + k)
 
 /-- Side conditions of the witnesses. -/
 def validX (n : ℕ) (cyc : Bool) (bases : List ℕ) : WX → Bool

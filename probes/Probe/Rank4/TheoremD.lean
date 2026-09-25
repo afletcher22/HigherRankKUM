@@ -105,9 +105,9 @@ theorem uniformlyDense_restrict_of_fibres {M : Matroid α} {k : ℕ} [NeZero k] 
   rw [hXT, ← hrc]
   exact_mod_cast hle
 
-/-- **Theorem D.** Given the rank-4 extension theorem (for `N ≥ 8`) and KUM on 8 elements,
-rank-4 KUM holds on `4k` elements. -/
-theorem solvesDivisibleKUMAtRank_four (hext : ∀ N, 8 ≤ N → Rank4Extension α N)
+/-- **Theorem D.** Given the rank-4 extension theorem on `4k` elements (`k ≥ 2`) and KUM on 8
+elements, rank-4 KUM holds on `4k` elements. -/
+theorem solvesDivisibleKUMAtRank_four (hext : ∀ k, 2 ≤ k → Rank4Extension α (4 * k))
     (h8 : SolvesKUMAtRankSize α 4 8) : SolvesDivisibleKUMAtRank α 4 := by
   intro M k hr hk hE hRank hEcard hDense
   induction k using Nat.strong_induction_on generalizing M with
@@ -197,7 +197,7 @@ theorem solvesDivisibleKUMAtRank_four (hext : ∀ N, 8 ≤ N → Rank4Extension 
       intro i
       refine isBase_of_isBase_restrict hRE (hσ' i) hrkR ?_
       exact Set.finite_range _
-    obtain ⟨τ, hτ⟩ := hext (4 * (k - 1)) (by omega) M S (Nat.mul_pos hr (by omega)) hE hRank4
+    obtain ⟨τ, hτ⟩ := hext (k - 1) (by omega) M S (Nat.mul_pos hr (by omega)) hE hRank4
       hSbase ⟨σ', hcbo⟩
     exact exists_cyclicBasisOrder_congr M (by omega) rfl ⟨τ, hτ⟩
 
