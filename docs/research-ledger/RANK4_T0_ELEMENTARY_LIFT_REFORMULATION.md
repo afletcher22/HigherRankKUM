@@ -498,9 +498,10 @@ units can be placed.
 Two further points:
 
 - The endpoints (a) and (b) are the same object in `M`: a 3k-point plane.
-- For k>=6, both endpoints are handled without any deletion CBO by the
-  heavy-flat splice (Corollary 6 there).  This is conditional on a hitting
-  lemma.  The splice reduces reinsertion to the Lean-proved Rank3KUM two-gap
-  theorem.
+- For every k>=2, both endpoints are handled without any deletion CBO by
+  Theorem G there.  Its proof combines the heavy-flat splice (which reduces
+  reinsertion to the Lean-proved Rank3KUM two-gap theorem), a decomposition
+  principle, a SAT-certified 10-element base lemma and a choice lemma.  It
+  needs no hitting lemma.
 
 Retire the §12–14 completion target.

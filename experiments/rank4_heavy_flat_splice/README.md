@@ -38,6 +38,23 @@ scripts take a seed as their first argument.
 | `run_hit.py SEED` | Hitting lemma for heavy flats at k=4..10 |
 | `run_light.py SEED` | Contiguous basis splice on light matroids and on the k=6,7 witnesses |
 
+## Decomposition principle and Theorem G (ledger §7)
+
+The SAT scripts need the `python-sat` package (`pip install python-sat`).
+
+| Script | What it does |
+|---|---|
+| `dp.py` | Site detection, site-CBO search, iterated plane splicing, and Edmonds partitions in rank 3 |
+| `run_dp.py SEED` | Base search plus DP construction on the n=10 class, the counterexamples, the witnesses and random k=3..5 |
+| `run_base_k2.py SEED N` | k=2 base lemma stress over GF(3), GF(5) and GF(7) |
+| `run_base_tau.py`, `base_shapes.py`, `run_shapes.py` | Perfect-core extendability to a site-CBO, split by rank of complement and by skeleton |
+| `b2_exhaustive.py` | Exhaustive, representation-free proof of the base lemma for `r(C)=2` |
+| `base_sat.py [rC]` | **SAT proof of the 10-element base lemma** for a 6-point plane (UNSAT for `rC=2,3,4`) |
+| `base_sat_sanity.py`, `base_sat_controls.py` | Sanity checks and discriminating controls for the SAT encoding |
+| `base_sat_general.py RHO F` | 10-element base lemmas for other flats: `3 7`, `1 2` and `2 4` are UNSAT; `3 5` and `2 3` are SAT |
+| `theorem_g.py`, `run_theorem_g.py SEED` | Theorem G pipeline with the paper choice lemma, verified end to end |
+| `theorem_pl.py`, `run_theorem_pl.py SEED` | Pipelines for k-points and 2k-lines, with the base chosen by search |
+
 ## Scripts from the earlier session: `bsi/`
 
 `bsi/block_exhaust.py M` exhaustively lists the cyclic orders of `M\D`, with `D={1,2,4,8}`, into

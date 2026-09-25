@@ -12,6 +12,9 @@ Branch: `rank4-heavy-flat-splice-research`, based on
 * §2 and §3: refutations, with exact certificates.
 * §4: remarks and a conjecture.
 * §5: computational evidence.
+* §7 (added later the same day): the decomposition principle and **Theorem G**. It is proved
+  by paper argument plus a SAT-certified 10-element base lemma, and it supersedes the
+  threshold-based use of Corollary 6.
 
 No claim here proves rank-4 KUM.
 
@@ -235,3 +238,132 @@ included in `experiments/rank4_heavy_flat_splice/bsi/`. Its findings, not re-run
 References: van den Heuvel–Thomassé, arXiv:0912.2929; McGuinness, *Cyclic orderings of paving
 matroids*, arXiv:2308.12239. McGuinness uses the same delete-a-basis / universal-reinsertion
 architecture, with paving playing the role of lightness.
+
+
+## 7. Decomposition principle and Theorem G (3k-planes, all k)
+
+### Observation
+Theorem 4 needs only three things:
+
+* a CBO of `M\B` that contains an F-site;
+* `B∩F`, a basis of `F`;
+* `B`, a basis of `M`.
+
+It needs no density, hitting or threshold hypothesis, and its output again contains an F-site.
+So sites propagate, and the counting in Lemma 5 is needed only to start the chain.
+
+### Decomposition principle (DP, checked informal)
+Suppose the following hold:
+
+* `F = F0 ∪ T1 ∪ ... ∪ Tm` with each `Ti` a basis of `M|F`;
+* `Z1,...,Zm` are disjoint sets outside `F` such that each `Bi = Ti ∪ Zi` is a basis of `M`;
+* `M0 = M \ (B1 ∪ ... ∪ Bm)` has a CBO containing an `F0`-site.
+
+Then `M` has a CBO: apply Theorem 4 `m` times, reusing the site each time.
+
+The slack of `F` does not change along the chain. Consequently a flat of slack `s` has a base
+of fixed size, independent of `k`. For example:
+
+* a 3k-plane has a 10-element base with `|F0|=6`;
+* a k-point has a 10-element base with `|F0|=2`;
+* a 2k-line has a 10-element base with `|F0|=4`.
+
+### Base lemma (SAT-certified, representation-free)
+Every uniformly dense rank-4 matroid on 10 elements with a 6-point plane `K0` has a CBO
+containing a K0-site.
+
+The encoding is in `base_sat.py`:
+
+* the rank function on all 1,024 subsets, in order encoding;
+* rank axioms (monotone, unit increase, local submodularity);
+* density;
+* flatness of `K0`;
+* one clause for each of the 51,840 candidate site sequences.
+
+The problem is UNSAT for each of `r(C)=2,3,4`, where `C` is the complement.
+
+Controls (`base_sat_sanity.py`, `base_sat_controls.py`):
+
+* the core clauses alone are SAT, and the model they give is a matroid;
+* the orbit-8 matroid satisfies the core clauses;
+* restricting to the skeleton S1 gives SAT for `r(C)=3` (as expected) and UNSAT for `r(C)=2`;
+* restricting to S2 gives SAT for `r(C)=2`.
+
+The case `r(C)=2` is proved independently by `b2_exhaustive.py`. That script enumerates all 20
+loopless rank-3 matroids on 6 elements (points <=2, lines <=5) and all 423 admissible
+partitions by planes through `cl(C)`, and finds an S1 ordering in every case.
+
+### Choice lemma (paper proof)
+Let `M` be strict with t=0 on `4k+2` elements, `k >= 3`, and let `K` be a 3k-plane with
+`C=E-K`. Partition `K` into `k` bases `D_i` (Edmonds). Then there are two of them, `D_a` and
+`D_b`, and a set `C0 ⊆ C` with `|C0|=4`, such that `M0 = M|(D_a ∪ D_b ∪ C0)` is uniformly dense.
+
+*Proof.* Uniform density of `M0` means: at most 2 elements per point, at most 5 per line and at
+most 7 per plane. We split on the rank of `C`.
+
+* **`r(C)=4`.** Take `C0` to be a basis of `M` inside `C`, and any `D_a,D_b`.
+* **`r(C)=3`.** Let `ℓ = cl(C)∩K`. Density gives `|ℓ| <= 3k-(k+2) = 2k-2`, so some `D_a` has at
+  most 1 element on `ℓ`, and `D_b` can be any other basis. Take `C0` of rank 3 with at most 2
+  elements per point. The only plane that can contain `C0` is `cl(C)`, and it meets
+  `D_a ∪ D_b` in at most 3 elements.
+* **`r(C)=2`.** Let `L = cl(C)` and `P = L∩K`, so that `|P| <= k-2`.
+  * The planes through `L` meet `K` in lines `ℓ_Π ⊇ P`, each with `|ℓ_Π| <= 2k-2`.
+  * The requirements are `|P∩K0| <= 1` and `|ℓ_Π∩K0| <= 3` for every such plane.
+  * A basis `D` avoiding `P` has 2 elements on at most one `ℓ_Π`. Call that plane its heavy
+    plane.
+  * If two bases that avoid `P` have different heavy planes (or none), use them.
+  * Otherwise every basis avoiding `P` has 2 elements on the same line `ℓ*`. Counting then gives
+    `|P| >= 2`.
+  * The bases meeting `P` contain at most `|P|-2` elements of `ℓ*` outside `P`. So some basis
+    meeting `P` has none, and pairing it with a basis that avoids `P` works.
+
+### Theorem G (paper + SAT)
+Every strict rank-4 matroid with t=0 on `4k+2` elements (`k >= 2`) that has a rank-3 flat with
+`3k` elements has a CBO.
+
+*Proof.*
+
+* For `k=2`, apply the base lemma to `M` itself.
+* For `k >= 3`, the choice lemma gives the base, the base lemma gives it a site-CBO, and DP
+  (with `T_i` the remaining bases `D_i` and `Z_i` the remaining elements of `C`) builds the
+  CBO of `M`.
+
+This closes both elementary-lift endpoints (a) and (b) for **all** k. It uses no deletion CBO,
+repair argument, hitting lemma or `k` threshold. It also covers:
+
+* the exact binary n=10 class, since every orbit has a 6-plane;
+* the historical n=18 witness;
+* the growing-distance witnesses k=3,4,5;
+* the completion counterexamples of §2.
+
+End-to-end pipeline check (`theorem_g.py`, `run_theorem_g.py`): 202 instances at k=2..7 over
+GF(2)/GF(3)/GF(5), all producing verified CBOs. Every case of the choice lemma occurred except
+the "basis meeting `P`" sub-case.
+
+### Other flats (`base_sat_general.py RHO F`)
+
+| Flat | Base (`|F0|`, n0=10) | Base lemma | Choice lemma |
+|---|---|---|---|
+| dangerous plane (3k+1) | 7 | UNSAT: holds | not needed (t>0 already solved) |
+| 3k-plane | 6 | UNSAT: holds | proved above |
+| k-point | 2 | UNSAT: holds | evidence only (`theorem_pl.py`: 36 instances, k=3..6) |
+| 2k-line | 4 | UNSAT: holds | evidence only (36 instances, k=3..6) |
+| (3k-1)-plane | 5 | **SAT: fails at n0=10** | needs a 14-element base |
+| (2k-1)-line | 3 | **SAT: fails at n0=10** | needs a 14-element base |
+
+### Updated frontier for strict t=0, `4k+2`
+The following are now covered:
+
+* a 3k-plane, by Theorem G;
+* a k-point or a 2k-line, once their choice lemmas are written up.
+
+What remains is matroids with **points <= k-1, lines <= 2k-1, planes <= 3k-1**. The k=7
+growing-distance witness (profile (6,12,20)) lies there, as the boundary case of a
+(3k-1)-plane.
+
+Next steps:
+
+1. Paper proofs of the point and line choice lemmas.
+2. 14-element base lemmas for (3k-1)-planes, (2k-1)-lines and (k-1)-points. This probably
+   needs SAT with lazy (CEGAR) site clauses.
+3. The remaining light class.
