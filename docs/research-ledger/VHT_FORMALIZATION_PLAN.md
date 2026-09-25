@@ -97,3 +97,29 @@ equivalent:
 * The modules then move to `HigherRankKUM/VHT/`, with the coprime solver exposed through the
   existing `SolvesKUMAtRankSize` interface. That removes the explicit coprime hypotheses in the
   rank-2 and rank-3 reductions.
+
+## Status (2026-09-25)
+
+The work is on branch `probe/vht`, in `probes/Probe/VHT/`, on the `v4.35.0-rc3` toolchain. Every
+module builds, with warnings only.
+
+* **`Statement.lean`** defines:
+  * `arcSet`, the elements whose arc covers a point, with points in `ZMod D`;
+  * `WeightBounded`, which is condition (b);
+  * `Statement α`, Theorem 2.1 (b) ⇒ (a) as a proposition;
+  * `card_arc`: an arc of length `w` covers `min w D` points.
+* **`Coprime.lean`** proves `coprime_kum : Statement α → Nat.Coprime r m → SolvesKUMAtRankSize α r m`,
+  which is Theorem 3.1 in full. It also contains the window-sum and fibre lemmas.
+* **`Covers.lean`** proves:
+  * `exists_arc_bases`: for a constant weight `w ≤ D` with `|E|·w = D·r(M)`, every arc is a
+    basis;
+  * `edmonds_partition`, the input of Theorem D;
+  * `double_cover`, the input of Lemma U.
+
+So every consumer of vHT is now proved from `Statement α`. The only remaining piece is the proof
+of `Statement α` itself, following steps 0–6 above.
+
+That proof uses the paper's fairness rule, which is not round-robin: push the first pushable
+element and move it to the back of the list. The state is (mapping on `E`, list ordering of `E`),
+which lies in a finite space, so pigeonhole gives a cycle. Round-robin scheduling does not give
+fairness, because an element can stop being pushable before its turn comes.
