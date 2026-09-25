@@ -13,3 +13,9 @@ srcDir = "vendor/Rank3KUM"
 
 [[lean_lib]]
 name = "HigherRankKUM"
+
+# Rank-4 formalization probes (probe branches only; not part of the default target)
+[[lean_lib]]
+name = "Probe"
+srcDir = "probes"
+globs = ["Probe.+"]
