@@ -478,3 +478,29 @@ The relevant data are now constant-width:
 
 This should be attacked as a finite local classification plus the existing
 rank-two common-base/path lemmas, not as another global potential.
+
+
+## 15. Correction: completion from an arbitrary deletion CBO is false
+
+Recorded 2026-09-24 on `rank4-heavy-flat-splice-research`. The full details
+are in `RANK4_HEAVY_FLAT_SPLICE.md`.
+
+The updated next task above is false for k>=3.  Exact certificates exist at
+binary k=3, GF(3) k=3, and k=4.  In each one, a deletion CBO's inherited
+K-order is a *perfect* rank-three CBO of `K`, yet no CBO of `M` induces that
+K-order.  So neither pair-only completion nor the CCC-tail schedule, nor any
+other order-preserving completion, can succeed.
+
+The mechanism is a rank-two complement: two parallel classes on one line
+meeting `K`.  The good core pairs are isolated, so only four of the six defect
+units can be placed.
+
+Two further points:
+
+- The endpoints (a) and (b) are the same object in `M`: a 3k-point plane.
+- For k>=6, both endpoints are handled without any deletion CBO by the
+  heavy-flat splice (Corollary 6 there).  This is conditional on a hitting
+  lemma.  The splice reduces reinsertion to the Lean-proved Rank3KUM two-gap
+  theorem.
+
+Retire the §12–14 completion target.
