@@ -1,0 +1,21 @@
+Control 1: binary N=6 counterexample, S={1,2,4,8}, cycle (1,6,8,3,4,10)
+  direct brute force: hypotheses hold=True, interleavings=3024, interleavings with all windows bases=0
+  binary example in full B6 CNFs: falsified clauses E1=0  E2=0
+  E1(B6) solve under assumptions = binary matroid: SAT
+Control 2: random representable rank-4 matroids on 18 elements (A14 blocks)
+  GF(2) trial 0: non-bases=2152, falsified axiom clauses E1=0 E2=0
+  GF(2) trial 1: non-bases=2295, falsified axiom clauses E1=0 E2=0
+  GF(2) trial 2: non-bases=2274, falsified axiom clauses E1=0 E2=0
+  GF(3) trial 0: non-bases=1173, falsified axiom clauses E1=0 E2=0
+  GF(3) trial 1: non-bases=1434, falsified axiom clauses E1=0 E2=0
+  GF(3) trial 2: non-bases=1283, falsified axiom clauses E1=0 E2=0
+  GF(5) trial 0: non-bases=654, falsified axiom clauses E1=0 E2=0
+  GF(5) trial 1: non-bases=567, falsified axiom clauses E1=0 E2=0
+  GF(5) trial 2: non-bases=655, falsified axiom clauses E1=0 E2=0
+  U_{4,18} in full A14 CNFs: falsified clauses E1=11880  E2=11880
+  (expected: exactly the 11880 interleaving clauses falsified, nothing else)
+Control 3: non-matroids must be rejected (axiom clauses only, A14 blocks)
+  augmentation-violating family (s0,s1 in no basis): falsified axiom clauses E1=47040 E2=360
+  hereditary-violating (one 3-set dependent): falsified axiom clauses E1=15 E2=15
+  two 4-sets T+a, T+b dependent but {t1,t2,a,b} independent: falsified axiom clauses E1=3 E2=1
+ALL CONTROLS PASSED

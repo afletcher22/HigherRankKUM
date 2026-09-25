@@ -1,0 +1,7 @@
+models/B6_exact.pkl: n=10 rank(E)=4 axiom_errors=none ind_recovered=True hypotheses_hold=True interleavings=3024 good_interleavings=0 non-bases(4-sets)=129
+   loops=[] parallel_pairs=3
+models/A12_exact.pkl: n=16 rank(E)=4 axiom_errors=none ind_recovered=True hypotheses_hold=True interleavings=5040 good_interleavings=0 non-bases(4-sets)=766
+   loops=[] parallel_pairs=5
+models/A13_exact.pkl: n=17 rank(E)=4 axiom_errors=none ind_recovered=True hypotheses_hold=True interleavings=7920 good_interleavings=0 non-bases(4-sets)=988
+   loops=[] parallel_pairs=4
+ALL VERIFIED

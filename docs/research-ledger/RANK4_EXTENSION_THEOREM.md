@@ -8,7 +8,9 @@ Branch: `rank4-heavy-flat-splice-research` (continues `RANK4_HEAVY_FLAT_SPLICE.m
 
 * §1–2: the **extension theorem**, SAT-certified and representation-free, with controls.
 * §3: the divisible case `n=4k`, closed modulo the extension theorem and a 8-element SAT check.
-* §4: the gcd-two case `n=4k+2`, including a paper proof of a new hitting lemma (Lemma H).
+* §4: the gcd-two case `n=4k+2`. A basis whose deletion keeps uniform density always exists in the
+  strict t=0 case. This is Lemma U (paper, `k >= 4`, via double covers), and SAT with Lemma H at
+  `k = 3`. Theorems G and L4 are no longer needed.
 * §5: the resulting proof of rank-4 KUM, as a dependency graph with the status of each input.
 
 Nothing here is Lean-certified yet. The SAT results were checked by several solvers and with
@@ -121,6 +123,42 @@ independent encoding.
 * **Brute-force validation of the extension search** (`ext_crosscheck.py`): `ext.extend` agreed
   with brute-force enumeration of all CBOs on 75 random n=10 instances.
 
+### 2.4 Independent re-implementation (`indep_check/`)
+
+A separate agent wrote new code for Claims X (linear) and X' (cyclic), working only from the
+mathematical statement and without seeing the scripts above. It used two encodings:
+
+* **E1 (exact, no relaxation).** One variable per subset of size 1–4, with hereditary clauses and
+  single-step augmentation. Its models are exactly the rank-4 matroids, so its SAT models are
+  genuine counterexamples and its UNSAT answers are direct proofs.
+* **E2 (block relaxation).** Blocks are `S ∪ {4 consecutive e's}`, narrower than the 6 used above.
+
+Its interleaving enumeration comes from two independent generators, which agree with each other
+and with the closed formula (11,880 at L=14 and 17,160 at N=10).
+
+| Instance | E1 exact | E2 blocks |
+|---|---|---|
+| linear, L=12 | SAT | SAT |
+| linear, L=13 | SAT | SAT |
+| linear, L=14 | **UNSAT** (CaDiCaL 43 s, Glucose 34 s) | UNSAT |
+| cyclic, N=6 | SAT | SAT |
+| cyclic, N=7 | UNSAT | UNSAT |
+| cyclic, N=8 | UNSAT | UNSAT |
+| cyclic, N=10 | UNSAT | UNSAT |
+| cyclic, N=12 | UNSAT | UNSAT |
+
+These match §2.2 in every case.
+
+**Controls of the re-implementation** (`controls.py`, `verify.py`):
+
+* The E1 SAT models at N=6, L=12 and L=13 were re-verified as genuine matroids by brute force over
+  the whole power set, and none of their interleavings works.
+* The binary N=6 counterexample satisfies both encodings.
+* Nine random GF(2)/GF(3)/GF(5) matroids on 18 elements violate no axiom clause.
+* `U_{4,18}` violates exactly the 11,880 interleaving clauses.
+* Three kinds of non-matroid are rejected: one violating augmentation, one violating heredity,
+  and one violating submodularity.
+
 ## 3. The divisible case `n = 4k`
 
 **Theorem D.** Every uniformly dense rank-4 matroid on `4k` elements has a CBO.
@@ -195,18 +233,132 @@ through `p` that misses a `(3k-1)`-plane. It covered 36 reduced instances at k=3
 GF(2)/GF(3)/GF(5), with 2,062 swap starts. Of these, 74 had one non-empty `𝒬_s` and 5 had two.
 All 19,314 swaps were verified deletable, and every assertion held.
 
+### Lemma U (unified hitting lemma, `k >= 4`; paper proof)
+
+Let `M` be strict with t=0 on `4k+2` elements, `k >= 4`. Then `M` has a basis `S` with `M\S`
+uniformly dense. No assumption about 3k-planes or 2k-lines is made. In fact **every double
+cover** of `M` contains such a basis.
+
+**Double covers.** Double every element. The doubled matroid has `4(2k+1)` elements and is
+uniformly dense at the integral ratio `2k+1`. By Edmonds it splits into `2k+1` bases. Two copies
+of an element are parallel, so they lie in different bases. The result is a family
+`B_1, ..., B_{2k+1}` of bases of `M` in which every element lies in exactly two.
+
+**Demand flats and victims.** The demand flats are the flats in the table above, with demand
+`d(F)`. Say `B_i` is a *victim* of `F` if `|B_i ∩ F| < d(F)`. The *deficit* of `F` is
+
+`δ(F) = Σ_i (r(F) - |B_i ∩ F|) = (2k+1) r(F) - 2|F|`.
+
+| Flat | `δ(F)` | Deficit at a victim |
+|---|---|---|
+| k-point | 1 | 1 |
+| 2k-line | 2 | 2 |
+| 3k-plane | 3 | at least 2 |
+| (3k-1)-plane | 5 | 3 |
+
+So **every demand flat has at most one victim.** A k-point's non-victims each meet it exactly once,
+so the point is a *vertex* `cl(b)` of each of them. A 2k-line's non-victims each meet it in exactly
+two elements, so the line is an *edge* `cl(b, b')` of each of them.
+
+A plane `F` has `|B ∩ F| = 3` iff `F = cl(B - b)` for some `b ∈ B`, that is, iff `F` is a *face* of
+`B`. A basis has exactly 4 faces.
+
+*Proof.* Suppose every `B_i` is a victim. Choose, for each `i`, a demand flat `F_i` with victim `B_i`.
+These `2k+1` flats are distinct. Let `p`, `l` and `m = m_K + m_H` count the k-points, 2k-lines, and
+3k- or (3k-1)-planes among them.
+
+1. **Basic bounds.** `p <= 4`, since `5k > 4k+2`.
+   * **(C1)** No point of the family lies in a line or (3k-1)-plane of the family.
+   * **(C2)** No line of the family lies in a (3k-1)-plane of the family.
+
+   In each case the bigger flat's victim would also be the smaller flat's victim.
+2. **Lines of the family are pairwise disjoint, so `l <= 2`.**
+   * If two of them met, they would span a plane with at least `3k` elements. That plane is then a
+     3k-plane `L ∪ L'`, and `L ∩ L'` is a k-point `P`.
+   * Every other basis meets both lines in 2 and the plane in at most 3, so it meets `P`.
+   * The two victims miss `P`. Hence `2|P| = 2k-1`, which is impossible.
+3. **`p >= 3` is impossible.**
+   * Three k-points span the 3k-plane `K = P_1 ∪ P_2 ∪ P_3`. The `2k-2` bases that are not their
+     victims have the form `{p_1, p_2, p_3, c}` with `c ∉ K`.
+   * Any flat inside `K` that meets some `P_i` contains it. From this one checks that none of these
+     bases misses a 2k-line or a (3k-1)-plane, or meets a 3k-plane `K' ≠ K` in at most one element:
+     `K ∩ K'` is a line with at least `2k-2 > k` elements, hence contains two `P_i`.
+   * So they can only be victims of a k-point inside `E - K`. There is at most one such k-point,
+     because `|E - K| = k+2 < 2k`.
+4. **Deficit budget.** Let `R` be the total deficit of the family's planes at bases other than their
+   own victims. The table gives `R <= m_K + 2 m_H <= 2m`.
+   Each basis `B` has at most 4 faces. So at least `m - 4` of the family's planes (`m - 5` if `B`'s
+   own flat is a plane) have deficit at least 1 at `B`. Hence
+
+   `(p + l)(m - 4)⁺ + m(m - 5)⁺ <= R <= 2m`.
+5. **`k >= 5`.** Here `m = 2k+1-p-l >= 2k-3 >= 7`. For `m >= 8`, `m(m-5) > 2m`. For `m = 7`, we
+   have `k = 5` and `p+l = 4`, so the left side is `26 > 14`.
+6. **`k = 4`.** Here `m >= 5`.
+   * `m >= 7` fails as in step 5 (`m=7` gives `20 > 14`).
+   * **`m = 6`** has `p + l = 3`, so `l >= 1`, and the budget is tight (`12 = 12`). Tightness forces
+     every plane of the family to be a (3k-1)-plane, and every face of every basis to be one of
+     them. The family's line `L` is an edge of its 8 non-victims, so `L` lies in two of their faces.
+     These faces are (3k-1)-planes of the family, which contradicts (C2).
+   * **`m = 5`** forces `p = l = 2`. The two lines are disjoint and cover `4k` elements. By (C1) the
+     k-points avoid both lines, but only 2 elements remain.
+
+   All cases are contradictions. ∎
+
+**Consequence.** For `k >= 4` the strict t=0 case needs neither Theorem G nor Theorem L4, nor
+Lemma H.
+
+**Checks.**
+
+* `double_cover.py` builds random double covers by matroid partition (shortest augmenting paths).
+  It checked 7,518 covers of random and structured strict t=0 instances at k=3..6. Every cover
+  contained a deletable basis, every demand flat had at most one victim, and victim-distinct
+  2k-lines were always disjoint.
+* `hit_structured.py` ran about 9,700 structured instances at k=3,4,5: stars of 2k-lines through a
+  k-point, several k-points, and 3k-planes through a common point or line. All had deletable
+  bases. They had up to 20 demand flats at k=3 and 14 at k=4,5, so a crude count of flats would not
+  suffice; the victim argument is needed.
+
+### k = 3 (n = 14): SAT plus Lemma H
+
+The counting does not reach `k=3`. The hitting lemma there is checked representation-free by
+`hit_sat14.py`:
+
+* the full rank function on all `2^14` subsets, with the rank axioms, no loops, and the strict t=0
+  caps (points <= 3, lines <= 6, planes <= 9);
+* one clause per 4-set `B`, saying that `B` is not a basis, or that `E-B` contains a 3-set of rank
+  1, a 6-set of rank at most 2, or an 8-set of rank at most 3.
+
+The unsplit formula is hard for the solvers, so it is split by the flat that Lemma H does not cover
+(`hit_sat14_split.py`):
+
+| Case | Result |
+|---|---|
+| elements 0..8 form a 9-plane | **UNSAT** (CaDiCaL, 439 s) |
+| elements 0..5 form a 6-line, and there is no 9-plane | **UNSAT** (48 s) |
+| no 9-plane and no 6-line | Lemma H (paper, valid for `k >= 2`) |
+
+So **the hitting lemma holds for every `k >= 3`**: by Lemma U for `k >= 4`, and by SAT with Lemma H
+for `k = 3`.
+
+**Controls.**
+
+* The first version of the encoding omitted the no-loop clauses and returned a spurious model with
+  two loops. That model was caught when the flats were decoded, and the clauses were added.
+* `hit_sat14_control.py` relaxes the caps to allow t>0 or tight lines. Any model is then re-checked
+  independently of the encoding: submodularity, uniform density, and a direct scan of all 1,001
+  4-sets for a deletable basis.
+
 ### Theorem T (strict t=0, `n=4k+2`)
 
 Assume rank-4 KUM on `4k-2` elements. Then every strict t=0 rank-4 matroid on `4k+2 >= 14`
 elements has a CBO.
 
-*Proof.*
+*Proof.* The hitting lemma (Lemma U for `k >= 4`; SAT with Lemma H for `k = 3`) gives a basis `S`
+with `M\S` uniformly dense on `4k-2` elements. By hypothesis `M\S` has a CBO, and X' extends it,
+since `4k-2 >= 10`. ∎
 
-* With a 3k-plane, use Theorem G.
-* With a 2k-line, use Theorem L4. Both are in `RANK4_HEAVY_FLAT_SPLICE.md`; they are paper
-  proofs with SAT base lemmas, and they use no induction.
-* Otherwise Lemma H gives `S` with `M\S` uniformly dense on `4k-2` elements. By hypothesis `M\S` has
-  a CBO, and X' extends it, since `4k-2 >= 10`. ∎
+Theorems G and L4 (`RANK4_HEAVY_FLAT_SPLICE.md`) are no longer used. They remain an independent
+second proof of the 3k-plane and 2k-line cases.
 
 ## 5. Rank-4 KUM: the full argument
 
@@ -221,9 +373,8 @@ elements has a CBO.
 | `n=6`, `n=10` | `kum_small_sat.py 6`, `kum_4_10_sat.py` | SAT |
 | `n=4k+2 >= 14`, proper tight set | `exists_cyclicBasisOrder_of_rank_four_gcd_two_of_nonempty_proper_tight` | **Lean**, needs rank-2 KUM at odd size `2k+1` (coprime theorem) |
 | strict, t>0 | `exists_cbo_of_dangerous_hyperplane` | **Lean**, needs rank-3 KUM (vendored Rank3KUM, Lean) |
-| strict, t=0, 3k-plane | Theorem G | paper (choice lemma, decomposition principle, Theorem 4 via Lean two-gap insertion) + SAT base lemma |
-| strict, t=0, 2k-line | Theorem L4 | paper + SAT base lemmas |
-| strict, t=0, otherwise | Lemma H + induction + X' | paper + SAT |
+| strict, t=0, `k >= 4` | Lemma U + induction + X' | paper (Lemma U) + SAT (X') |
+| strict, t=0, `k = 3` | hitting lemma (SAT split + Lemma H) + KUM(10) + X' | paper + SAT |
 
 The induction is legitimate: every appeal is to KUM at `n-4`, for all uniformly dense rank-4
 matroids of that size, whatever their class. ∎
@@ -232,11 +383,15 @@ matroids of that size, whatever their class. ∎
 
 * **The divisible branch is now as easy as the coprime one.** No strictness analysis and no
   pair cycles are needed.
-* **In the gcd-two branch, the only non-local work left is Theorems G and L4.** Random evidence
-  suggests that even these can be replaced by a hitting lemma: all 960 heavy strict t=0 instances
-  with 3k-planes and/or 2k-lines at k=3..6 have a deletable basis (`hit_general.py`, two seeds).
-  A unified hitting lemma would give a proof using only X', Edmonds, vHT, the two Lean
-  reductions and small SAT checks.
+* **The gcd-two branch needs only the hitting lemma.** The proof now uses only:
+  * X' (SAT);
+  * Edmonds and van den Heuvel–Thomassé;
+  * the two Lean reductions (tight sets, dangerous hyperplanes);
+  * Lemma U and Lemma H (short paper proofs);
+  * small SAT checks: KUM at n=6, 8, 10 and the n=14 hitting split.
+
+  The decomposition principle, the base lemmas and Theorems G and L4 are no longer on the critical
+  path.
 * **Superseded routes.** The following are no longer needed for rank 4:
   * elementary-lift completion;
   * pair-cycle orientation and repair;
@@ -246,13 +401,16 @@ matroids of that size, whatever their class. ∎
 ## 6. Caveats and next steps
 
 1. **Certificates.**
-   * Produce DRAT/LRAT proofs for `local_sat.py 14` and `cyclic_sat.py N` at N=7..13, and for
-     `kum_small_sat.py 6, 8` and `kum_4_10_sat.py`.
+   * Produce DRAT/LRAT proofs for `local_sat.py 14`, `cyclic_sat.py N` at N=8, 10, 12,
+     `kum_small_sat.py 6, 8`, `kum_4_10_sat.py`, and the two cases of `hit_sat14_split.py`. These
+     are the only SAT claims the proof uses.
    * Check them with a verified checker. For example, Lean's LRAT checker, used by `bv_decide`,
      would put X' inside the trusted Lean graph.
    * No C compiler was available in this session, so only multi-solver agreement was obtained.
 2. **Human proof of Theorem X.** The UNSAT cores are small and fast (2 s), which suggests there is
    a readable case analysis.
-3. **Unified hitting lemma**, removing the dependence on G and L4 (see §5).
-4. **Independent audit** of Theorems G and L4. They now carry the heaviest informal load.
-5. **Lean formalization** of Lemma H, Theorem D and the induction wrapper. These are short.
+3. **Independent audit of Lemma U and Lemma H.** These are the only informal proofs left on the
+   critical path, and both are short.
+4. **Lean formalization** of Lemma U, Lemma H, Theorem D and the induction wrapper. The double
+   cover needs Edmonds' covering theorem, and the `n=14` hitting split needs a SAT certificate
+   like the others.

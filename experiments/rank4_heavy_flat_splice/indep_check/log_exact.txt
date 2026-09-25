@@ -1,0 +1,18 @@
+[B8 exact] n=12 interleavings=7920 (formula 7920, two generators agree) distinct clauses=7920
+[B8 exact] vars=793 clauses=132141 build=0.4s
+[B8 exact] solver=cadical195 result=UNSAT solve=1.89s (load 0.2s)
+[B10 exact] n=14 interleavings=17160 (formula 17160, two generators agree) distinct clauses=17160
+[B10 exact] vars=1470 clauses=415933 build=1.1s
+[B10 exact] solver=cadical195 result=UNSAT solve=7.60s (load 0.5s)
+[A12 exact] n=16 interleavings=5040 (formula 5040, two generators agree) distinct clauses=5040
+[A12 exact] vars=2516 clauses=1093370 build=2.2s
+[A12 exact] solver=cadical195 result=SAT solve=1.40s (load 1.8s)
+[A13 exact] n=17 interleavings=7920 (formula 7920, two generators agree) distinct clauses=7920
+[A13 exact] vars=3213 clauses=1721123 build=5.6s
+[A13 exact] solver=cadical195 result=SAT solve=2.60s (load 4.1s)
+[B12 exact] n=16 interleavings=32760 (formula 32760, two generators agree) distinct clauses=32760
+[B12 exact] vars=2516 clauses=1121093 build=5.8s
+[B12 exact] solver=cadical195 result=UNSAT solve=28.90s (load 3.3s)
+[A14 exact] n=18 interleavings=11880 (formula 11880, two generators agree) distinct clauses=11880
+[A14 exact] vars=4047 clauses=2636454 build=10.1s
+[A14 exact] solver=cadical195 result=UNSAT solve=42.62s (load 8.8s)

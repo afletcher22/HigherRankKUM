@@ -95,3 +95,8 @@ of the ledger note.
 | `kum_small_sat.py N [nodensity]` | Direct SAT proof of rank-4 KUM on N<=9 elements (used for N=6 and 8), with a no-density control |
 | `lemma_h.py` | Runs the Lemma H construction from every adversarial starting basis and asserts each step |
 | `hit_general.py` | Random evidence for a unified hitting lemma, with 3k-planes and 2k-lines present |
+| `double_cover.py` | Random double covers (matroid partition): checks Lemma U's claims (one victim per demand flat, disjoint victim lines, a deletable basis in every cover) |
+| `hit_structured.py` | Structured search for strict t=0 matroids without a deletable basis (stars, k-points, plane pencils) |
+| `hit_sat14.py`, `hit_sat14_alt.py` | SAT form of the hitting lemma at n=14 (full rank function), with alternative solvers |
+| `hit_sat14_split.py plane\|line` | **The n=14 hitting lemma, split by the heavy flat that Lemma H does not cover**: UNSAT in both cases |
+| `hit_sat14_control.py t>0\|nonstrict` | Relaxed-cap controls; any model is re-verified independently of the encoding |
