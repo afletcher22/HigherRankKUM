@@ -205,7 +205,7 @@ theorem rankModel_of_no_cbo {M : Matroid α} {N : ℕ} (hN : 0 < N) (hE : M.E.Fi
       obtain ⟨t, ht, htj⟩ := hj
       rw [cyclicWindow, Set.mem_range]
       refine ⟨⟨t, ht⟩, ?_⟩
-      have hpj : p (cyclicIndex N hN i t) = j := Fin.ext (by simp [p, cyclicIndex, htj])
+      have hpj : p (cyclicIndex N hN i t) = j := Fin.ext (by simpa [p, cyclicIndex] using htj)
       simp [τ, hpj]
     have hWfin : (cyclicWindow 4 hN τ i).Finite := Set.finite_range _
     have h4 : (4 : ℕ∞) ≤ M.eRk (cyclicWindow 4 hN τ i) := by
