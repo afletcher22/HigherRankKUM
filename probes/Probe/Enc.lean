@@ -74,17 +74,17 @@ elab "clause_witnesses " n:ident ppSpace src:term:max : command => do
       | k :: rest =>
         let a := rest.map String.toNat!
         let e ← match k, a with
-          | "o", [X, v] => pure <| mkApp2 (mkConst ``W.order) (nat X) (nat v)
-          | "c", [X, v] => pure <| mkApp2 (mkConst ``W.cap) (nat X) (nat v)
-          | "d", [X, v] => pure <| mkApp2 (mkConst ``W.dens) (nat X) (nat v)
-          | "m", [X, x, v] => pure <| mkApp3 (mkConst ``W.mono) (nat X) (nat x) (nat v)
-          | "i", [X, x, v] => pure <| mkApp3 (mkConst ``W.inc) (nat X) (nat x) (nat v)
-          | "s", [X, x, y, v] => pure <| mkApp4 (mkConst ``W.sub) (nat X) (nat x) (nat y) (nat v)
-          | "w", s => pure <| mkApp (mkConst ``W.win) (toExpr s)
+          | "o", [X, v] => pure <| mkApp2 (mkConst ``Probe.Enc.W.order) (nat X) (nat v)
+          | "c", [X, v] => pure <| mkApp2 (mkConst ``Probe.Enc.W.cap) (nat X) (nat v)
+          | "d", [X, v] => pure <| mkApp2 (mkConst ``Probe.Enc.W.dens) (nat X) (nat v)
+          | "m", [X, x, v] => pure <| mkApp3 (mkConst ``Probe.Enc.W.mono) (nat X) (nat x) (nat v)
+          | "i", [X, x, v] => pure <| mkApp3 (mkConst ``Probe.Enc.W.inc) (nat X) (nat x) (nat v)
+          | "s", [X, x, y, v] => pure <| mkApp4 (mkConst ``Probe.Enc.W.sub) (nat X) (nat x) (nat y) (nat v)
+          | "w", s => pure <| mkApp (mkConst ``Probe.Enc.W.win) (toExpr s)
           | _, _ => throwError "bad witness line: {line}"
         ws := ws.push e
     if ws.isEmpty then throwError "no witnesses"
-    let ty := mkConst ``W
+    let ty := mkConst ``Probe.Enc.W
     addDecl <| Declaration.defnDecl {
       name, levelParams := [], type := mkApp (mkConst ``List [levelZero]) ty
       value := balancedList ty ws 0 ws.size
@@ -117,14 +117,14 @@ def pc (N X : ℕ) : ℕ := ((List.range N).filter fun j => X.testBit j).length
 
 /-- Side conditions under which each generated clause is valid for a counterexample. -/
 def valid (N : ℕ) : W → Bool
-  | .order X v => X < 2 ^ N && 1 ≤ v && v ≤ 3
-  | .cap X v => X < 2 ^ N && pc N X < v && v ≤ 4
-  | .dens X k => X < 2 ^ N && 1 ≤ k && k ≤ 4 && N * (k - 1) < 4 * pc N X
-  | .mono X a v => X < 2 ^ N && a < N && !X.testBit a && 1 ≤ v && v ≤ 4
-  | .inc X a v => X < 2 ^ N && a < N && !X.testBit a && 1 ≤ v && v ≤ 3
-  | .sub X a b v =>
-      X < 2 ^ N && a < b && b < N && !X.testBit a && !X.testBit b && 1 ≤ v && v ≤ 4
-  | .win s => s.length == N && (List.range N).all s.contains
+  | .order X v => decide (X < 2 ^ N ∧ 1 ≤ v ∧ v ≤ 3)
+  | .cap X v => decide (X < 2 ^ N ∧ pc N X < v ∧ v ≤ 4)
+  | .dens X k => decide (X < 2 ^ N ∧ 1 ≤ k ∧ k ≤ 4 ∧ N * (k - 1) < 4 * pc N X)
+  | .mono X a v => decide (X < 2 ^ N ∧ a < N ∧ X.testBit a = false ∧ 1 ≤ v ∧ v ≤ 4)
+  | .inc X a v => decide (X < 2 ^ N ∧ a < N ∧ X.testBit a = false ∧ 1 ≤ v ∧ v ≤ 3)
+  | .sub X a b v => decide (X < 2 ^ N ∧ a < b ∧ b < N ∧ X.testBit a = false ∧
+      X.testBit b = false ∧ 1 ≤ v ∧ v ≤ 4)
+  | .win s => decide (s.length = N ∧ ∀ x < N, x ∈ s)
 
 def litBEq : Sat.Literal → Sat.Literal → Bool
   | .pos a, .pos b => a == b
