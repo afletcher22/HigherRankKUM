@@ -16,6 +16,7 @@ Strong induction on the size of the ground set.
 namespace HigherRankKUM.VHT
 
 open Set
+open scoped Matroid
 
 variable {α : Type*}
 

@@ -21,6 +21,7 @@ component.
 namespace HigherRankKUM.VHT
 
 open Set
+open scoped Matroid
 
 variable {α : Type*} [DecidableEq α] {M : Matroid α} {D : ℕ} [NeZero D] {ω : α → ℕ}
 
@@ -74,7 +75,7 @@ theorem closure_diff_mono_step (hω1 : ∀ e ∈ M.E, 1 ≤ ω e) (hω : ∀ e �
       show e ∈ M.closure (arcSet M χ ω (χ e) \ {e})
       rw [hχe, hx]
       exact h
-    set X := E0 \ {g} \ {e} with hX
+    set X := (E0 \ {g}) \ {e} with hX
     have h1 : E0 \ {g} = insert e X := by
       ext a
       simp only [hX, mem_diff, mem_singleton_iff, mem_insert_iff]
@@ -172,7 +173,9 @@ theorem indep_union (hω1 : ∀ e ∈ M.E, 1 ≤ ω e) (hω : ∀ e ∈ M.E, ω 
   · apply hC.not_indep
     refine hJ.subset fun a haC => ?_
     rcases hCX haC with ha | ha
-    · exact absurd (show a ∈ CB from ⟨haC, ha.2⟩) (by rw [hempty]; exact not_mem_empty a)
+    · have hmem : a ∈ CB := ⟨haC, ha.2⟩
+      rw [hempty] at hmem
+      exact absurd hmem (by simp)
     · exact ha
   obtain ⟨e, ⟨heC, heU⟩, hstart⟩ := exists_start hω η hne hCBx
   have heE : e ∈ M.E := hC.subset_ground heC
