@@ -99,4 +99,4 @@ of the ledger note.
 | `hit_structured.py` | Structured search for strict t=0 matroids without a deletable basis (stars, k-points, plane pencils) |
 | `hit_sat14.py`, `hit_sat14_alt.py` | SAT form of the hitting lemma at n=14 (full rank function), with alternative solvers |
 | `hit_sat14_split.py plane\|line` | **The n=14 hitting lemma, split by the heavy flat that Lemma H does not cover**: UNSAT in both cases |
-| `hit_sat14_control.py t>0\|nonstrict` | Relaxed-cap controls; any model is re-verified independently of the encoding |
+| `hit_sat_control.py` | Discriminating control: the same encoding at k=2 (n=10), where deletable bases fail. Must be SAT; the model is re-verified independently of the encoding |

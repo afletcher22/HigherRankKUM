@@ -344,9 +344,10 @@ for `k = 3`.
 
 * The first version of the encoding omitted the no-loop clauses and returned a spurious model with
   two loops. That model was caught when the flats were decoded, and the clauses were added.
-* `hit_sat14_control.py` relaxes the caps to allow t>0 or tight lines. Any model is then re-checked
-  independently of the encoding: submodularity, uniform density, and a direct scan of all 1,001
-  4-sets for a deletable basis.
+* `hit_sat_control.py` runs the same construction at `k=2` (n=10), where deletable bases are known
+  to fail. It must be SAT, and it is (1 s). The model is re-checked independently of the encoding:
+  it is fully submodular, uniformly dense and strict, has no deletable basis among its 4-sets, and
+  has five doubled points, matching the known k=2 failure type.
 
 ### Theorem T (strict t=0, `n=4k+2`)
 
@@ -372,7 +373,7 @@ second proof of the 3k-plane and 2k-line cases.
 | `n=4k` | Theorem D (Edmonds + X' + n=8) | Edmonds external; X' and n=8 by SAT |
 | `n=6`, `n=10` | `kum_small_sat.py 6`, `kum_4_10_sat.py` | SAT |
 | `n=4k+2 >= 14`, proper tight set | `exists_cyclicBasisOrder_of_rank_four_gcd_two_of_nonempty_proper_tight` | **Lean**, needs rank-2 KUM at odd size `2k+1` (coprime theorem) |
-| strict, t>0 | `exists_cbo_of_dangerous_hyperplane` | **Lean**, needs rank-3 KUM (vendored Rank3KUM, Lean) |
+| strict, t>0 | `exists_cbo_of_dangerous_hyperplane` | **Lean**, takes `SolvesKUMAtRank α 3` (rank-3 KUM at **all** sizes). A dangerous plane has `3k+1` elements, which is coprime to 3, so this needs vHT at rank 3 as well as the vendored Rank3KUM (which covers sizes `3k` only) |
 | strict, t=0, `k >= 4` | Lemma U + induction + X' | paper (Lemma U) + SAT (X') |
 | strict, t=0, `k = 3` | hitting lemma (SAT split + Lemma H) + KUM(10) + X' | paper + SAT |
 
@@ -404,13 +405,22 @@ matroids of that size, whatever their class. ∎
    * Produce DRAT/LRAT proofs for `local_sat.py 14`, `cyclic_sat.py N` at N=8, 10, 12,
      `kum_small_sat.py 6, 8`, `kum_4_10_sat.py`, and the two cases of `hit_sat14_split.py`. These
      are the only SAT claims the proof uses.
-   * Check them with a verified checker. For example, Lean's LRAT checker, used by `bv_decide`,
-     would put X' inside the trusted Lean graph.
+   * The target is the Palomar Registry, which accepts only `propext`, `Classical.choice` and
+     `Quot.sound`. It rejects `Lean.ofReduceBool`, so `native_decide` and `bv_decide` (whose LRAT
+     check runs through `ofReduceBool`) cannot be used. Every SAT claim must either be checked by
+     the kernel itself (for example Mathlib's `from_lrat`, which uses the kernel as the LRAT
+     checker), together with a Lean proof that the encoding is sound, or be replaced by a human
+     proof. Palomar also replays every proof through the independent NanoDa kernel, within a
+     budget of about 19,800 s.
    * No C compiler was available in this session, so only multi-solver agreement was obtained.
 2. **Human proof of Theorem X.** The UNSAT cores are small and fast (2 s), which suggests there is
-   a readable case analysis.
-3. **Independent audit of Lemma U and Lemma H.** These are the only informal proofs left on the
-   critical path, and both are short.
-4. **Lean formalization** of Lemma U, Lemma H, Theorem D and the induction wrapper. The double
-   cover needs Edmonds' covering theorem, and the `n=14` hitting split needs a SAT certificate
-   like the others.
+   a readable case analysis. This is the highest-leverage item: it removes the most important SAT
+   claim, and it is the statement that has to generalize to rank 5 and beyond.
+3. **Lean formalization of Lemma H and Lemma U, now.** Formalization replaces a separate informal
+   audit. Lemma H uses only closure and flat-size facts. Lemma U can take the double cover as a
+   hypothesis (a family of `2k+1` bases in which every element lies in exactly two), to be
+   discharged later.
+4. **Lean formalization** of Theorem D and the induction wrapper. van den Heuvel–Thomassé's
+   Theorem 2.1 supplies both inputs: weights 1 and `D=k` give Edmonds' partition into `k` bases,
+   and weights 2 and `D=2k+1` give the double covers of Lemma U directly. The `n=14` hitting
+   split needs a certificate like the other SAT claims.
