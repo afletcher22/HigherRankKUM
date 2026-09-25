@@ -1,0 +1,57 @@
+name: Palomar kernel probe
+
+# Measurement-only workflow for Phase 0 of the Palomar plan.  It builds only the modules under
+# probes/ (not the HigherRankKUM library), records elaboration/kernel time and peak memory, replays
+# the resulting .olean files with leanchecker, and fails if a forbidden axiom appears.
+
+on:
+  push:
+    branches:
+      - 'probe/**'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch pinned dependencies
+        run: lake update
+      - name: Verify dependency lock
+        run: git diff --exit-code -- lake-manifest.json
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build draft challenge statement
+        shell: bash
+        run: lake build Probe.ChallengeDraft 2>&1 | tee challenge.log
+      - name: Build Kum6 (kernel-checked LRAT)
+        shell: bash
+        run: /usr/bin/time -v lake build Probe.Kum6 2>&1 | tee kum6.log
+      - name: Replay Kum6 with leanchecker
+        shell: bash
+        run: /usr/bin/time -v lake env leanchecker Probe.Kum6 2>&1 | tee kum6-replay.log
+      - name: Build Kum8 (kernel-checked LRAT)
+        continue-on-error: true
+        shell: bash
+        run: /usr/bin/time -v lake build Probe.Kum8 2>&1 | tee kum8.log
+      - name: Replay Kum8 with leanchecker
+        continue-on-error: true
+        shell: bash
+        run: /usr/bin/time -v lake env leanchecker Probe.Kum8 2>&1 | tee kum8-replay.log
+      - name: Axiom guard
+        shell: bash
+        run: |
+          grep -h "depends on axioms" kum6.log kum8.log || true
+          if grep -hE "ofReduceBool|sorryAx|trustCompiler" kum6.log kum8.log; then
+            echo "Forbidden axiom found"; exit 1
+          fi
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-logs
+          path: '*.log'

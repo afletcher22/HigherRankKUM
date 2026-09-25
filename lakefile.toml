@@ -13,3 +13,9 @@ srcDir = "vendor/Rank3KUM"
 
 [[lean_lib]]
 name = "HigherRankKUM"
+
+# Phase 0 measurement probes (probe branches only; not part of the default target)
+[[lean_lib]]
+name = "Probe"
+srcDir = "probes"
+roots = ["Probe.ChallengeDraft", "Probe.Kum6", "Probe.Kum8"]
