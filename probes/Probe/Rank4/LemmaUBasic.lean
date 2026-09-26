@@ -81,7 +81,7 @@ theorem subset_flat (h : StrictT0 M k) {G I Y : Set α} (hG : M.IsFlat G) (hIG :
 theorem exists_mem_not_mem (h : StrictT0 M k) {B G : Set α} (hB : M.IsBase B)
     (hG : M.eRk G ≤ (3 : ℕ)) : ∃ b ∈ B, b ∉ G := by
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have h1 := h.ncard_inter_le hB hG
   rw [inter_eq_left.mpr hno, h.ncard_base hB] at h1
   omega

@@ -201,8 +201,8 @@ theorem ln_disjoint (S : UFam M k B F ρ) {a b : Fin (2 * k + 1)} (ha : ρ a = 2
   obtain ⟨x, hxb, hxa⟩ := Set.not_subset.mp hnsub
   have hU : 2 * k + 1 ≤ (F a ∪ F b).ncard := by
     have h1 := Set.ncard_insert_of_notMem hxa hfa
-    have h2 := Set.ncard_le_ncard (Set.insert_subset (Or.inr hxb) subset_union_left)
-      (hfa.union hfb)
+    have h2 := Set.ncard_le_ncard
+      (Set.insert_subset (Set.mem_union_right (F a) hxb) subset_union_left) (hfa.union hfb)
     omega
   -- submodularity: the union has rank 3 and the intersection rank 1
   obtain ⟨u, hu, -⟩ := h.exists_eRk_eq (F a ∪ F b)
@@ -325,7 +325,7 @@ theorem pt_of_three (S : UFam M k B F ρ) {a₁ a₂ a₃ i : Fin (2 * k + 1)} (
 /-- **At most two family points.** -/
 theorem card_pts_le (S : UFam M k B F ρ) : (Finset.univ.filter fun i => ρ i = 1).card ≤ 2 := by
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   obtain ⟨a₁, ha₁, a₂, ha₂, a₃, ha₃, h₁₂, h₁₃, h₂₃⟩ := Finset.two_lt_card.mp hlt
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha₁ ha₂ ha₃
   have hall : ∀ i, ρ i = 1 := by
@@ -394,7 +394,7 @@ theorem card_faces_le (S : UFam M k B F ρ) (i : Fin (2 * k + 1)) {T : Set α} (
       ∃ b, b ∈ B i ∧ b ∉ F j := fun j hj => h.exists_mem_not_mem hB (S.rk_le (hmem j hj).1)
   obtain ⟨x₀, -⟩ : (B i).Nonempty :=
     Set.nonempty_of_ncard_ne_zero (by rw [h.ncard_base hB]; norm_num)
-  haveI : Nonempty α := ⟨x₀⟩
+  have : Nonempty α := ⟨x₀⟩
   choose! g hg using hex
   rw [Set.ncard_eq_toFinset_card T hTfin]
   refine Finset.card_le_card_of_injOn g (fun j hj => ?_) (fun j hj j2 hj2 hgg => ?_)
@@ -504,7 +504,7 @@ theorem not_ufam (S : UFam M k B F ρ) : False := by
     have h3 : 8 * ((planes ρ).card - 2) ≤ (2 * k + 1 - 1) * ((planes ρ).card - 2) :=
       Nat.mul_le_mul_right _ (by omega)
     omega
-  · push_neg at hl
+  · push Not at hl
     have hl0 : (Finset.univ.filter fun i => ρ i = 2).card = 0 :=
       Finset.card_eq_zero.mpr (Finset.filter_eq_empty_iff.mpr fun i _ => hl i)
     have hlow : ∀ i ∈ (Finset.univ : Finset (Fin (2 * k + 1))),
