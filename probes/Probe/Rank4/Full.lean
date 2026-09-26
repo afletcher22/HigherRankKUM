@@ -1,5 +1,5 @@
 import Probe.ExtFinal
-import Probe.Kum10
+import Probe.Rank4.Kum10Chain
 import HigherRankKUM.Rank4.SixElementBoundary
 import Probe.Rank4.Hitting
 import HigherRankKUM.Rank4.Unconditional
@@ -13,7 +13,7 @@ The proof is by strong induction on `n`:
 * `n` odd: coprime KUM (van den Heuvel–Thomassé);
 * `n = 4k`: Theorem D (`solvesDivisibleKUMAtRank_four'`);
 * `n = 6`: duality with rank-2 KUM (`Rank4.exists_cyclicBasisOrder_of_rank_four_six`);
-* `n = 10`: certificates;
+* `n = 10`: a van den Heuvel–Thomassé pair chain and one certificate (`Kum10Chain`);
 * `n = 4k+2 ≥ 14`:
   * a nonempty proper tight set, or a dangerous plane: the Lean reductions of the main library;
   * otherwise `M` is strict with `t = 0`. The hitting lemma (`HittingLemma`, a hypothesis here)
@@ -74,7 +74,7 @@ theorem solvesKUMAtRank_four_of_hitting {α : Type*} (hhit : HittingLemma α) :
     rcases (show k = 1 ∨ k = 2 ∨ 3 ≤ k by omega) with rfl | rfl | hk3
     · exact Rank4.exists_cyclicBasisOrder_of_rank_four_six M hE hRank4
         (hEcard.trans (by norm_num)) hDense
-    · exact solvesKUMAtRankSize_four_ten M hr hn hE hRank hEcard hDense
+    · exact solvesKUMAtRankSize_four_ten_of_pairChain M hr hn hE hRank hEcard hDense
     -- a nonempty proper tight set
     by_cases htight : ∃ X, TightRatio M (4 * k + 2) 4 X ∧ X.Nonempty ∧ X ≠ M.E
     · obtain ⟨X, hX, hne, hprop⟩ := htight
