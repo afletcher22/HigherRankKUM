@@ -57,6 +57,22 @@ So strict t=0 KUM(4,10) reduces to three pieces:
 * (b) "an unpaired element gives a deletable basis", currently a small SAT claim;
 * (c) the restricted X′(6), a small SAT claim in the X′ family.
 
+Refinements:
+
+* **X′(6) needs only "every plane has at most 6 elements".** It is UNSAT with just that
+  constraint, even with loops allowed, and SAT once 7-element planes are allowed. It needs no
+  density of `M` or of `M \ S`. Statement: *in a rank-4 matroid on 10 elements whose planes have at
+  most 6 elements, a cyclic basis ordering of `M \ S` (S a basis) extends to one of `M`.*
+  Certificate: `xcyc6p`, 96k hints.
+* (b) as one claim (`hit10u`) needs 3.27M hints, which is too big. Split by case, it is small:
+  * no 6-plane and no 4-line: Lemma H (Lean, human);
+  * 4-line and no 6-plane: `hit10line`, **2.6k hints**, a candidate for a hand proof;
+  * 6-plane with an unpaired element inside the plane: `hit10planeU0`, 120k hints;
+  * 6-plane with an unpaired element outside the plane: `hit10planeU9`, 121k hints.
+* Total for the new route is about 340k hints, against about 2.3M for the five current
+  certificates. The proof then has the same shape at `k = 2` as at `k ≥ 3`: a hitting lemma, the
+  induction (KUM(4,6) by duality) and X′, plus one explicit exceptional matroid.
+
 ## hit14g and hit14line
 
 `hit14g` is the choice lemma of Theorem G at `k = 3`. Its paper proof, three cases on `r(C)`, is
