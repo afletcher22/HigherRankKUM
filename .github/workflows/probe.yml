@@ -28,7 +28,7 @@ jobs:
       - name: Build and replay probe modules
         shell: bash
         env:
-          PROBE_MODULES: Kum10BaseG4 Kum10BaseL4 Kum10BaseG3 Kum10Light Hit14Line EncKum8Final ExtCyc8 ExtCyc10 ExtCyc12 ExtLin14 ExtFinal Kum10 Rank4.Full Rank4.Final
+          PROBE_MODULES: Rank4.SerialExchange Rank4.Kum8 Rank4.TheoremDCert
         run: |
           for m in $PROBE_MODULES; do
             echo "::group::$m"
