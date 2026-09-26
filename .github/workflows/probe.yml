@@ -28,7 +28,7 @@ jobs:
       - name: Build and replay probe modules
         shell: bash
         env:
-          PROBE_MODULES: LRATChunked ChunkTest EncFBridge Kum10BaseG2 Kum10BaseG4 Kum10BaseL4 Kum10BaseG3 Kum10Light Kum10
+          PROBE_MODULES: Rank4.LemmaH
         run: |
           for m in $PROBE_MODULES; do
             echo "::group::$m"
