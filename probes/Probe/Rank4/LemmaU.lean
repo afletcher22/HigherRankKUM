@@ -248,10 +248,34 @@ theorem exists_meet (S : UFam M k B F ρ) {a i : Fin (2 * k + 1)} (ha : ρ a = 1
     (B i ∩ F a).Nonempty :=
   Set.nonempty_of_ncard_ne_zero (by have := S.meet_pt ha hia; omega)
 
+/-- A flat missed by `B i` contains no element of `B i`. -/
 theorem not_mem_of_zero (S : UFam M k B F ρ) {i : Fin (2 * k + 1)} (hv : (B i ∩ F i).ncard = 0)
     {x : α} (hx : x ∈ B i) : x ∉ F i := by
   intro hxF
   have := (Set.ncard_pos (S.inter_fin i (F i))).mpr ⟨x, hx, hxF⟩
+  omega
+
+/-- A family `k`-point has `k` elements. -/
+theorem pt_ncard (S : UFam M k B F ρ) {a : Fin (2 * k + 1)} (ha : ρ a = 1) : (F a).ncard = k := by
+  rcases S.kind a with h1 | h1 | h1 | h1 <;> omega
+
+/-- A family flat missing elements of two disjoint family points has at most `2k+2` elements. -/
+theorem ncard_avoid_two (S : UFam M k B F ρ) {i s t : Fin (2 * k + 1)} (hs : ρ s = 1)
+    (ht : ρ t = 1) (hst : Disjoint (F s) (F t)) {xs xt : α} (hxs : xs ∈ F s) (hxt : xt ∈ F t)
+    (hxsG : xs ∉ F i) (hxtG : xt ∉ F i) : (F i).ncard + 2 * k ≤ 4 * k + 2 := by
+  have h3 := S.strict.ncard_add3_le (S.sub i) (S.sub s) (S.sub t)
+    (S.disjoint_pt hs (S.flat i) hxs hxsG) (S.disjoint_pt ht (S.flat i) hxt hxtG) hst
+  rw [S.pt_ncard hs, S.pt_ncard ht] at h3
+  omega
+
+/-- A flat that `B i` meets at most once contains at most one element of `B i`. -/
+theorem eq_of_mem (S : UFam M k B F ρ) {i : Fin (2 * k + 1)} (hv : (B i ∩ F i).ncard ≤ 1)
+    {x y : α} (hxB : x ∈ B i) (hyB : y ∈ B i) (hxG : x ∈ F i) (hyG : y ∈ F i) : x = y := by
+  by_contra hxy
+  have hsub : ({x, y} : Set α) ⊆ B i ∩ F i :=
+    Set.insert_subset ⟨hxB, hxG⟩ (Set.singleton_subset_iff.mpr ⟨hyB, hyG⟩)
+  have h2 := Set.ncard_le_ncard hsub (S.inter_fin i (F i))
+  rw [Set.ncard_pair hxy] at h2
   omega
 
 /-- **Three family points force the rest.** If `a₁, a₂, a₃` index three family `k`-points, then
@@ -261,63 +285,40 @@ big for the `k+2` (or `2k+2`) remaining elements. -/
 theorem pt_of_three (S : UFam M k B F ρ) {a₁ a₂ a₃ i : Fin (2 * k + 1)} (h₁ : ρ a₁ = 1)
     (h₂ : ρ a₂ = 1) (h₃ : ρ a₃ = 1) (h₁₂ : a₁ ≠ a₂) (h₁₃ : a₁ ≠ a₃) (h₂₃ : a₂ ≠ a₃)
     (hi₁ : i ≠ a₁) (hi₂ : i ≠ a₂) (hi₃ : i ≠ a₃) : ρ i = 1 := by
-  have h := S.strict
   have hk := S.k4
-  have hn : ∀ {a : Fin (2 * k + 1)}, ρ a = 1 → (F a).ncard = k := fun {a} ha => by
-    rcases S.kind a with h1 | h1 | h1 | h1 <;> omega
   have hd₁₂ := S.pt_disjoint h₁ h₂ h₁₂
   have hd₁₃ := S.pt_disjoint h₁ h₃ h₁₃
   have hd₂₃ := S.pt_disjoint h₂ h₃ h₂₃
   obtain ⟨x₁, hx₁B, hx₁P⟩ := S.exists_meet h₁ hi₁
   obtain ⟨x₂, hx₂B, hx₂P⟩ := S.exists_meet h₂ hi₂
   obtain ⟨x₃, hx₃B, hx₃P⟩ := S.exists_meet h₃ hi₃
-  have hG := S.flat i
-  -- a flat avoiding two of the three points has at most `2k+2` elements
-  have htwo : ∀ {s t : Fin (2 * k + 1)}, ρ s = 1 → ρ t = 1 → Disjoint (F s) (F t) →
-      ∀ {xs xt : α}, xs ∈ F s → xt ∈ F t → xs ∉ F i → xt ∉ F i →
-      (F i).ncard + 2 * k ≤ 4 * k + 2 := by
-    intro s t hs ht hst xs xt hxs hxt hxsG hxtG
-    have h3 := h.ncard_add3_le (S.sub i) (S.sub s) (S.sub t) (S.disjoint_pt hs hG hxs hxsG)
-      (S.disjoint_pt ht hG hxt hxtG) hst
-    rw [hn hs, hn ht] at h3
-    omega
   -- a flat avoiding all three points has at most `k+2` elements
   have hthree : (B i ∩ F i).ncard = 0 → (F i).ncard + 3 * k ≤ 4 * k + 2 := by
     intro hv
-    have hnot := fun {x : α} (hx : x ∈ B i) => S.not_mem_of_zero hv hx
-    have h4 := h.ncard_add4_le (S.sub i) (S.sub a₁) (S.sub a₂) (S.sub a₃)
-      (S.disjoint_pt h₁ hG hx₁P (hnot hx₁B)) (S.disjoint_pt h₂ hG hx₂P (hnot hx₂B))
-      (S.disjoint_pt h₃ hG hx₃P (hnot hx₃B)) hd₁₂ hd₁₃ hd₂₃
-    rw [hn h₁, hn h₂, hn h₃] at h4
+    have h4 := S.strict.ncard_add4_le (S.sub i) (S.sub a₁) (S.sub a₂) (S.sub a₃)
+      (S.disjoint_pt h₁ (S.flat i) hx₁P (S.not_mem_of_zero hv hx₁B))
+      (S.disjoint_pt h₂ (S.flat i) hx₂P (S.not_mem_of_zero hv hx₂B))
+      (S.disjoint_pt h₃ (S.flat i) hx₃P (S.not_mem_of_zero hv hx₃B)) hd₁₂ hd₁₃ hd₂₃
+    rw [S.pt_ncard h₁, S.pt_ncard h₂, S.pt_ncard h₃] at h4
     omega
-  -- two distinct elements of `B i` cannot both lie in a `3k`-plane that `B i` meets once
-  have hpair : (B i ∩ F i).ncard ≤ 1 → ∀ {x y : α}, x ∈ B i → y ∈ B i → x ∈ F i → y ∈ F i →
-      x ≠ y → False := by
-    intro hv x y hxB hyB hxG hyG hxy
-    have hsub : ({x, y} : Set α) ⊆ B i ∩ F i :=
-      Set.insert_subset ⟨hxB, hxG⟩ (Set.singleton_subset_iff.mpr ⟨hyB, hyG⟩)
-    have h2 := Set.ncard_le_ncard hsub (S.inter_fin i (F i))
-    rw [Set.ncard_pair hxy] at h2
-    omega
-  have hne : ∀ {s t : Fin (2 * k + 1)} {xs xt : α}, Disjoint (F s) (F t) → xs ∈ F s →
-      xt ∈ F t → xs ≠ xt := by
-    intro s t xs xt hst hxs hxt heq
-    rw [heq] at hxs
-    exact Set.disjoint_left.mp hst hxs hxt
   rcases S.kind i with ⟨hr, -, -⟩ | ⟨-, hni, hv⟩ | ⟨-, hni, hv⟩ | ⟨-, hni, hv⟩
   · exact hr
   · have := hthree hv
     omega
-  · by_cases hin₁ : x₁ ∈ F i
-    · have hout₂ : x₂ ∉ F i := fun hin => hpair hv hx₁B hx₂B hin₁ hin (hne hd₁₂ hx₁P hx₂P)
-      have hout₃ : x₃ ∉ F i := fun hin => hpair hv hx₁B hx₃B hin₁ hin (hne hd₁₃ hx₁P hx₃P)
-      have := htwo h₂ h₃ hd₂₃ hx₂P hx₃P hout₂ hout₃
+  · -- a `3k`-plane met once contains at most one of `x₁, x₂, x₃`, so it avoids two points
+    by_cases hin₁ : x₁ ∈ F i
+    · have hout₂ : x₂ ∉ F i := fun hin => Set.disjoint_left.mp hd₁₂ hx₁P
+        (by rw [S.eq_of_mem hv hx₁B hx₂B hin₁ hin]; exact hx₂P)
+      have hout₃ : x₃ ∉ F i := fun hin => Set.disjoint_left.mp hd₁₃ hx₁P
+        (by rw [S.eq_of_mem hv hx₁B hx₃B hin₁ hin]; exact hx₃P)
+      have := S.ncard_avoid_two h₂ h₃ hd₂₃ hx₂P hx₃P hout₂ hout₃
       omega
     · by_cases hin₂ : x₂ ∈ F i
-      · have hout₃ : x₃ ∉ F i := fun hin => hpair hv hx₂B hx₃B hin₂ hin (hne hd₂₃ hx₂P hx₃P)
-        have := htwo h₁ h₃ hd₁₃ hx₁P hx₃P hin₁ hout₃
+      · have hout₃ : x₃ ∉ F i := fun hin => Set.disjoint_left.mp hd₂₃ hx₂P
+          (by rw [S.eq_of_mem hv hx₂B hx₃B hin₂ hin]; exact hx₃P)
+        have := S.ncard_avoid_two h₁ h₃ hd₁₃ hx₁P hx₃P hin₁ hout₃
         omega
-      · have := htwo h₁ h₂ hd₁₂ hx₁P hx₂P hin₁ hin₂
+      · have := S.ncard_avoid_two h₁ h₂ hd₁₂ hx₁P hx₂P hin₁ hin₂
         omega
   · have := hthree hv
     omega
