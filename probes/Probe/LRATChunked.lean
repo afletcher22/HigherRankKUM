@@ -28,6 +28,7 @@ open Std (HashMap)
 inductive ATree where
   | leaf (ty pf : Expr)
   | node (ty pf : Expr) (l r : ATree)
+  deriving Inhabited
 
 def ATree.ty : ATree → Expr
   | .leaf t _ => t
@@ -44,14 +45,14 @@ partial def buildATree (tys prfs : Array Expr) (lo hi : Nat) : ATree :=
     let mid := (lo + hi) / 2
     let l := buildATree tys prfs lo mid
     let r := buildATree tys prfs mid hi
-    .node (mkApp2 (mkConst ``And) l.ty r.ty) (mkApp4 (mkConst ``And.intro) l.ty r.ty l.pf r.pf) l r
+    .node (mkApp2 (Lean.mkConst ``And) l.ty r.ty) (mkApp4 (Lean.mkConst ``And.intro) l.ty r.ty l.pf r.pf) l r
 
 /-- For a proof `e` of the tree's conjunction, proofs of its leaves in order. -/
 partial def ATree.projs : ATree → Expr → Array Expr → Array Expr
   | .leaf _ _, e, acc => acc.push e
   | .node _ _ l r, e, acc =>
-    let acc := l.projs (mkApp3 (mkConst ``And.left) l.ty r.ty e) acc
-    r.projs (mkApp3 (mkConst ``And.right) l.ty r.ty e) acc
+    let acc := l.projs (mkApp3 (Lean.mkConst ``And.left) l.ty r.ty e) acc
+    r.projs (mkApp3 (Lean.mkConst ``And.right) l.ty r.ty e) acc
 
 /-- `lrat_refutation_chunked foo cnf lrat budget` adds `foo.fmla : Sat.Fmla` and
 `foo.refute : Sat.Fmla.proof foo.fmla []`, checked in chunks of about `budget` hints. -/
@@ -60,17 +61,17 @@ elab "lrat_refutation_chunked " n:ident ppSpace cnf:term:max ppSpace lrat:term:m
   let name := (← getCurrNamespace) ++ n.getId
   let budget := budget.getNat
   liftTermElabM do
-    let cnf ← unsafe evalTerm String (mkConst ``String) cnf
-    let lrat ← unsafe evalTerm String (mkConst ``String) lrat
+    let cnf ← unsafe evalTerm String (Lean.mkConst ``String) cnf
+    let lrat ← unsafe evalTerm String (Lean.mkConst ``String) lrat
     let Std.Internal.Parsec.ParseResult.success _ (_, arr) :=
         Mathlib.Tactic.Sat.Parser.parseDimacs ⟨_, cnf.startPos⟩
       | throwError "parse CNF failed"
     if arr.isEmpty then throwError "empty CNF"
     let ctx' := Mathlib.Tactic.Sat.buildConj arr 0 arr.size
     addDecl <| Declaration.defnDecl {
-      name := name ++ `fmla, levelParams := [], type := mkConst ``Sat.Fmla, value := ctx'
+      name := name ++ `fmla, levelParams := [], type := Lean.mkConst ``Sat.Fmla, value := ctx'
       hints := ReducibilityHints.abbrev, safety := DefinitionSafety.safe }
-    let ctx := mkConst (name ++ `fmla)
+    let ctx := Lean.mkConst (name ++ `fmla)
     let Std.Internal.Parsec.ParseResult.success _ steps :=
         Mathlib.Tactic.Sat.Parser.parseLRAT ⟨_, lrat.startPos⟩
       | throwError "parse LRAT failed"
@@ -82,7 +83,7 @@ elab "lrat_refutation_chunked " n:ident ppSpace cnf:term:max ppSpace lrat:term:m
       | .add _ _ pf => for i in pf do lastUse := lastUse.insert i.natAbs idx
       | .del _ => pure ()
       idx := idx + 1
-    let p := mkApp (mkConst ``Sat.Fmla.subsumes_self) ctx
+    let p := mkApp (Lean.mkConst ``Sat.Fmla.subsumes_self) ctx
     let mut db := (Mathlib.Tactic.Sat.buildClauses arr ctx 0 arr.size ctx' p default).2
     let mut derived : Array Nat := #[]
     let mut used := 0
@@ -99,7 +100,7 @@ elab "lrat_refutation_chunked " n:ident ppSpace cnf:term:max ppSpace lrat:term:m
           if ns.isEmpty then
             addDecl <| Declaration.thmDecl {
               name := name ++ `refute, levelParams := []
-              type := mkApp2 (mkConst ``Sat.Fmla.proof) ctx (mkConst ``Sat.Clause.nil)
+              type := mkApp2 (Lean.mkConst ``Sat.Fmla.proof) ctx (Lean.mkConst ``Sat.Clause.nil)
               value := proof }
             return
           db := db.insert i { lits := ns, expr := e, proof }
@@ -112,14 +113,14 @@ elab "lrat_refutation_chunked " n:ident ppSpace cnf:term:max ppSpace lrat:term:m
               if lastUse.getD j 0 > idx then
                 if let some cl := db[j]? then live := live.push (j, cl)
             if !live.isEmpty then
-              let tys := live.map fun (_, cl) => mkApp2 (mkConst ``Sat.Fmla.proof) ctx cl.expr
+              let tys := live.map fun (_, cl) => mkApp2 (Lean.mkConst ``Sat.Fmla.proof) ctx cl.expr
               let prfs := live.map fun (_, cl) => cl.proof
               let tree := buildATree tys prfs 0 live.size
               chunk := chunk + 1
               let cname := name ++ Name.mkSimple s!"chunk_{chunk}"
               addDecl <| Declaration.thmDecl {
                 name := cname, levelParams := [], type := tree.ty, value := tree.pf }
-              let projs := tree.projs (mkConst cname) #[]
+              let projs := tree.projs (Lean.mkConst cname) #[]
               let mut k := 0
               for (j, cl) in live do
                 db := db.insert j { cl with proof := projs[k]! }
