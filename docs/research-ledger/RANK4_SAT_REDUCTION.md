@@ -73,6 +73,75 @@ Refinements:
   certificates. The proof then has the same shape at `k = 2` as at `k ≥ 3`: a hitting lemma, the
   induction (KUM(4,6) by duality) and X′, plus one explicit exceptional matroid.
 
+## KUM(4,10) from a pair chain (adopted)
+
+A literature review (2026-09-26) turned up two sources of *pair chains*: cyclic sequences of
+disjoint pairs `P_0 .. P_{m-1}` with every `P_i ∪ P_{i+1}` a basis.
+
+* **van den Heuvel–Thomassé.** Theorem 2.1 with weight 2 on `ZMod (2k+1)` makes every arc
+  `φ⁻¹(x) ∪ φ⁻¹(x-1)` a basis. For a rank-4 matroid on `4k+2` elements the fibre sizes satisfy
+  `f(x) + f(x-1) = 4` around an odd cycle, so every fibre has 2 elements. Every uniformly dense
+  rank-4 matroid on `4k+2` elements therefore has a chain of `2k+1` pairs. This settles the
+  existence question left open for the pair-cycle layer of the main library (`PairCycle*.lean`,
+  `docs/RANK4_COVERAGE.md`).
+* **Wiedemann** (*Cyclic base orders of matroids*, 1984 note, typed 2006). For bases
+  `B_1 .. B_l` and a split `B_1 = X_1 ⊔ Y_1` there are splits `B_i = X_i ⊔ Y_i` with every
+  `Y_i ∪ X_{i+1}` a basis. With `|X_1| = 2` this gives a chain of `2k` pairs for `n = 4k`.
+
+**Orienting a chain.** The windows that start inside a pair are `{last(P_i)} ∪ P_{i+1} ∪
+{first(P_{i+2})}`. The relation `R_i` (pairs `(u, v)` making this a basis) has no empty row or
+column. A cycle of `i → i+2` fails to orient only if every `R_i` on it is a permutation and their
+Z/2 parities sum to the wrong value: the chain is *rigid*. A rigid 5-pair chain, relabelled along
+its dependent matchings as `Z_10`, is exactly:
+* bases `m + {0,3,5,8}` and `j + {0,3,6,8}`;
+* rank 3 for `j + {0,1,3,8}`.
+Nothing else is forced (`rigid10.py`).
+
+**Re-splits.** A re-split cuts one window `P_x ∪ P_{x+1}` into two other pairs. Results from
+`pairchain.py` (no hypotheses beyond the chain unless stated):
+
+| n | chain | question | result | hints |
+|---|---|---|---|---|
+| 10 | vHT, 5 pairs | a CBO within one re-split | UNSAT | 17k (14.7k ungated) |
+| 8 | Wiedemann, 4 pairs | a CBO within one re-split | UNSAT | 6k |
+| 12 | Wiedemann, 6 pairs | within one re-split | SAT | |
+| 12 | Wiedemann, 6 pairs | within two re-splits | UNSAT | 2.4M |
+| 14 | vHT, 7 pairs | within one re-split (even strict t=0) | SAT | |
+| 14 | vHT, 7 pairs | within two re-splits | UNSAT | 749k |
+
+A single rigid chain can also have no pair deletion (`P_{i-1} ∪ P_{i+2}` never a basis). A
+12-element one-window local version of the re-split lemma is false (`localsplit.py`).
+
+**Adopted for n = 10.** Claim `chain10` in `lean_witness_f.py` lists the orientations of the chain
+and of every one-window re-split, with no gating and no density bounds: 14,738 hints, 2,737 core
+clauses. It replaces the tight/dangerous case split and all five certificates (about 2.3M hints)
+on branch `probe/rank4` (`Probe/Chain10.lean`, `Probe/Rank4/Kum10Chain.lean`).
+
+**For n = 14** the two-re-split claim (749k) would replace hit14g + hit14line + X′(10) (about
+924k): a modest saving. X′(10) is used only at n = 14.
+
+## Paving and the extension theorem
+
+McGuinness (*Cyclic orderings of paving matroids*, EJC 31(4) 2024, Proposition 13) proves X′ for
+paving matroids in every rank, with no density hypothesis. `ext_rank_r.py` options `paving` and
+`indepJ` (every set of at most J elements independent) give:
+
+| claim | general | simple (indep2) | paving |
+|---|---|---|---|
+| X′₄(6) | SAT | UNSAT | UNSAT |
+| X′₅(10), w = 7 | SAT | SAT | UNSAT (49 s) |
+| X′₅(15), w = 7 | SAT | | UNSAT (206 s) |
+
+So every failure of the naive extension involves circuits of size at most 4 through `S`.
+
+## KUM(5,10) is known
+
+Garamvölgyi, Mizutani, Oki, Schwarcz and Yamaguchi (ICALP 2025, arXiv 2411.06771, Proposition
+4.3) show by SAT that in rank at most 5 the only basis pair without an SI-ordering is `R10`, and
+`R10` satisfies Gabow's conjecture (Bérczi–Mátravölgyi–Schwarcz). Hence Gabow's conjecture, and
+KUM(5,10), hold up to rank 5. Our run of `kum_r_n.py 5 10` is an independent confirmation. Kotlar
+(2013) gives only exchanges of length at most 6 in rank 5, despite being cited for rank 5.
+
 ## hit14g and hit14line
 
 `hit14g` is the choice lemma of Theorem G at `k = 3`. Its paper proof, three cases on `r(C)`, is

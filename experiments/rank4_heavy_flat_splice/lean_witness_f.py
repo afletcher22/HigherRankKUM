@@ -10,6 +10,10 @@ r(X) >= v for a bitmask X.
   kum10l                  strict t=0 with no 6-plane and no 4-line: the size table LIGHT bounds
                           every rank from below; one clause per cyclic order (0 first, one of each
                           reflection pair)
+  chain10                 a pair chain P_i = {2i, 2i+1} (i mod 5) with every P_i + P_i+1 a basis
+                          (facts); one clause per orientation of the chain and of every chain
+                          obtained by re-splitting one window P_x + P_x+1 into two other pairs.
+                          No lower bounds. (pairchain.py 2 rigid resplit, without the gates.)
 
 The formulas are the same claims as the scripts above, re-emitted in a canonical form:
 
@@ -131,6 +135,22 @@ def all_orders():
         yield (0,) + rest
 
 
+def chain_orders():
+    P = [(2 * i, 2 * i + 1) for i in range(5)]
+    chains = [P]
+    for x in range(5):
+        W = P[x] + P[(x + 1) % 5]
+        for q in itertools.combinations(W, 2):
+            if set(q) == set(P[x]):
+                continue
+            c = list(P)
+            c[x], c[(x + 1) % 5] = q, tuple(y for y in W if y not in q)
+            chains.append(c)
+    for c in chains:
+        for o in itertools.product((0, 1), repeat=5):
+            yield [e for i in range(5) for e in (c[i][o[i]], c[i][1 - o[i]])]
+
+
 def claim(name):
     """(low table, facts, orders) of a claim."""
     if name.startswith("baseG"):
@@ -146,6 +166,9 @@ def claim(name):
         return DENS, facts, site_orders_general(2, 4)
     if name == "kum10l":
         return LIGHT, [], all_orders()
+    if name == "chain10":
+        facts = [(mask([2 * i, 2 * i + 1, (2 * i + 2) % N, (2 * i + 3) % N]), 4, 1) for i in range(5)]
+        return [0] * (N + 1), facts, chain_orders()
     raise ValueError(name)
 
 

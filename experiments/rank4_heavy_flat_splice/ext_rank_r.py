@@ -10,14 +10,16 @@ S + {w cyclically consecutive e's}. Unit clauses make S and every r-window of th
 clause per interleaving (an order of S and a multiset of insertion gaps) says that some window of
 the merged sequence containing an element of S is not a basis. UNSAT proves X'(r, N).
 
-Usage: python ext_rank_r.py r N [w] [dense]      (w defaults to r + 2; dense adds the density
-of M and of M - S as lower bounds on ranks)
+Usage: python ext_rank_r.py r N [w] [dense] [paving] [indepJ]   (w defaults to r + 2; indepJ makes
+every set of at most J elements independent; dense adds the
+density of M and of M - S as lower bounds on ranks; paving makes every set of at most r - 1
+elements independent, the setting of McGuinness, Cyclic orderings of paving matroids, Prop. 5.2)
 """
 import itertools, sys, time
 from pysat.solvers import Cadical195
 
 
-def build(r, N, w, dense=False):
+def build(r, N, w, dense=False, paving=False, indep=0):
     B = r + 1
     var = lambda X, v: B * X + v
     mask = lambda ps: sum(1 << p for p in ps)
@@ -69,6 +71,12 @@ def build(r, N, w, dense=False):
                 need = max(need, -(-r * pc(X) // N))
             if need >= 1:
                 add([var(X, min(need, r))])
+    if paving:
+        indep = max(indep, r - 1)
+    # every set of at most `indep` elements is independent (paving: indep = r - 1)
+    for X in done:
+        if 1 <= pc(X) <= indep:
+            add([var(X, pc(X))])
     add([var(mask(S), r)])
     for i in range(N):
         add([var(mask(E[(i + t) % N] for t in range(r)), r)])
@@ -94,9 +102,11 @@ def build(r, N, w, dense=False):
 if __name__ == "__main__":
     r, N = int(sys.argv[1]), int(sys.argv[2])
     w = int(sys.argv[3]) if len(sys.argv) > 3 else r + 2
-    dense = len(sys.argv) > 4 and sys.argv[4] == "dense"
+    dense = "dense" in sys.argv[4:]
+    paving = "paving" in sys.argv[4:]
+    indep = max([int(a[5:]) for a in sys.argv[4:] if a.startswith("indep")], default=0)
     t = time.time()
-    cls, n = build(r, N, w, dense)
+    cls, n = build(r, N, w, dense, paving, indep)
     print(f"r={r} N={N} w={w}: {len(cls)} clauses, {n} interleavings (built {time.time() - t:.0f}s)",
           flush=True)
     s = Cadical195(bootstrap_with=cls)
