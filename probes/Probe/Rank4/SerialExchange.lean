@@ -76,18 +76,18 @@ theorem notMem_closure_of_isBase {P : Set α} {p e : α} (hP : M.IsBase P) (heE 
 `I - p - q`. -/
 theorem mem_closure_sdiff_sdiff {I : Set α} {p q e : α} (hI : M.Indep I)
     (h₁ : e ∈ M.closure (I \ {p})) (h₂ : e ∈ M.closure (I \ {q})) :
-    e ∈ M.closure (I \ {p} \ {q}) := by
+    e ∈ M.closure ((I \ {p}) \ {q}) := by
   have hU : M.Indep ((I \ {p}) ∪ (I \ {q})) :=
     hI.subset (Set.union_subset Set.sdiff_subset Set.sdiff_subset)
   have h : e ∈ M.closure ((I \ {p}) ∩ (I \ {q})) := by
     rw [hU.closure_inter_eq_inter_closure]
     exact ⟨h₁, h₂⟩
-  have hsub : (I \ {p}) ∩ (I \ {q}) ⊆ I \ {p} \ {q} := fun x hx => ⟨hx.1, hx.2.2⟩
+  have hsub : (I \ {p}) ∩ (I \ {q}) ⊆ (I \ {p}) \ {q} := fun x hx => ⟨hx.1, hx.2.2⟩
   exact M.closure_subset_closure hsub h
 
 /-- If `u` is spanned by `P - x` but not by `P - x - y`, then `P - y + u` is a basis. -/
 theorem isBase_insert_of_closure {P : Set α} {x y u : α} (hP : M.IsBase P) (huE : u ∈ M.E)
-    (huP : u ∉ P) (h₁ : u ∈ M.closure (P \ {x})) (h₂ : u ∉ M.closure (P \ {x} \ {y})) :
+    (huP : u ∉ P) (h₁ : u ∈ M.closure (P \ {x})) (h₂ : u ∉ M.closure ((P \ {x}) \ {y})) :
     M.IsBase (insert u (P \ {y})) :=
   (isBase_insert_sdiff_iff hP huE huP).2 fun h => h₂ (mem_closure_sdiff_sdiff hP.indep h₁ h)
 
@@ -101,7 +101,7 @@ theorem isBase_insert_of_subset_closure {P S : Set α} {p e : α} (hP : M.IsBase
   · by_cases hep : e = p
     · rw [hep, Set.insert_sdiff_self_of_mem hp]
       exact hP
-    · exact absurd (M.mem_closure_of_mem' ⟨heP, hep⟩ heE) he
+    · exact (he (M.mem_closure_of_mem' ⟨heP, hep⟩ heE)).elim
   · exact (isBase_insert_sdiff_iff hP heE heP).2 he
 
 /-! ### Fundamental circuits: Observation 2.3 and Proposition 2.8 -/
@@ -204,8 +204,8 @@ theorem disjoint_exchange {A B : Set α} {a b : α} (hAB : Disjoint A B) (ha : a
 structure SerialPair (M : Matroid α) (A B : Set α) (x₁ x₂ y₁ y₂ : α) : Prop where
   base₁ : M.IsBase (insert y₁ (A \ {x₁}))
   base₁' : M.IsBase (insert x₁ (B \ {y₁}))
-  base₂ : M.IsBase (insert y₁ (insert y₂ (A \ {x₁} \ {x₂})))
-  base₂' : M.IsBase (insert x₁ (insert x₂ (B \ {y₁} \ {y₂})))
+  base₂ : M.IsBase (insert y₁ (insert y₂ ((A \ {x₁}) \ {x₂})))
+  base₂' : M.IsBase (insert x₁ (insert x₂ ((B \ {y₁}) \ {y₂})))
 
 /-- The early exit of Theorem 3.3: after exchanging `(a₁, b₁)`, `a₂` has a symmetric exchange
 partner `b`. -/
@@ -254,7 +254,7 @@ theorem kz_final_left {P : Set α} {x y u v : α} (hP : M.IsBase P) (hx : x ∈ 
     (huE : u ∈ M.E) (huP : u ∉ P) (hvE : v ∈ M.E) (hvP : v ∉ P)
     (h₁ : M.IsBase (insert u (P \ {x}))) (h₂ : M.IsBase (insert v (P \ {y})))
     (h₃ : ¬ M.IsBase (insert v (P \ {x}))) :
-    M.IsBase (insert u (insert v (P \ {y} \ {x}))) := by
+    M.IsBase (insert u (insert v ((P \ {y}) \ {x}))) := by
   have hvx : v ≠ x := fun h => hvP (by rw [h]; exact hx)
   have hv : v ∈ M.closure (P \ {x}) := mem_closure_of_not_isBase hP hvE hvP h₃
   have hu : u ∉ M.closure (P \ {x}) := notMem_closure_of_isBase hP huE huP h₁
@@ -264,7 +264,8 @@ theorem kz_final_left {P : Set α} {x y u v : α} (hP : M.IsBase P) (hx : x ∈ 
     · rw [hwv]
       exact hv
     · exact M.mem_closure_of_mem' ⟨hwP, hwx⟩ (hP.subset_ground hwP)
-  have h := isBase_insert_of_subset_closure h₂ (Set.mem_insert_of_mem v ⟨hx, hxy⟩) hsub huE hu
+  have hxP : x ∈ insert v (P \ {y}) := Set.mem_insert_of_mem v ⟨hx, hxy⟩
+  have h := isBase_insert_of_subset_closure h₂ hxP hsub huE hu
   rw [← Set.insert_sdiff_singleton_comm hvx] at h
   exact h
 
@@ -292,7 +293,7 @@ theorem kz_right {B : Set α} {a₁ a₂ b₁ b₂ y : α} (hR : M.IsBase (inser
     · rw [hxa]
       exact ⟨Set.mem_insert _ _, ha₁b₁⟩
     · exact ⟨Set.mem_insert_of_mem _ ⟨hxB, hxb₂⟩, hxb₁⟩
-  have h₂ : a₂ ∉ M.closure (insert a₁ (B \ {b₂}) \ {b₁} \ {y}) := by
+  have h₂ : a₂ ∉ M.closure ((insert a₁ (B \ {b₂}) \ {b₁}) \ {y}) := by
     intro h
     refine notMem_closure_of_isBase hQ ha₂E ha₂Q hy (M.closure_subset_closure ?_ h)
     rintro x ⟨⟨hx, hxb₁⟩, hxy⟩
