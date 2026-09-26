@@ -65,6 +65,75 @@ theorem maskRank_noCBO {M : Matroid α} (hRank : M.eRank = 4) {N : ℕ} (hN : 0 
   calc (4 : ℕ∞) ≤ ((maskRank M pos (window s i) : ℕ) : ℕ∞) := by exact_mod_cast hall i i.2
     _ ≤ M.eRk (cyclicWindow 4 hN τ i) := h2
 
+/-! The rank axioms for the ranks of the sets named by bitmasks. -/
+
+theorem maskRank_card {M : Matroid α} (hRank : M.eRank = 4) {N : ℕ} (pos : Fin N ≃ M.E)
+    (X : ℕ) : maskRank M pos X ≤ pc N X := by
+  have h := M.eRk_le_encard (maskSet pos X)
+  rw [← maskRank_cast hRank pos X, encard_maskSet] at h
+  exact_mod_cast h
+
+theorem maskRank_mono {M : Matroid α} (hRank : M.eRank = 4) {N : ℕ} (pos : Fin N ≃ M.E)
+    (X a : ℕ) (ha : a < N) : maskRank M pos X ≤ maskRank M pos (X ||| 1 <<< a) := by
+  have h := M.eRk_mono (show maskSet pos X ⊆ maskSet pos (X ||| 1 <<< a) by
+    rw [maskSet_insert pos X a ha]
+    exact subset_insert _ _)
+  rw [← maskRank_cast hRank pos X, ← maskRank_cast hRank pos (X ||| 1 <<< a)] at h
+  exact_mod_cast h
+
+theorem maskRank_ins {M : Matroid α} (hRank : M.eRank = 4) {N : ℕ} (pos : Fin N ≃ M.E)
+    (X a : ℕ) (ha : a < N) : maskRank M pos (X ||| 1 <<< a) ≤ maskRank M pos X + 1 := by
+  have h := M.eRk_insert_le_add_one (pos ⟨a, ha⟩ : α) (maskSet pos X)
+  rw [← maskSet_insert pos X a ha, ← maskRank_cast hRank pos X,
+    ← maskRank_cast hRank pos (X ||| 1 <<< a)] at h
+  exact_mod_cast h
+
+theorem maskRank_sub {M : Matroid α} (hRank : M.eRank = 4) {N : ℕ} (pos : Fin N ≃ M.E)
+    (X a b : ℕ) (hab : a < b) (hbN : b < N) (ha : X.testBit a = false)
+    (hb : X.testBit b = false) :
+    maskRank M pos (X ||| 1 <<< a ||| 1 <<< b) + maskRank M pos X ≤
+      maskRank M pos (X ||| 1 <<< a) + maskRank M pos (X ||| 1 <<< b) := by
+  have haN : a < N := by omega
+  have hA := maskSet_insert pos X a haN
+  have hB := maskSet_insert pos X b hbN
+  have hAB := maskSet_insert pos (X ||| 1 <<< a) b hbN
+  have hna : (pos ⟨a, haN⟩ : α) ∉ maskSet pos X := by
+    rw [mem_maskSet_self]
+    simpa using ha
+  have hne : (pos ⟨a, haN⟩ : α) ≠ (pos ⟨b, hbN⟩ : α) := by
+    intro h
+    have h' := pos.injective (Subtype.ext h)
+    simp only [Fin.mk.injEq] at h'
+    omega
+  have hU : maskSet pos (X ||| 1 <<< a ||| 1 <<< b) =
+      maskSet pos (X ||| 1 <<< a) ∪ maskSet pos (X ||| 1 <<< b) := by
+    rw [hAB, hA, hB]
+    ext x
+    simp only [mem_insert_iff, mem_union]
+    tauto
+  have hI : maskSet pos (X ||| 1 <<< a) ∩ maskSet pos (X ||| 1 <<< b) = maskSet pos X := by
+    rw [hA, hB]
+    ext x
+    simp only [mem_insert_iff, mem_inter_iff]
+    constructor
+    · rintro ⟨h1 | h1, h2 | h2⟩
+      · exact absurd (h1.symm.trans h2) hne
+      · rw [h1] at h2
+        exact absurd h2 hna
+      · exact h1
+      · exact h1
+    · intro h
+      exact ⟨Or.inr h, Or.inr h⟩
+  have h := M.eRk_inter_add_eRk_union_le (maskSet pos (X ||| 1 <<< a))
+    (maskSet pos (X ||| 1 <<< b))
+  rw [hI, ← hU, ← maskRank_cast hRank pos X,
+    ← maskRank_cast hRank pos (X ||| 1 <<< a ||| 1 <<< b),
+    ← maskRank_cast hRank pos (X ||| 1 <<< a), ← maskRank_cast hRank pos (X ||| 1 <<< b)] at h
+  have h' : maskRank M pos X + maskRank M pos (X ||| 1 <<< a ||| 1 <<< b) ≤
+      maskRank M pos (X ||| 1 <<< a) + maskRank M pos (X ||| 1 <<< b) := by
+    exact_mod_cast h
+  omega
+
 /-- The ranks of the sets named by bitmasks form a `RankModelF`, given its lower bounds and
 facts. -/
 noncomputable def rankModelF_of_pos {M : Matroid α} (hRank : M.eRank = 4) {N : ℕ} (hN : 0 < N)
@@ -74,63 +143,11 @@ noncomputable def rankModelF_of_pos {M : Matroid α} (hRank : M.eRank = 4) {N : 
     (hfactF : ∀ X v, (X, v, false) ∈ facts → maskRank M pos X < v)
     (hno : ¬ ∃ τ : Fin N ≃ M.E, CyclicBasisOrder M 4 hN τ) : RankModelF N lowTab facts where
   r := maskRank M pos
-  card X _ := by
-    have h := M.eRk_le_encard (maskSet pos X)
-    rw [← maskRank_cast hRank pos X, encard_maskSet] at h
-    exact_mod_cast h
+  card X _ := maskRank_card hRank pos X
   low := hlow
-  mono X a _ ha _ := by
-    have h := M.eRk_mono (show maskSet pos X ⊆ maskSet pos (X ||| 1 <<< a) by
-      rw [maskSet_insert pos X a ha]
-      exact subset_insert _ _)
-    rw [← maskRank_cast hRank pos X, ← maskRank_cast hRank pos (X ||| 1 <<< a)] at h
-    exact_mod_cast h
-  ins X a _ ha _ := by
-    have h := M.eRk_insert_le_add_one (pos ⟨a, ha⟩ : α) (maskSet pos X)
-    rw [← maskSet_insert pos X a ha, ← maskRank_cast hRank pos X,
-      ← maskRank_cast hRank pos (X ||| 1 <<< a)] at h
-    exact_mod_cast h
-  sub X a b _ hab hbN ha hb := by
-    have haN : a < N := by omega
-    have hA := maskSet_insert pos X a haN
-    have hB := maskSet_insert pos X b hbN
-    have hAB := maskSet_insert pos (X ||| 1 <<< a) b hbN
-    have hna : (pos ⟨a, haN⟩ : α) ∉ maskSet pos X := by
-      rw [mem_maskSet_self]
-      simpa using ha
-    have hne : (pos ⟨a, haN⟩ : α) ≠ (pos ⟨b, hbN⟩ : α) := by
-      intro h
-      have h' := pos.injective (Subtype.ext h)
-      simp only [Fin.mk.injEq] at h'
-      omega
-    have hU : maskSet pos (X ||| 1 <<< a ||| 1 <<< b) =
-        maskSet pos (X ||| 1 <<< a) ∪ maskSet pos (X ||| 1 <<< b) := by
-      rw [hAB, hA, hB]
-      ext x
-      simp only [mem_insert_iff, mem_union]
-      tauto
-    have hI : maskSet pos (X ||| 1 <<< a) ∩ maskSet pos (X ||| 1 <<< b) = maskSet pos X := by
-      rw [hA, hB]
-      ext x
-      simp only [mem_insert_iff, mem_inter_iff]
-      constructor
-      · rintro ⟨h1 | h1, h2 | h2⟩
-        · exact absurd (h1.symm.trans h2) hne
-        · rw [h1] at h2
-          exact absurd h2 hna
-        · exact h1
-        · exact h1
-      · intro h
-        exact ⟨Or.inr h, Or.inr h⟩
-    have h := M.eRk_inter_add_eRk_union_le (maskSet pos (X ||| 1 <<< a))
-      (maskSet pos (X ||| 1 <<< b))
-    rw [hI, ← hU, ← maskRank_cast hRank pos X,
-      ← maskRank_cast hRank pos (X ||| 1 <<< a ||| 1 <<< b),
-      ← maskRank_cast hRank pos (X ||| 1 <<< a), ← maskRank_cast hRank pos (X ||| 1 <<< b)] at h
-    have h' : maskRank M pos X + maskRank M pos (X ||| 1 <<< a ||| 1 <<< b) ≤
-        maskRank M pos (X ||| 1 <<< a) + maskRank M pos (X ||| 1 <<< b) := by
-      exact_mod_cast h
-    omega
+  mono X a _ ha _ := maskRank_mono hRank pos X a ha
+  ins X a _ ha _ := maskRank_ins hRank pos X a ha
+  sub X a b _ hab hbN ha hb := maskRank_sub hRank pos X a b hab hbN ha hb
   factT := hfactT
   factF := hfactF
   noCBO := maskRank_noCBO hRank hN pos hno
