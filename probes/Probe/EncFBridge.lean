@@ -251,6 +251,14 @@ theorem blockEquiv_mem_iff (p : Fin (a + b)) :
   · rw [blockFun_ge hAE aEnum bEnum p h]
     exact iff_of_false (bEnum _).2.2 h
 
+theorem blockEquiv_val_lt (p : Fin (a + b)) (h : p.val < a) :
+    (blockEquiv hAE aEnum bEnum p : α) = aEnum ⟨p, h⟩ :=
+  blockFun_lt hAE aEnum bEnum p h
+
+theorem blockEquiv_val_ge (p : Fin (a + b)) (h : ¬ p.val < a) :
+    (blockEquiv hAE aEnum bEnum p : α) = bEnum ⟨p - a, by have := p.isLt; omega⟩ :=
+  blockFun_ge hAE aEnum bEnum p h
+
 end Block
 
 /-- The complement of a set of `a` elements in a ground set of `a + b` elements. -/

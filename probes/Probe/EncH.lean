@@ -34,6 +34,9 @@ def restOf (N B : ℕ) : List ℕ := (List.range N).filter fun x => !B.testBit x
 /-- Lower bounds on 14 elements: no loops, points `≤ 3`, lines `≤ 6`, and no 9-element plane. -/
 def low14 : List ℕ := [0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4]
 
+/-- Lower bounds on 14 elements: no loops, points `≤ 3`, lines `≤ 6`, planes `≤ 9`. -/
+def lowG14 : List ℕ := [0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4]
+
 /-- Clause witnesses for the hitting claims. -/
 inductive WH where
   | order (X v : ℕ)
