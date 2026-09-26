@@ -134,6 +134,36 @@ paving matroids in every rank, with no density hypothesis. `ext_rank_r.py` optio
 
 So every failure of the naive extension involves circuits of size at most 4 through `S`.
 
+## Toward a human proof of X′ (in progress, 2026-09-26)
+
+Exact encodings with a full rank function on all `N + 4` elements (`xcontig.py`):
+
+| N | S as one block (McGuinness) | S in at most two blocks | any interleaving (X′) |
+|---|---|---|---|
+| 6 | fails | fails | fails |
+| 7 | holds | | |
+| 8 | fails (also for simple M) | fails | holds |
+| 9 | holds | | |
+| 10 | fails | holds | holds |
+
+Odd `N` behaves like the paving case; even `N`, which is every case the proof uses, has a parity
+obstruction to contiguous insertion. Under McGuinness's local genericity at two adjacent gaps,
+contiguous insertion holds (N = 8, gaps 0 and 1).
+
+Single-gap failure patterns (`gap_patterns.py`; families H1, H2 of subsets of S whose straddling
+windows are dependent):
+* paving: exactly one pattern up to symmetry, `H1 = {a, b, ab, acd}`, `H2 = {a, c, ac, abd}`, as in
+  McGuinness;
+* simple matroids: 95 patterns, 20 of them inclusion-minimal;
+* general matroids: 105 patterns, with the same 20 minimal ones.
+
+So a McGuinness-style proof of X′ for general matroids would be a large case analysis.
+
+Pair chains as a uniform route (`localsplit2.py`): the local lemma "at most two re-splits inside a
+linear segment of w pairs break local rigidity" is SAT for w = 6, 7, 8, 9 (block rank axioms). So
+repair is not local in that sense. The cyclic mode reproduces the n = 10 (one re-split, UNSAT) and
+n = 14 (one re-split, SAT) results. The global two-re-split question for n ≥ 18 is still open.
+
 ## KUM(5,10) is known
 
 Garamvölgyi, Mizutani, Oki, Schwarcz and Yamaguchi (ICALP 2025, arXiv 2411.06771, Proposition
