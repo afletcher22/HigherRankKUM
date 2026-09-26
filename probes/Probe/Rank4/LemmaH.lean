@@ -152,7 +152,8 @@ theorem KPoint.eq (h : StrictT0 M k) (hk : 1 ≤ k) (h2 : NoTwoKLine M k) {P Q :
 
 /-- If every `k`-point meets `T ⊆ S` and the flat `F` misses `S`, then a set of rank at most `1`
 inside `F` has at most `k-1` elements. -/
-theorem ncard_add_one_le_of_subset_of_eRk_le_one (h : StrictT0 M k) {S T F Y : Set α}
+theorem ncard_add_one_le_of_subset_of_eRk_le_one (h : StrictT0 M k) (hk : 1 ≤ k)
+    {S T F Y : Set α}
     (hT : ∀ Q, KPoint M k Q → (Q ∩ T).Nonempty) (hTS : T ⊆ S) (hF : M.IsFlat F)
     (hFS : Disjoint F S) (hY : Y ⊆ F) (hr : M.eRk Y ≤ 1) : Y.ncard + 1 ≤ k := by
   have hYE : Y ⊆ M.E := hY.trans hF.subset_ground
@@ -440,7 +441,7 @@ theorem exists_unblocked (h : StrictT0 M k) (hk : 2 ≤ k) (h2 : NoTwoKLine M k)
   obtain ⟨Gb, hGb⟩ := hblock b hb
   obtain ⟨Gc, hGc⟩ := hblock c hc'
   have hpt : ∀ Y ⊆ F, M.eRk Y ≤ 1 → Y.ncard + 1 ≤ k := fun Y hY hr =>
-    ncard_add_one_le_of_subset_of_eRk_le_one h hT hTS hF.1 hFS hY hr
+    ncard_add_one_le_of_subset_of_eRk_le_one h (by omega) hT hTS hF.1 hFS hY hr
   exact not_three_blockers h hk h2 hF hS hFS hpt ha.1 hb.1 hc'.1 hab hac hbc hGa hGb hGc
 
 /-- **The swap.** Given a basis `S` and a protected set `T ⊆ S` of size at most `1`, some basis
