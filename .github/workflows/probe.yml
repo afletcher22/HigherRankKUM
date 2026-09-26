@@ -28,8 +28,15 @@ jobs:
       - name: Build and replay probe modules
         shell: bash
         env:
+          # heavy dependencies built one at a time first (memory), then the modules to replay
+          PROBE_BUILD: Rank4.SerialExchange Rank4.Kum8 ExtCyc8 ExtCyc10 ExtCyc12 ExtLin14 Chain10 Hit14G Hit14Line Rank4.LemmaH Rank4.LemmaU
           PROBE_MODULES: Rank4.Final
         run: |
+          for m in $PROBE_BUILD; do
+            echo "::group::build $m"
+            /usr/bin/time -v lake build Probe.$m 2>&1 | tee build-$m.log || echo "BUILD FAILED: $m"
+            echo "::endgroup::"
+          done
           for m in $PROBE_MODULES; do
             echo "::group::$m"
             /usr/bin/time -v lake build Probe.$m 2>&1 | tee $m.log || echo "BUILD FAILED: $m"
