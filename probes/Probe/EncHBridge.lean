@@ -33,7 +33,7 @@ theorem mem_combs : ∀ {n : ℕ} {l c : List ℕ}, c.Sublist l → c.length = n
   | n + 1, x :: xs, c, hs, hlen => by
     cases hs with
     | cons _ h => exact List.mem_append_right _ (mem_combs h hlen)
-    | cons₂ _ h =>
+    | cons_cons _ h =>
       rw [List.length_cons] at hlen
       exact List.mem_append_left _ (List.mem_map.2 ⟨_, mem_combs h (by omega), rfl⟩)
 
@@ -115,42 +115,14 @@ theorem low14_le {M : Matroid α} (hT : Hitting.StrictT0 M 3) (pos : Fin 14 ≃ 
   rw [hlow _ hpc]
   split_ifs <;> omega
 
-/-- **The hitting lemma on 14 elements with a 6-element rank-2 set and no 9-element plane**,
-from its certificate. -/
-theorem deletable_of_hitLine
-    (hcert : ∀ m : RankModelH 14 low14 (factsOfRanks [(63, 2)]), False)
-    {M : Matroid α} (hT : Hitting.StrictT0 M 3) {L : Set α} (hLE : L ⊆ M.E)
-    (hLrank : M.eRk L = 2) (hLcard : L.encard = ((6 : ℕ) : ℕ∞))
-    (h9 : ∀ F, M.IsFlat F → M.eRk F = 3 → F.encard ≠ ((3 * 3 : ℕ) : ℕ∞)) :
-    ∃ S, Hitting.Deletable M 3 S := by
-  by_contra hno
-  push_neg at hno
-  have hEcard : M.E.encard = ((6 + 8 : ℕ) : ℕ∞) := hT.card.trans (by norm_num)
-  let aEnum : Fin 6 ≃ L := finEquivOfSetEncard (hT.finite.subset hLE) hLcard
-  let bEnum : Fin 8 ≃ (M.E \ L : Set α) :=
-    finEquivOfSetEncard (hT.finite.subset diff_subset) (encard_diff_eq hT.finite hLE hEcard hLcard)
-  let pos : Fin 14 ≃ M.E := blockEquiv hLE aEnum bEnum
-  have hmem : ∀ p : Fin 14, (pos p : α) ∈ L ↔ (p : ℕ) < 6 := blockEquiv_mem_iff hLE aEnum bEnum
-  have hL : maskSet pos 63 = L := maskSet_eq pos hLE fun p => by
-    rw [hmem p]
-    revert p
-    decide
-  have hranks : ∀ X s, (X, s) ∈ [((63 : ℕ), (2 : ℕ))] → maskRank M pos X = s := by
-    intro X s h
-    rcases List.mem_singleton.1 h with ⟨⟩
-    exact maskRank_eq pos (by rw [hL]; exact_mod_cast hLrank)
+/-- With no deletable basis, every 4-set of rank 4 leaves a dense-violating 3-, 6- or 8-set. -/
+theorem noDel_of_forall_not_deletable {M : Matroid α} (hT : Hitting.StrictT0 M 3)
+    (pos : Fin 14 ≃ M.E) (hno : ∀ S, ¬ Hitting.Deletable M 3 S) (B : ℕ) (hB : B < 2 ^ 14)
+    (hpc : pc 14 B = 4) (hB4 : 4 ≤ maskRank M pos B) :
+    (∃ c ∈ combs 3 (restOf 14 B), maskRank M pos (maskOf c) ≤ 1) ∨
+    (∃ c ∈ combs 6 (restOf 14 B), maskRank M pos (maskOf c) ≤ 2) ∨
+    (∃ c ∈ combs 8 (restOf 14 B), maskRank M pos (maskOf c) ≤ 3) := by
   have hRank := hT.rank
-  refine hcert
-    { r := maskRank M pos
-      card := fun X _ => maskRank_card hRank pos X
-      low := low14_le hT pos h9
-      mono := fun X a _ ha _ => maskRank_mono hRank pos X a ha
-      ins := fun X a _ ha _ => maskRank_ins hRank pos X a ha
-      sub := fun X a b _ hab hbN ha hb => maskRank_sub hRank pos X a b hab hbN ha hb
-      factT := factT_of_ranks hranks
-      factF := factF_of_ranks hranks
-      noDel := ?_ }
-  intro B hB hpc hB4
   -- the 4-set named by `B` is a basis
   set S := maskSet pos B with hSdef
   have hSE : S ⊆ M.E := maskSet_subset pos B
@@ -225,5 +197,50 @@ theorem deletable_of_hitLine
     exact Or.inr (Or.inl ⟨c, hc, hr⟩)
   · obtain ⟨c, hc, hr⟩ := hsubset 8 (by omega)
     exact Or.inr (Or.inr ⟨c, hc, hr⟩)
+
+
+/-- The ranks of the sets named by bitmasks form a `RankModelH`, if no basis is deletable. -/
+noncomputable def rankModelH_of_pos {M : Matroid α} (hT : Hitting.StrictT0 M 3)
+    (pos : Fin 14 ≃ M.E) {lowTab : List ℕ} {facts : List (ℕ × ℕ × Bool)}
+    (hlow : ∀ X, X < 2 ^ 14 → lowTab.getD (pc 14 X) 0 ≤ maskRank M pos X)
+    (hfactT : ∀ X v, (X, v, true) ∈ facts → v ≤ maskRank M pos X)
+    (hfactF : ∀ X v, (X, v, false) ∈ facts → maskRank M pos X < v)
+    (hno : ∀ S, ¬ Hitting.Deletable M 3 S) : RankModelH 14 lowTab facts where
+  r := maskRank M pos
+  card X _ := maskRank_card hT.rank pos X
+  low := hlow
+  mono X a _ ha _ := maskRank_mono hT.rank pos X a ha
+  ins X a _ ha _ := maskRank_ins hT.rank pos X a ha
+  sub X a b _ hab hbN ha hb := maskRank_sub hT.rank pos X a b hab hbN ha hb
+  factT := hfactT
+  factF := hfactF
+  noDel := noDel_of_forall_not_deletable hT pos hno
+
+/-- **The hitting lemma on 14 elements with a 6-element rank-2 set and no 9-element plane**,
+from its certificate. -/
+theorem deletable_of_hitLine
+    (hcert : ∀ m : RankModelH 14 low14 (factsOfRanks [(63, 2)]), False)
+    {M : Matroid α} (hT : Hitting.StrictT0 M 3) {L : Set α} (hLE : L ⊆ M.E)
+    (hLrank : M.eRk L = 2) (hLcard : L.encard = ((6 : ℕ) : ℕ∞))
+    (h9 : ∀ F, M.IsFlat F → M.eRk F = 3 → F.encard ≠ ((3 * 3 : ℕ) : ℕ∞)) :
+    ∃ S, Hitting.Deletable M 3 S := by
+  by_contra hno
+  push_neg at hno
+  have hEcard : M.E.encard = ((6 + 8 : ℕ) : ℕ∞) := hT.card.trans (by norm_num)
+  let aEnum : Fin 6 ≃ L := finEquivOfSetEncard (hT.finite.subset hLE) hLcard
+  let bEnum : Fin 8 ≃ (M.E \ L : Set α) :=
+    finEquivOfSetEncard (hT.finite.subset diff_subset) (encard_diff_eq hT.finite hLE hEcard hLcard)
+  let pos : Fin 14 ≃ M.E := blockEquiv hLE aEnum bEnum
+  have hmem : ∀ p : Fin 14, (pos p : α) ∈ L ↔ (p : ℕ) < 6 := blockEquiv_mem_iff hLE aEnum bEnum
+  have hL : maskSet pos 63 = L := maskSet_eq pos hLE fun p => by
+    rw [hmem p]
+    revert p
+    decide
+  have hranks : ∀ X s, (X, s) ∈ [((63 : ℕ), (2 : ℕ))] → maskRank M pos X = s := by
+    intro X s h
+    rcases List.mem_singleton.1 h with ⟨⟩
+    exact maskRank_eq pos (by rw [hL]; exact_mod_cast hLrank)
+  exact hcert (rankModelH_of_pos hT pos (low14_le hT pos h9) (factT_of_ranks hranks)
+    (factF_of_ranks hranks) hno)
 
 end Probe.Enc

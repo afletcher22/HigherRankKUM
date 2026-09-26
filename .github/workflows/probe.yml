@@ -28,7 +28,7 @@ jobs:
       - name: Build and replay probe modules
         shell: bash
         env:
-          PROBE_MODULES: EncFBridge EncH EncHBridge Hit14Line
+          PROBE_MODULES: Split.G4a Split.G4b Split.G4c EncHBridge
         run: |
           for m in $PROBE_MODULES; do
             echo "::group::$m"
