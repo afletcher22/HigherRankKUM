@@ -25,11 +25,11 @@ open Set
 /-- Equality of set literals up to order; `!false` and `!true` are evaluated first. -/
 macro "set_perm'" : tactic =>
   `(tactic| (ext; simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Bool.not_false,
-    Bool.not_true]; tauto))
+    Bool.not_true]; try tauto))
 
 /-- Inclusion of set literals. -/
 macro "sub_perm" : tactic =>
-  `(tactic| (intro t ht; simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ht ⊢; tauto))
+  `(tactic| (intro t ht; simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ht ⊢; try tauto))
 
 variable {α : Type*} {M : Matroid α}
 
@@ -37,7 +37,7 @@ variable {α : Type*} {M : Matroid α}
 
 theorem encard_three_le (x y z : α) : ({x, y, z} : Set α).encard ≤ 3 := by
   calc ({x, y, z} : Set α).encard ≤ ({y, z} : Set α).encard + 1 := encard_insert_le _ _
-    _ ≤ (({z} : Set α).encard + 1) + 1 := add_le_add_right (encard_insert_le _ _) 1
+    _ ≤ (({z} : Set α).encard + 1) + 1 := by gcongr; exact encard_insert_le _ _
     _ = 3 := by rw [encard_singleton]; norm_num
 
 theorem encard_three_eq {x y z : α} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) :
