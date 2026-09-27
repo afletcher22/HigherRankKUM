@@ -215,7 +215,17 @@ slack cycle's only slack relation.
 
 About 80k hints in total, against 1,256,043 for X′(8), X′(10), X′(12) and X at length 14 (254,213 + 300,537 + 390,228 + 311,065, counted from the LRAT files checked in Lean).
 
-**Hand proofs.** The P-cycle and Q-cycle lemmas now have a complete human proof
+**All four local lemmas now have human proofs, so XP (and with it X′) needs no SAT.** The
+unifying statement is an 8-element *Main Lemma* (`XP_LOCAL_LEMMAS_ODD_EVEN.md`): if `S` and
+`A_0 ∪ A_1` are bases, some valid split of `S` is neither P-crossed nor Q-crossed. Tightness turns
+each window into a pair-to-pair non-parallelism in a rank-2 contraction, and then:
+* EVEN fails for a valid split exactly when it is P-crossed or Q-crossed (a K₂,₂ argument);
+* ODD fails exactly when all four matchings exist and exactly one crossing holds (a ℤ/2 count);
+* P-only and Q-only are the two halves of EVEN.
+The Main Lemma follows from Greene–Magnanti, the one-swap cover (below), a five-line lemma (a
+one-swap of a P-crossed split is never Q-crossed) and mirror symmetry.
+
+**Hand proofs (first version).** The P-cycle and Q-cycle lemmas now have a complete human proof
 (`XP_LOCAL_LEMMA_PQ.md`, about 1.5 pages): a valid split fails exactly when it is crossed; a valid
 split exists by multiple symmetric exchange (Greene, Woodall); and if it is crossed, one of the two
 splits obtained by swapping one element of P with one of Q is valid and uncrossed (six short
