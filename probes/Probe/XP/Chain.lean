@@ -60,7 +60,7 @@ theorem cycle_sat {L : ℕ} (R : ℕ → Bool → Bool → Prop) (hrow : ∀ t <
   · rw [htk]
     have h1 : cyclePos L k k = L - 1 := by
       unfold cyclePos
-      rw [if_neg (lt_irrefl k)]
+      rw [ite_eq_right (lt_irrefl k)]
       omega
     have h2 : cyclePos L k ((k + 1) % L) = 0 := by
       rcases mod_succ_cases hk with ⟨he, -⟩ | ⟨he, heq⟩
@@ -159,12 +159,12 @@ def chainSeq (B : ℕ → Bool → α) (o : ℕ → Bool) (p : ℕ) : α :=
 theorem chainSeq_even (B : ℕ → Bool → α) (o : ℕ → Bool) (i : ℕ) :
     chainSeq B o (2 * i) = B i (o i) := by
   unfold chainSeq
-  rw [show 2 * i / 2 = i by omega, if_pos (by omega)]
+  rw [show 2 * i / 2 = i by omega, ite_eq_left (by omega)]
 
 theorem chainSeq_odd (B : ℕ → Bool → α) (o : ℕ → Bool) (i : ℕ) :
     chainSeq B o (2 * i + 1) = B i (!o i) := by
   unfold chainSeq
-  rw [show (2 * i + 1) / 2 = i by omega, if_neg (by omega)]
+  rw [show (2 * i + 1) / 2 = i by omega, ite_eq_right (by omega)]
 
 /-- **An oriented pair chain is a cyclic basis ordering.** -/
 theorem cbo_of_chain {M : Matroid α} {n : ℕ} (hn : 0 < n) (B : ℕ → Bool → α) (o : ℕ → Bool)

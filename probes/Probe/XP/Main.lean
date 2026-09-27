@@ -278,7 +278,7 @@ theorem valid_of (h : Std M a0 a1 b0 b1 u v w z) (hw : w ∉ M.closure {b0, a0, 
 theorem invalid (h : Std M a0 a1 b0 b1 u v w z) (hn : ¬ Valid M a0 a1 b0 b1 u w v z) :
     w ∈ M.closure {b0, a0, a1} ∨ v ∈ M.closure {z, b0, b1} := by
   by_contra hc
-  push_neg at hc
+  push Not at hc
   exact hn (h.valid_of hc.1 hc.2)
 
 /-- **9.1.** `w` and `z` are not both in `H`. -/
@@ -338,7 +338,7 @@ theorem not_both_cl (h : Std M a0 a1 b0 b1 u v w z) (hw : v ∈ M.closure {w, b0
 theorem valid_or (h : Std M a0 a1 b0 b1 u v w z) :
     Valid M a0 a1 b0 b1 u w v z ∨ Valid M a0 a1 b0 b1 u z v w := by
   by_contra hc
-  push_neg at hc
+  push Not at hc
   rcases h.invalid hc.1 with hw | hv <;> rcases h.twin.invalid hc.2 with hz | hv'
   · exact h.not_both_H hw hz
   · exact (h.claim92 hv').2.1 hw

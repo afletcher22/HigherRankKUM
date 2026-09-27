@@ -118,24 +118,24 @@ variable {m r : ℕ} {A : ℕ → Bool → α} {P Q : Bool → α}
 
 theorem nc_A {i j : ℕ} (hi : i < m) (hj : j = i + r) : newChain m r A P Q i = A j := by
   unfold newChain newPair
-  rw [Nat.mod_eq_of_lt (by omega : i < m + 2), if_pos hi, hj]
+  rw [Nat.mod_eq_of_lt (by omega : i < m + 2), ite_eq_left hi, hj]
 
 theorem nc_P : newChain m r A P Q m = P := by
   unfold newChain newPair
-  rw [Nat.mod_eq_of_lt (by omega : m < m + 2), if_neg (lt_irrefl m), if_pos rfl]
+  rw [Nat.mod_eq_of_lt (by omega : m < m + 2), ite_eq_right (lt_irrefl m), ite_eq_left rfl]
 
 theorem nc_Q : newChain m r A P Q (m + 1) = Q := by
   unfold newChain newPair
-  rw [Nat.mod_eq_of_lt (by omega : m + 1 < m + 2), if_neg (by omega), if_neg (by omega)]
+  rw [Nat.mod_eq_of_lt (by omega : m + 1 < m + 2), ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem nc_A0 (hm : 0 < m) : newChain m r A P Q (m + 2) = A r := by
   unfold newChain newPair
-  rw [Nat.mod_self, if_pos hm, Nat.zero_add]
+  rw [Nat.mod_self, ite_eq_left hm, Nat.zero_add]
 
 theorem nc_A1 (hm : 1 < m) : newChain m r A P Q (m + 3) = A (1 + r) := by
   unfold newChain newPair
   rw [show m + 3 = (m + 2) + 1 by omega, Nat.add_mod_left,
-    Nat.mod_eq_of_lt (by omega : 1 < m + 2), if_pos hm]
+    Nat.mod_eq_of_lt (by omega : 1 < m + 2), ite_eq_left hm]
 
 theorem nc_per (i : ℕ) : newChain m r A P Q (i + (m + 2)) = newChain m r A P Q i := by
   unfold newChain
@@ -364,13 +364,13 @@ theorem orient_O2 (hRank : M.eRank = 4) (hm : 4 ≤ m) (hme : m % 2 = 0) (hA : O
     have h := (hxP (i / 2) h1 : newW M m r A P Q (0 + 2 * (i / 2)) (xP (i / 2))
       (xP ((i / 2 + 1) % ((m + 2) / 2))))
     rw [h4] at h
-    rw [if_pos he, if_pos h2, h3]
+    rw [ite_eq_left he, ite_eq_left h2, h3]
     exact h
   · obtain ⟨h1, h2, h3, h4⟩ := class_step (n := m + 2) (by omega) (c := 1) (by omega) hi ho
     have h := (hxQ (i / 2) h1 : newW M m r A P Q (1 + 2 * (i / 2)) (xQ (i / 2))
       (xQ ((i / 2 + 1) % ((m + 2) / 2))))
     rw [h4] at h
-    rw [if_neg (by omega), if_neg (by omega), h3]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), h3]
     exact h
 
 /-- The orientation of the tight cycles: every old pair of a class is flipped by the same bit,
@@ -391,7 +391,7 @@ theorem orient_O3 (hm : 4 ≤ m) (hA : OldChain M m A S) (e1 e2 oP oQ : Bool)
   · rw [Nat.mod_eq_of_lt (by omega : i + 2 < m + 2), newW_old h]
     have e : tightO m e1 e2 oP oQ (i + 2) = tightO m e1 e2 oP oQ i := by
       unfold tightO
-      rw [if_pos h, if_pos (by omega : i < m), show (i + 2) % 2 = i % 2 by omega]
+      rw [ite_eq_left h, ite_eq_left (by omega : i < m), show (i + 2) % 2 = i % 2 by omega]
     rw [e]
     generalize tightO m e1 e2 oP oQ i = b
     cases b
@@ -400,38 +400,38 @@ theorem orient_O3 (hm : 4 ≤ m) (hA : OldChain M m A S) (e1 e2 oP oQ : Bool)
   · rw [h, show m - 2 + 2 = m by omega, Nat.mod_eq_of_lt (by omega : m < m + 2)]
     have e1' : tightO m e1 e2 oP oQ (m - 2) = e1 := by
       unfold tightO
-      rw [if_pos (by omega : m - 2 < m), if_pos (by omega : (m - 2) % 2 = m % 2)]
+      rw [ite_eq_left (by omega : m - 2 < m), ite_eq_left (by omega : (m - 2) % 2 = m % 2)]
     have e2' : tightO m e1 e2 oP oQ m = oP := by
       unfold tightO
-      rw [if_neg (lt_irrefl m), if_pos rfl]
+      rw [ite_eq_right (lt_irrefl m), ite_eq_left rfl]
     rw [e1', e2']
     exact hWa
   · rw [h, show m - 1 + 2 = m + 1 by omega, Nat.mod_eq_of_lt (by omega : m + 1 < m + 2)]
     have e1' : tightO m e1 e2 oP oQ (m - 1) = e2 := by
       unfold tightO
-      rw [if_pos (by omega : m - 1 < m), if_neg (by omega : ¬ (m - 1) % 2 = m % 2)]
+      rw [ite_eq_left (by omega : m - 1 < m), ite_eq_right (by omega : ¬ (m - 1) % 2 = m % 2)]
     have e2' : tightO m e1 e2 oP oQ (m + 1) = oQ := by
       unfold tightO
-      rw [if_neg (by omega : ¬ m + 1 < m), if_neg (by omega : ¬ m + 1 = m)]
+      rw [ite_eq_right (by omega : ¬ m + 1 < m), ite_eq_right (by omega : ¬ m + 1 = m)]
     rw [e1', e2']
     exact hWb
   · rw [h, Nat.mod_self]
     have e1' : tightO m e1 e2 oP oQ m = oP := by
       unfold tightO
-      rw [if_neg (lt_irrefl m), if_pos rfl]
+      rw [ite_eq_right (lt_irrefl m), ite_eq_left rfl]
     have e2' : tightO m e1 e2 oP oQ 0 = if 0 % 2 = m % 2 then e1 else e2 := by
       unfold tightO
-      rw [if_pos (by omega : 0 < m)]
+      rw [ite_eq_left (by omega : 0 < m)]
     rw [e1', e2']
     exact hWc
   · rw [h, show m + 1 + 2 = (m + 2) + 1 by omega, Nat.add_mod_left,
       Nat.mod_eq_of_lt (by omega : 1 < m + 2)]
     have e1' : tightO m e1 e2 oP oQ (m + 1) = oQ := by
       unfold tightO
-      rw [if_neg (by omega : ¬ m + 1 < m), if_neg (by omega : ¬ m + 1 = m)]
+      rw [ite_eq_right (by omega : ¬ m + 1 < m), ite_eq_right (by omega : ¬ m + 1 = m)]
     have e2' : tightO m e1 e2 oP oQ 1 = if 1 % 2 = m % 2 then e1 else e2 := by
       unfold tightO
-      rw [if_pos (by omega : 1 < m)]
+      rw [ite_eq_left (by omega : 1 < m)]
     rw [e1', e2']
     exact hWd
 
@@ -459,10 +459,10 @@ theorem orient_O4 (hRank : M.eRank = 4) (hm : 4 ≤ m) (hme : m % 2 = 0) (hA : O
     · rw [Nat.mod_eq_of_lt (by omega : i + 2 < m + 2), newW_old h]
       have ea : mixO m e1 oP xQ i = e1 := by
         unfold mixO
-        rw [if_pos he, if_pos (by omega : i < m)]
+        rw [ite_eq_left he, ite_eq_left (by omega : i < m)]
       have eb : mixO m e1 oP xQ (i + 2) = e1 := by
         unfold mixO
-        rw [if_pos (by omega : (i + 2) % 2 = 0), if_pos h]
+        rw [ite_eq_left (by omega : (i + 2) % 2 = 0), ite_eq_left h]
       rw [ea, eb]
       cases e1
       · exact hA.odd (i + r)
@@ -470,19 +470,19 @@ theorem orient_O4 (hRank : M.eRank = 4) (hm : 4 ≤ m) (hme : m % 2 = 0) (hA : O
     · rw [h, show m - 2 + 2 = m by omega, Nat.mod_eq_of_lt (by omega : m < m + 2)]
       have ea : mixO m e1 oP xQ (m - 2) = e1 := by
         unfold mixO
-        rw [if_pos (by omega : (m - 2) % 2 = 0), if_pos (by omega : m - 2 < m)]
+        rw [ite_eq_left (by omega : (m - 2) % 2 = 0), ite_eq_left (by omega : m - 2 < m)]
       have eb : mixO m e1 oP xQ m = oP := by
         unfold mixO
-        rw [if_pos hme, if_neg (lt_irrefl m)]
+        rw [ite_eq_left hme, ite_eq_right (lt_irrefl m)]
       rw [ea, eb]
       exact hWa
     · rw [h, Nat.mod_self]
       have ea : mixO m e1 oP xQ m = oP := by
         unfold mixO
-        rw [if_pos hme, if_neg (lt_irrefl m)]
+        rw [ite_eq_left hme, ite_eq_right (lt_irrefl m)]
       have eb : mixO m e1 oP xQ 0 = e1 := by
         unfold mixO
-        rw [if_pos (by omega : 0 % 2 = 0), if_pos (by omega : 0 < m)]
+        rw [ite_eq_left (by omega : 0 % 2 = 0), ite_eq_left (by omega : 0 < m)]
       rw [ea, eb]
       exact hWc
   · obtain ⟨h1, h2, h3, h4⟩ := class_step (n := m + 2) (by omega) (c := 1) (by omega) hi ho
@@ -491,10 +491,10 @@ theorem orient_O4 (hRank : M.eRank = 4) (hm : 4 ≤ m) (hme : m % 2 = 0) (hA : O
     rw [h4] at h
     have ea : mixO m e1 oP xQ i = xQ (i / 2) := by
       unfold mixO
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
     have eb : mixO m e1 oP xQ ((i + 2) % (m + 2)) = xQ ((i / 2 + 1) % ((m + 2) / 2)) := by
       unfold mixO
-      rw [if_neg (by omega), h3]
+      rw [ite_eq_right (by omega), h3]
     rw [ea, eb]
     exact h
 
@@ -521,7 +521,7 @@ theorem choice_even {m : ℕ} (hm : 4 ≤ m) (hme : m % 2 = 0) (R : ℕ → Bool
     exact hk
   by_cases h : ∀ i, i % 2 = 0 → ¬ Slack (R (i + (k + 3)))
   · exact ⟨k + 3, hk3, Or.inr h⟩
-  · push_neg at h
+  · push Not at h
     obtain ⟨i, hi, hs⟩ := h
     have hi' : i % m % 2 = 0 := by rw [Nat.mod_mod_of_dvd i (by omega : 2 ∣ m)]; exact hi
     have hs' : Slack (R (i % m + (k + 3))) := by
@@ -558,7 +558,7 @@ theorem exists_newChain (hRank : M.eRank = 4) {m : ℕ} (hm : 4 ≤ m) {A : ℕ 
       refine ⟨k + 3, P, Q, hI, orient_O1 hRank hm hmo hA hS hI ?_⟩
       rw [show m - 3 + (k + 3) = k + m by omega, hA.perR]
       exact hk
-  · push_neg at hsl
+  · push Not at hsl
     obtain ⟨P, Q, hI, hGP, hGQ⟩ := local_at hRank hm hA hS 0
     have hold : ∀ i, i + 2 < m → oldR M A (i + 0) true true := fun i _ =>
       (hA.tt_of_tight hRank _ (hsl _)).1
@@ -567,10 +567,10 @@ theorem exists_newChain (hRank : M.eRank = 4) {m : ℕ} (hm : 4 ≤ m) {A : ℕ 
     · obtain ⟨e1, oP, hWa, hWc⟩ := (hGP (hsl _)).diag
       obtain ⟨e2, oQ, hWb, hWd⟩ := (hGQ (hsl _)).diag
       exact orient_O3 hm hA e1 e2 oP oQ hold hWa hWb
-        (by rw [if_pos (by omega)]; exact hWc) (by rw [if_neg (by omega)]; exact hWd)
+        (by rw [ite_eq_left (by omega)]; exact hWc) (by rw [ite_eq_right (by omega)]; exact hWd)
     · obtain ⟨e1, e2, ⟨oP, hWa, hWc⟩, ⟨oQ, hWb, hWd⟩⟩ := Good.common (hGP (hsl _)) (hGQ (hsl _))
       exact orient_O3 hm hA e1 e2 oP oQ hold hWa hWb
-        (by rw [if_neg (by omega)]; exact hWc) (by rw [if_pos (by omega)]; exact hWd)
+        (by rw [ite_eq_right (by omega)]; exact hWc) (by rw [ite_eq_left (by omega)]; exact hWd)
 
 /-! ### From a cyclic basis ordering of `M \ S` -/
 

@@ -183,7 +183,7 @@ def Slack (R : Bool → Bool → Prop) : Prop := ∀ a b c d, ¬ R a b → ¬ R 
 theorem slack_close {R : Bool → Bool → Prop} (h : Slack R) (F : Bool → Bool) :
     ∃ c, R (F c) c := by
   by_contra hno
-  push_neg at hno
+  push Not at hno
   exact Bool.false_ne_true (h (F false) false (F true) true (hno false) (hno true)).2
 
 /-- A relation with full support that is not slack and contains `(false, false)` is the
@@ -192,7 +192,7 @@ theorem tight_of_not_slack {R : Bool → Bool → Prop} (hff : R false false)
     (hr : R true false ∨ R true true) (hc : R false true ∨ R true true) (h : ¬ Slack R) :
     ¬ R false true ∧ ¬ R true false := by
   simp only [Slack] at h
-  push_neg at h
+  push Not at h
   obtain ⟨a, b, c, d, h1, h2, h3⟩ := h
   cases a <;> cases b <;> cases c <;> cases d <;> simp_all
 
