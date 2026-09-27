@@ -149,6 +149,7 @@ def pr (x y : α) : Bool → α
   | false => x
   | true => y
 
+set_option maxHeartbeats 2000000 in
 /-- **The local lemmas of XP.** -/
 theorem local_xp (hRank : M.eRank = 4) {S : Set α} (hS : M.IsBase S) (X A B Y : Bool → α)
     (hAB : M.IsBase {A false, A true, B false, B true})
@@ -200,10 +201,15 @@ theorem local_xp (hRank : M.eRank = 4) {S : Set α} (hS : M.IsBase S) (X A B Y :
   · -- the Q side, from the mirror
     rintro ⟨t1, t2⟩
     have hB' : M.IsBase {B false, B true, A false, A true} := isBase_perm hAB (by set_perm')
-    have hS'' : M.IsBase {q0, q1, p0, p1} := isBase_perm hS' (by set_perm')
-    have hV' : Valid M (B false) (B true) (A false) (A true) q0 q1 p0 p1 :=
-      ⟨isBase_perm hV.valB (by set_perm'), isBase_perm hV.valA (by set_perm')⟩
-    have hg := (side_good hRank B A (pr q0 q1) (pr p0 p1) hB' hS'' hV' hQ).neg
+    have hS'' : M.IsBase {pr q0 q1 false, pr q0 q1 true, pr p0 p1 false, pr p0 p1 true} :=
+      isBase_perm hS' (by simp only [pr]; set_perm')
+    have hV' : Valid M (B false) (B true) (A false) (A true) (pr q0 q1 false) (pr q0 q1 true)
+        (pr p0 p1 false) (pr p0 p1 true) :=
+      ⟨isBase_perm hV.valB (by simp only [pr]; set_perm'),
+        isBase_perm hV.valA (by simp only [pr]; set_perm')⟩
+    have hQ' : ¬ PCrossed M (B false) (B true) (A false) (A true) (pr q0 q1 false)
+        (pr q0 q1 true) (pr p0 p1 false) (pr p0 p1 true) := hQ
+    have hg := (side_good hRank B A (pr q0 q1) (pr p0 p1) hB' hS'' hV' hQ').neg
     refine Good.mono ?_ hg
     rintro e1 e2 ⟨o, h1, h2⟩
     refine ⟨!o, isBase_perm h2 (by set_perm'), ?_⟩

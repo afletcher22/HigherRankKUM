@@ -30,7 +30,7 @@ jobs:
         env:
           # heavy dependencies built one at a time first (memory), then the modules to replay
           PROBE_BUILD: ""
-          PROBE_MODULES: XP.Main XP.Local
+          PROBE_MODULES: XP.Local XP.Insert
         run: |
           for m in $PROBE_BUILD; do
             echo "::group::build $m"
