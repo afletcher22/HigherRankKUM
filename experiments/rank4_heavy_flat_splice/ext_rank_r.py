@@ -11,7 +11,8 @@ clause per interleaving (an order of S and a multiset of insertion gaps) says th
 the merged sequence containing an element of S is not a basis. UNSAT proves X'(r, N).
 
 Usage: python ext_rank_r.py r N [w] [dense] [paving] [indepJ]   (w defaults to r + 2; indepJ makes
-every set of at most J elements independent; dense adds the
+every set of at most J elements independent; strict: M strictly uniformly dense (local sets);
+contig: only contiguous interleavings (S as one block); dense adds the
 density of M and of M - S as lower bounds on ranks; paving makes every set of at most r - 1
 elements independent, the setting of McGuinness, Cyclic orderings of paving matroids, Prop. 5.2)
 """
@@ -19,7 +20,7 @@ import itertools, sys, time
 from pysat.solvers import Cadical195
 
 
-def build(r, N, w, dense=False, paving=False, indep=0):
+def build(r, N, w, dense=False, paving=False, indep=0, strict=False, contig=False):
     B = r + 1
     var = lambda X, v: B * X + v
     mask = lambda ps: sum(1 << p for p in ps)
@@ -63,12 +64,15 @@ def build(r, N, w, dense=False, paving=False, indep=0):
                         if v >= 2:
                             c.append(-var(X, v - 1))
                         add(c)
-    if dense:
-        # M uniformly dense on N + r elements, and M - S uniformly dense on N elements
+    if dense or strict:
+        # M uniformly dense on N + r elements, and M - S uniformly dense on N elements; strict:
+        # r|X| < (N + r) r(X) for 0 < |X| < N + r
         for X in done:
             need = -(-r * pc(X) // (N + r))
             if X & mask(S) == 0:
                 need = max(need, -(-r * pc(X) // N))
+            if strict and 0 < pc(X) < N + r:
+                need = max(need, r * pc(X) // (N + r) + 1)
             if need >= 1:
                 add([var(X, min(need, r))])
     if paving:
@@ -83,6 +87,8 @@ def build(r, N, w, dense=False, paving=False, indep=0):
     n = 0
     for perm in itertools.permutations(S):
         for gs in itertools.combinations_with_replacement(range(N), r):
+            if contig and len(set(gs)) > 1:
+                continue
             seq, gi = [], 0
             for pos in range(N):
                 while gi < r and gs[gi] == pos:
@@ -105,8 +111,10 @@ if __name__ == "__main__":
     dense = "dense" in sys.argv[4:]
     paving = "paving" in sys.argv[4:]
     indep = max([int(a[5:]) for a in sys.argv[4:] if a.startswith("indep")], default=0)
+    strict = "strict" in sys.argv[4:]
+    contig = "contig" in sys.argv[4:]
     t = time.time()
-    cls, n = build(r, N, w, dense, paving, indep)
+    cls, n = build(r, N, w, dense, paving, indep, strict, contig)
     print(f"r={r} N={N} w={w}: {len(cls)} clauses, {n} interleavings (built {time.time() - t:.0f}s)",
           flush=True)
     s = Cadical195(bootstrap_with=cls)

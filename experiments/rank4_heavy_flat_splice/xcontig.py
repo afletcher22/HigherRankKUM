@@ -13,7 +13,9 @@ window of the merged sequence is not a basis. Options:
   gen      McGuinness local genericity everywhere: no s parallel to any e, no 3-circuit {s, s', e},
            no 3-circuit {s, e_i, e_j} with e_i, e_j within 3 consecutive positions;
   gaps=G   only the gaps in the comma list G (e.g. gaps=0,1 for two adjacent gaps);
-  blocks2  also allow S in two blocks (sizes 1+3, 2+2, 3+1) at any two gaps.
+  blocks2  also allow S in two blocks (sizes 1+3, 2+2, 3+1) at any two gaps;
+  dense    M uniformly dense (4|X| <= n r(X), n = N + 4) and M - S uniformly dense (4|X| <= N r(X));
+  strict   M strictly uniformly dense: 4|X| < n r(X) for 0 < |X| < n (implies dense for M).
 
 Usage: python xcontig.py N [simple] [nopar] [gen] [gaps=...]
 """
@@ -40,6 +42,15 @@ for X in range(1 << n):
         cls.append([var(X, 1)])
     if "simple" in opts and pc(X) == 2:
         cls.append([var(X, 2)])
+    need = 0
+    if "dense" in opts or "strict" in opts:
+        need = -(-4 * pc(X) // n)
+        if X & 15 == 0:
+            need = max(need, -(-4 * pc(X) // N))
+    if "strict" in opts and 0 < pc(X) < n:
+        need = max(need, 4 * pc(X) // n + 1)
+    if need >= 1:
+        cls.append([var(X, min(need, 4))])
 for X in range(1 << n):
     for a in range(n):
         if X >> a & 1:
@@ -106,3 +117,14 @@ s = Cadical195(bootstrap_with=cls)
 res = s.solve()
 print(f"XC({N}) {opts}: {'SAT (contiguous insertion can fail)' if res else 'UNSAT (holds)'} "
       f"({time.time() - t:.0f}s)", flush=True)
+if res and "show" in opts:
+    model = set(l for l in s.get_model() if l > 0)
+    rk = lambda X: max([v for v in range(1, 5) if var(X, v) in model], default=0)
+    name = lambda x: "abcd"[x] if x < 4 else str(x - 4)
+    for rank_ in (1, 2, 3):
+        fl = []
+        for X in range(1, 1 << n):
+            if rk(X) == rank_ and pc(X) > rank_ and all(rk(X | 1 << e) > rank_ for e in range(n)
+                                                        if not X >> e & 1):
+                fl.append("".join(name(e) + " " for e in range(n) if X >> e & 1).strip())
+        print(f"  rank-{rank_} flats with more than {rank_} elements:", fl)

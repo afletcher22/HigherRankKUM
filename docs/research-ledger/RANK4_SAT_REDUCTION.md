@@ -164,6 +164,64 @@ linear segment of w pairs break local rigidity" is SAT for w = 6, 7, 8, 9 (block
 repair is not local in that sense. The cyclic mode reproduces the n = 10 (one re-split, UNSAT) and
 n = 14 (one re-split, SAT) results. The global two-re-split question for n ≥ 18 is still open.
 
+## Pair-chain insertion (XP): a replacement for X′ (2026-09-27)
+
+**Statement XP(N)** (N = 2m even). Let `S` be a basis of a rank-4 matroid `M`, and let
+`A_0, ..., A_{m-1}` be an orientable pair chain of `M \ S` (every `A_i ∪ A_{i+1}` a basis; for
+instance the pairs `{e_{2i}, e_{2i+1}}` of a cyclic basis ordering). Then for some position `j`
+and some ordered split `S = P ⊔ Q` the chain `A_0, ..., A_j, P, Q, A_{j+1}, ..., A_{m-1}` is valid
+(`A_j ∪ P` and `Q ∪ A_{j+1}` are bases) and orientable. Old pairs may be re-oriented. No density
+is assumed.
+
+XP gives a cyclic basis ordering of `M` from one of `M \ S`, which is exactly how X′ is used (Theorem
+D, and the step after the hitting lemma). It is strictly stronger than contiguous insertion (the
+case of fixed old orientations): exact checks (`xpair.py`) give
+
+| N | contiguous insertion | XP |
+|---|---|---|
+| 6 | fails | holds |
+| 8 | fails | holds |
+| 10 | fails | holds |
+| 12 | fails | holds |
+
+With rank axioms only on `S` plus 4 consecutive pairs (`block=4`), XP holds for N = 14, 16, 18
+using 2 consecutive positions (m odd) or 4 (m even).
+
+**Proof of XP(N), N ≥ 8, from four local lemmas.**
+
+1. *Orientability of a cycle of 2×2 relations.* The orientation relations `R_i` (between `A_i`
+   and `A_{i+2}` through `A_{i+1}`) have full support. A cycle of full-support 2×2 relations is
+   orientable if some relation has at least 3 entries (*slack*). If all are permutations
+   (*tight*), it is orientable iff their parities multiply correctly. For m odd the pairs form one
+   cycle of `i → i+2`; for m even, two.
+2. *Validity* (Greene–Magnanti basis-partition exchange): for the bases `A_j ∪ A_{j+1}` and `S`,
+   some split has `A_j ∪ P` and `Q ∪ A_{j+1}` bases. The four new relations then have full support.
+3. *Choice of j.* Inserting at `j` replaces `R_{j-1}` and `R_j`. Choose `j` so that no slack cycle
+   loses its only slack relation (possible for m ≥ 4); such cycles stay orientable.
+4. *Tight cycles* close by a local lemma on the 12 elements `A_{j-1}, A_j, A_{j+1}, A_{j+2}, S`
+   (`local_xp.py`). The tight path left after removing the replaced relations can be flipped as a
+   whole: for m odd, `A_{j-1}` flips with `A_{j+2}` and `A_j` with `A_{j+1}`; for m even,
+   `A_{j-1}` with `A_{j+1}` and `A_j` with `A_{j+2}`.
+
+| local lemma | when | result | hints |
+|---|---|---|---|
+| odd (both replaced relations tight) | m odd, cycle tight | UNSAT | 34,873 |
+| even (both tight) | m even, both cycles tight | UNSAT | 28,925 |
+| P-cycle only (`R_{j-1}` tight) | m even, the other cycle slack | UNSAT | 8,650 |
+| Q-cycle only (`R_j` tight) | m even, the other cycle slack | UNSAT | 7,713 |
+
+Without tightness of the replaced relation each is SAT, which is why step 3 avoids replacing a
+slack cycle's only slack relation.
+
+About 80k hints in total, against about 800k for X′(8), X′(10), X′(12) and X at length 14.
+
+**Toward hand proofs of the local lemmas.** In the rank-2 contractions the tight hypotheses read
+`x ∥ b`, `x̄ ∥ b̄` in `M / A_0` and `a ∥ y`, `ā ∥ ȳ` in `M / A_1`. The P-cycle lemma fails for a
+valid split exactly when the split is *crossed*: `P = {u, v}` with `u ∥ b`, `v ∥ b̄` in `M / A_0`
+and `u ∥ b̄`, `v ∥ b` in `M / Q`. Its core, "not every valid split is crossed", is an 8-element
+claim (`crossed.py`, UNSAT). A crossed valid split `(P, Q)` forces `(Q, P)`, if valid, to be
+uncrossed.
+
 ## KUM(5,10) is known
 
 Garamvölgyi, Mizutani, Oki, Schwarcz and Yamaguchi (ICALP 2025, arXiv 2411.06771, Proposition
