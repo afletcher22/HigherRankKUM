@@ -153,8 +153,8 @@ theorem nc_succ_mod (i : ℕ) :
 theorem newW_old {i : ℕ} (hi : i + 2 < m) : newW M m r A P Q i = oldR M A (i + r) := by
   funext x y
   unfold newW oldR
-  rw [nc_A (by omega : i < m) rfl, nc_A (by omega : i + 1 < m) (show i + 1 + r = i + r + 1 by omega),
-    nc_A hi (show i + 2 + r = i + r + 2 by omega)]
+  rw [nc_A (by omega : i < m) rfl, nc_A (by omega : i + 1 < m) (show i + r + 1 = i + 1 + r by omega),
+    nc_A hi (show i + r + 2 = i + 2 + r by omega)]
 
 theorem newW_a (hm : 2 ≤ m) (x y : Bool) : newW M m r A P Q (m - 2) x y ↔
     M.IsBase {A (m - 2 + r) (!x), A (m - 1 + r) false, A (m - 1 + r) true, P y} := by
@@ -199,7 +199,7 @@ theorem even_lt (hm : 2 ≤ m) (hA : OldChain M m A S) (hS : M.IsBase S)
     M.IsBase {newChain m r A P Q i false, newChain m r A P Q i true,
       newChain m r A P Q (i + 1) false, newChain m r A P Q (i + 1) true} := by
   rcases (show i + 1 < m ∨ i = m - 1 ∨ i = m ∨ i = m + 1 by omega) with h | h | h | h
-  · rw [nc_A (by omega : i < m) rfl, nc_A h (show i + 1 + r = i + r + 1 by omega)]
+  · rw [nc_A (by omega : i < m) rfl, nc_A h (show i + r + 1 = i + 1 + r by omega)]
     exact hA.even (i + r)
   · rw [h, nc_A (by omega : m - 1 < m) rfl, show m - 1 + 1 = m by omega, nc_P]
     exact hI.V1
@@ -672,7 +672,7 @@ theorem rank4Extension_of_even {N : ℕ} (h8 : 8 ≤ N) (heven : Even N) : Rank4
   have hn : 0 < m + 2 := by omega
   have hcard : M.E.ncard = 2 * (m + 2) := by
     have h1 : (M.E \ S).ncard = 2 * m := by
-      rw [← Set.Nat.card_coe_set_eq, Nat.card_congr σ.symm]
+      rw [← Nat.card_coe_set_eq, Nat.card_congr σ.symm]
       simp
     have h2 : S.ncard = 4 := KotlarZiv.ncard_eq_four hS hRank
     have h3 := Set.ncard_sdiff_add_ncard_of_subset hS.subset_ground hE
