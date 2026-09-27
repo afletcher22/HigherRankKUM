@@ -215,6 +215,12 @@ slack cycle's only slack relation.
 
 About 80k hints in total, against 1,256,043 for X′(8), X′(10), X′(12) and X at length 14 (254,213 + 300,537 + 390,228 + 311,065, counted from the LRAT files checked in Lean).
 
+**Hand proofs.** The P-cycle and Q-cycle lemmas now have a complete human proof
+(`XP_LOCAL_LEMMA_PQ.md`, about 1.5 pages): a valid split fails exactly when it is crossed; a valid
+split exists by multiple symmetric exchange (Greene, Woodall); and if it is crossed, one of the two
+splits obtained by swapping one element of P with one of Q is valid and uncrossed (six short
+incidence lemmas and a 3×3 table). The Q-cycle lemma is its mirror image under reversal.
+
 **Toward hand proofs of the local lemmas.** In the rank-2 contractions the tight hypotheses read
 `x ∥ b`, `x̄ ∥ b̄` in `M / A_0` and `a ∥ y`, `ā ∥ ȳ` in `M / A_1`. The P-cycle lemma fails for a
 valid split exactly when the split is *crossed*: `P = {u, v}` with `u ∥ b`, `v ∥ b̄` in `M / A_0`
