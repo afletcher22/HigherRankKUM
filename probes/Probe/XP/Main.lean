@@ -39,8 +39,7 @@ macro "ne_tac" : tactic => `(tactic| first | assumption | exact Ne.symm ‹_›)
 
 /-- `e ∉ {x, y, …}` from hypotheses `e ≠ x`, … (in either orientation). -/
 macro "notin_tac" : tactic =>
-  `(tactic| (simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or];
-    repeat' apply And.intro; all_goals ne_tac))
+  `(tactic| (simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] <;> (repeat' apply And.intro) <;> ne_tac))
 
 theorem isBase_perm {X Y : Set α} (h : M.IsBase X) (e : X = Y) : M.IsBase Y := e ▸ h
 
@@ -101,7 +100,7 @@ theorem exists_valid_split (hRank : M.eRank = 4) {a0 a1 b0 b1 : α} {S : Set α}
     (hB : M.IsBase {a0, a1, b0, b1}) (hS : M.IsBase S) (hdisj : Disjoint S {a0, a1, b0, b1}) :
     ∃ p0 p1 q0 q1, S = {p0, p1, q0, q1} ∧ Valid M a0 a1 b0 b1 p0 p1 q0 q1 := by
   obtain ⟨hab, ha0b0, ha0b1, ha1b0, ha1b1, hbb⟩ := distinct4 hRank hB
-  have hA1 : ({a0, a1, b0, b1} : Set α) \ {b0} \ {b1} = {a0, a1} := by
+  have hA1 : (({a0, a1, b0, b1} : Set α) \ {b0}) \ {b1} = {a0, a1} := by
     ext t
     simp only [mem_sdiff, mem_insert_iff, mem_singleton_iff]
     constructor
@@ -115,7 +114,7 @@ theorem exists_valid_split (hRank : M.eRank = 4) {a0 a1 b0 b1 : α} {S : Set α}
         exact ⟨⟨Or.inl rfl, ha0b0⟩, ha0b1⟩
       · subst h
         exact ⟨⟨Or.inr (Or.inl rfl), ha1b0⟩, ha1b1⟩
-  have hA2 : ({a0, a1, b0, b1} : Set α) \ {b1} \ {b0} = {a0, a1} := by
+  have hA2 : (({a0, a1, b0, b1} : Set α) \ {b1}) \ {b0} = {a0, a1} := by
     rw [Set.sdiff_sdiff_comm]
     exact hA1
   obtain ⟨y1, hy1, y2, hy2, hy, hSP⟩ := KotlarZiv.exists_serialPair hB hS hdisj.symm
@@ -327,11 +326,11 @@ theorem not_both_cl (h : Std M a0 a1 b0 b1 u v w z) (hw : v ∈ M.closure {w, b0
   have hvb : v ∈ M.closure {b0} := mem_closure_of_mem_two (singleton_subset_iff.2 hb0) h1 h2 hne
   have hv0 : v ∉ M.closure ∅ := by
     refine notMem_closure_of_isBase h.hS ?_ (notMem_empty v)
-    rw [insert_emptyc_eq]
+    rw [LawfulSingleton.insert_emptyc_eq]
     exact singleton_subset_iff.2 (by simp)
-  have h3 : v ∈ M.closure (insert b0 ∅) := by rw [insert_emptyc_eq]; exact hvb
+  have h3 : v ∈ M.closure (insert b0 ∅) := by rw [LawfulSingleton.insert_emptyc_eq]; exact hvb
   have h4 : b0 ∈ M.closure (insert v ∅) := Matroid.mem_closure_insert hv0 h3
-  rw [insert_emptyc_eq] at h4
+  rw [LawfulSingleton.insert_emptyc_eq] at h4
   have hsub : ({v} : Set α) ⊆ M.closure {b1, a0, a1} := singleton_subset_iff.2 h.X2
   exact h.D1b (Matroid.closure_subset_closure_of_subset_closure hsub h4)
 

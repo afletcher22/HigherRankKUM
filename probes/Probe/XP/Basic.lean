@@ -29,7 +29,8 @@ macro "set_perm'" : tactic =>
 
 /-- Inclusion of set literals. -/
 macro "sub_perm" : tactic =>
-  `(tactic| (intro t ht; simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ht ⊢; try tauto))
+  `(tactic| (intro t ht; simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Bool.not_false,
+    Bool.not_true] at ht ⊢; try tauto))
 
 variable {α : Type*} {M : Matroid α}
 
