@@ -166,6 +166,12 @@ n = 14 (one re-split, SAT) results. The global two-re-split question for n ≥ 1
 
 ## Pair-chain insertion (XP): a replacement for X′ (2026-09-27)
 
+**Status: formalized.** `HigherRankKUM.XP.rank4Extension_of_even : 8 ≤ N → Even N →
+Rank4Extension α N` (`probes/Probe/XP/`, about 1,960 lines, all human) is wired into Theorem D and
+the `4k+2` step on `probe/rank4` (commit 0eab7cd). `solvesKUMAtRank_four` builds and replays with
+standard axioms (CI run 36345894127). The X′ certificates (1,256,043 hints) are off the critical
+path; the remaining certificates are `chain10`, `hit14g` and `hit14line` (913,066 hints).
+
 **Statement XP(N)** (N = 2m even). Let `S` be a basis of a rank-4 matroid `M`, and let
 `A_0, ..., A_{m-1}` be an orientable pair chain of `M \ S` (every `A_i ∪ A_{i+1}` a basis; for
 instance the pairs `{e_{2i}, e_{2i+1}}` of a cyclic basis ordering). Then for some position `j`

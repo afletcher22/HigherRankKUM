@@ -48,8 +48,8 @@ Palomar axiom set.
 | 1 | divisible KUM | formalized internal | main | human |
 | 2 | divisible KUM, and KUM at odd sizes | formalized internal | main | human |
 | 3 | full KUM | formalized internal | main | human (vendored Rank3KUM plus vHT) |
-| 4 | full KUM | formalized internal | probe/rank4 | human plus 7 certificates (2.17M hints) |
-| 4 | pair-chain insertion XP (would replace X′) | human reduction plus SAT; Lean work not started | ledger; `probe/xp` | 4 local lemmas, about 80k hints |
+| 4 | full KUM | formalized internal | probe/rank4 | human plus 3 certificates (913k hints) |
+| 4 | extension theorem X′ for every even `N ≥ 8`, by pair-chain insertion (XP) | formalized internal | probe/rank4 (`probes/Probe/XP/`) | human, no certificates |
 | 5 | KUM(5,10) | literature (SAT) and our own SAT run | none | computational evidence |
 | 5 | KUM(5,5k) for `k ≥ 3` | research target | none | none |
 | general | divisible KUM (and intermediate gcds at composite ranks) | research target | none | none |
@@ -120,16 +120,16 @@ No axiom and no live external Rank3KUM dependency is used.
 (`probes/Probe/Rank4/Final.lean`): every finite uniformly dense rank-4 matroid has a cyclic basis
 ordering. It depends on the axioms `[propext, Classical.choice, Quot.sound]` only.
 
-**Verification.** Workflow "Palomar kernel probe", run 36223257829, on commit a4ead33 (the head of
-`probe/rank4`), 2026-09-26: success.
+**Verification.** Workflow "Palomar kernel probe", run 36345894127, on commit 0eab7cd (the head of
+`probe/rank4`, fast-forwarded from `probe/xp`), 2026-09-27: success. The previous run with the X′
+certificates (36223257829, commit a4ead33, 2026-09-26) also succeeded.
 
 - The run builds the heavy certificate modules one at a time, then `Probe.Rank4.Final`.
 - It replays `Probe.Rank4.Final` with `leanchecker`, and fails if `ofReduceBool`, `sorryAx` or
   `trustCompiler` appears.
-- Resources on the GitHub runner (4 vCPU, 16 GB):
-  - wall time 33 minutes;
-  - slowest module `Hit14Line`, 11 minutes;
-  - peak memory 12.8 GB, for `ExtCyc12`.
+- Resources on the GitHub runner (4 vCPU, 16 GB), measured on the earlier run with the X′
+  certificates: wall time 33 minutes, slowest module `Hit14Line` (11 minutes), peak memory 12.8 GB
+  (`ExtCyc12`, no longer built). The XP run is lighter; see its log for exact figures.
 - For comparison, the Palomar runner has 16 cores, 32 GB and a budget of 19,800 s.
 
 ### Proof structure
@@ -141,13 +141,13 @@ The proof is a strong induction on `n = |E|` (`solvesKUMAtRank_four_of_hitting`,
 |---|---|---|---|
 | odd | coprime KUM (vHT) | main | human |
 | 4 | the ground set is a basis | probe/rank4 | human |
-| `4k`, `k ≥ 2` | **Theorem D**: Edmonds splits `E` into `k` bases (vHT); delete one basis; order the rest by induction; reinsert with X′(`4k−4`). Base case KUM(4,8). | probe/rank4: `Rank4/TheoremD.lean`, `TheoremDCert.lean`, `ExtFinal.lean` | human, given X′ |
+| `4k`, `k ≥ 2` | **Theorem D**: Edmonds splits `E` into `k` bases (vHT); delete one basis; order the rest by induction; reinsert with X′(`4k−4`), proved by XP. Base case KUM(4,8). (`solvesDivisibleKUMAtRank_four_xp`) | probe/rank4: `Rank4/TheoremD.lean`, `TheoremDCert.lean`, `XP/` | human |
 | 6 | duality with rank-2 KUM (`Rank4.exists_cyclicBasisOrder_of_rank_four_six`) | main: `Rank4/SixElementBoundary.lean` | human |
 | 8 | Kotlar–Ziv: two disjoint bases of a rank-4 matroid have a full serial symmetric exchange (`KotlarZiv.serial_exchange_rank_four`, `solvesKUMAtRankSize_four_eight`) | probe/rank4: `Rank4/SerialExchange.lean`, `Rank4/Kum8.lean` | human |
 | 10 | vHT with weight 2 on `ℤ/5` has fibres of size 2, so `E` is a chain of five pairs with every `P_i ∪ P_{i+1}` a basis. Certificate `chain10`: some orientation of the chain, or of a chain re-split at one window, is a CBO (`solvesKUMAtRankSize_four_ten_of_pairChain`). | probe/rank4: `Chain10.lean`, `Rank4/Kum10Chain.lean` | human plus certificate (14,738 hints) |
 | `4k+2`, `k ≥ 3`, with a nonempty proper tight set | rational tight reduction; its rank-2 input at odd size `2k+1` comes from coprime KUM (`exists_cyclicBasisOrder_of_rank_four_gcd_two_of_nonempty_proper_tight'`) | main: `Rank4/Unconditional.lean` | human |
 | `4k+2`, `k ≥ 3`, strict, with a dangerous plane | dangerous-hyperplane schedule; its rank-3 input comes from `solvesKUMAtRank_three` (`Rank4DangerousBranches.exists_cbo_of_dangerous_hyperplane'`) | main: `Rank4/Unconditional.lean` | human |
-| `4k+2`, `k ≥ 3`, strict, `t = 0` | the hitting lemma gives a basis `S` with `M∖S` uniformly dense on `4k−2` elements; induction orders `M∖S`; X′(`4k−2`) reinserts `S` | probe/rank4: `Rank4/Full.lean` | human, given the hitting lemma and X′ |
+| `4k+2`, `k ≥ 3`, strict, `t = 0` | the hitting lemma gives a basis `S` with `M∖S` uniformly dense on `4k−2` elements; induction orders `M∖S`; X′(`4k−2`), proved by XP, reinserts `S` | probe/rank4: `Rank4/Full.lean` | human, given the hitting lemma |
 
 With these, the tight/dangerous gcd-two reductions of the main library are **no longer
 conditional**: their odd rank-2 and rank-3 inputs are discharged by coprime KUM and full rank-3
@@ -169,34 +169,29 @@ elements, `k ≥ 3`. The interface (`StrictT0`, `Deletable`, `MeetsDemands`) is 
 
 **The extension theorem X′.** `Rank4Extension α N` (`Rank4/TheoremD.lean`) states: if `S` is a
 basis of a rank-4 matroid `M`, and `M∖S` (on `N` elements) has a CBO, then `M` has a CBO. There is
-no density hypothesis. It is proved in `ExtFinal.lean`:
+no density hypothesis. It is now proved for every even `N ≥ 8` by **pair-chain insertion**,
+`HigherRankKUM.XP.rank4Extension_of_even` (`probes/Probe/XP/Insert.lean`), with a human proof and
+no certificates; see the section on XP below. Theorem D uses it at `N = 8, 12, 16, …`, and the
+`4k+2` step at `N = 10, 14, 18, …`.
 
-- `N = 8, 10, 12`: the cyclic certificates `xcyc8`, `xcyc10` and `xcyc12`;
-- `N ≥ 14`: the linear lemma X on 14 consecutive entries (certificate `xlin14`), plus a human
-  bridge (`rank4Extension_of_linCert`, `ExtBridge.lean`) that interleaves `S` into one stretch of
-  14 entries.
-
-Theorem D uses X′ at `N = 8, 12` and `N ≥ 16`. The `4k+2` step uses it at `N = 10` and at
-`N ≥ 14`.
+The earlier certificate proof (`ExtFinal.lean`: cyclic certificates `xcyc8`, `xcyc10`, `xcyc12`
+and the linear lemma `xlin14` with the bridge `rank4Extension_of_linCert`) is still on the branch
+but no longer imported.
 
 ### Certificates on the critical path
 
 | Certificate | Claim | LRAT hints | Lean module (probe/rank4) |
 |---|---|---|---|
 | `chain10` | KUM(4,10) from a 5-pair chain | 14,738 | `Chain10.lean` |
-| `xcyc8` | X′(8) | 254,213 | `ExtCyc8.lean` |
-| `xcyc10` | X′(10) | 300,537 | `ExtCyc10.lean` |
-| `xcyc12` | X′(12) | 390,228 | `ExtCyc12.lean` |
-| `xlin14` | X, linear, length 14 | 311,065 | `ExtLin14.lean` |
 | `hit14g` | hitting lemma, `k = 3`, 9-element plane | 55,754 | `Hit14G.lean` |
 | `hit14line` | hitting lemma, `k = 3`, 6-element line | 842,574 | `Hit14Line.lean` |
-| **total** | | **2,169,109** | |
+| **total** | | **913,066** | |
 
 Two corrections to figures quoted in the ledger:
 
 - The Lean-checked `hit14line` has 842,574 hints. The figure of 623,520 was a native-CaDiCaL
   measurement of a different encoding of the same claim, not the certificate in Lean.
-- The four X′ certificates total about 1.26M hints, not about 800k.
+- The four X′ certificates totalled 1,256,043 hints, not about 800k.
 
 **Superseded certificates.** These are still on the probe branches but no longer imported by
 `Final.lean`:
@@ -204,7 +199,8 @@ Two corrections to figures quoted in the ledger:
 - KUM(4,6): `kum6`, 682 hints (`probe/encoding`), replaced by duality;
 - KUM(4,8): `kum8`, 371,427 hints, replaced by Kotlar–Ziv;
 - the five KUM(4,10) certificates `baseG2`, `baseG3`, `baseG4`, `baseL4` and `kum10l`, 2.27M
-  hints in total, replaced by `chain10`.
+  hints in total, replaced by `chain10`;
+- X′: `xcyc8`, `xcyc10`, `xcyc12` and `xlin14` (1,256,043 hints), replaced by XP.
 
 ### Migration and Palomar packaging (in progress)
 
@@ -229,44 +225,33 @@ Two corrections to figures quoted in the ledger:
   - Still missing: `Solution.lean`, `comparator.json`, `formalization.yaml`, a root `LICENSE`, and
     a recorded NanoDa replay.
 
-## Rank 4 in progress: pair-chain insertion (XP)
+## Rank 4: pair-chain insertion (XP), formalized
 
-Source: `docs/research-ledger/RANK4_SAT_REDUCTION.md`, section "Pair-chain insertion (XP)".
+Sources: `docs/research-ledger/RANK4_SAT_REDUCTION.md` (section "Pair-chain insertion (XP)"),
+`XP_LOCAL_LEMMAS_ODD_EVEN.md` and `XP_LOCAL_LEMMA_PQ.md`. Lean: `probes/Probe/XP/` on `probe/rank4`
+(about 1,960 lines: `Basic`, `Chain`, `Main`, `Local`, `Insert`), all human, standard axioms.
 
 **Statement XP(N)** (`N = 2m`). Let `S` be a basis of a rank-4 matroid `M`, and let
 `A_0 … A_{m−1}` be an orientable pair chain of `M∖S`: every `A_i ∪ A_{i+1}` is a basis, as for the
 consecutive pairs of a CBO. Then for some position `j` and some ordered split `S = P ⊔ Q`, the chain
 `A_0 … A_j, P, Q, A_{j+1} … A_{m−1}` is valid and orientable. Old pairs may be re-oriented, and no
-density is assumed. XP gives X′ in the form the proof uses. It is strictly stronger than contiguous
-insertion, which fails for `N = 6, 8, 10, 12`, while XP holds there (exact SAT).
+density is assumed. XP gives X′. It is strictly stronger than contiguous (one-block) insertion,
+which fails for every even `N` tested, while XP holds already at `N = 6`.
 
-**Human reduction for `N ≥ 8`.** The reduction goes to four local lemmas on the 12 elements
-`A_{j−1}, A_j, A_{j+1}, A_{j+2}, S`:
+**Proof for `N ≥ 8`.**
+- A cycle of full-support 2×2 orientation relations is satisfiable if one relation is slack
+  (`cycle_sat`, `Chain.lean`).
+- A valid split exists by Greene–Magnanti (taken from the Kotlar–Ziv development).
+- Choose `j` so that every slack cycle keeps a slack relation (`choice_even`, `Insert.lean`).
+- Tight cycles are closed by the local analysis (`Local.lean`): tightness turns each new window
+  into a pair-to-pair non-parallelism in a rank-2 contraction, and a split fails only if it is
+  *P-crossed* or *Q-crossed* (with a parity condition in the one-cycle case).
+- The **8-element Main Lemma** (`Main.lean`): if `S` and `A_0 ∪ A_1` are bases, some valid split is
+  neither P-crossed nor Q-crossed. Its proof uses a one-swap cover, a five-line lemma and mirror
+  symmetry.
 
-- orientability of a cycle of full-support 2×2 relations: a slack relation suffices, and an
-  all-tight cycle is decided by parity;
-- validity of the new split, by Greene–Magnanti basis-partition exchange;
-- a choice of `j` that leaves every slack cycle a slack relation (`m ≥ 4`);
-- local lemmas that close the tight cycles.
-
-| Local lemma | LRAT hints |
-|---|---|
-| odd | 34,873 |
-| even | 28,925 |
-| P-cycle only | 8,650 |
-| Q-cycle only | 7,713 |
-
-The total is about 80k hints, against about 1.26M for the four X′ certificates it would replace.
-These LRAT proofs were produced and checked outside Lean.
-
-**Status.**
-
-- The reduction is written in the ledger. Formalization is to happen on branch `probe/xp`, which at
-  the time of writing has no commits beyond `probe/rank4` a4ead33.
-- Hand proofs of the local lemmas are being sought. For the P-cycle lemma:
-  - it fails for a valid split exactly when the split is *crossed*;
-  - "not every valid split is crossed" is an 8-element claim (UNSAT, `crossed.py`);
-  - if `(P, Q)` is crossed and valid, then `(Q, P)`, if valid, is uncrossed.
+Four local lemmas were first checked by SAT (about 80k hints); all four now have the human proofs
+above, and no certificate is used.
 
 ## Rank 4: earlier structural layers in the main library
 
@@ -364,9 +349,7 @@ the repository.
 
 ## Open research targets
 
-1. **Human proofs of the remaining rank-4 certificates.**
-   - The four XP local lemmas. Together with the XP formalization, they would remove all four X′
-     certificates (1.26M hints).
+1. **Human proofs of the remaining rank-4 certificates** (X′ is done, by XP).
    - `hit14g` and `hit14line`.
      - For `hit14g`, the ledger records a paper argument for the related Theorem G choice lemma
        (`RANK4_HEAVY_FLAT_SPLICE.md` §7).
