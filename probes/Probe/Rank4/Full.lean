@@ -1,4 +1,4 @@
-import Probe.ExtFinal
+import Probe.Rank4.TheoremDCert
 import Probe.Rank4.Kum10Chain
 import HigherRankKUM.Rank4.SixElementBoundary
 import Probe.Rank4.Hitting
@@ -11,14 +11,16 @@ import HigherRankKUM.VHT.Theorem21
 The proof is by strong induction on `n`:
 
 * `n` odd: coprime KUM (van den Heuvel–Thomassé);
-* `n = 4k`: Theorem D (`solvesDivisibleKUMAtRank_four'`);
+* `n = 4k`: Theorem D (`solvesDivisibleKUMAtRank_four_xp`), with the extension theorem from
+  pair-chain insertion;
 * `n = 6`: duality with rank-2 KUM (`Rank4.exists_cyclicBasisOrder_of_rank_four_six`);
 * `n = 10`: a van den Heuvel–Thomassé pair chain and one certificate (`Kum10Chain`);
 * `n = 4k+2 ≥ 14`:
   * a nonempty proper tight set, or a dangerous plane: the Lean reductions of the main library;
   * otherwise `M` is strict with `t = 0`. The hitting lemma (`HittingLemma`, a hypothesis here)
     gives a basis `S` with `M \ S` uniformly dense on `4k - 2 ≥ 10` elements. By induction
-    `M \ S` has a cyclic basis ordering, and the extension theorem X′ extends it to `M`.
+    `M \ S` has a cyclic basis ordering, and pair-chain insertion (`XP.rank4Extension_of_even`)
+    extends it to `M`.
 -/
 
 namespace HigherRankKUM
@@ -65,7 +67,7 @@ theorem solvesKUMAtRank_four_of_hitting {α : Type*} (hhit : HittingLemma α) :
   · -- `n = 4k`: Theorem D
     obtain ⟨k, rfl⟩ : ∃ k, n = 4 * k := ⟨n / 4, by omega⟩
     exact exists_cyclicBasisOrder_congr M rfl rfl
-      (solvesDivisibleKUMAtRank_four' M k hr (by omega) hE hRank hEcard
+      (solvesDivisibleKUMAtRank_four_xp M k hr (by omega) hE hRank hEcard
         (uniformlyDense_of_ratio_four hDense))
   · exact VHT.solvesKUMAtRankSize_of_coprime (coprime_four_of_mod (Or.inl h1)) M hr hn hE hRank
       hEcard hDense
@@ -121,12 +123,8 @@ theorem solvesKUMAtRank_four_of_hitting {α : Type*} (hhit : HittingLemma α) :
       hRcard hSdense
     have hcbo : CyclicBasisOrder M 4 (by omega) σ := fun i =>
       isBase_of_isBase_restrict hRE (hσ i) hrkR (Set.finite_range _)
-    have hext : Rank4Extension α (4 * k - 2) := by
-      rcases Nat.lt_or_ge k 4 with hk4 | hk4
-      · have hk : k = 3 := by omega
-        subst hk
-        exact rank4Extension_ten
-      · exact rank4Extension_of_fourteen_le (by omega)
+    have hext : Rank4Extension α (4 * k - 2) :=
+      XP.rank4Extension_of_even (by omega) ⟨2 * k - 1, by omega⟩
     obtain ⟨τ, hτ⟩ := hext M S (by omega) hE hRank4 hSbase ⟨σ, hcbo⟩
     exact exists_cyclicBasisOrder_congr M (by omega) rfl ⟨τ, hτ⟩
   · exact VHT.solvesKUMAtRankSize_of_coprime (coprime_four_of_mod (Or.inr h3)) M hr hn hE hRank
