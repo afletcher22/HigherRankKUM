@@ -213,7 +213,7 @@ using 2 consecutive positions (m odd) or 4 (m even).
 Without tightness of the replaced relation each is SAT, which is why step 3 avoids replacing a
 slack cycle's only slack relation.
 
-About 80k hints in total, against about 800k for X′(8), X′(10), X′(12) and X at length 14.
+About 80k hints in total, against 1,256,043 for X′(8), X′(10), X′(12) and X at length 14 (254,213 + 300,537 + 390,228 + 311,065, counted from the LRAT files checked in Lean).
 
 **Toward hand proofs of the local lemmas.** In the rank-2 contractions the tight hypotheses read
 `x ∥ b`, `x̄ ∥ b̄` in `M / A_0` and `a ∥ y`, `ā ∥ ȳ` in `M / A_1`. The P-cycle lemma fails for a
