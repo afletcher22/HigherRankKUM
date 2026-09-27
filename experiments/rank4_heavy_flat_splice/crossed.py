@@ -103,9 +103,38 @@ if "claim" in sys.argv:
     print("every valid split crossed is", "possible (SAT)" if s3.solve() else "impossible (UNSAT)")
     sys.exit()
 fmt = lambda sp: "{" + "".join(names[x] for x in sp[0]) + "|" + "".join(names[x] for x in sp[1]) + "}"
-for sp in splits:
+for sp in (splits if "backbone" not in sys.argv else []):
     vl, cl = lits[sp]
     fv = "valid" if not s.solve(assumptions=[-vl]) else ("invalid" if not s.solve(assumptions=[vl]) else "?")
     fc = "crossed" if not s.solve(assumptions=[vl, -cl]) else (
         "not crossed" if not s.solve(assumptions=[vl, cl]) else "?")
     print(f"  {fmt(sp)}: {fv}; if valid: {fc}")
+
+if "backbone" in sys.argv:
+    s = Cadical195(bootstrap_with=cls)
+    fb, fd = [], []
+    for q in itertools.combinations(range(n), 4):
+        lit = Bs(q)
+        if not s.solve(assumptions=[-lit]):
+            fb.append(q)
+        elif not s.solve(assumptions=[lit]):
+            fd.append(q)
+    f = lambda q: "".join(names[x] + " " for x in q).strip()
+    print("forced bases:", [f(q) for q in fb])
+    print("forced dependent:", [f(q) for q in fd])
+
+if "cover" in sys.argv:
+    others = [sp for sp in splits if sp != base]
+    good = lambda sp: [lits[sp][0], -lits[sp][1]]      # valid and not crossed
+    for k in range(1, len(others) + 1):
+        found = []
+        for sub in itertools.combinations(others, k):
+            # all splits in sub are invalid or crossed
+            extra = [[-lits[sp][0], lits[sp][1]] for sp in sub]
+            if not Cadical195(bootstrap_with=cls + extra).solve():
+                found.append(sub)
+        if found:
+            print(f"minimal covers of size {k}:")
+            for sub in found:
+                print("  ", [fmt(sp) for sp in sub])
+            break
