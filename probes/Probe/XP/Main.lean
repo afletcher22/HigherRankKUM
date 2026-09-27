@@ -326,11 +326,11 @@ theorem not_both_cl (h : Std M a0 a1 b0 b1 u v w z) (hw : v ∈ M.closure {w, b0
   have hvb : v ∈ M.closure {b0} := mem_closure_of_mem_two (singleton_subset_iff.2 hb0) h1 h2 hne
   have hv0 : v ∉ M.closure ∅ := by
     refine notMem_closure_of_isBase h.hS ?_ (notMem_empty v)
-    rw [LawfulSingleton.insert_emptyc_eq]
+    rw [insert_empty_eq]
     exact singleton_subset_iff.2 (by simp)
-  have h3 : v ∈ M.closure (insert b0 ∅) := by rw [LawfulSingleton.insert_emptyc_eq]; exact hvb
+  have h3 : v ∈ M.closure (insert b0 ∅) := by rw [insert_empty_eq]; exact hvb
   have h4 : b0 ∈ M.closure (insert v ∅) := Matroid.mem_closure_insert hv0 h3
-  rw [LawfulSingleton.insert_emptyc_eq] at h4
+  rw [insert_empty_eq] at h4
   have hsub : ({v} : Set α) ⊆ M.closure {b1, a0, a1} := singleton_subset_iff.2 h.X2
   exact h.D1b (Matroid.closure_subset_closure_of_subset_closure hsub h4)
 
