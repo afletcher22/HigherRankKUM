@@ -1,5 +1,11 @@
 # Rank-Four KUM Coverage Map
 
+> **Historical document.** This is the Sprint-era coverage map. It predates the van den
+> Heuvel–Thomassé formalization and the rank-4 proof, and is kept only as a record.
+> `docs/GENERALIZATION_STATUS.md` supersedes it. Rank-4 KUM is now proved in full
+> (`HigherRankKUM.solvesKUMAtRank_four`, module `Probe.Rank4.Final` on branch `probe/rank4`,
+> kernel-checked in CI).
+
 This document separates arithmetic regimes before structural case splitting. That distinction is essential in rank four.
 
 Let `n = |E(M)|` and `r(M)=4`.
