@@ -25,6 +25,11 @@ Each formalized result is also labelled by location and by method.
   - *probe/rank4*: modules under `probes/Probe/` on branch `probe/rank4` (local worktree
     `../probe-worktree`). They import the main library but are not part of it. Only the
     `probe.yml` workflow builds them.
+  - *The `main` branch* (since 2026-10-10) holds only the rank-4 proof, moved out of `probes/`:
+    `probes/Probe/<M>` is `HigherRankKUM/SAT/<M>`, `probes/Probe/Rank4/<M>` is
+    `HigherRankKUM/Rank4/<M>`, `probes/Probe/XP/<M>` is `HigherRankKUM/Rank4/XP/<M>`, and
+    `Chain10`, `Kum10Chain`, `Full`, `Final` are in `HigherRankKUMCert/`. Every file there uses the
+    Lean module system, and `Challenge.lean`/`Solution.lean` are the Palomar package.
 - **How.**
   - *Human*: an ordinary Lean proof.
   - *Certificate*: a kernel-checked SAT certificate. It has three parts:
@@ -216,11 +221,9 @@ Two corrections to figures quoted in the ledger:
 
 ### Migration and Palomar packaging (in progress)
 
-- **Not migrated.** The rank-4 proof exists only on `probe/rank4`.
-  - The main library holds only part of the human input: vHT and its covers, KUM(4,6), and the
-    tight and dangerous-plane reductions.
-  - The following are probe-only: Theorem D, Kotlar–Ziv, the hitting-lemma interface, Lemma H,
-    Lemma U, the SAT encoding layer, all certificates, and the assembly.
+- **Migrated on `main`** (2026-10-10). `scripts/migrate_probe.py` (on the research branch) moved
+  the proof out of `probes/`; every Lean file outside the proof's import closure was left off
+  `main`, and the remaining 68 files were ported to the Lean module system.
 - **Migration script.** `scripts/migrate_probe.py` (not yet run) sends:
   - the SAT layer to `HigherRankKUM/SAT/`;
   - the paper lemmas, now including `HitThree`, to `HigherRankKUM/Rank4/`;

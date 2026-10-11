@@ -1,71 +1,98 @@
-# HigherRankKUM
+# HigherRankKUM: the Kajitani–Ueno–Miyano conjecture in rank 4
 
-HigherRankKUM is a research repository for extending the Kajitani–Ueno–Miyano cyclic basis-ordering program beyond the completed rank-three case.
+A Lean 4 / Mathlib proof that **every finite uniformly dense matroid of rank 4 has a cyclic basis
+ordering**: a cyclic ordering of the ground set in which every 4 cyclically consecutive elements
+form a basis. Uniform density means `r(M) · |X| ≤ |E| · r(X)` for every `X ⊆ E`. There is no
+condition on `|E|`. Kajitani, Ueno and Miyano (1988) conjectured this for every rank.
 
-It is a successor to [`afletcher22/Rank3KUM`](https://github.com/afletcher22/Rank3KUM), not a fork or replacement for that proof artifact. The higher-rank core has been reorganized so its generic machinery is independent of rank-three geometry, while the completed rank-three proof is retained locally as a frozen vendored base theorem.
+The proof depends only on the axioms `propext`, `Classical.choice` and `Quot.sound`. One step, the
+10-element case, uses a SAT certificate that the Lean kernel checks in full (no `native_decide`,
+no `ofReduceBool`). Every other step is an ordinary Lean proof.
 
-## Current formal core
+## The theorem
 
-The repository currently contains:
+The statement is in `Challenge.lean`, which imports only Mathlib:
 
-- arbitrary-rank cyclic-window and cyclic-basis-order definitions;
-- uniform density and tight-set infrastructure;
-- restriction and tight-contraction density inheritance;
-- abstract restriction/contraction basis gluing;
-- arbitrary-rank balanced `(L^s R^t)^k` interleaving;
-- a concrete balanced restriction/contraction gluing theorem;
-- an abstract `SolvesDivisibleKUMAtRank` interface;
-- generic tight-factor reduction;
-- the theorem reducing every divisible rank-`r` instance with a nonempty proper tight set to solved lower ranks;
-- internal divisible KUM solvers at ranks 1 and 2;
-- an internal rank-3 solver backed by a frozen vendored copy of the Rank3KUM version-3 proof.
+```lean
+theorem HigherRankKUM.Palomar.rankFourKUM (M : Matroid α) (hfin : M.E.Finite)
+    (hrank : M.eRank = 4) (hdense : UniformlyDense M) :
+    ∃ (n : ℕ) (hn : 0 < n) (σ : Fin n ≃ M.E), IsCyclicBasisOrdering M 4 hn σ
+```
 
-The migration source and declaration-level policy are recorded in `docs/PROVENANCE.md`, `docs/MIGRATION_MANIFEST.md`, and `docs/DEPENDENCY_POLICY.md`.
+`Solution.lean` proves it from `HigherRankKUM.solvesKUMAtRank_four`
+(`HigherRankKUMCert/Final.lean`), whose definitions unfold to the same statement.
 
-## Vendored rank-three theorem
+## Proof outline
 
-`vendor/Rank3KUM/` is a Lean-source snapshot of the following commit. It is byte-for-byte except for toolchain patches, which are listed in `vendor/Rank3KUM/PATCHES.md`:
+Strong induction on `n = |E|`.
 
-- source repository: `afletcher22/Rank3KUM`;
-- source branch at selection time: `version-3`;
-- exact source commit: `eff642a2e01fac4fc1f6f76e592eeea46c3152c9`;
-- exact source `Rank3KUM/` tree: `a73e2f94c811a4f2f072e197d1a03656bc53f616`.
+| `n` | argument | Lean |
+|---|---|---|
+| odd | coprime case: van den Heuvel–Thomassé, Theorem 3.1 | `HigherRankKUM/VHT/` |
+| `4k` | Theorem D: Edmonds splits `E` into `k` bases; delete one, order the rest by induction, and reinsert it by pair-chain insertion (XP). Base case `n = 8` by the Kotlar–Ziv serial symmetric exchange | `Rank4/TheoremD.lean`, `Rank4/TheoremDCert.lean`, `Rank4/XP/`, `Rank4/SerialExchange.lean`, `Rank4/Kum8.lean` |
+| 6 | duality with rank-2 KUM | `Rank4/SixElementBoundary.lean`, `LowRank/RankTwo.lean` |
+| 10 | a van den Heuvel–Thomassé chain of five pairs, ordered by the certificate `chain10` | `HigherRankKUMCert/Chain10.lean`, `HigherRankKUMCert/Kum10Chain.lean` |
+| `4k+2 ≥ 14`, with a proper tight set | rational tight reduction; its rank-2 input at the odd size `2k+1` is the coprime case | `Rank4/RationalTightReduction.lean` |
+| `4k+2 ≥ 14`, strict | delete a basis `S` with `M \ S` uniformly dense, order `M \ S` by induction, reinsert `S` by XP. `S` comes from the hitting lemma: Lemma U for `k ≥ 4`, Lemma H and `HitThree` for `k = 3`, Lemma D when there is a plane with `3k+1` elements | `Rank4/Hitting.lean`, `Rank4/LemmaU.lean`, `Rank4/LemmaH.lean`, `Rank4/HitThree.lean`, `Rank4/HitDanger.lean`, `HigherRankKUMCert/Full.lean` |
 
-The snapshot is a local Lake library, not a Git dependency. `HigherRankKUM/LowRank/RankThree.lean` is the only HigherRankKUM module allowed to import it and exposes the narrow theorem `solvesDivisibleKUMAtRank_three`.
+Paths under `Rank4/`, `VHT/` and `LowRank/` are in `HigherRankKUM/`. Paper proofs and the history
+of each step are in `docs/GENERALIZATION_STATUS.md` and `docs/research-ledger/`.
 
-`vendor/Rank3KUM/SHA256SUMS` records checksums for the vendored Lean source as patched. CI verifies those checksums and the exact source commit recorded in `vendor/Rank3KUM/SOURCE.md`.
+## The certificate
 
-## Rank-four program
+`chain10` (`HigherRankKUMCert/data/`, 14,738 LRAT hints) states that a chain of five pairs in a
+rank-4 matroid, with every two consecutive pairs forming a basis, can be oriented (or re-split at
+one window) into a cyclic basis ordering. The kernel checks three things:
 
-Rank four has three arithmetic regimes:
+* the LRAT refutation of the CNF, in chunks (`HigherRankKUM/SAT/LRATChunked.lean`);
+* that the CNF is exactly the encoding generated from the clause witnesses
+  (`HigherRankKUM/SAT/Cert.lean`);
+* that a matroid with no such ordering would satisfy the CNF (`HigherRankKUM/SAT/EncF.lean`,
+  `HigherRankKUM/SAT/EncFBridge.lean`).
 
-1. `gcd(|E|,4)=1` — the coprime regime;
-2. `gcd(|E|,4)=2`, equivalently `|E| ≡ 2 (mod 4)`;
-3. `4 | |E|` — the divisible regime addressed by the present `r*k` machinery.
+The scripts that generate the encoding and the certificate are in `experiments/`.
 
-Within the divisible regime, ranks 1–3 are now internally available. Therefore every rank-four instance with a nonempty proper tight set is formally discharged by the generic lower-rank induction theorem. The remaining new structural target there is the strictly uniformly dense branch.
+## Layout
 
-The `gcd=2` regime is a separate full-rank-four target and must not be conflated with the strict divisible branch. See `docs/RANK4_COVERAGE.md`.
+* `HigherRankKUM/`: the library. Uniform density, cyclic orders and gluing; the
+  van den Heuvel–Thomassé theorem and its corollaries (`VHT/`); rank-2 KUM (`LowRank/`); the
+  rank-4 lemmas (`Rank4/`); the SAT encoding layer (`SAT/`).
+* `HigherRankKUMCert/`: the certificate `chain10`, its data, and the assembly of the proof.
+* `Challenge.lean`, `Solution.lean`, `comparator.json`, `formalization.yaml`: the
+  [Palomar Registry](https://palomar-registry.org) package.
+* `docs/`: the status of the project (`GENERALIZATION_STATUS.md`) and the research ledger.
+* `experiments/`: SAT encoders, checks and search scripts (Python). They are not part of the Lean
+  build.
 
-## Repository policy
+Every Lean file uses the Lean module system, as Palomar requires.
 
-HigherRankKUM is intended to remain stable on its own even if Rank3KUM later changes, is reorganized, or disappears.
+## Building and checking
 
-- There is no live Git dependency on Rank3KUM.
-- Rank3KUM is provenance plus a frozen local source snapshot.
-- Only `HigherRankKUM/LowRank/RankThree.lean` may import the vendored `Rank3KUM` library.
-- The generic core must remain independent of rank-three-specific proof machinery.
-- Experimental rank-four searches and candidate lemmas remain outside the trusted dependency graph until their mathematical role is understood.
+```sh
+lake exe cache get
+lake build
+lake env leanchecker Solution
+```
 
-## Toolchain
+CI (`.github/workflows/ci.yml`) builds everything, replays `Solution` with `leanchecker`, and
+checks the axioms of `HigherRankKUM.Palomar.rankFourKUM`. `.github/workflows/palomar.yml` runs
+Palomar's own verifier as a preflight on `palomar/**` branches.
 
-The project is pinned to:
+The toolchain is Lean and Mathlib `v4.35.0-rc3`, with the dependency graph pinned in
+`lake-manifest.json`.
 
-- Lean `v4.35.0-rc3`;
-- mathlib `v4.35.0-rc3`;
-- the exact resolved transitive dependency graph in `lake-manifest.json`.
+## Provenance
 
-The initial migration used `v4.33.0-rc2`. The upgrade to `v4.35.0-rc3` meets the Palomar Registry
-toolchain floor (`v4.35.0-rc2`). It needed only the Mathlib rename `Equiv.setCongr` →
-`Set.equivOfEq`, which touches 8 sites in HigherRankKUM and 13 in the vendored snapshot (see
-`vendor/Rank3KUM/PATCHES.md`).
+* HigherRankKUM is a successor to [`afletcher22/Rank3KUM`](https://github.com/afletcher22/Rank3KUM),
+  from which its generic density and gluing infrastructure was migrated (`docs/PROVENANCE.md`).
+  The rank-three theorem itself is not used by this proof.
+* Formalized literature: J. van den Heuvel and S. Thomassé, *Cyclic orderings and cyclic
+  arboricity of matroids*, JCTB 102 (2012); D. Kotlar and R. Ziv, *On serial symmetric exchanges
+  of matroid bases*, J. Graph Theory 73 (2013).
+* The `main` branch holds only the rank-4 proof. The full research history, the other research
+  modules and the vendored rank-three snapshot are on the branch
+  `rank4-heavy-flat-splice-research`.
+
+## License
+
+MIT (`LICENSE`).

@@ -1,5 +1,9 @@
 # Dependency Policy
 
+> **On `main`.** Since 2026-10-10 the `main` branch holds only the rank-4 proof. The vendored
+> rank-three snapshot is not on `main`: the rank-4 proof does not use it. It remains on the research
+> branch `rank4-heavy-flat-splice-research`, where this policy still applies in full.
+
 HigherRankKUM is intended to remain buildable and mathematically stable even if `afletcher22/Rank3KUM` later changes, is reorganized, or disappears.
 
 ## Hard rule
