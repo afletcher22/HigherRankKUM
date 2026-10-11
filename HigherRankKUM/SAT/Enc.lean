@@ -150,22 +150,38 @@ def fmlaBEq : List (List Sat.Literal) → List (List Sat.Literal) → Bool
 end
 
 theorem litBEq_eq {a b : Sat.Literal} (h : litBEq a b = true) : a = b := by
-  cases a <;> cases b <;> simp_all [litBEq]
+  -- unfold `litBEq` definitionally: equation lemmas would compile a splitter over the `meta`
+  -- constructors of `Sat.Literal`
+  cases a with
+  | pos x =>
+    cases b with
+    | pos y =>
+      have h' : (x == y) = true := h
+      rw [beq_iff_eq.1 h']
+    | neg y => exact absurd (h : false = true) Bool.false_ne_true
+  | neg x =>
+    cases b with
+    | pos y => exact absurd (h : false = true) Bool.false_ne_true
+    | neg y =>
+      have h' : (x == y) = true := h
+      rw [beq_iff_eq.1 h']
 
 theorem clauseBEq_eq : ∀ {c d : List Sat.Literal}, clauseBEq c d = true → c = d
   | [], [], _ => rfl
-  | [], _ :: _, h => by simp [clauseBEq] at h
-  | _ :: _, [], h => by simp [clauseBEq] at h
-  | _ :: _, _ :: _, h => by
-    simp only [clauseBEq, Bool.and_eq_true] at h
-    rw [litBEq_eq h.1, clauseBEq_eq h.2]
+  | [], _ :: _, h => absurd (h : false = true) Bool.false_ne_true
+  | _ :: _, [], h => absurd (h : false = true) Bool.false_ne_true
+  | a :: c, b :: d, h => by
+    have h' : (litBEq a b && clauseBEq c d) = true := h
+    rw [Bool.and_eq_true] at h'
+    rw [litBEq_eq h'.1, clauseBEq_eq h'.2]
 
 theorem fmlaBEq_eq : ∀ {f g : List (List Sat.Literal)}, fmlaBEq f g = true → f = g
   | [], [], _ => rfl
-  | [], _ :: _, h => by simp [fmlaBEq] at h
-  | _ :: _, [], h => by simp [fmlaBEq] at h
-  | _ :: _, _ :: _, h => by
-    simp only [fmlaBEq, Bool.and_eq_true] at h
-    rw [clauseBEq_eq h.1, fmlaBEq_eq h.2]
+  | [], _ :: _, h => absurd (h : false = true) Bool.false_ne_true
+  | _ :: _, [], h => absurd (h : false = true) Bool.false_ne_true
+  | c :: f, d :: g, h => by
+    have h' : (clauseBEq c d && fmlaBEq f g) = true := h
+    rw [Bool.and_eq_true] at h'
+    rw [clauseBEq_eq h'.1, fmlaBEq_eq h'.2]
 
 end HigherRankKUM.SAT
