@@ -18,6 +18,11 @@ discriminating controls, but no proof certificates (DRAT/LRAT) have been produce
 This note should be read as a **complete computer-assisted proof sketch that still needs
 independent audit**, not as a settled theorem.
 
+> **Update (2026-10-10).** The route of this note is now formalized in Lean on `probe/rank4`, with
+> one SAT certificate left (`chain10`); see `docs/GENERALIZATION_STATUS.md`. The SAT steps below
+> were replaced by human proofs: X′ by pair-chain insertion (XP), the `k = 3` hitting cases by
+> `HIT14_HAND_PROOFS.md`, and the dangerous-plane (t>0) branch by Lemma D (`PROOF_ARCHEOLOGY.md`).
+
 Scripts are in `experiments/rank4_heavy_flat_splice/` (README section "Extension theorem").
 The SAT scripts need `python-sat`.
 

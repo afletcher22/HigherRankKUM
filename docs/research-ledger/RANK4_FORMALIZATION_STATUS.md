@@ -1,5 +1,10 @@
 # Rank-4 KUM: formalization status
 
+> **Historical document (last updated 2026-09-25).** `docs/GENERALIZATION_STATUS.md` supersedes
+> it. Since then rank-4 KUM has been proved in full on `probe/rank4`: X′ by pair-chain insertion
+> (XP), KUM(4,8) by Kotlar–Ziv, the `k = 3` hitting cases by hand (`HIT14_HAND_PROOFS.md`), and the
+> dangerous-plane branch by Lemma D (`PROOF_ARCHEOLOGY.md`). The only certificate left is `chain10`.
+
 This page tracks what is proved in Lean for the rank-4 proof of `RANK4_EXTENSION_THEOREM.md` §5,
 and what remains. Every theorem listed as proved depends only on
 `[propext, Classical.choice, Quot.sound]`, the Palomar axiom set.
