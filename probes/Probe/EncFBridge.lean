@@ -1,5 +1,5 @@
 import Probe.Kum10Data
-import Probe.ExtBridge
+import Probe.MaskBridge
 import Probe.Rank4.Hitting
 
 /-!

@@ -1,6 +1,5 @@
 import Probe.LRATChunked
 import Probe.EncF
-import Probe.EncH
 
 /-!
 # Certificates in bounded memory
@@ -10,8 +9,8 @@ that every witness is valid and that the witnesses regenerate the CNF exactly. R
 kernel evaluations, these checks and the LRAT refutation each hold memory proportional to the whole
 certificate: about 0.6 MB per clause for the formula comparison.
 
-`f_certificate foo cnf lrat wit valid gen budget slice` (and `h_certificate` for the hitting
-claims) splits everything into bounded declarations:
+`f_certificate foo cnf lrat wit valid gen budget slice` splits everything into bounded
+declarations:
 
 * `foo.fmla` is a balanced `Sat.Fmla.and` tree over slices `foo.fmla_i` of `slice` clauses each.
   `foo.ws` is the matching `List.append` tree over the witness slices `foo.ws_i`.
@@ -226,32 +225,6 @@ def parseWF (text : String) : MetaM (Array Expr) := do
       ws := ws.push e
   return ws
 
-/-- Parse `lean_witness_h.py` witness lines. -/
-def parseWH (text : String) : MetaM (Array Expr) := do
-  let nat := fun (k : Nat) => mkRawNatLit k
-  let mut ws : Array Expr := #[]
-  for line in text.splitOn "\n" do
-    match (line.splitOn " ").filter (· ≠ "") with
-    | [] => pure ()
-    | k :: rest =>
-      let a := rest.map String.toNat!
-      let e ← match k, a with
-        | "o", [X, v] => pure <| mkApp2 (Lean.mkConst ``Probe.Enc.WH.order) (nat X) (nat v)
-        | "c", [X, v] => pure <| mkApp2 (Lean.mkConst ``Probe.Enc.WH.cap) (nat X) (nat v)
-        | "l", [X, v] => pure <| mkApp2 (Lean.mkConst ``Probe.Enc.WH.low) (nat X) (nat v)
-        | "m", [X, x, v] =>
-          pure <| mkApp3 (Lean.mkConst ``Probe.Enc.WH.mono) (nat X) (nat x) (nat v)
-        | "i", [X, x, v] =>
-          pure <| mkApp3 (Lean.mkConst ``Probe.Enc.WH.inc) (nat X) (nat x) (nat v)
-        | "s", [X, x, y, v] =>
-          pure <| mkApp4 (Lean.mkConst ``Probe.Enc.WH.sub) (nat X) (nat x) (nat y) (nat v)
-        | "f", [X, v, b] =>
-          pure <| mkApp3 (Lean.mkConst ``Probe.Enc.WH.fact) (nat X) (nat v) (toExpr (b == 1))
-        | "h", [B] => pure <| mkApp (Lean.mkConst ``Probe.Enc.WH.hit) (nat B)
-        | _, _ => throwError "bad witness line: {line}"
-      ws := ws.push e
-  return ws
-
 def elabFn (stx : Syntax) : TermElabM Expr := do
   let e ← Term.elabTerm stx none
   Term.synthesizeSyntheticMVarsNoPostponing
@@ -268,19 +241,6 @@ elab "f_certificate " n:ident ppSpace cnf:term:max ppSpace lrat:term:max ppSpace
     let wit ← unsafe evalTerm String (Lean.mkConst ``String) wit
     let ws ← parseWF wit
     mkCertificate name cnf lrat ws (Lean.mkConst ``Probe.Enc.WF) (← elabFn valid)
-      (← elabFn gen) budget.getNat slice.getNat
-
-/-- `h_certificate foo cnf lrat wit valid gen budget slice`: a certificate with `WH` witnesses. -/
-elab "h_certificate " n:ident ppSpace cnf:term:max ppSpace lrat:term:max ppSpace wit:term:max
-    ppSpace valid:term:max ppSpace gen:term:max ppSpace budget:num ppSpace slice:num :
-    command => do
-  let name := (← getCurrNamespace) ++ n.getId
-  liftTermElabM do
-    let cnf ← unsafe evalTerm String (Lean.mkConst ``String) cnf
-    let lrat ← unsafe evalTerm String (Lean.mkConst ``String) lrat
-    let wit ← unsafe evalTerm String (Lean.mkConst ``String) wit
-    let ws ← parseWH wit
-    mkCertificate name cnf lrat ws (Lean.mkConst ``Probe.Enc.WH) (← elabFn valid)
       (← elabFn gen) budget.getNat slice.getNat
 
 end Probe.Enc
