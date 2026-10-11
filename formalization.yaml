@@ -1,0 +1,162 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# DRY-RUN DRAFT. Fields marked TODO(owner) record facts only the maintainer can confirm
+# (authorship, AI roles, review status, manuscript). Confirm them before a real submission.
+version: "v0.4"
+
+project:
+  name: "HigherRankKUM: the Kajitani-Ueno-Miyano conjecture in rank four"
+  description: >-
+    Lean 4 formalization of the rank-four case of the Kajitani-Ueno-Miyano
+    cyclic basis ordering conjecture: every finite uniformly dense matroid of
+    rank four (r(M)|X| <= |E| r(X) for every subset X) admits a cyclic ordering
+    of its ground set in which every four cyclically consecutive elements form
+    a basis. There is no condition on the size of the ground set. The proof
+    combines a formalization of the van den Heuvel-Thomasse cyclic-ordering
+    theorem (coprime sizes, Edmonds partitions and double covers), Kotlar-Ziv
+    serial symmetric exchange in rank four, a pair-chain insertion theorem that
+    extends a cyclic basis ordering across a deleted basis, a hitting lemma that
+    finds a deletable basis, the vendored rank-three theorem, and one
+    kernel-checked SAT certificate (14,738 LRAT hints) for ten-element pair
+    chains.
+  authors:
+    - "Austen Fletcher"  # TODO(owner): confirm
+  license: "MIT"
+  responsible_maintainers:
+    - "Austen Fletcher"  # TODO(owner): confirm
+
+classification:
+  arxiv: ["math.CO"]
+  msc2020: ["05B35", "68V20"]
+
+sources:
+  - title: "The Kajitani-Ueno-Miyano conjecture in rank four"  # TODO(owner): manuscript title
+    authors:
+      - "Austen Fletcher"
+    type: "original-proof"
+    relationship: "other"
+    note: >-
+      The rank-four argument was developed together with this formalization.
+      No manuscript has been released yet.
+    author_endorsement: "participated"
+
+  - title: "Ordering of the elements of a matroid such that its consecutive w elements are independent"
+    authors:
+      - "Y. Kajitani"
+      - "S. Ueno"
+      - "H. Miyano"
+    id: "Discrete Mathematics 72 (1988), 187-194"
+    type: "article"
+    relationship: "background"
+    note: "Original source of the Kajitani-Ueno-Miyano cyclic-ordering conjecture."
+    author_endorsement: "n/a"
+
+  - title: "Cyclic orderings and cyclic arboricity of matroids"
+    authors:
+      - "J. van den Heuvel"
+      - "S. Thomasse"
+    id: "arXiv:0912.2929"
+    type: "article"
+    location: "J. Combin. Theory Ser. B 102 (2012), 638-646"
+    relationship: "other"
+    note: >-
+      Theorem 2.1 and its corollaries (the coprime case, Edmonds partitions,
+      double covers) are formalized in this repository and used as ingredients.
+    author_endorsement: "n/a"
+
+  - title: "On serial symmetric exchanges of matroid bases"
+    authors:
+      - "D. Kotlar"
+      - "R. Ziv"
+    id: "arXiv:1110.1826"
+    type: "article"
+    location: "J. Graph Theory 73(3) (2013), 296-304"
+    relationship: "other"
+    note: >-
+      The rank-four serial symmetric exchange theorem is formalized in this
+      repository and gives the eight-element case.
+    author_endorsement: "n/a"
+
+  - title: "Cyclic Orderings of Paving Matroids"
+    authors:
+      - "S. McGuinness"
+    id: "arXiv:2308.12239"
+    type: "article"
+    location: "Electron. J. Combin. 31(4) (2024), Paper 4.9"
+    relationship: "background"
+    note: "Deletion and contiguous-insertion method for paving matroids."
+    author_endorsement: "n/a"
+
+related_formalizations:
+  - id: "https://github.com/afletcher22/Rank3KUM/tree/eff642a2e01fac4fc1f6f76e592eeea46c3152c9"
+    relationship: "builds-on"
+    note: >-
+      The rank-three theorem is vendored byte-for-byte (vendor/Rank3KUM, with
+      recorded toolchain patches) and used for rank-three inputs.
+
+status:
+  scope: >-
+    Formalizes the full rank-four case: every finite uniformly dense matroid of
+    rank four, of any size, has a cyclic basis ordering. The higher-rank
+    conjecture is not claimed. One step (ten-element pair chains) is a SAT
+    certificate whose LRAT refutation, encoding and soundness bridge are all
+    checked by the Lean kernel, without native_decide or ofReduceBool.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "HigherRankKUM.Palomar.rankFourKUM"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+
+automation:
+  methods:
+    - method: "copilot"
+      models: ["GPT-5.6 Sol", "GPT-6 (Astra)", "Claude Opus 5.5"]  # TODO(owner): confirm
+      framework: "interactive model interfaces with Lean 4"
+      tool_setup: >-
+        Human-directed AI-assisted proof development and Lean formalization,
+        with Lean elaboration and kernel checking on GitHub Actions throughout.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "not tracked"
+        hardware: "local development machine, hosted model services, GitHub Actions"
+      prompting_notes: >-
+        The maintainer selected proof directions and requested formal checks.
+    - method: "other"
+      models: []
+      framework: "SAT solving (CaDiCaL) with LRAT proof output"
+      tool_setup: >-
+        SAT experiments guided the proof search. The one certificate on the
+        critical path is replayed by the Lean kernel; every other step is an
+        ordinary Lean proof.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "0"
+        hardware: "local development machine"
+      prompting_notes: "Not applicable."
+  spend_usd: "not tracked"
+  notes: >-
+    All formal claims are checked by Lean. The headline theorem is separated
+    into Palomar Challenge and Solution modules for Comparator comparison.
+
+fidelity:
+  divergences: "No known divergence from the rank-four Kajitani-Ueno-Miyano statement."
+
+review:
+  status: "unreviewed"  # TODO(owner): confirm
+  reviewers: []
+  notes: "No independent review is claimed for the rank-four development yet."
+
+alignment:
+  namespace: "HigherRankKUM.Palomar"
+  statements:
+    - source: "Kajitani-Ueno-Miyano conjecture, rank four"
+      lean: "HigherRankKUM.Palomar.rankFourKUM"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Solution.lean is a thin wrapper around HigherRankKUM.solvesKUMAtRank_four
+        in probes/Probe/Rank4/Final.lean.

@@ -1,0 +1,50 @@
+name: Palomar dry run
+
+# Predictive mechanical preflight: the Palomar verifier's own reusable workflow, pinned to a full
+# PalomarSubmission commit, run on the GitHub-hosted palomar-standard-v1 profile (smaller than the
+# production 16x32 runner, same 19,800 s budget). It is advisory and is not a registry submission.
+
+on:
+  push:
+    branches:
+      - 'palomar/**'
+
+permissions:
+  contents: read
+
+jobs:
+  statement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch pinned dependencies
+        run: lake update
+      - name: Verify dependency lock
+        run: git diff --exit-code -- lake-manifest.json
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build Challenge and Solution
+        shell: bash
+        run: |
+          /usr/bin/time -v lake build Challenge 2>&1 | tee challenge.log
+          /usr/bin/time -v lake build Solution 2>&1 | tee solution.log
+          grep -h "depends on axioms" solution.log
+          if grep -hE "ofReduceBool|sorryAx|trustCompiler" solution.log; then
+            echo "Forbidden axiom found"; exit 1
+          fi
+
+  palomar:
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@d4e41c1d5b0d114c4859e6e5831dc6d3ad1d0d44
+    with:
+      repository: ${{ github.repository }}
+      commit: ${{ github.sha }}
+      pipeline_commit: d4e41c1d5b0d114c4859e6e5831dc6d3ad1d0d44
+      request_id: kumr4dry0001
+      mode: full
+      execution_profile: palomar-standard-v1
+      options: '{"comparator_config_path":"comparator.json","authorization_relationship":"I am a responsible author or maintainer"}'

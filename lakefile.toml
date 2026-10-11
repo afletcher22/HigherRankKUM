@@ -19,3 +19,12 @@ name = "HigherRankKUM"
 name = "Probe"
 srcDir = "probes"
 globs = ["Probe.+"]
+
+# Palomar statement surface (Mathlib only) and its solution
+[[lean_lib]]
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]
