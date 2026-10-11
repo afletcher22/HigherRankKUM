@@ -508,9 +508,10 @@ theorem not_three_planes (h : Strict4 M k) (hk : 3 ≤ k) {P C0 Q0 : Set α} (hP
   have f3 : ((F3 ∩ P) \ Q0).Finite := hPfin.subset (Set.sdiff_subset.trans inter_subset_right)
   have u12 := Set.ncard_union_eq d12 f1 f2
   have u123 := Set.ncard_union_eq (Set.disjoint_union_left.2 ⟨d13, d23⟩) (f1.union f2) f3
-  have hsub := Set.ncard_le_ncard
-    (union_subset (union_subset inter_subset_right (Set.sdiff_subset.trans inter_subset_right))
-      (Set.sdiff_subset.trans inter_subset_right)) hPfin
+  have hsub : (F1 ∩ P) ∪ ((F2 ∩ P) \ Q0) ∪ ((F3 ∩ P) \ Q0) ⊆ P :=
+    union_subset (union_subset inter_subset_right (Set.sdiff_subset.trans inter_subset_right))
+      (Set.sdiff_subset.trans inter_subset_right)
+  have hsubn := Set.ncard_le_ncard hsub hPfin
   have c2 := Set.ncard_inter_add_ncard_sdiff_eq_ncard (F2 ∩ P) Q0 (hPfin.subset inter_subset_right)
   have c3 := Set.ncard_inter_add_ncard_sdiff_eq_ncard (F3 ∩ P) Q0 (hPfin.subset inter_subset_right)
   have q2 := Set.ncard_le_ncard (inter_subset_right : (F2 ∩ P) ∩ Q0 ⊆ Q0) hQfin
