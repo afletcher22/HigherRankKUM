@@ -33,8 +33,8 @@ The proof is the import closure of ``Probe.Rank4.Final`` (theorem
   ``probes/Probe/XP/<M>.lean`` goes to ``HigherRankKUM/Rank4/XP/<M>.lean``. The XP modules keep
   their namespace ``HigherRankKUM.XP``. ``TheoremDCert`` is here too: since XP it has no
   certificate inputs (Theorem D with Kotlar-Ziv for n = 8 and pair-chain insertion).
-* Certificates and assembly: the certificate modules ``Chain10``, ``Hit14G`` and ``Hit14Line``,
-  ``Rank4/Kum10Chain`` (it imports ``Chain10``), ``Rank4/Full`` and ``Rank4/Final`` go to
+* Certificates and assembly: the certificate module ``Chain10``, ``Rank4/Kum10Chain`` (it
+  imports ``Chain10``), ``Rank4/Full`` and ``Rank4/Final`` go to
   ``HigherRankKUMCert/<M>.lean`` (library ``HigherRankKUMCert``, not a default target). The
   data files they read with ``include_str`` go to ``HigherRankKUMCert/data/``, and the
   ``include_str`` paths are rewritten. The script adds a ``[[lean_lib]]`` entry for
@@ -59,8 +59,8 @@ After running
 -------------
 Compile only on GitHub Actions. Build the heavy modules one at a time first (memory):
 ``HigherRankKUM.Rank4.SerialExchange``, ``HigherRankKUM.Rank4.Kum8``,
-``HigherRankKUM.Rank4.XP.Insert``, ``HigherRankKUMCert.Chain10``, ``HigherRankKUMCert.Hit14G``,
-``HigherRankKUMCert.Hit14Line``, ``HigherRankKUM.Rank4.LemmaH``, ``HigherRankKUM.Rank4.LemmaU``.
+``HigherRankKUM.Rank4.XP.Insert``, ``HigherRankKUMCert.Chain10``, ``HigherRankKUM.Rank4.HitThree``,
+``HigherRankKUM.Rank4.LemmaH``, ``HigherRankKUM.Rank4.LemmaU``.
 Then build and replay (leanchecker) ``HigherRankKUMCert.Final``. The expected axioms of
 ``solvesKUMAtRank_four`` are ``[propext, Classical.choice, Quot.sound]``.
 
@@ -78,15 +78,15 @@ import sys
 
 # SAT encoding layer -> HigherRankKUM/SAT/
 SAT = ["Enc", "EncSound", "EncBridge", "ExtEnc", "ExtBridge", "EncF", "EncFBridge", "EncH",
-       "EncHBridge", "EncHBridgeG", "LRATChunked", "Cert", "Kum10Data"]
+       "LRATChunked", "Cert", "Kum10Data"]
 # rank-4 paper lemmas -> HigherRankKUM/Rank4/
 RANK4 = ["TheoremD", "Hitting", "LemmaH", "LemmaUBasic", "LemmaU", "SerialExchange", "Kum8",
-         "HitGeFour", "TheoremDCert"]
+         "HitGeFour", "HitThree", "TheoremDCert"]
 # pair-chain insertion (XP) -> HigherRankKUM/Rank4/XP/
 XP = ["Basic", "Main", "Local", "Chain", "Insert"]
 # certificates and assembly -> HigherRankKUMCert/ (not a default target)
 CERT = {
-    "Chain10": "Chain10", "Hit14G": "Hit14G", "Hit14Line": "Hit14Line",
+    "Chain10": "Chain10",
     "Rank4.Kum10Chain": "Kum10Chain", "Rank4.Full": "Full", "Rank4.Final": "Final",
 }
 

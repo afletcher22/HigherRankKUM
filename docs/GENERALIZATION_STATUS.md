@@ -1,6 +1,6 @@
 # Generalization Status
 
-Accurate as of 2026-09-27. This file separates certified generic infrastructure from rank-specific
+Accurate as of 2026-10-10. This file separates certified generic infrastructure from rank-specific
 results and open research targets. For each result it records where the Lean proof lives and how it
 is proved. Where `docs/RANK4_COVERAGE.md` (which predates van den Heuvel–Thomassé and the rank-4
 proof) disagrees with this file, this file is current.
@@ -25,6 +25,9 @@ Each formalized result is also labelled by location and by method.
   - *probe/rank4*: modules under `probes/Probe/` on branch `probe/rank4` (local worktree
     `../probe-worktree`). They import the main library but are not part of it. Only the
     `probe.yml` workflow builds them.
+  - *probe/hit14-human*: `probe/rank4` plus human proofs of the two `k = 3` hitting cases
+    (`probes/Probe/Rank4/HitThree.lean`), without the certificates `hit14g` and `hit14line`. It is
+    three commits ahead of `probe/rank4` and can be fast-forwarded into it.
 - **How.**
   - *Human*: an ordinary Lean proof.
   - *Certificate*: a kernel-checked SAT certificate. It has three parts:
@@ -48,7 +51,7 @@ Palomar axiom set.
 | 1 | divisible KUM | formalized internal | main | human |
 | 2 | divisible KUM, and KUM at odd sizes | formalized internal | main | human |
 | 3 | full KUM | formalized internal | main | human (vendored Rank3KUM plus vHT) |
-| 4 | full KUM | formalized internal | probe/rank4 | human plus 3 certificates (913k hints) |
+| 4 | full KUM | formalized internal | probe/hit14-human | human plus 1 certificate (`chain10`, 14.7k hints) |
 | 4 | extension theorem X′ for every even `N ≥ 8`, by pair-chain insertion (XP) | formalized internal | probe/rank4 (`probes/Probe/XP/`) | human, no certificates |
 | 5 | KUM(5,10) | literature (SAT) and our own SAT run | none | computational evidence |
 | 5 | KUM(5,5k) for `k ≥ 3` | research target | none | none |
@@ -114,22 +117,24 @@ The earlier statement that HigherRankKUM has no formalization of the van den Heu
 coprime theorem, so that odd-size rank-2 instances appear as explicit hypotheses, is **obsolete**.
 No axiom and no live external Rank3KUM dependency is used.
 
-## Rank 4: full KUM, kernel-checked on `probe/rank4`
+## Rank 4: full KUM, kernel-checked on `probe/hit14-human`
 
 **Theorem.** `HigherRankKUM.solvesKUMAtRank_four : SolvesKUMAtRank α 4`
 (`probes/Probe/Rank4/Final.lean`): every finite uniformly dense rank-4 matroid has a cyclic basis
 ordering. It depends on the axioms `[propext, Classical.choice, Quot.sound]` only.
 
-**Verification.** Workflow "Palomar kernel probe", run 36345894127, on commit 0eab7cd (the head of
-`probe/rank4`, fast-forwarded from `probe/xp`), 2026-09-27: success. The previous run with the X′
-certificates (36223257829, commit a4ead33, 2026-09-26) also succeeded.
+**Verification.** Workflow "Palomar kernel probe", run 38101498074, on commit af49194 (the head of
+`probe/hit14-human`), 2026-10-10: success. The certificate version on `probe/rank4` (run
+36345894127, commit 0eab7cd, 2026-09-27) and the earlier run with the X′ certificates
+(36223257829, commit a4ead33, 2026-09-26) also succeeded.
 
-- The run builds the heavy certificate modules one at a time, then `Probe.Rank4.Final`.
+- The run builds the heavy modules one at a time, then `Probe.Rank4.Final`.
 - It replays `Probe.Rank4.Final` with `leanchecker`, and fails if `ofReduceBool`, `sorryAx` or
   `trustCompiler` appears.
-- Resources on the GitHub runner (4 vCPU, 16 GB), measured on the earlier run with the X′
-  certificates: wall time 33 minutes, slowest module `Hit14Line` (11 minutes), peak memory 12.8 GB
-  (`ExtCyc12`, no longer built). The XP run is lighter; see its log for exact figures.
+- Resources on the GitHub runner (4 vCPU, 16 GB), run 38101498074: the whole job takes about
+  7 minutes. The slowest step is the final `lake build Probe.Rank4.Final` (3 minutes, which also
+  builds the main-library dependencies), and peak memory is 3.4 GB. The run with the X′
+  certificates took 33 minutes and 12.8 GB, and `Hit14Line` alone took 11 minutes.
 - For comparison, the Palomar runner has 16 cores, 32 GB and a budget of 19,800 s.
 
 ### Proof structure
@@ -164,8 +169,11 @@ elements, `k ≥ 3`. The interface (`StrictT0`, `Deletable`, `MeetsDemands`) is 
   | heavy flat | proof |
   |---|---|
   | no 9-element plane and no 6-element line | Lemma H (`Hitting.lemmaH`, `Rank4/LemmaH.lean`); human, valid for every `k ≥ 2` |
-  | a 9-element plane | certificate `hit14g` (`Hit14G.lean`) |
-  | a 6-element line and no 9-element plane | certificate `hit14line` (`Hit14Line.lean`) |
+  | a 9-element plane | choice lemma of Theorem G (`Hitting.HitThree.hitG`, `Rank4/HitThree.lean`); human |
+  | a 6-element line and no 9-element plane | `Hitting.HitThree.hitLine` (`Rank4/HitThree.lean`); human |
+
+  The paper proofs of the last two rows are in `docs/research-ledger/HIT14_HAND_PROOFS.md`. They
+  replace the certificates `hit14g` and `hit14line`.
 
 **The extension theorem X′.** `Rank4Extension α N` (`Rank4/TheoremD.lean`) states: if `S` is a
 basis of a rank-4 matroid `M`, and `M∖S` (on `N` elements) has a CBO, then `M` has a CBO. There is
@@ -180,12 +188,12 @@ but no longer imported.
 
 ### Certificates on the critical path
 
-| Certificate | Claim | LRAT hints | Lean module (probe/rank4) |
+| Certificate | Claim | LRAT hints | Lean module (probe/hit14-human) |
 |---|---|---|---|
 | `chain10` | KUM(4,10) from a 5-pair chain | 14,738 | `Chain10.lean` |
-| `hit14g` | hitting lemma, `k = 3`, 9-element plane | 55,754 | `Hit14G.lean` |
-| `hit14line` | hitting lemma, `k = 3`, 6-element line | 842,574 | `Hit14Line.lean` |
-| **total** | | **913,066** | |
+
+Until 2026-10-10 the critical path also had `hit14g` (55,754 hints) and `hit14line` (842,574),
+913,066 hints in all.
 
 Two corrections to figures quoted in the ledger:
 
@@ -196,6 +204,9 @@ Two corrections to figures quoted in the ledger:
 **Superseded certificates.** These are still on the probe branches but no longer imported by
 `Final.lean`:
 
+- the hitting lemma at `k = 3`: `hit14g` and `hit14line` (898,328 hints together), replaced by
+  `Rank4/HitThree.lean`. They are still on `probe/rank4`; `probe/hit14-human` deletes them, with
+  their bridges `EncHBridge` and `EncHBridgeG`;
 - KUM(4,6): `kum6`, 682 hints (`probe/encoding`), replaced by duality;
 - KUM(4,8): `kum8`, 371,427 hints, replaced by Kotlar–Ziv;
 - the five KUM(4,10) certificates `baseG2`, `baseG3`, `baseG4`, `baseL4` and `kum10l`, 2.27M
@@ -209,15 +220,14 @@ Two corrections to figures quoted in the ledger:
     tight and dangerous-plane reductions.
   - The following are probe-only: Theorem D, Kotlar–Ziv, the hitting-lemma interface, Lemma H,
     Lemma U, the SAT encoding layer, all certificates, and the assembly.
-- **Migration script.** A draft script, `migrate.py`, exists in a working scratchpad and is not
-  committed. It sends:
+- **Migration script.** `scripts/migrate_probe.py` (not yet run) sends:
   - the SAT layer to `HigherRankKUM/SAT/`;
-  - the paper lemmas to `HigherRankKUM/Rank4/`;
-  - the certificate modules, their data and the assembly to a separate library
+  - the paper lemmas, now including `HitThree`, to `HigherRankKUM/Rank4/`;
+  - the certificate module `Chain10`, its data and the assembly to a separate library
     `HigherRankKUMCert`, which is not built by default.
 
-  Its module list predates the Kotlar–Ziv, `chain10` and `HitGeFour` changes, so it needs
-  updating.
+  Its module tables match the import closure of `Probe.Rank4.Final` on `probe/hit14-human`: a
+  `--dry-run` against that branch passes every check (30 modules, 3 data files).
 - **Palomar packaging.**
   - The toolchain (Lean/Mathlib v4.35.0-rc3) is above Palomar's floor.
   - A draft `Challenge.lean` stating rank-4 KUM with Mathlib only compiles. It is at
@@ -349,12 +359,9 @@ the repository.
 
 ## Open research targets
 
-1. **Human proofs of the remaining rank-4 certificates** (X′ is done, by XP).
-   - `hit14g` and `hit14line`.
-     - For `hit14g`, the ledger records a paper argument for the related Theorem G choice lemma
-       (`RANK4_HEAVY_FLAT_SPLICE.md` §7).
-     - `hit14line` has no written proof.
-   - After these, only `chain10` (14.7k hints) would stand between rank 4 and a proof free of SAT.
+1. **A human proof of `chain10`** (14.7k hints), the last certificate on the rank-4 critical path.
+   X′ is done (XP), and so are `hit14g` and `hit14line` (`Rank4/HitThree.lean`). After
+   `chain10`, the rank-4 proof would be free of SAT.
 2. **Migration and Palomar packaging.**
    - Move the probe proof into the main library, with the certificates in a separate library.
    - Write `Challenge.lean`, `Solution.lean`, `comparator.json` and `formalization.yaml`, and add a

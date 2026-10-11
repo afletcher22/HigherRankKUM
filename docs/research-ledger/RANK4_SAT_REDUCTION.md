@@ -170,7 +170,8 @@ n = 14 (one re-split, SAT) results. The global two-re-split question for n ≥ 1
 Rank4Extension α N` (`probes/Probe/XP/`, about 1,960 lines, all human) is wired into Theorem D and
 the `4k+2` step on `probe/rank4` (commit 0eab7cd). `solvesKUMAtRank_four` builds and replays with
 standard axioms (CI run 36345894127). The X′ certificates (1,256,043 hints) are off the critical
-path; the remaining certificates are `chain10`, `hit14g` and `hit14line` (913,066 hints).
+path; the remaining certificates were then `chain10`, `hit14g` and `hit14line` (913,066 hints).
+Since 2026-10-10 only `chain10` remains (see "hit14g and hit14line" below).
 
 **Statement XP(N)** (N = 2m even). Let `S` be a basis of a rank-4 matroid `M`, and let
 `A_0, ..., A_{m-1}` be an orientable pair chain of `M \ S` (every `A_i ∪ A_{i+1}` a basis; for
@@ -252,11 +253,21 @@ Garamvölgyi, Mizutani, Oki, Schwarcz and Yamaguchi (ICALP 2025, arXiv 2411.0677
 KUM(5,10), hold up to rank 5. Our run of `kum_r_n.py 5 10` is an independent confirmation. Kotlar
 (2013) gives only exchanges of length at most 6 in rank 5, despite being cited for rank 5.
 
-## hit14g and hit14line
+## hit14g and hit14line: replaced (2026-10-10)
 
-`hit14g` is the choice lemma of Theorem G at `k = 3`. Its paper proof, three cases on `r(C)`, is
-in `RANK4_HEAVY_FLAT_SPLICE.md` §7. `hit14line` (a 6-line, no 9-plane) has no written proof yet.
-Both are specific to `n = 4k+2`, so they matter only for rank 4.
+Both now have human proofs, formalized in `probes/Probe/Rank4/HitThree.lean` (branch
+`probe/hit14-human`); the paper proofs are in `HIT14_HAND_PROOFS.md`.
+
+* `hit14g` (a 9-plane) is the choice lemma of Theorem G at `k = 3`
+  (`Hitting.HitThree.hitG`). The proof follows `RANK4_HEAVY_FLAT_SPLICE.md` §7, with the three
+  cases on `r(C)` merged into one "light pair" lemma.
+* `hit14line` (a 6-line, no 9-plane) has a short direct proof (`Hitting.HitThree.hitLine`).
+  Every 3-point lies on the line `L`, and there is at most one other 6-line. The basis
+  `{a, b, x, y}` takes `x` on that line and `y ∉ cl(L + x)`. Then the only 8-plane that `x` and
+  `y` can both miss while meeting `L` in a 2-point is `cl(E - L - {x, y})`, so `a` and `b` have at
+  most two points of `L` to meet.
+
+The only remaining certificate on the critical path is `chain10` (14,738 hints).
 
 ## X′ and the linear lemma X
 

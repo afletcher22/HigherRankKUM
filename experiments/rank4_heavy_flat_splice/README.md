@@ -100,3 +100,4 @@ of the ledger note.
 | `hit_sat14.py`, `hit_sat14_alt.py` | SAT form of the hitting lemma at n=14 (full rank function), with alternative solvers |
 | `hit_sat14_split.py plane\|line` | **The n=14 hitting lemma, split by the heavy flat that Lemma H does not cover**: UNSAT in both cases |
 | `hit_sat_control.py` | Discriminating control: the same encoding at k=2 (n=10), where deletable bases fail. Must be SAT; the model is re-verified independently of the encoding |
+| `check_hit14.py N SEED [G\|L\|GL]` | Random check of the human proofs of the n=14 heavy-flat cases (`HIT14_HAND_PROOFS.md`): tries every choice the proofs allow and asserts a deletable basis |
