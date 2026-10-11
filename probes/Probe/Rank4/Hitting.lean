@@ -1,6 +1,8 @@
 import HigherRankKUM.StrictDensity
 import HigherRankKUM.RationalDensity
-import HigherRankKUM.Rank4.GcdTwoDeletion
+import Mathlib.Data.Set.Card.Arithmetic
+import Mathlib.Data.Set.Finite.Powerset
+import Mathlib.Combinatorics.Matroid.Minor.Delete
 
 /-!
 # The hitting lemma: shared definitions and the deletability criterion
@@ -27,13 +29,26 @@ open scoped Matroid
 
 variable {α : Type*} {M : Matroid α} {k : ℕ}
 
+/-- A dangerous plane: a flat of rank `3` with `3k+1` elements. -/
+def DangerousPlane (M : Matroid α) (k : ℕ) (H : Set α) : Prop :=
+  M.IsFlat H ∧ M.eRk H = (3 : ℕ∞) ∧ H.encard = ((3 * k + 1 : ℕ) : ℕ∞)
+
+/-- Binary intersections of flats are flats. -/
+theorem isFlat_inter {H K : Set α} (hH : M.IsFlat H) (hK : M.IsFlat K) : M.IsFlat (H ∩ K) := by
+  rw [Matroid.isFlat_iff_closure_eq]
+  apply Set.Subset.antisymm
+  · exact Set.subset_inter
+      ((M.closure_subset_closure Set.inter_subset_left).trans_eq hH.closure)
+      ((M.closure_subset_closure Set.inter_subset_right).trans_eq hK.closure)
+  · exact M.subset_closure (H ∩ K) (Set.inter_subset_left.trans hH.subset_ground)
+
 /-- A strict rank-4 matroid on `4k+2` elements with no dangerous hyperplane. -/
 structure StrictT0 (M : Matroid α) (k : ℕ) : Prop where
   finite : M.E.Finite
   rank : M.eRank = (4 : ℕ∞)
   card : M.E.encard = ((4 * k + 2 : ℕ) : ℕ∞)
   strict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4
-  noDanger : ∀ H, ¬ Rank4GcdTwoDeletion.DangerousHyperplane M k H
+  noDanger : ∀ H, ¬ DangerousPlane M k H
 
 /-- A basis whose complement is uniformly dense at ratio `(4k-2)/4`. -/
 def Deletable (M : Matroid α) (k : ℕ) (S : Set α) : Prop :=

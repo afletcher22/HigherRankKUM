@@ -2,7 +2,8 @@ import Probe.Rank4.TheoremDCert
 import Probe.Rank4.Kum10Chain
 import HigherRankKUM.Rank4.SixElementBoundary
 import Probe.Rank4.Hitting
-import HigherRankKUM.Rank4.Unconditional
+import HigherRankKUM.Rank4.RationalTightReduction
+import Probe.Rank4.HitDanger
 import HigherRankKUM.VHT.Theorem21
 
 /-!
@@ -16,11 +17,13 @@ The proof is by strong induction on `n`:
 * `n = 6`: duality with rank-2 KUM (`Rank4.exists_cyclicBasisOrder_of_rank_four_six`);
 * `n = 10`: a van den Heuvel–Thomassé pair chain and one certificate (`Kum10Chain`);
 * `n = 4k+2 ≥ 14`:
-  * a nonempty proper tight set, or a dangerous plane: the Lean reductions of the main library;
-  * otherwise `M` is strict with `t = 0`. The hitting lemma (`HittingLemma`, a hypothesis here)
-    gives a basis `S` with `M \ S` uniformly dense on `4k - 2 ≥ 10` elements. By induction
-    `M \ S` has a cyclic basis ordering, and pair-chain insertion (`XP.rank4Extension_of_even`)
-    extends it to `M`.
+  * a nonempty proper tight set: the rational tight reduction of the main library, with its
+    rank-2 input at the odd size `2k+1` from coprime KUM;
+  * otherwise `M` is strict. A basis `S` with `M \ S` uniformly dense on `4k - 2 ≥ 10` elements
+    comes from `Hitting.hitDanger` if `M` has a dangerous plane (`3k+1` elements), and otherwise
+    from the hitting lemma (`HittingLemma`, a hypothesis here; `M` is strict with `t = 0`). By
+    induction `M \ S` has a cyclic basis ordering, and pair-chain insertion
+    (`XP.rank4Extension_of_even`) extends it to `M`.
 -/
 
 namespace HigherRankKUM
@@ -80,18 +83,19 @@ theorem solvesKUMAtRank_four_of_hitting {α : Type*} (hhit : HittingLemma α) :
     -- a nonempty proper tight set
     by_cases htight : ∃ X, TightRatio M (4 * k + 2) 4 X ∧ X.Nonempty ∧ X ≠ M.E
     · obtain ⟨X, hX, hne, hprop⟩ := htight
-      exact exists_cyclicBasisOrder_of_rank_four_gcd_two_of_nonempty_proper_tight' M k hE hRank4
+      exact exists_cyclicBasisOrder_of_rank_four_gcd_two_of_nonempty_proper_tight M k hE hRank4
         hEcard hDense hX hne hprop
+        (VHT.solvesKUMAtRankSize_of_coprime (Nat.coprime_two_left.2 (odd_two_mul_add_one k)))
     have hStrict : StrictlyUniformlyDenseRatio M (4 * k + 2) 4 := fun X hX hne hprop =>
       lt_of_le_of_ne (hDense X hX) fun heq => htight ⟨X, ⟨hX, heq⟩, hne, hprop⟩
-    -- a dangerous plane
-    by_cases hdanger : ∃ H, Rank4GcdTwoDeletion.DangerousHyperplane M k H
-    · obtain ⟨H, hH⟩ := hdanger
-      exact Rank4DangerousBranches.exists_cbo_of_dangerous_hyperplane' (by omega) hE hRank4
-        hEcard hStrict hH
-    -- strict, `t = 0`: delete a deletable basis, order the rest, and extend
-    have hT : Hitting.StrictT0 M k := ⟨hE, hRank4, hEcard, hStrict, fun H hH => hdanger ⟨H, hH⟩⟩
-    obtain ⟨S, hSbase, hSdense⟩ := hhit M k hk3 hT
+    have h4 : Hitting.Strict4 M k := ⟨hE, hRank4, hEcard, hStrict⟩
+    -- a deletable basis: with a dangerous plane by `hitDanger`, otherwise by the hitting lemma
+    obtain ⟨S, hSbase, hSdense⟩ : ∃ S, Hitting.Deletable M k S := by
+      by_cases hdanger : ∃ H, Hitting.DangerousPlane M k H
+      · obtain ⟨H, hHf, hHr, hHc⟩ := hdanger
+        exact Hitting.hitDanger h4 hk3 hHf hHr hHc
+      · exact hhit M k hk3 ⟨hE, hRank4, hEcard, hStrict, fun H hH => hdanger ⟨H, hH⟩⟩
+    -- delete it, order the rest, and extend
     have hSE : S ⊆ M.E := hSbase.subset_ground
     have hRE : M.E \ S ⊆ M.E := diff_subset
     have hRfin : (M.E \ S).Finite := hE.subset hRE
@@ -104,7 +108,7 @@ theorem solvesKUMAtRank_four_of_hitting {α : Type*} (hhit : HittingLemma α) :
       have h'' : (M.E \ S).ncard = 4 * k - 2 := by omega
       rw [h'']
     -- `M \ S` has rank 4
-    obtain ⟨j, hj, hj4⟩ := hT.exists_eRk_eq (M.E \ S)
+    obtain ⟨j, hj, hj4⟩ := h4.exists_eRk_eq (M.E \ S)
     have hj4' : 4 ≤ j := by
       have h := hSdense (M.E \ S) subset_rfl
       rw [Matroid.restrict_eRk_eq M subset_rfl, hj, hRcard] at h

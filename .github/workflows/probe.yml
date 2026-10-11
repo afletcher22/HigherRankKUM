@@ -29,7 +29,7 @@ jobs:
         shell: bash
         env:
           # heavy dependencies built one at a time first (memory), then the modules to replay
-          PROBE_BUILD: Rank4.SerialExchange Rank4.Kum8 XP.Insert Chain10 Rank4.HitThree Rank4.LemmaH Rank4.LemmaU
+          PROBE_BUILD: Rank4.Hitting Rank4.HitThree Rank4.HitDanger Rank4.SerialExchange Rank4.Kum8 XP.Insert Chain10 Rank4.LemmaH Rank4.LemmaU
           PROBE_MODULES: Rank4.Final
         run: |
           for m in $PROBE_BUILD; do

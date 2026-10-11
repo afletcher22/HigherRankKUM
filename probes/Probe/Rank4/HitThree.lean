@@ -527,7 +527,7 @@ theorem hitLine (h : StrictT0 M 3) {L : Set α} (hLf : M.IsFlat L) (hLr : M.eRk 
     by_cases hLF : L ⊆ F
     · exact ⟨a, hLF haL, haS⟩
     -- `L ∩ F` is a point with `2` or `3` elements
-    have hQf : M.IsFlat (L ∩ F) := Rank4GcdTwoDeletion.isFlat_inter_of_isFlat hLf hFf
+    have hQf : M.IsFlat (L ∩ F) := isFlat_inter hLf hFf
     obtain ⟨i, hi, hi2⟩ := exists_eRk_inter_flat_lt h hLE hFf hLF (j := 2)
       (by exact_mod_cast hLr)
     have hQ3 := ncard_le_three_mul h (inter_subset_left.trans hLE) (j := 1)
