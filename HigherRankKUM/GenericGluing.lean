@@ -1,5 +1,9 @@
-import HigherRankKUM.CyclicOrder
-import HigherRankKUM.TightContraction
+module
+
+public import HigherRankKUM.CyclicOrder
+public import HigherRankKUM.TightContraction
+
+@[expose] public section
 
 namespace HigherRankKUM
 

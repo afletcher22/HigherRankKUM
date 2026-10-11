@@ -1,6 +1,8 @@
-import HigherRankKUM.SAT.EncSound
-import HigherRankKUM.FullSolver
-import HigherRankKUM.CyclicOrder
+module
+
+public import HigherRankKUM.SAT.EncSound
+public import HigherRankKUM.FullSolver
+public import HigherRankKUM.CyclicOrder
 
 /-!
 # Palomar probe: from matroids to rank models (round 3)
@@ -10,6 +12,9 @@ A uniformly dense rank-4 matroid on `N` elements with no cyclic basis ordering y
 `maskSet σ X`, and take `r X` to be its rank.  Combined with a kernel-checked refutation, this
 proves KUM at that size.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.SAT
 

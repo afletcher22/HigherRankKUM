@@ -1,6 +1,10 @@
-import HigherRankKUM.PeriodicGluing
-import HigherRankKUM.FullSolver
-import HigherRankKUM.TightInduction
+module
+
+public import HigherRankKUM.PeriodicGluing
+public import HigherRankKUM.FullSolver
+public import HigherRankKUM.TightInduction
+
+@[expose] public section
 
 namespace HigherRankKUM
 

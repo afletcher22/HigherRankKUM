@@ -1,5 +1,9 @@
-import HigherRankKUM.RationalTightInduction
-import Mathlib.Data.Nat.Prime.Basic
+module
+
+public import HigherRankKUM.RationalTightInduction
+public import Mathlib.Data.Nat.Prime.Basic
+
+@[expose] public section
 
 namespace HigherRankKUM
 

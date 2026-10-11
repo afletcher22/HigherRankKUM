@@ -1,6 +1,8 @@
-import HigherRankKUM.Rank4.SerialExchange
-import Mathlib.Combinatorics.Matroid.Rank.ENat
-import Mathlib.Data.Set.Card
+module
+
+public import HigherRankKUM.Rank4.SerialExchange
+public import Mathlib.Combinatorics.Matroid.Rank.ENat
+public import Mathlib.Data.Set.Card
 
 /-!
 # Pair-chain insertion (XP): basic tools
@@ -17,6 +19,9 @@ Rank-4 facts about small sets, used throughout the XP modules:
 
 And Boolean relations on `Bool × Bool`: `Slack` (at most one missing entry) and `Good`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.XP
 

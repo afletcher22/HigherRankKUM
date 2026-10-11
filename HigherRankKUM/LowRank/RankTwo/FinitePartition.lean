@@ -1,7 +1,11 @@
-import HigherRankKUM.LowRank.RankTwo.LargestFirst
-import Mathlib.Order.Partition.Finpartition
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Finset.Max
+module
+
+public import HigherRankKUM.LowRank.RankTwo.LargestFirst
+public import Mathlib.Order.Partition.Finpartition
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Finset.Max
+
+@[expose] public section
 
 namespace HigherRankKUM.RankTwo
 

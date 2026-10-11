@@ -1,1 +1,3 @@
-import HigherRankKUMCert.Final
+module
+
+public import HigherRankKUMCert.Final

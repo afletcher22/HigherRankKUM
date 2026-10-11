@@ -1,7 +1,9 @@
-import Mathlib.Combinatorics.Matroid.Rank.ENat
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Tactic
+module
+
+public import Mathlib.Combinatorics.Matroid.Rank.ENat
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Tactic
 
 /-!
 # van den Heuvel–Thomassé, Theorem 2.1: statement and basic counting
@@ -18,6 +20,9 @@ only if every finite `A ⊆ E` has total weight at most `D · r(A)`. Only the di
 (b) ⇒ (a) is used, and `Statement α` records it as a proposition, so that its consequences
 (coprime KUM, Edmonds' covering, double covers) can be developed before its proof.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.VHT
 

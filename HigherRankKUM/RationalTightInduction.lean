@@ -1,4 +1,8 @@
-import HigherRankKUM.RationalTightFactorReduction
+module
+
+public import HigherRankKUM.RationalTightFactorReduction
+
+@[expose] public section
 
 namespace HigherRankKUM
 

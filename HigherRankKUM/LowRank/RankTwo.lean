@@ -1,6 +1,10 @@
-import HigherRankKUM.LowRank.RankTwo.Matroid
-import HigherRankKUM.BalancedInterleave
-import HigherRankKUM.DivisibleSolver
+module
+
+public import HigherRankKUM.LowRank.RankTwo.Matroid
+public import HigherRankKUM.BalancedInterleave
+public import HigherRankKUM.DivisibleSolver
+
+@[expose] public section
 
 namespace HigherRankKUM
 

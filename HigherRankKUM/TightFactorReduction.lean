@@ -1,4 +1,8 @@
-import HigherRankKUM.DivisibleSolver
+module
+
+public import HigherRankKUM.DivisibleSolver
+
+@[expose] public section
 
 namespace HigherRankKUM
 

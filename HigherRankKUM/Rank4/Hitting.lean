@@ -1,8 +1,10 @@
-import HigherRankKUM.StrictDensity
-import HigherRankKUM.RationalDensity
-import Mathlib.Data.Set.Card.Arithmetic
-import Mathlib.Data.Set.Finite.Powerset
-import Mathlib.Combinatorics.Matroid.Minor.Delete
+module
+
+public import HigherRankKUM.StrictDensity
+public import HigherRankKUM.RationalDensity
+public import Mathlib.Data.Set.Card.Arithmetic
+public import Mathlib.Data.Set.Finite.Powerset
+public import Mathlib.Combinatorics.Matroid.Minor.Delete
 
 /-!
 # The hitting lemma: shared definitions and the deletability criterion
@@ -20,6 +22,9 @@ Lemma H (no `3k`-plane and no `2k`-line, `k ≥ 2`) and Lemma U (every double co
 produce bases that meet the demands. Their statements are `LemmaHStatement` and
 `LemmaUStatement`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 namespace Hitting

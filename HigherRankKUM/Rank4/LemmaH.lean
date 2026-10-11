@@ -1,4 +1,6 @@
-import HigherRankKUM.Rank4.Hitting
+module
+
+public import HigherRankKUM.Rank4.Hitting
 
 /-!
 # Lemma H: the hitting lemma with no `3k`-plane and no `2k`-line
@@ -20,6 +22,9 @@ Proof outline (paper proof in `docs/research-ledger/RANK4_EXTENSION_THEOREM.md`,
   (`not_three_blockers`): the lines `G_j ∩ F` have `≥ 2k-1` elements each, pairwise meet in
   `≤ k-1` elements, and would not fit in `F`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 namespace Hitting

@@ -1,4 +1,6 @@
-import HigherRankKUM.Rank4.XP.Basic
+module
+
+public import HigherRankKUM.Rank4.XP.Basic
 
 /-!
 # Pair-chain insertion (XP): the 8-element Main Lemma
@@ -25,6 +27,9 @@ and **Q-crossed** if it is P-crossed in the mirror configuration (`A₀ ↔ A₁
 Everything uses only closure, exchange and "two flats `cl(X + g)` and `cl(X + h)` with
 `h ∉ cl(X + g)` meet in `cl X`" (`mem_closure_of_mem_two`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.XP
 

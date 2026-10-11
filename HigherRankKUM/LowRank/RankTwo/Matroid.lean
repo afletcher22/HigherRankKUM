@@ -1,6 +1,10 @@
-import HigherRankKUM.Density
-import HigherRankKUM.LowRank.RankTwo.FinitePartition
-import Mathlib.Combinatorics.Matroid.Rank.ENat
+module
+
+public import HigherRankKUM.Density
+public import HigherRankKUM.LowRank.RankTwo.FinitePartition
+public import Mathlib.Combinatorics.Matroid.Rank.ENat
+
+@[expose] public section
 
 namespace HigherRankKUM.RankTwo
 

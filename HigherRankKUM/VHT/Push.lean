@@ -1,4 +1,6 @@
-import HigherRankKUM.VHT.Statement
+module
+
+public import HigherRankKUM.VHT.Statement
 
 /-!
 # Theorem 2.1, step 2: pushes
@@ -13,6 +15,9 @@ by one. When every weight is below `D`:
   the first point of some element of `C` (`exists_start`);
 * every dependent point set contains a pushable element (`exists_pushable`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.VHT
 

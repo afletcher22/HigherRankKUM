@@ -1,4 +1,6 @@
-import HigherRankKUM.VHT.Best
+module
+
+public import HigherRankKUM.VHT.Best
 
 /-!
 # Theorem 2.1, steps 3–4: the push graph and a sink component
@@ -13,6 +15,9 @@ the paper's ordered push sequence.
 * An element never pushed there is *bounded*. By definition it is never pushable in the
   component, which is the paper's Claim 2, and its first point never moves.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.VHT
 

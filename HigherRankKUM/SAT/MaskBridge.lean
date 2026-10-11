@@ -1,4 +1,6 @@
-import HigherRankKUM.SAT.EncBridge
+module
+
+public import HigherRankKUM.SAT.EncBridge
 
 /-!
 # Bitmask ranks and numberings
@@ -7,6 +9,9 @@ Helpers shared by the certificate bridges: a numbering of a finite set of known 
 the set named by a bitmask (`maskRank`), and the fact that a cyclic window of rank `4` in a rank-4
 matroid is a basis.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.SAT
 

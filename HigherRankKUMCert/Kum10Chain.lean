@@ -1,7 +1,9 @@
-import HigherRankKUMCert.Chain10
-import HigherRankKUM.SAT.EncFBridge
-import HigherRankKUM.VHT.Covers
-import HigherRankKUM.VHT.Theorem21
+module
+
+public import HigherRankKUMCert.Chain10
+public import HigherRankKUM.SAT.EncFBridge
+public import HigherRankKUM.VHT.Covers
+public import HigherRankKUM.VHT.Theorem21
 
 /-!
 # Rank-4 KUM on 10 elements from a pair chain
@@ -17,6 +19,9 @@ has a cyclic basis ordering: an orientation of the chain, or of a chain obtained
 one window `P_x ∪ P_{x+1}`. No case analysis on tight sets, dangerous planes or heavy flats is
 needed.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 

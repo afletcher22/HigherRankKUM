@@ -1,4 +1,8 @@
-import HigherRankKUM.BalancedWindow
+module
+
+public import HigherRankKUM.BalancedWindow
+
+@[expose] public section
 
 namespace HigherRankKUM
 

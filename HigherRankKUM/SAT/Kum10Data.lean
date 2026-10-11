@@ -1,4 +1,6 @@
-import HigherRankKUM.SAT.EncF
+module
+
+public import HigherRankKUM.SAT.EncF
 
 /-!
 # Tables and facts of the 10-element claims
@@ -14,6 +16,9 @@ The claims of `lean_witness_f.py` on 10 elements:
 
 An exact rank `(X, r)` gives the facts `r(X) ≥ r` and `r(X) < r + 1` (`factsOfRanks`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.SAT
 

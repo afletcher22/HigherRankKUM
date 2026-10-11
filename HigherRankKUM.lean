@@ -1,60 +1,62 @@
-import HigherRankKUM.BalancedGluing
-import HigherRankKUM.BalancedInterleave
-import HigherRankKUM.BalancedWindow
-import HigherRankKUM.BalancedWindowDecomposition
-import HigherRankKUM.BalancedWindowRight
-import HigherRankKUM.CyclicIndex
-import HigherRankKUM.CyclicOrder
-import HigherRankKUM.Density
-import HigherRankKUM.DivisibleSolver
-import HigherRankKUM.FullSolver
-import HigherRankKUM.GenericGluing
-import HigherRankKUM.LowRank.RankTwo
-import HigherRankKUM.LowRank.RankTwo.FinitePartition
-import HigherRankKUM.LowRank.RankTwo.Indexing
-import HigherRankKUM.LowRank.RankTwo.LargestFirst
-import HigherRankKUM.LowRank.RankTwo.Matroid
-import HigherRankKUM.PeriodicGluing
-import HigherRankKUM.PeriodicWindow
-import HigherRankKUM.Rank4.HitDanger
-import HigherRankKUM.Rank4.HitGeFour
-import HigherRankKUM.Rank4.HitThree
-import HigherRankKUM.Rank4.Hitting
-import HigherRankKUM.Rank4.Kum8
-import HigherRankKUM.Rank4.LemmaH
-import HigherRankKUM.Rank4.LemmaU
-import HigherRankKUM.Rank4.LemmaUBasic
-import HigherRankKUM.Rank4.RationalTightReduction
-import HigherRankKUM.Rank4.SerialExchange
-import HigherRankKUM.Rank4.SixElementBoundary
-import HigherRankKUM.Rank4.TheoremD
-import HigherRankKUM.Rank4.TheoremDCert
-import HigherRankKUM.Rank4.XP.Basic
-import HigherRankKUM.Rank4.XP.Chain
-import HigherRankKUM.Rank4.XP.Insert
-import HigherRankKUM.Rank4.XP.Local
-import HigherRankKUM.Rank4.XP.Main
-import HigherRankKUM.RationalDensity
-import HigherRankKUM.RationalTightFactorReduction
-import HigherRankKUM.RationalTightInduction
-import HigherRankKUM.SAT.Cert
-import HigherRankKUM.SAT.Enc
-import HigherRankKUM.SAT.EncBridge
-import HigherRankKUM.SAT.EncF
-import HigherRankKUM.SAT.EncFBridge
-import HigherRankKUM.SAT.EncSound
-import HigherRankKUM.SAT.Kum10Data
-import HigherRankKUM.SAT.LRATChunked
-import HigherRankKUM.SAT.MaskBridge
-import HigherRankKUM.StrictDensity
-import HigherRankKUM.TightContraction
-import HigherRankKUM.TightFactorReduction
-import HigherRankKUM.TightInduction
-import HigherRankKUM.VHT.Best
-import HigherRankKUM.VHT.Coprime
-import HigherRankKUM.VHT.Core
-import HigherRankKUM.VHT.Covers
-import HigherRankKUM.VHT.Push
-import HigherRankKUM.VHT.Reach
-import HigherRankKUM.VHT.Statement
-import HigherRankKUM.VHT.Theorem21
+module
+
+public import HigherRankKUM.BalancedGluing
+public import HigherRankKUM.BalancedInterleave
+public import HigherRankKUM.BalancedWindow
+public import HigherRankKUM.BalancedWindowDecomposition
+public import HigherRankKUM.BalancedWindowRight
+public import HigherRankKUM.CyclicIndex
+public import HigherRankKUM.CyclicOrder
+public import HigherRankKUM.Density
+public import HigherRankKUM.DivisibleSolver
+public import HigherRankKUM.FullSolver
+public import HigherRankKUM.GenericGluing
+public import HigherRankKUM.LowRank.RankTwo
+public import HigherRankKUM.LowRank.RankTwo.FinitePartition
+public import HigherRankKUM.LowRank.RankTwo.Indexing
+public import HigherRankKUM.LowRank.RankTwo.LargestFirst
+public import HigherRankKUM.LowRank.RankTwo.Matroid
+public import HigherRankKUM.PeriodicGluing
+public import HigherRankKUM.PeriodicWindow
+public import HigherRankKUM.Rank4.HitDanger
+public import HigherRankKUM.Rank4.HitGeFour
+public import HigherRankKUM.Rank4.HitThree
+public import HigherRankKUM.Rank4.Hitting
+public import HigherRankKUM.Rank4.Kum8
+public import HigherRankKUM.Rank4.LemmaH
+public import HigherRankKUM.Rank4.LemmaU
+public import HigherRankKUM.Rank4.LemmaUBasic
+public import HigherRankKUM.Rank4.RationalTightReduction
+public import HigherRankKUM.Rank4.SerialExchange
+public import HigherRankKUM.Rank4.SixElementBoundary
+public import HigherRankKUM.Rank4.TheoremD
+public import HigherRankKUM.Rank4.TheoremDCert
+public import HigherRankKUM.Rank4.XP.Basic
+public import HigherRankKUM.Rank4.XP.Chain
+public import HigherRankKUM.Rank4.XP.Insert
+public import HigherRankKUM.Rank4.XP.Local
+public import HigherRankKUM.Rank4.XP.Main
+public import HigherRankKUM.RationalDensity
+public import HigherRankKUM.RationalTightFactorReduction
+public import HigherRankKUM.RationalTightInduction
+public import HigherRankKUM.SAT.Cert
+public import HigherRankKUM.SAT.Enc
+public import HigherRankKUM.SAT.EncBridge
+public import HigherRankKUM.SAT.EncF
+public import HigherRankKUM.SAT.EncFBridge
+public import HigherRankKUM.SAT.EncSound
+public import HigherRankKUM.SAT.Kum10Data
+public import HigherRankKUM.SAT.LRATChunked
+public import HigherRankKUM.SAT.MaskBridge
+public import HigherRankKUM.StrictDensity
+public import HigherRankKUM.TightContraction
+public import HigherRankKUM.TightFactorReduction
+public import HigherRankKUM.TightInduction
+public import HigherRankKUM.VHT.Best
+public import HigherRankKUM.VHT.Coprime
+public import HigherRankKUM.VHT.Core
+public import HigherRankKUM.VHT.Covers
+public import HigherRankKUM.VHT.Push
+public import HigherRankKUM.VHT.Reach
+public import HigherRankKUM.VHT.Statement
+public import HigherRankKUM.VHT.Theorem21

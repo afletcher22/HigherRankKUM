@@ -1,8 +1,10 @@
-import HigherRankKUMCert.Full
-import HigherRankKUM.Rank4.LemmaH
-import HigherRankKUM.Rank4.HitGeFour
-import HigherRankKUM.Rank4.HitThree
-import HigherRankKUM.VHT.Covers
+module
+
+public import HigherRankKUMCert.Full
+public import HigherRankKUM.Rank4.LemmaH
+public import HigherRankKUM.Rank4.HitGeFour
+public import HigherRankKUM.Rank4.HitThree
+public import HigherRankKUM.VHT.Covers
 
 /-!
 # Rank-4 KUM
@@ -17,6 +19,9 @@ The hitting lemma (`HittingLemma`) comes from:
 
 Together with `solvesKUMAtRank_four_of_hitting`, it gives rank-4 KUM.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 

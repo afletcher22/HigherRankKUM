@@ -1,6 +1,8 @@
-import HigherRankKUM.VHT.Statement
-import HigherRankKUM.FullSolver
-import HigherRankKUM.CyclicOrder
+module
+
+public import HigherRankKUM.VHT.Statement
+public import HigherRankKUM.FullSolver
+public import HigherRankKUM.CyclicOrder
 
 /-!
 # Coprime KUM from Theorem 2.1 (van den Heuvel–Thomassé, Theorem 3.1)
@@ -14,6 +16,9 @@ which every set of elements covering a point is independent. The argument then r
 4. The length-`r` windows of its inverse are arcs of `φ`, so they are independent sets of size
    `r`, that is, bases.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.VHT
 

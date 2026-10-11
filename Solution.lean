@@ -1,4 +1,6 @@
-import HigherRankKUMCert.Final
+module
+
+public import HigherRankKUMCert.Final
 
 /-!
 # Palomar solution
@@ -8,6 +10,9 @@ The same statement surface as `Challenge.lean`, proved from the rank-4 developme
 `UniformlyDenseRatio M |E| 4` and `CyclicBasisOrder M 4 hn σ`; the only translation is
 `|E| = (M.E.ncard : ℕ∞)` for a finite ground set.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.Palomar
 

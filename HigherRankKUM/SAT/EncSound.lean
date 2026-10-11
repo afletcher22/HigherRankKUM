@@ -1,4 +1,6 @@
-import HigherRankKUM.SAT.Enc
+module
+
+public import HigherRankKUM.SAT.Enc
 
 /-!
 # Palomar probe: semantic soundness of the KUM clause witnesses (round 2)
@@ -12,6 +14,9 @@ the regenerated formula shows that no rank model exists.
 Everything here is elementary arithmetic on `ℕ`; the bridge from matroids to `RankModel` is kept
 separate.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.SAT
 

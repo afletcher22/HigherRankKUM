@@ -1,5 +1,7 @@
-import HigherRankKUM.SAT.LRATChunked
-import HigherRankKUM.SAT.EncF
+module
+
+public import HigherRankKUM.SAT.LRATChunked
+public import HigherRankKUM.SAT.EncF
 
 /-!
 # Certificates in bounded memory
@@ -22,6 +24,9 @@ declarations:
   `foo.fmla_eq : (foo.fmla : List (List Sat.Literal)) = foo.ws.map gen` combine the slices along
   the tree.
 -/
+
+@[expose] public meta section
+
 
 namespace HigherRankKUM.SAT
 

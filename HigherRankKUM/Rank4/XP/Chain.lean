@@ -1,5 +1,7 @@
-import HigherRankKUM.Rank4.XP.Basic
-import HigherRankKUM.CyclicOrder
+module
+
+public import HigherRankKUM.Rank4.XP.Basic
+public import HigherRankKUM.CyclicOrder
 
 /-!
 # Pair-chain insertion (XP): cycles and chains
@@ -14,6 +16,9 @@ import HigherRankKUM.CyclicOrder
   `{last B i} ∪ B (i+1) ∪ {first B (i+2)}` is a basis, then reading first, last, first, last, …
   is a cyclic basis ordering of `M`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.XP
 

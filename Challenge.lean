@@ -1,4 +1,6 @@
-import Mathlib.Combinatorics.Matroid.Rank.ENat
+module
+
+public import Mathlib.Combinatorics.Matroid.Rank.ENat
 
 /-!
 # Palomar statement: the Kajitani–Ueno–Miyano conjecture in rank 4
@@ -12,6 +14,9 @@ consecutive elements form a basis. Kajitani, Ueno and Miyano (1988) conjectured 
 uniformly dense matroid has one. This file states the conjecture for matroids of rank 4, with no
 condition on `|E|`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.Palomar
 

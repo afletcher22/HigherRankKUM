@@ -1,6 +1,8 @@
-import HigherRankKUM.Rank4.LemmaU
-import HigherRankKUM.VHT.Covers
-import HigherRankKUM.VHT.Theorem21
+module
+
+public import HigherRankKUM.Rank4.LemmaU
+public import HigherRankKUM.VHT.Covers
+public import HigherRankKUM.VHT.Theorem21
 
 /-!
 # The hitting lemma for `k ≥ 4`
@@ -10,6 +12,9 @@ Van den Heuvel–Thomassé give a double cover of a strict t=0 rank-4 matroid on
 arcs at `φ e` and `φ e + 1`. Reindexed by `Fin (2k+1)`, Lemma U finds a basis among them that
 meets the demands, and so is deletable.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 

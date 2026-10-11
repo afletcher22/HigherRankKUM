@@ -1,5 +1,9 @@
-import HigherRankKUM.PeriodicWindow
-import HigherRankKUM.BalancedGluing
+module
+
+public import HigherRankKUM.PeriodicWindow
+public import HigherRankKUM.BalancedGluing
+
+@[expose] public section
 
 namespace HigherRankKUM
 

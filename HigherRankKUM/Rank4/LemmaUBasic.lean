@@ -1,4 +1,6 @@
-import HigherRankKUM.Rank4.Hitting
+module
+
+public import HigherRankKUM.Rank4.Hitting
 
 /-!
 # Lemma U, part 1: counting infrastructure
@@ -17,6 +19,9 @@ hyperplane), used in the proof of Lemma U (`HigherRankKUM.Rank4.LemmaU`).
   `ncard_add4_le`, `sum_ncard_le`).
 * A basis that does not meet the demands misses some demand flat (`exists_viol`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 namespace Hitting

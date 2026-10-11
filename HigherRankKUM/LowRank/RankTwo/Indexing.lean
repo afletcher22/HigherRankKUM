@@ -1,5 +1,9 @@
-import Mathlib.Logic.Equiv.Fin.Basic
-import Mathlib.Tactic
+module
+
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import Mathlib.Tactic
+
+@[expose] public section
 
 namespace HigherRankKUM.RankTwo
 

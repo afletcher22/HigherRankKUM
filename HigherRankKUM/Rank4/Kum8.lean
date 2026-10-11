@@ -1,6 +1,8 @@
-import HigherRankKUM.Rank4.SerialExchange
-import HigherRankKUM.VHT.Theorem21
-import HigherRankKUM.VHT.Covers
+module
+
+public import HigherRankKUM.Rank4.SerialExchange
+public import HigherRankKUM.VHT.Theorem21
+public import HigherRankKUM.VHT.Covers
 
 /-!
 # KUM(4, 8) from Kotlar–Ziv
@@ -11,6 +13,9 @@ A uniformly dense rank-4 matroid on 8 elements is the disjoint union of two base
 `B = {q₁, q₂, q₃, q₄}` for which every cyclic 4-window of `p₁ p₂ p₃ p₄ q₁ q₂ q₃ q₄` is a basis.
 This proof replaces the SAT certificate `HigherRankKUM.SAT.Kum8.solves`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 

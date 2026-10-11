@@ -1,4 +1,6 @@
-import HigherRankKUM.VHT.Reach
+module
+
+public import HigherRankKUM.VHT.Reach
 
 /-!
 # Theorem 2.1, steps 5–6: the claims and the core case
@@ -17,6 +19,9 @@ component.
 * The core case of Theorem 2.1 (every weight between `1` and `D - 1`) follows by applying the
   induction hypothesis to `M ↾ U` (`core`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.VHT
 

@@ -1,6 +1,8 @@
-import HigherRankKUM.VHT.Core
-import HigherRankKUM.VHT.Coprime
-import HigherRankKUM.TightContraction
+module
+
+public import HigherRankKUM.VHT.Core
+public import HigherRankKUM.VHT.Coprime
+public import HigherRankKUM.TightContraction
 
 /-!
 # Theorem 2.1 of van den Heuvel–Thomassé: the proof
@@ -13,6 +15,9 @@ Strong induction on the size of the ground set.
   loopless, and the element is added back to every point set.
 * Otherwise every weight lies between `1` and `D - 1`, which is the core case (`core`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.VHT
 

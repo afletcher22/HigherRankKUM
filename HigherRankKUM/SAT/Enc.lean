@@ -1,5 +1,7 @@
-import Mathlib.Tactic.Sat.FromLRAT
-import Mathlib.Data.Finset.Card
+module
+
+public import Mathlib.Tactic.Sat.FromLRAT
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Palomar probe: the encoding layer for kernel-checked SAT certificates (round 1)
@@ -22,6 +24,9 @@ Variables follow `experiments/rank4_heavy_flat_splice/lean_witness.py`: DIMACS v
 means `r(X) ≥ v` for a bitmask `X` and `1 ≤ v ≤ 4`, and `from_lrat` shifts every index down by one.
 -/
 
+@[expose] public section
+
+
 namespace HigherRankKUM.SAT
 
 open Lean Elab Command Term Meta
@@ -37,7 +42,7 @@ inductive W where
   | win (s : List ℕ)
 
 /-- Balanced `List.append` tree over `xs[lo:hi]`, so that long lists never nest deeply. -/
-partial def balancedList (ty : Expr) (xs : Array Expr) (lo hi : Nat) : Expr :=
+meta partial def balancedList (ty : Expr) (xs : Array Expr) (lo hi : Nat) : Expr :=
   if hi ≤ lo + 1 then
     mkApp3 (mkConst ``List.cons [Level.zero]) ty xs[lo]! (mkApp (mkConst ``List.nil [Level.zero]) ty)
   else

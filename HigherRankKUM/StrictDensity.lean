@@ -1,4 +1,8 @@
-import HigherRankKUM.RationalDensity
+module
+
+public import HigherRankKUM.RationalDensity
+
+@[expose] public section
 
 namespace HigherRankKUM
 

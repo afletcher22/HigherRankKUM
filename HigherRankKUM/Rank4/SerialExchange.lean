@@ -1,7 +1,9 @@
-import Mathlib.Combinatorics.Matroid.Circuit
-import Mathlib.Combinatorics.Matroid.Rank.ENat
-import Mathlib.Data.Set.Card
-import Mathlib.Tactic
+module
+
+public import Mathlib.Combinatorics.Matroid.Circuit
+public import Mathlib.Combinatorics.Matroid.Rank.ENat
+public import Mathlib.Data.Set.Card
+public import Mathlib.Tactic
 
 /-!
 # Serial symmetric exchanges in rank 4 (Kotlar–Ziv)
@@ -40,6 +42,9 @@ not needed for them. In Case 2 the paper passes to `A'' = A - a₂ + b₁` and r
 we show directly that `(a₂, b₂)` is a symmetric exchange for `A` and `B`. That is the pair the
 paper's re-run produces (`A** = A - a₂ + b₂`, `B** = B - b₂ + a₂`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.KotlarZiv
 

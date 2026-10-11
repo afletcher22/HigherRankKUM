@@ -1,6 +1,8 @@
-import HigherRankKUM.Rank4.LemmaH
-import HigherRankKUM.VHT.Covers
-import HigherRankKUM.VHT.Theorem21
+module
+
+public import HigherRankKUM.Rank4.LemmaH
+public import HigherRankKUM.VHT.Covers
+public import HigherRankKUM.VHT.Theorem21
 
 /-!
 # The hitting lemma at `k = 3` with a heavy flat
@@ -41,6 +43,9 @@ is disjoint from `L`, and there is at most one.
 * So `a` and `b` only need to meet the `3`-points of `L` and one more point. Three such points
   would need `3 + 3 + 1 > 6` elements of `L` (`exists_pair_meeting`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 namespace Hitting

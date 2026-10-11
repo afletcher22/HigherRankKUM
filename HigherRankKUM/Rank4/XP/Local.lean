@@ -1,4 +1,6 @@
-import HigherRankKUM.Rank4.XP.Main
+module
+
+public import HigherRankKUM.Rank4.XP.Main
 
 /-!
 # Pair-chain insertion (XP): the local lemmas
@@ -27,6 +29,9 @@ then `Good` by `good_TT`: its two relations have full support (augmentation), an
 cross. Tightness identifies `X` with `B` in `M/A` and `Y` with `A` in `M/B` (`transfer_last`,
 `transfer_first`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.XP
 

@@ -1,4 +1,6 @@
-import Mathlib.Tactic.Sat.FromLRAT
+module
+
+public import Mathlib.Tactic.Sat.FromLRAT
 
 /-!
 # Kernel-checked LRAT refutations in bounded memory
@@ -18,6 +20,9 @@ It adds the same declarations as `lrat_refutation`: `foo.fmla : Sat.Fmla` and
 
 The proof steps are Mathlib's (`Mathlib.Tactic.Sat.buildProofStep`); only the bookkeeping is new.
 -/
+
+@[expose] public meta section
+
 
 namespace HigherRankKUM.SAT
 

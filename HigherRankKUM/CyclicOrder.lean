@@ -1,6 +1,10 @@
-import HigherRankKUM.CyclicIndex
-import Mathlib.Combinatorics.Matroid.Dual
-import Mathlib.Tactic
+module
+
+public import HigherRankKUM.CyclicIndex
+public import Mathlib.Combinatorics.Matroid.Dual
+public import Mathlib.Tactic
+
+@[expose] public section
 
 namespace HigherRankKUM
 

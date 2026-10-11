@@ -1,10 +1,15 @@
-import HigherRankKUM.SAT.Cert
-import HigherRankKUM.SAT.Kum10Data
+module
+
+public import HigherRankKUM.SAT.Cert
+public import HigherRankKUM.SAT.Kum10Data
 
 /-! KUM(4,10) from a pair chain: no rank model on 10 positions in which the five sets
 `P_i ∪ P_{i+1}` (`P_i = {2i, 2i+1}`, positions mod 10) are bases avoids every orientation of the
 chain and of the chains obtained by re-splitting one window `P_x ∪ P_{x+1}` into two other pairs.
 Certificate: `lean_witness_f.py chain10` (14.7k hints). -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.SAT.Chain10
 

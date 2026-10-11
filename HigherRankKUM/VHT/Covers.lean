@@ -1,4 +1,6 @@
-import HigherRankKUM.VHT.Coprime
+module
+
+public import HigherRankKUM.VHT.Coprime
 
 /-!
 # Constant-weight covers from Theorem 2.1: Edmonds' partition and double covers
@@ -10,6 +12,9 @@ lies in exactly `w` of them.
 * `w = 1`, `D = k`: Edmonds' partition of a set of `k·r(M)` elements into `k` bases (Theorem D).
 * `w = 2`, `D = 2k+1`, `|E| = 4k+2`, rank 4: the double covers used by Lemma U.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.VHT
 

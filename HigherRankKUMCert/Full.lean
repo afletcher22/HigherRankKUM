@@ -1,10 +1,12 @@
-import HigherRankKUM.Rank4.TheoremDCert
-import HigherRankKUMCert.Kum10Chain
-import HigherRankKUM.Rank4.SixElementBoundary
-import HigherRankKUM.Rank4.Hitting
-import HigherRankKUM.Rank4.RationalTightReduction
-import HigherRankKUM.Rank4.HitDanger
-import HigherRankKUM.VHT.Theorem21
+module
+
+public import HigherRankKUM.Rank4.TheoremDCert
+public import HigherRankKUMCert.Kum10Chain
+public import HigherRankKUM.Rank4.SixElementBoundary
+public import HigherRankKUM.Rank4.Hitting
+public import HigherRankKUM.Rank4.RationalTightReduction
+public import HigherRankKUM.Rank4.HitDanger
+public import HigherRankKUM.VHT.Theorem21
 
 /-!
 # Rank-4 KUM, given the hitting lemma
@@ -25,6 +27,9 @@ The proof is by strong induction on `n`:
     induction `M \ S` has a cyclic basis ordering, and pair-chain insertion
     (`XP.rank4Extension_of_even`) extends it to `M`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 

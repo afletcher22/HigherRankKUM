@@ -1,5 +1,9 @@
-import Mathlib.Tactic
-import Mathlib.Data.Nat.ModEq
+module
+
+public import Mathlib.Tactic
+public import Mathlib.Data.Nat.ModEq
+
+@[expose] public section
 
 namespace HigherRankKUM
 

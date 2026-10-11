@@ -1,4 +1,8 @@
-import HigherRankKUM.TightContraction
+module
+
+public import HigherRankKUM.TightContraction
+
+@[expose] public section
 
 namespace HigherRankKUM
 

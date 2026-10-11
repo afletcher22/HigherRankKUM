@@ -1,6 +1,10 @@
-import HigherRankKUM.LowRank.RankTwo
-import HigherRankKUM.RationalDensity
-import Mathlib.Combinatorics.Matroid.Dual
+module
+
+public import HigherRankKUM.LowRank.RankTwo
+public import HigherRankKUM.RationalDensity
+public import Mathlib.Combinatorics.Matroid.Dual
+
+@[expose] public section
 
 namespace HigherRankKUM
 namespace Rank4

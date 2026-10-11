@@ -1,5 +1,7 @@
-import HigherRankKUM.VHT.Theorem21
-import HigherRankKUM.VHT.Covers
+module
+
+public import HigherRankKUM.VHT.Theorem21
+public import HigherRankKUM.VHT.Covers
 
 /-!
 # Theorem D: rank-4 KUM on `4k` elements
@@ -16,6 +18,9 @@ Let `M` be a uniformly dense rank-4 matroid on `4k` elements.
 Both inputs are finite statements: SAT-certified in the research ledger (`RANK4_EXTENSION_THEOREM.md`
 §§2–3), or, for `k = 2`, a consequence of Kotlar–Ziv.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 

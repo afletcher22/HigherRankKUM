@@ -1,5 +1,9 @@
-import HigherRankKUM.BalancedWindowDecomposition
-import Mathlib.Combinatorics.Matroid.Minor.Contract
+module
+
+public import HigherRankKUM.BalancedWindowDecomposition
+public import Mathlib.Combinatorics.Matroid.Minor.Contract
+
+@[expose] public section
 
 namespace HigherRankKUM
 

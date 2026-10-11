@@ -1,6 +1,10 @@
-import HigherRankKUM.GenericGluing
-import Mathlib.Logic.Equiv.Sum
-import Mathlib.Tactic
+module
+
+public import HigherRankKUM.GenericGluing
+public import Mathlib.Logic.Equiv.Sum
+public import Mathlib.Tactic
+
+@[expose] public section
 
 namespace HigherRankKUM
 

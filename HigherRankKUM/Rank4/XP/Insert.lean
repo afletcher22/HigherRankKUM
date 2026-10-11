@@ -1,6 +1,8 @@
-import HigherRankKUM.Rank4.XP.Local
-import HigherRankKUM.Rank4.XP.Chain
-import HigherRankKUM.Rank4.TheoremD
+module
+
+public import HigherRankKUM.Rank4.XP.Local
+public import HigherRankKUM.Rank4.XP.Chain
+public import HigherRankKUM.Rank4.TheoremD
 
 /-!
 # Pair-chain insertion (XP): the rank-4 extension theorem for even `N ≥ 8`
@@ -25,6 +27,9 @@ relations `R_{i+r}` for `i + 2 < m`, and the four local windows `Wa, Wb, Wc, Wd`
 `cbo_of_chain` turns the oriented new chain into a cyclic basis ordering of `M`
 (`rank4Extension_of_even`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.XP
 

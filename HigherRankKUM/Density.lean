@@ -1,6 +1,10 @@
-import Mathlib.Combinatorics.Matroid.Rank.ENat
-import Mathlib.Combinatorics.Matroid.Closure
-import Mathlib.Tactic
+module
+
+public import Mathlib.Combinatorics.Matroid.Rank.ENat
+public import Mathlib.Combinatorics.Matroid.Closure
+public import Mathlib.Tactic
+
+@[expose] public section
 
 namespace HigherRankKUM
 

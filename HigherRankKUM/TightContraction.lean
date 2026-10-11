@@ -1,6 +1,10 @@
-import HigherRankKUM.Density
-import Mathlib.Combinatorics.Matroid.Minor.Contract
-import Mathlib.Tactic
+module
+
+public import HigherRankKUM.Density
+public import Mathlib.Combinatorics.Matroid.Minor.Contract
+public import Mathlib.Tactic
+
+@[expose] public section
 
 namespace HigherRankKUM
 

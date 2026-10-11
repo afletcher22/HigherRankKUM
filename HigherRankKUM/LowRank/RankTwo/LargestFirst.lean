@@ -1,4 +1,8 @@
-import HigherRankKUM.LowRank.RankTwo.Indexing
+module
+
+public import HigherRankKUM.LowRank.RankTwo.Indexing
+
+@[expose] public section
 
 namespace HigherRankKUM.RankTwo
 

@@ -1,6 +1,8 @@
-import HigherRankKUM.Rank4.LemmaH
-import HigherRankKUM.VHT.Covers
-import HigherRankKUM.VHT.Theorem21
+module
+
+public import HigherRankKUM.Rank4.LemmaH
+public import HigherRankKUM.VHT.Covers
+public import HigherRankKUM.VHT.Theorem21
 
 /-!
 # The hitting lemma with a dangerous plane
@@ -32,6 +34,9 @@ Let `C = E - P`, which has `k+1` elements.
   its part in `P` lies in `P - D x`, the rest in `C₀`, and only `X ⊇ C₀` at rank 3 needs the
   choice of `x`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 namespace Hitting

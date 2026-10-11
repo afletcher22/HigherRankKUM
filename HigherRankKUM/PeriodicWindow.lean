@@ -1,4 +1,8 @@
-import HigherRankKUM.BalancedWindowDecomposition
+module
+
+public import HigherRankKUM.BalancedWindowDecomposition
+
+@[expose] public section
 
 namespace HigherRankKUM
 

@@ -1,6 +1,8 @@
-import HigherRankKUM.Rank4.TheoremD
-import HigherRankKUM.Rank4.Kum8
-import HigherRankKUM.Rank4.XP.Insert
+module
+
+public import HigherRankKUM.Rank4.TheoremD
+public import HigherRankKUM.Rank4.Kum8
+public import HigherRankKUM.Rank4.XP.Insert
 
 /-!
 Theorem D with its 8-element input discharged by Kotlar–Ziv (`HigherRankKUM.Rank4.Kum8`, a human proof,
@@ -10,6 +12,9 @@ The extension theorem on `4k` elements (`k ≥ 2`) is pair-chain insertion
 (`XP.rank4Extension_of_even`, a human proof, no certificate), so divisible rank-4 KUM holds with
 no hypotheses (`solvesDivisibleKUMAtRank_four_xp`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 

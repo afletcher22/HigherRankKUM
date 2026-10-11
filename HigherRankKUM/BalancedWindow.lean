@@ -1,4 +1,8 @@
-import HigherRankKUM.BalancedInterleave
+module
+
+public import HigherRankKUM.BalancedInterleave
+
+@[expose] public section
 
 namespace HigherRankKUM
 

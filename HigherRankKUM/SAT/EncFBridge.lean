@@ -1,6 +1,8 @@
-import HigherRankKUM.SAT.Kum10Data
-import HigherRankKUM.SAT.MaskBridge
-import HigherRankKUM.Rank4.Hitting
+module
+
+public import HigherRankKUM.SAT.Kum10Data
+public import HigherRankKUM.SAT.MaskBridge
+public import HigherRankKUM.Rank4.Hitting
 
 /-!
 # From matroids to `RankModelF`: the 10-element claims
@@ -18,6 +20,9 @@ names it. The results are:
 * `cbo_of_baseLine`: the same with a 4-element flat line;
 * `cbo_of_light`: the same in the strict t=0 class with no 6-plane and no 4-line.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.SAT
 

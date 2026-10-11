@@ -1,4 +1,6 @@
-import HigherRankKUM.SAT.EncSound
+module
+
+public import HigherRankKUM.SAT.EncSound
 
 /-!
 # Encoding layer for KUM-type claims with side conditions
@@ -16,6 +18,9 @@ windows. The 10-element claims behind rank-4 KUM on 10 elements
 ordering. A kernel-checked refutation of a formula regenerated from valid witnesses shows that no
 such model exists (`no_modelF`).
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.SAT
 

@@ -1,4 +1,6 @@
-import HigherRankKUM.VHT.Push
+module
+
+public import HigherRankKUM.VHT.Push
 
 /-!
 # Theorem 2.1, step 1: best mappings
@@ -10,6 +12,9 @@ applied to a best mapping keeps every closure unchanged and gives another best m
 
 Also: with every weight at most `D`, the point sets have total size `Σ_e ω e`.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM.VHT
 

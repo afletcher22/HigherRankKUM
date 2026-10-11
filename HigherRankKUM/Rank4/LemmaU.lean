@@ -1,4 +1,6 @@
-import HigherRankKUM.Rank4.LemmaUBasic
+module
+
+public import HigherRankKUM.Rank4.LemmaUBasic
 
 /-!
 # Lemma U: some basis of every double cover meets the demands
@@ -35,6 +37,9 @@ Suppose not, and choose for each `i` a demand flat `F i` of rank `ρ i` that `B 
 This is the argument of `docs/research-ledger/RANK4_EXTENSION_THEOREM.md` ("Lemma U"), with the
 budget step sharpened so that the cases `m = 5, 6` at `k = 4` need no separate treatment.
 -/
+
+@[expose] public section
+
 
 namespace HigherRankKUM
 namespace Hitting
