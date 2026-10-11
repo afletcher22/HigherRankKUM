@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
-# DRY-RUN DRAFT. Fields marked TODO(owner) record facts only the maintainer can confirm
-# (authorship, AI roles, review status, manuscript). Confirm them before a real submission.
 version: "v0.4"
 
 project:
@@ -19,17 +17,17 @@ project:
     kernel-checked SAT certificate (14,738 LRAT hints) for ten-element pair
     chains.
   authors:
-    - "Austen Fletcher"  # TODO(owner): confirm
+    - "Austen Fletcher"
   license: "MIT"
   responsible_maintainers:
-    - "Austen Fletcher"  # TODO(owner): confirm
+    - "Austen Fletcher"
 
 classification:
   arxiv: ["math.CO"]
   msc2020: ["05B35", "68V20"]
 
 sources:
-  - title: "The Kajitani-Ueno-Miyano conjecture in rank four"  # TODO(owner): manuscript title
+  - title: "The Kajitani-Ueno-Miyano conjecture in rank four"
     authors:
       - "Austen Fletcher"
     type: "original-proof"
@@ -114,7 +112,7 @@ status:
 automation:
   methods:
     - method: "copilot"
-      models: ["GPT-5.6 Sol", "GPT-6 (Astra)", "Claude Opus 5.5"]  # TODO(owner): confirm
+      models: ["GPT-5.6 Sol", "GPT-6 (Astra)", "Claude Opus 5.5"]
       framework: "interactive model interfaces with Lean 4"
       tool_setup: >-
         Human-directed AI-assisted proof development and Lean formalization,
@@ -146,7 +144,7 @@ fidelity:
   divergences: "No known divergence from the rank-four Kajitani-Ueno-Miyano statement."
 
 review:
-  status: "unreviewed"  # TODO(owner): confirm
+  status: "unreviewed"
   reviewers: []
   notes: "No independent review is claimed for the rank-four development yet."
 
@@ -159,4 +157,4 @@ alignment:
       status: "proved"
       note: >-
         Solution.lean is a thin wrapper around HigherRankKUM.solvesKUMAtRank_four
-        in probes/Probe/Rank4/Final.lean.
+        in HigherRankKUMCert/Final.lean.

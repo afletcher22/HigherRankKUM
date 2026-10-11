@@ -1,0 +1,26 @@
+name: Palomar preflight
+
+# Predictive mechanical preflight: Palomar's own reusable verifier, pinned to a full
+# PalomarSubmission commit, on the GitHub-hosted palomar-standard-v1 profile (smaller than the
+# production 16x32 runner, same 19,800 s budget). Advisory only; it is not a registry submission.
+
+on:
+  push:
+    branches:
+      - 'palomar/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  palomar:
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@d4e41c1d5b0d114c4859e6e5831dc6d3ad1d0d44
+    with:
+      repository: ${{ github.repository }}
+      commit: ${{ github.sha }}
+      pipeline_commit: d4e41c1d5b0d114c4859e6e5831dc6d3ad1d0d44
+      request_id: kumr4pre0001
+      mode: full
+      execution_profile: palomar-standard-v1
+      options: '{"comparator_config_path":"comparator.json","authorization_relationship":"I am a responsible author or maintainer"}'
