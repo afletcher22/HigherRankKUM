@@ -337,7 +337,7 @@ theorem plane_eq (h : StrictT0 M 3) {L F : Set α} (hL : SixLine M L) {x y : α}
     (hFf : M.IsFlat F) (hFr : M.eRk F = 3) (hxF : x ∉ F) (hyF : y ∉ F)
     (hF6 : (F \ L).ncard = 6) : F = M.closure ((M.E \ L) \ {x, y}) := by
   have hFE := hFf.subset_ground
-  have hWE : (M.E \ L) \ {x, y} ⊆ M.E := diff_subset.trans diff_subset
+  have hWE : (M.E \ L) \ {x, y} ⊆ M.E := Set.sdiff_subset.trans Set.sdiff_subset
   have hWfin : ((M.E \ L) \ {x, y}).Finite := h.finite.subset hWE
   have hxW : x ∉ (M.E \ L) \ {x, y} := fun hx => hx.2 (mem_insert x _)
   have hyW : y ∉ (M.E \ L) \ {x, y} := fun hy => hy.2 (mem_insert_of_mem x (mem_singleton y))
@@ -352,7 +352,7 @@ theorem plane_eq (h : StrictT0 M 3) {L F : Set α} (hL : SixLine M L) {x y : α}
   have hEq : F \ L = (M.E \ L) \ {x, y} := Set.eq_of_subset_of_ncard_le hFW (by omega) hWfin
   have hWF : (M.E \ L) \ {x, y} ⊆ F := by
     rw [← hEq]
-    exact diff_subset
+    exact Set.sdiff_subset
   have hWn : ((M.E \ L) \ {x, y}).ncard = 6 := by
     rw [← hEq]
     exact hF6
@@ -533,7 +533,7 @@ theorem hitLine (h : StrictT0 M 3) {L : Set α} (hLf : M.IsFlat L) (hLr : M.eRk 
     have hQ3 := ncard_le_three_mul h (inter_subset_left.trans hLE) (j := 1)
       (by rw [hi]; exact_mod_cast (show i ≤ 1 by omega)) (by norm_num)
     have hFL6 := ncard_le_six_avoid h hL hxE hyE hxL hyL (Ne.symm hyx)
-      (diff_subset.trans hFE) Set.disjoint_sdiff_left (fun hx => hxF hx.1) (fun hy => hyF hy.1)
+      (Set.sdiff_subset.trans hFE) Set.disjoint_sdiff_left (fun hx => hxF hx.1) (fun hy => hyF hy.1)
     have hsplit : (L ∩ F).ncard + (F \ L).ncard = F.ncard := by
       rw [Set.inter_comm]
       exact Set.ncard_inter_add_ncard_sdiff_eq_ncard F L hFfin
@@ -574,8 +574,9 @@ theorem ncard_inter_le_four (h : StrictT0 M 3) {K F : Set α} (hKE : K ⊆ M.E)
   have hFn := ncard_le_three_mul h hFE (j := 3) (by exact_mod_cast hFr.le) le_rfl
   have hdisj : Disjoint (F ∩ K) (M.E \ K) := Set.disjoint_left.2 fun _ hz hz' => hz'.2 hz.2
   have hU := Set.ncard_union_eq hdisj (h.finite.subset (inter_subset_left.trans hFE))
-    (h.finite.subset diff_subset)
-  have hle := Set.ncard_le_ncard (union_subset inter_subset_left hCF) (h.finite.subset hFE)
+    (h.finite.subset Set.sdiff_subset)
+  have hle := Set.ncard_le_ncard (union_subset (inter_subset_left : F ∩ K ⊆ F) hCF)
+    (h.finite.subset hFE)
   have hCn := ncard_diff_nine h hKE hKn
   omega
 
@@ -609,7 +610,7 @@ theorem inter_subset_closure_compl (h : StrictT0 M 3) {K F G : Set α} (hKE : K 
     (hKn : K.ncard = 9) (hF : M.IsFlat F) (hFr : M.eRk F = 3) (hG : M.IsFlat G)
     (hGr : M.eRk G = 3) (hFG : F ≠ G) (hCF : M.E \ K ⊆ F) (hCG : M.E \ K ⊆ G) :
     F ∩ G ⊆ M.closure (M.E \ K) ∧ (M.closure (M.E \ K) ∩ K).ncard ≤ 1 := by
-  have hCE : M.E \ K ⊆ M.E := diff_subset
+  have hCE : M.E \ K ⊆ M.E := Set.sdiff_subset
   have hCn := ncard_diff_nine h hKE hKn
   obtain ⟨i, hi, hi3⟩ := exists_eRk_inter_lt_of_ne h hF hG (j := 3) (by exact_mod_cast hFr)
     (by exact_mod_cast hGr) hFG
@@ -635,8 +636,9 @@ theorem inter_subset_closure_compl (h : StrictT0 M 3) {K F G : Set α} (hKE : K 
     Set.disjoint_left.2 fun _ hz hz' => hz'.2 hz.2
   have hU := Set.ncard_union_eq hdisj (h.finite.subset (inter_subset_left.trans hclE))
     (h.finite.subset hCE)
-  have hle := Set.ncard_le_ncard (union_subset inter_subset_left (M.subset_closure _ hCE))
-    (h.finite.subset hclE)
+  have hle := Set.ncard_le_ncard
+    (union_subset (inter_subset_left : M.closure (M.E \ K) ∩ K ⊆ M.closure (M.E \ K))
+      (M.subset_closure _ hCE)) (h.finite.subset hclE)
   omega
 
 /-- Two subsets of a `3`-element set with at least `2` elements each meet. -/
@@ -725,7 +727,7 @@ theorem exists_c (h : StrictT0 M 3) {K : Set α} (hKf : M.IsFlat K) (hKn : K.nca
     ∃ c ∈ M.E, c ∉ K ∧ (∀ Y ⊆ (M.E \ K) \ {c}, M.eRk Y ≤ 1 → Y.ncard ≤ 2) ∧
       M.E \ K ⊆ M.closure ((M.E \ K) \ {c}) := by
   have hKE := hKf.subset_ground
-  have hCE : M.E \ K ⊆ M.E := diff_subset
+  have hCE : M.E \ K ⊆ M.E := Set.sdiff_subset
   have hCfin : (M.E \ K).Finite := h.finite.subset hCE
   have hCn := ncard_diff_nine h hKE hKn
   by_cases hQ : ∃ Q ⊆ M.E \ K, M.eRk Q ≤ 1 ∧ 3 ≤ Q.ncard
@@ -744,7 +746,7 @@ theorem exists_c (h : StrictT0 M 3) {K : Set α} (hKf : M.IsFlat K) (hKn : K.nca
     refine ⟨c, hcC.1, hcC.2, ?_, ?_⟩
     · intro Y hY hYr
       by_contra hbig
-      have hYC : Y ⊆ M.E \ K := hY.trans diff_subset
+      have hYC : Y ⊆ M.E \ K := hY.trans Set.sdiff_subset
       have hYfin : Y.Finite := hCfin.subset hYC
       have hcY : c ∉ Y := fun hcY => (hY hcY).2 (mem_singleton c)
       by_cases hmeet : (Y ∩ Q).Nonempty
@@ -767,7 +769,7 @@ theorem exists_c (h : StrictT0 M 3) {K : Set α} (hKf : M.IsFlat K) (hKn : K.nca
         omega
     · have hc'C0 : c' ∈ (M.E \ K) \ {c} :=
         ⟨hQC hc'Q, fun h' => hc'c (Set.mem_singleton_iff.1 h')⟩
-      have hC0E : (M.E \ K) \ {c} ⊆ M.E := diff_subset.trans hCE
+      have hC0E : (M.E \ K) \ {c} ⊆ M.E := Set.sdiff_subset.trans hCE
       have hccl : c ∈ M.closure ((M.E \ K) \ {c}) :=
         M.closure_subset_closure (singleton_subset_iff.2 hc'C0)
           (subset_closure_singleton_of_le_one h (hQC.trans hCE) hQr hc'Q hcQ)
@@ -789,7 +791,7 @@ theorem exists_c (h : StrictT0 M 3) {K : Set α} (hKf : M.IsFlat K) (hKn : K.nca
       omega
     obtain ⟨c, hcC, hcI⟩ := Set.not_subset.1 hnot
     refine ⟨c, hcC.1, hcC.2, fun Y hY hYr => ?_, ?_⟩
-    · have := hQ Y (hY.trans diff_subset) hYr
+    · have := hQ Y (hY.trans Set.sdiff_subset) hYr
       omega
     · have hIC0 : I ⊆ (M.E \ K) \ {c} := fun z hz =>
         ⟨hI.subset hz, fun h' => hcI (by rw [← Set.mem_singleton_iff.1 h']; exact hz)⟩
@@ -817,12 +819,12 @@ theorem deletable_of_choice (h : StrictT0 M 3) {K Da Db De : Set α} {c : α} (h
   have hCn := ncard_diff_nine h hKE hKn
   have hcC : c ∈ M.E \ K := ⟨hcE, hcK⟩
   have hC0n : ((M.E \ K) \ {c}).ncard = 4 := by
-    have := Set.ncard_sdiff_singleton_add_one hcC (hfin diff_subset)
+    have := Set.ncard_sdiff_singleton_add_one hcC (hfin Set.sdiff_subset)
     omega
-  have hC0fin : ((M.E \ K) \ {c}).Finite := hfin (diff_subset.trans diff_subset)
+  have hC0fin : ((M.E \ K) \ {c}).Finite := hfin (Set.sdiff_subset.trans Set.sdiff_subset)
   refine ⟨hSbase, fun X hX => ?_⟩
   have hXS : X ⊆ M.E \ insert c De := hX
-  have hXE : X ⊆ M.E := hXS.trans diff_subset
+  have hXE : X ⊆ M.E := hXS.trans Set.sdiff_subset
   have hXfin : X.Finite := hfin hXE
   rw [Matroid.restrict_eRk_eq M hXS]
   obtain ⟨j, hj, hj4⟩ := h.exists_eRk_eq X
@@ -848,12 +850,12 @@ theorem deletable_of_choice (h : StrictT0 M 3) {K Da Db De : Set α} {c : α} (h
   have hw1 : j ≤ 1 → (X \ K).ncard ≤ 2 := by
     intro hj1
     refine hpt (X \ K) hXC ?_
-    have h1 : M.eRk (X \ K) ≤ (j : ℕ∞) := (M.eRk_mono diff_subset).trans hj.le
+    have h1 : M.eRk (X \ K) ≤ (j : ℕ∞) := (M.eRk_mono Set.sdiff_subset).trans hj.le
     exact h1.trans (by exact_mod_cast hj1)
   by_cases hXsubK : X ⊆ K
   · -- `|X| ≤ 2j`
     have hw0 : (X \ K).ncard = 0 := by
-      rw [Set.diff_eq_empty.2 hXsubK, Set.ncard_empty]
+      rw [Set.sdiff_eq_empty.2 hXsubK, Set.ncard_empty]
     have hu := indep_inter_ncard_le h hDa (Y := X ∩ K)
       ((M.eRk_mono inter_subset_left).trans hj.le)
     have hv := indep_inter_ncard_le h hDb (Y := X ∩ K)
@@ -868,7 +870,7 @@ theorem deletable_of_choice (h : StrictT0 M 3) {K Da Db De : Set α} {c : α} (h
       Set.eq_of_subset_of_ncard_le hXC (by omega) hC0fin
     have hC0X : (M.E \ K) \ {c} ⊆ X := by
       rw [← hXCeq]
-      exact diff_subset
+      exact Set.sdiff_subset
     have hCcl : M.E \ K ⊆ M.closure X := hcl.trans (M.closure_subset_closure hC0X)
     have hclE := M.closure_subset_ground X
     interval_cases j
@@ -880,9 +882,11 @@ theorem deletable_of_choice (h : StrictT0 M 3) {K Da Db De : Set α} {c : α} (h
         (by rw [M.eRk_closure_eq]; exact_mod_cast hj.le) (by norm_num)
       have hdisj : Disjoint (X ∩ K) (M.E \ K) :=
         Set.disjoint_left.2 fun _ hz hz' => hz'.2 hz.2
-      have hU := Set.ncard_union_eq hdisj (hfin (inter_subset_left.trans hXE)) (hfin diff_subset)
+      have hU := Set.ncard_union_eq hdisj (hfin (inter_subset_left.trans hXE))
+        (hfin Set.sdiff_subset)
       have hle := Set.ncard_le_ncard
-        (union_subset (inter_subset_left.trans (M.subset_closure X hXE)) hCcl) (hfin hclE)
+        (union_subset ((inter_subset_left : X ∩ K ⊆ X).trans (M.subset_closure X hXE)) hCcl)
+        (hfin hclE)
       omega
     · -- rank `3`: `cl(X)` is a plane `≠ K` through `C`
       have hFr : M.eRk (M.closure X) = 3 := by
