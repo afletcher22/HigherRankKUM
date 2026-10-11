@@ -77,11 +77,11 @@ import sys
 # --- module tables (probe module suffix -> new module name) ---------------------------------
 
 # SAT encoding layer -> HigherRankKUM/SAT/
-SAT = ["Enc", "EncSound", "EncBridge", "ExtEnc", "ExtBridge", "EncF", "EncFBridge", "EncH",
-       "LRATChunked", "Cert", "Kum10Data"]
+SAT = ["Enc", "EncSound", "EncBridge", "MaskBridge", "EncF", "EncFBridge", "LRATChunked", "Cert",
+       "Kum10Data"]
 # rank-4 paper lemmas -> HigherRankKUM/Rank4/
 RANK4 = ["TheoremD", "Hitting", "LemmaH", "LemmaUBasic", "LemmaU", "SerialExchange", "Kum8",
-         "HitGeFour", "HitThree", "TheoremDCert"]
+         "HitGeFour", "HitThree", "HitDanger", "TheoremDCert"]
 # pair-chain insertion (XP) -> HigherRankKUM/Rank4/XP/
 XP = ["Basic", "Main", "Local", "Chain", "Insert"]
 # certificates and assembly -> HigherRankKUMCert/ (not a default target)

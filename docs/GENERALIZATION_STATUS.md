@@ -25,9 +25,6 @@ Each formalized result is also labelled by location and by method.
   - *probe/rank4*: modules under `probes/Probe/` on branch `probe/rank4` (local worktree
     `../probe-worktree`). They import the main library but are not part of it. Only the
     `probe.yml` workflow builds them.
-  - *probe/hit14-human*: `probe/rank4` plus human proofs of the two `k = 3` hitting cases
-    (`probes/Probe/Rank4/HitThree.lean`), without the certificates `hit14g` and `hit14line`. It is
-    three commits ahead of `probe/rank4` and can be fast-forwarded into it.
 - **How.**
   - *Human*: an ordinary Lean proof.
   - *Certificate*: a kernel-checked SAT certificate. It has three parts:
@@ -51,7 +48,7 @@ Palomar axiom set.
 | 1 | divisible KUM | formalized internal | main | human |
 | 2 | divisible KUM, and KUM at odd sizes | formalized internal | main | human |
 | 3 | full KUM | formalized internal | main | human (vendored Rank3KUM plus vHT) |
-| 4 | full KUM | formalized internal | probe/hit14-human | human plus 1 certificate (`chain10`, 14.7k hints) |
+| 4 | full KUM | formalized internal | probe/rank4 | human plus 1 certificate (`chain10`, 14.7k hints) |
 | 4 | extension theorem X′ for every even `N ≥ 8`, by pair-chain insertion (XP) | formalized internal | probe/rank4 (`probes/Probe/XP/`) | human, no certificates |
 | 5 | KUM(5,10) | literature (SAT) and our own SAT run | none | computational evidence |
 | 5 | KUM(5,5k) for `k ≥ 3` | research target | none | none |
@@ -117,24 +114,28 @@ The earlier statement that HigherRankKUM has no formalization of the van den Heu
 coprime theorem, so that odd-size rank-2 instances appear as explicit hypotheses, is **obsolete**.
 No axiom and no live external Rank3KUM dependency is used.
 
-## Rank 4: full KUM, kernel-checked on `probe/hit14-human`
+## Rank 4: full KUM, kernel-checked on `probe/rank4`
 
 **Theorem.** `HigherRankKUM.solvesKUMAtRank_four : SolvesKUMAtRank α 4`
 (`probes/Probe/Rank4/Final.lean`): every finite uniformly dense rank-4 matroid has a cyclic basis
 ordering. It depends on the axioms `[propext, Classical.choice, Quot.sound]` only.
 
-**Verification.** Workflow "Palomar kernel probe", run 38101498074, on commit af49194 (the head of
-`probe/hit14-human`), 2026-10-10: success. The certificate version on `probe/rank4` (run
-36345894127, commit 0eab7cd, 2026-09-27) and the earlier run with the X′ certificates
-(36223257829, commit a4ead33, 2026-09-26) also succeeded.
+**Verification.** Workflow "Palomar kernel probe", run 38105176177, on commit 9860df7 (the head of
+`probe/rank4`), 2026-10-10: success. Earlier versions also succeeded: with the human `k = 3`
+hitting cases and the dangerous-schedule branch (run 38101498074, commit af49194), with the
+`hit14` certificates (run 36345894127, commit 0eab7cd, 2026-09-27), and with the X′ certificates
+(run 36223257829, commit a4ead33, 2026-09-26).
+
+**Size.** The import closure of `Probe.Rank4.Final` has 64 modules and 13,277 lines, and does not
+use the vendored rank-3 theorem (it had 134 modules and 31,793 lines before the changes recorded
+in `docs/research-ledger/PROOF_ARCHEOLOGY.md`).
 
 - The run builds the heavy modules one at a time, then `Probe.Rank4.Final`.
 - It replays `Probe.Rank4.Final` with `leanchecker`, and fails if `ofReduceBool`, `sorryAx` or
   `trustCompiler` appears.
-- Resources on the GitHub runner (4 vCPU, 16 GB), run 38101498074: the whole job takes about
-  7 minutes. The slowest step is the final `lake build Probe.Rank4.Final` (3 minutes, which also
-  builds the main-library dependencies), and peak memory is 3.4 GB. The run with the X′
-  certificates took 33 minutes and 12.8 GB, and `Hit14Line` alone took 11 minutes.
+- Resources on the GitHub runner (4 vCPU, 16 GB), run 38105176177: the whole job takes under
+  5 minutes and peak memory is 3.4 GB (`XP.Insert`, 52 s). The run with the X′ certificates took
+  33 minutes and 12.8 GB, and `Hit14Line` alone took 11 minutes.
 - For comparison, the Palomar runner has 16 cores, 32 GB and a budget of 19,800 s.
 
 ### Proof structure
@@ -150,13 +151,13 @@ The proof is a strong induction on `n = |E|` (`solvesKUMAtRank_four_of_hitting`,
 | 6 | duality with rank-2 KUM (`Rank4.exists_cyclicBasisOrder_of_rank_four_six`) | main: `Rank4/SixElementBoundary.lean` | human |
 | 8 | Kotlar–Ziv: two disjoint bases of a rank-4 matroid have a full serial symmetric exchange (`KotlarZiv.serial_exchange_rank_four`, `solvesKUMAtRankSize_four_eight`) | probe/rank4: `Rank4/SerialExchange.lean`, `Rank4/Kum8.lean` | human |
 | 10 | vHT with weight 2 on `ℤ/5` has fibres of size 2, so `E` is a chain of five pairs with every `P_i ∪ P_{i+1}` a basis. Certificate `chain10`: some orientation of the chain, or of a chain re-split at one window, is a CBO (`solvesKUMAtRankSize_four_ten_of_pairChain`). | probe/rank4: `Chain10.lean`, `Rank4/Kum10Chain.lean` | human plus certificate (14,738 hints) |
-| `4k+2`, `k ≥ 3`, with a nonempty proper tight set | rational tight reduction; its rank-2 input at odd size `2k+1` comes from coprime KUM (`exists_cyclicBasisOrder_of_rank_four_gcd_two_of_nonempty_proper_tight'`) | main: `Rank4/Unconditional.lean` | human |
-| `4k+2`, `k ≥ 3`, strict, with a dangerous plane | dangerous-hyperplane schedule; its rank-3 input comes from `solvesKUMAtRank_three` (`Rank4DangerousBranches.exists_cbo_of_dangerous_hyperplane'`) | main: `Rank4/Unconditional.lean` | human |
+| `4k+2`, `k ≥ 3`, with a nonempty proper tight set | rational tight reduction (`exists_cyclicBasisOrder_of_rank_four_gcd_two_of_nonempty_proper_tight`); its rank-2 input at odd size `2k+1` is coprime KUM, passed in `Full.lean` | main: `Rank4/RationalTightReduction.lean` | human |
+| `4k+2`, `k ≥ 3`, strict, with a dangerous plane | Lemma D (`Hitting.hitDanger`) gives a basis `S` with `M∖S` uniformly dense; then as in the next row | probe/rank4: `Rank4/HitDanger.lean` | human |
 | `4k+2`, `k ≥ 3`, strict, `t = 0` | the hitting lemma gives a basis `S` with `M∖S` uniformly dense on `4k−2` elements; induction orders `M∖S`; X′(`4k−2`), proved by XP, reinserts `S` | probe/rank4: `Rank4/Full.lean` | human, given the hitting lemma |
 
-With these, the tight/dangerous gcd-two reductions of the main library are **no longer
-conditional**: their odd rank-2 and rank-3 inputs are discharged by coprime KUM and full rank-3
-KUM.
+The dangerous-hyperplane schedule of the main library (`Rank4/Dangerous*`, `Rank4/Unconditional.lean`)
+and with it the vendored rank-3 theorem are no longer used by the rank-4 proof; Lemma D replaces
+them (`docs/research-ledger/PROOF_ARCHEOLOGY.md`).
 
 **The hitting lemma** (`hittingLemma`, `Final.lean`) covers strict `t = 0` matroids on `4k+2`
 elements, `k ≥ 3`. The interface (`StrictT0`, `Deletable`, `MeetsDemands`) is in
@@ -188,7 +189,7 @@ but no longer imported.
 
 ### Certificates on the critical path
 
-| Certificate | Claim | LRAT hints | Lean module (probe/hit14-human) |
+| Certificate | Claim | LRAT hints | Lean module (probe/rank4) |
 |---|---|---|---|
 | `chain10` | KUM(4,10) from a 5-pair chain | 14,738 | `Chain10.lean` |
 
@@ -205,7 +206,7 @@ Two corrections to figures quoted in the ledger:
 `Final.lean`:
 
 - the hitting lemma at `k = 3`: `hit14g` and `hit14line` (898,328 hints together), replaced by
-  `Rank4/HitThree.lean`. They are still on `probe/rank4`; `probe/hit14-human` deletes them, with
+  `Rank4/HitThree.lean`. `probe/rank4` no longer has them (they remain in its history), nor
   their bridges `EncHBridge` and `EncHBridgeG`;
 - KUM(4,6): `kum6`, 682 hints (`probe/encoding`), replaced by duality;
 - KUM(4,8): `kum8`, 371,427 hints, replaced by Kotlar–Ziv;
@@ -226,8 +227,11 @@ Two corrections to figures quoted in the ledger:
   - the certificate module `Chain10`, its data and the assembly to a separate library
     `HigherRankKUMCert`, which is not built by default.
 
-  Its module tables match the import closure of `Probe.Rank4.Final` on `probe/hit14-human`: a
-  `--dry-run` against that branch passes every check (30 modules, 3 data files).
+  Its module tables match the import closure of `Probe.Rank4.Final` on `probe/rank4`: a
+  `--dry-run` against that branch passes every check (29 modules, 3 data files).
+- **Palomar dry run** (`palomar/dry-run`, see `PROOF_ARCHEOLOGY.md` §6): every `.lean` file in a
+  submitted tree must now use the module system (PalomarSubmission #155). The submission tree
+  should therefore contain only the proof's closure, ported to modules.
 - **Palomar packaging.**
   - The toolchain (Lean/Mathlib v4.35.0-rc3) is above Palomar's floor.
   - A draft `Challenge.lean` stating rank-4 KUM with Mathlib only compiles. It is at
@@ -275,8 +279,8 @@ formalized internal):
 - repair dynamics, dangerous cores and density-slack deletion;
 - the older divisible theorem `exists_cyclicBasisOrder_of_rank_four_of_nonempty_proper_tight`.
 
-These results remain valid. Apart from the tight-set and dangerous-hyperplane reductions, the
-rank-4 proof above does not use them.
+These results remain valid. Apart from the tight-set reduction, the rank-4 proof above does not
+use them.
 
 The existence question they left open is settled mathematically. vHT with weight 2 on `ℤ/(2k+1)`
 gives every uniformly dense rank-4 matroid on `4k+2` elements a chain of `2k+1` pairs, which is the
@@ -359,9 +363,10 @@ the repository.
 
 ## Open research targets
 
-1. **A human proof of `chain10`** (14.7k hints), the last certificate on the rank-4 critical path.
-   X′ is done (XP), and so are `hit14g` and `hit14line` (`Rank4/HitThree.lean`). After
-   `chain10`, the rank-4 proof would be free of SAT.
+1. **Compression before submission** (`PROOF_ARCHEOLOGY.md` §4). `chain10` (14.7k hints) stays
+   a kernel-checked certificate by decision of 2026-10-10. Open, measured options: the tight
+   branch by deletion (true at `n = 14` by SAT; saves 968 lines) and a direct `n = 6` argument
+   (saves 1,103 lines).
 2. **Migration and Palomar packaging.**
    - Move the probe proof into the main library, with the certificates in a separate library.
    - Write `Challenge.lean`, `Solution.lean`, `comparator.json` and `formalization.yaml`, and add a

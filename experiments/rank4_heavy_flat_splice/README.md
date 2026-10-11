@@ -101,3 +101,6 @@ of the ledger note.
 | `hit_sat14_split.py plane\|line` | **The n=14 hitting lemma, split by the heavy flat that Lemma H does not cover**: UNSAT in both cases |
 | `hit_sat_control.py` | Discriminating control: the same encoding at k=2 (n=10), where deletable bases fail. Must be SAT; the model is re-verified independently of the encoding |
 | `check_hit14.py N SEED [G\|L\|GL]` | Random check of the human proofs of the n=14 heavy-flat cases (`HIT14_HAND_PROOFS.md`): tries every choice the proofs allow and asserts a deletable basis |
+| `hit_sat14_nonstrict.py dangerous\|tight` | The deletion step at n=14 without strictness, split by a 10-plane or a 7-line: UNSAT in both cases (run on GitHub Actions via `.github/workflows/experiments.yml`) |
+| `hit_nonstrict.py K N SEED` | Random uniformly dense (non-strict) instances on 4k+2 elements: searches all bases for a deletable one |
+| `dangerous_choice.py K N SEED` | Lemma D's construction (`PROOF_ARCHEOLOGY.md`): for strict instances with a dangerous plane, every tested Edmonds partition has a triple and an element outside giving a deletable basis |
