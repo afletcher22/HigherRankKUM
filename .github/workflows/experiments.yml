@@ -1,0 +1,26 @@
+name: Experiments
+
+# SAT and enumeration experiments that are too heavy for a laptop. Measurement only.
+on:
+  push:
+    branches:
+      - 'exp/**'
+
+jobs:
+  hit-nonstrict:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        case: [dangerous, tight]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install python-sat
+        run: pip install python-sat
+      - name: Run
+        working-directory: experiments/rank4_heavy_flat_splice
+        run: /usr/bin/time -v python hit_sat14_nonstrict.py ${{ matrix.case }}
