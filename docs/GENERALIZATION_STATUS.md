@@ -219,28 +219,24 @@ Two corrections to figures quoted in the ledger:
   hints in total, replaced by `chain10`;
 - X′: `xcyc8`, `xcyc10`, `xcyc12` and `xlin14` (1,256,043 hints), replaced by XP.
 
-### Migration and Palomar packaging (in progress)
+### Migration and Palomar package (done on `main`)
 
-- **Migrated on `main`** (2026-10-10). `scripts/migrate_probe.py` (on the research branch) moved
-  the proof out of `probes/`; every Lean file outside the proof's import closure was left off
-  `main`, and the remaining 68 files were ported to the Lean module system.
-- **Migration script.** `scripts/migrate_probe.py` (not yet run) sends:
-  - the SAT layer to `HigherRankKUM/SAT/`;
-  - the paper lemmas, now including `HitThree`, to `HigherRankKUM/Rank4/`;
-  - the certificate module `Chain10`, its data and the assembly to a separate library
-    `HigherRankKUMCert`, which is not built by default.
-
-  Its module tables match the import closure of `Probe.Rank4.Final` on `probe/rank4`: a
-  `--dry-run` against that branch passes every check (29 modules, 3 data files).
-- **Palomar dry run** (`palomar/dry-run`, see `PROOF_ARCHEOLOGY.md` §6): every `.lean` file in a
-  submitted tree must now use the module system (PalomarSubmission #155). The submission tree
-  should therefore contain only the proof's closure, ported to modules.
-- **Palomar packaging.**
-  - The toolchain (Lean/Mathlib v4.35.0-rc3) is above Palomar's floor.
-  - A draft `Challenge.lean` stating rank-4 KUM with Mathlib only compiles. It is at
-    `probes/Probe/ChallengeDraft.lean` on `probe/lrat-kernel` and `probe/encoding`.
-  - Still missing: `Solution.lean`, `comparator.json`, `formalization.yaml`, a root `LICENSE`, and
-    a recorded NanoDa replay.
+- **Migrated** (2026-10-10). `scripts/migrate_probe.py` (on the research branch) moved the proof
+  out of `probes/`: the SAT layer to `HigherRankKUM/SAT/`, the paper lemmas to
+  `HigherRankKUM/Rank4/` and `HigherRankKUM/Rank4/XP/`, and `Chain10` with its data and the
+  assembly to the library `HigherRankKUMCert`. Every Lean file outside the import closure of
+  `Solution` was left off `main`, including the vendored rank-three snapshot. The remaining 68
+  files use the Lean module system, which Palomar requires of every Lean file in a submitted
+  tree (PalomarSubmission #155, 2026-09-28).
+- **Palomar package.** `Challenge.lean` (Mathlib only), `Solution.lean`, `comparator.json`,
+  `formalization.yaml` and a root MIT `LICENSE`. The toolchain (Lean/Mathlib v4.35.0-rc3) is
+  above Palomar's floor (v4.35.0-rc2).
+- **Preflight.** Palomar's own verifier (`PalomarSubmission` `submission.yml` at `d4e41c1`, mode
+  `full`, profile `palomar-standard-v1`: GitHub-hosted, 16 GB, the production budget of
+  19,800 s) passed on `palomar/submission` (run 38107544546): the comparator matched
+  `HigherRankKUM.Palomar.rankFourKUM` against the Challenge with the three standard axioms, and
+  the con-ron (13,586 declarations), NanoDa and Lean kernels accepted the solution. The whole job
+  took 7.5 minutes; the solution build took 78 s.
 
 ## Rank 4: pair-chain insertion (XP), formalized
 
