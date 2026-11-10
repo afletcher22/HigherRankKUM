@@ -123,7 +123,7 @@ theorem exists_deletable_arc_of_statement (hV : Statement α) (M : Matroid α) {
     have h' : g * q ≤ g * p := by exact_mod_cast h
     exact Nat.le_of_mul_le_mul_left h' hg
   have hp : 0 < p := by omega
-  haveI : NeZero p := ⟨hp.ne'⟩
+  have : NeZero p := ⟨hp.ne'⟩
   have hDense' : UniformlyDenseRatio M p q := UniformlyDenseRatio.unscale M p q g hg hDense
   obtain ⟨φ, hφ⟩ := exists_arc_bases hV M (w := q) (D := p) (n := g * p) (r := g * q) hq hqp hE
     hEcard hRank (by ring) hDense'

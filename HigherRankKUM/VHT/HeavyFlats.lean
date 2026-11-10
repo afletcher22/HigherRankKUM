@@ -249,7 +249,7 @@ theorem exists_deletable_basis_of_large (M : Matroid α) {n r : ℕ} (hr : 0 < r
     rw [M.eRk_ground, hRank, hEcard] at h
     exact_mod_cast h
   have hn : 0 < n := by omega
-  haveI : NeZero n := ⟨hn.ne'⟩
+  have : NeZero n := ⟨hn.ne'⟩
   obtain ⟨φ, hφ⟩ := exists_arc_bases theorem_2_1 M (w := r) (D := n) (n := n) (r := r) hr hrn hE
     hEcard hRank rfl hDense
   let 𝓕 : Finset (Set α) :=
