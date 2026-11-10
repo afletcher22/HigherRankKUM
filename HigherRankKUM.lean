@@ -20,6 +20,7 @@ import HigherRankKUM.DensitySlackCriterion
 import HigherRankKUM.DivisibleSolver
 import HigherRankKUM.FullSolver
 import HigherRankKUM.Duality
+import HigherRankKUM.Skeleton
 import HigherRankKUM.TightFactorReduction
 import HigherRankKUM.TightInduction
 import HigherRankKUM.RationalTightFactorReduction
@@ -110,5 +111,6 @@ import HigherRankKUM.VHT.Core
 import HigherRankKUM.VHT.Coprime
 import HigherRankKUM.VHT.Covers
 import HigherRankKUM.VHT.Theorem21
+import HigherRankKUM.VHT.BlockChain
 import HigherRankKUM.PrimeRank
 import HigherRankKUM.Rank4.Unconditional
