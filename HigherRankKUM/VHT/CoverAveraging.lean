@@ -16,8 +16,8 @@ the flat `F = cl(X)` is *violated* by `W`: `q·|F \ W| > (p - q)·r(F)`.
 Every element of `F` lies in `q` arcs, so `Σ_x δ_x = p·j - q·|F|`. The arc `W_x` violates `F`
 exactly when `q·δ_x > Σ_y δ_y`. So fewer than `q` arcs violate `F`.
 
-**Counting** (`exists_deletable_arc`). A violated flat is *heavy*: `q·|F| > (p - q)·r(F)`. If
-the heavy flats number fewer than `p / (q - 1)`, some arc violates none of them and is deletable.
+**Counting** (`exists_deletable_arc`). A violated flat is proper and *heavy*:
+`q·|F| > (p - q)·r(F)`. If the proper heavy flats number fewer than `p / (q - 1)`, some arc violates none of them and is deletable.
 For `q = 1` (the divisible case) every arc is deletable; this is the deletion step of Theorem D.
 For `q = 2` every heavy flat rules out at most one arc; this is the mechanism of Lemma U.
 -/
@@ -105,7 +105,7 @@ theorem card_arc_violations_lt {M : Matroid α} {p q j : ℕ} [NeZero p] (hq : 0
   exact violation_arith hqp hT (hδ x) hsplit hviol
 
 /-- **A deletable basis by counting heavy flats**, given Theorem 2.1. Let `M` be uniformly dense
-of rank `g·q` on `g·p` elements, and let `𝓕` contain every flat `F` with
+of rank `g·q` on `g·p` elements, and let `𝓕` contain every proper flat `F` with
 `(p - q)·r(F) < q·|F|`. If `|𝓕|·(q - 1) < p`, some basis `S` has `M \ S` uniformly dense at the
 ratio `(p - q) / q`. -/
 theorem exists_deletable_arc_of_statement (hV : Statement α) (M : Matroid α) {g p q : ℕ}
@@ -113,7 +113,8 @@ theorem exists_deletable_arc_of_statement (hV : Statement α) (M : Matroid α) {
     (hEcard : M.E.encard = ((g * p : ℕ) : ℕ∞)) (hRank : M.eRank = ((g * q : ℕ) : ℕ∞))
     (hDense : UniformlyDenseRatio M (g * p) (g * q))
     (𝓕 : Finset (Set α))
-    (h𝓕 : ∀ F, M.IsFlat F → ((p - q : ℕ) : ℕ∞) * M.eRk F < (q : ℕ∞) * F.encard → F ∈ 𝓕)
+    (h𝓕 : ∀ F, M.IsFlat F → F ≠ M.E →
+      ((p - q : ℕ) : ℕ∞) * M.eRk F < (q : ℕ∞) * F.encard → F ∈ 𝓕)
     (hcount : 𝓕.card * (q - 1) < p) :
     ∃ S, M.IsBase S ∧ UniformlyDenseRatio (M ↾ (M.E \ S)) (p - q) q := by
   have hqp : q ≤ p := by
@@ -142,7 +143,30 @@ theorem exists_deletable_arc_of_statement (hV : Statement α) (M : Matroid α) {
   -- the closure of each witness is a heavy flat
   have hheavy : ∀ x, M.closure (X x) ∈ 𝓕 := by
     intro x
-    refine h𝓕 _ (M.isFlat_closure (X x)) ?_
+    have hne : M.closure (X x) ≠ M.E := by
+      -- a witness of full rank would have more than `|E| - r(M)` elements outside a basis
+      intro hcl
+      have hXfin : (X x).Finite := hE.subset (hXE x)
+      have hr : M.eRk (X x) = ((g * q : ℕ) : ℕ∞) := by
+        rw [← M.eRk_closure_eq, hcl, M.eRk_ground, hRank]
+      have hWcard : (arcSet M φ (fun _ => q) x).encard = ((g * q : ℕ) : ℕ∞) := by
+        rw [(hφ x).encard_eq_eRank, hRank]
+      have hU : (X x ∪ arcSet M φ (fun _ => q) x).encard ≤ M.E.encard :=
+        Set.encard_mono (Set.union_subset (hXE x) (arcSet_subset M φ _ x))
+      rw [Set.encard_union_eq (hXdisj x), hWcard, hEcard, ← hXfin.cast_ncard_eq] at hU
+      have hU' : (X x).ncard + g * q ≤ g * p := by exact_mod_cast hU
+      have hv := hXviol x
+      rw [hr, ← hXfin.cast_ncard_eq] at hv
+      have hv' : (p - q) * (g * q) < q * (X x).ncard := by exact_mod_cast hv
+      obtain ⟨d, hdq⟩ : ∃ d, d = p - q := ⟨_, rfl⟩
+      rw [← hdq] at hv'
+      have hd : d + q = p := by omega
+      have h1 : q * ((X x).ncard + g * q) ≤ q * (g * p) := Nat.mul_le_mul_left q hU'
+      have e2 : q * (g * p) = q * (g * d) + q * (g * q) := by
+        rw [← hd]
+        ring
+      nlinarith [h1, e2, hv']
+    refine h𝓕 _ (M.isFlat_closure (X x)) hne ?_
     rw [M.eRk_closure_eq]
     have hsub : X x ⊆ M.closure (X x) := M.subset_closure (X x) (hXE x)
     have hmono : (X x).encard ≤ (M.closure (X x)).encard := Set.encard_mono hsub
@@ -177,14 +201,15 @@ theorem exists_deletable_arc_of_statement (hV : Statement α) (M : Matroid α) {
   omega
 
 /-- **A deletable basis by counting heavy flats.** Let `M` be uniformly dense of rank `g·q` on
-`g·p` elements, and let `𝓕` contain every flat `F` with `(p - q)·r(F) < q·|F|`. If
+`g·p` elements, and let `𝓕` contain every proper flat `F` with `(p - q)·r(F) < q·|F|`. If
 `|𝓕|·(q - 1) < p`, some basis `S` has `M \ S` uniformly dense at the ratio `(p - q) / q`. -/
 theorem exists_deletable_arc (M : Matroid α) {g p q : ℕ}
     (hg : 0 < g) (hq : 0 < q) (hE : M.E.Finite)
     (hEcard : M.E.encard = ((g * p : ℕ) : ℕ∞)) (hRank : M.eRank = ((g * q : ℕ) : ℕ∞))
     (hDense : UniformlyDenseRatio M (g * p) (g * q))
     (𝓕 : Finset (Set α))
-    (h𝓕 : ∀ F, M.IsFlat F → ((p - q : ℕ) : ℕ∞) * M.eRk F < (q : ℕ∞) * F.encard → F ∈ 𝓕)
+    (h𝓕 : ∀ F, M.IsFlat F → F ≠ M.E →
+      ((p - q : ℕ) : ℕ∞) * M.eRk F < (q : ℕ∞) * F.encard → F ∈ 𝓕)
     (hcount : 𝓕.card * (q - 1) < p) :
     ∃ S, M.IsBase S ∧ UniformlyDenseRatio (M ↾ (M.E \ S)) (p - q) q :=
   exists_deletable_arc_of_statement theorem_2_1 M hg hq hE hEcard hRank hDense 𝓕 h𝓕 hcount
