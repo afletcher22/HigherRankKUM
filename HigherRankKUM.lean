@@ -112,5 +112,6 @@ import HigherRankKUM.VHT.Coprime
 import HigherRankKUM.VHT.Covers
 import HigherRankKUM.VHT.Theorem21
 import HigherRankKUM.VHT.BlockChain
+import HigherRankKUM.VHT.CoverAveraging
 import HigherRankKUM.PrimeRank
 import HigherRankKUM.Rank4.Unconditional
