@@ -109,8 +109,8 @@ theorem SolvesKUMAtRankSize.of_dual {r n : ℕ} (hrn : r < n)
   refine ⟨σ, ?_⟩
   exact cyclicBasisOrder_of_dual N (n := n) (r := r) (s := n - r) hn (by omega) σ hσ
 
-/-- KUM at `(r, n)` and KUM at `(n - r, n)` are equivalent. -/
-theorem solvesKUMAtRankSize_dual_iff {r n : ℕ} (hrn : r < n) :
+/-- KUM at `(r, n)` and KUM at `(n - r, n)` are equivalent, for `0 < r < n`. -/
+theorem solvesKUMAtRankSize_dual_iff {r n : ℕ} (hr0 : 0 < r) (hrn : r < n) :
     SolvesKUMAtRankSize α (n - r) n ↔ SolvesKUMAtRankSize α r n := by
   refine ⟨SolvesKUMAtRankSize.of_dual hrn, fun h => ?_⟩
   intro N hr hn hE hRank hEcard hDense
@@ -123,7 +123,7 @@ theorem solvesKUMAtRankSize_dual_iff {r n : ℕ} (hrn : r < n) :
 /-- KUM at rank `r` and size `r`: the ground set is a basis, so every ordering works. -/
 theorem solvesKUMAtRankSize_self (r : ℕ) : SolvesKUMAtRankSize α r r := by
   intro N _hr hn hE hRank hEcard _hDense
-  haveI : Finite N.E := hE.to_subtype
+  have : Finite N.E := hE.to_subtype
   have hncard : N.E.ncard = r := by
     have hcast : (N.E.ncard : ℕ∞) = r := by
       rw [hE.cast_ncard_eq]
