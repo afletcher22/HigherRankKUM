@@ -19,6 +19,7 @@ import HigherRankKUM.DensitySlackDeletion
 import HigherRankKUM.DensitySlackCriterion
 import HigherRankKUM.DivisibleSolver
 import HigherRankKUM.FullSolver
+import HigherRankKUM.Duality
 import HigherRankKUM.TightFactorReduction
 import HigherRankKUM.TightInduction
 import HigherRankKUM.RationalTightFactorReduction
