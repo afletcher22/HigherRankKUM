@@ -21,6 +21,7 @@ import HigherRankKUM.DivisibleSolver
 import HigherRankKUM.FullSolver
 import HigherRankKUM.Duality
 import HigherRankKUM.Skeleton
+import HigherRankKUM.RatioInduction
 import HigherRankKUM.TightFactorReduction
 import HigherRankKUM.TightInduction
 import HigherRankKUM.RationalTightFactorReduction
