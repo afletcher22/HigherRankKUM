@@ -26,6 +26,10 @@ relations between orderings, decided by boolean matrix products (`chainlib.py`).
 | Prescribed initial segments on both of two bases | `pf_exhaust.py` | fails: 3,688 of 44,630 symmetric-exchange pairs in rank 5 |
 | Cyclic-window invariants span all invariants of multidegree `(r, ..., r)` | `span_test.py` | true for `r = 2` (`n = 4..7`) and `(4, 6)`; false for `(3, 6)` (35 of 40) and `(3, 7)` (205 of 225) |
 | Rank induction: contract `x0`, order the rank `r - 1` remainder, match the removed elements to the slots | `schemeR.py`, `schemeR5.py` | works for R10 from all 90 choices; strict binary matroids, share of sampled orderings that extend: rank 5: 41.7% / 16.3% / 7.4% for 2 / 3 / 4 bases; rank 4: 58.6% / 24.2% / 13.0% (`schemeR5_result.txt`) |
+| Pair split of the 4-blocks after a root split (rank 5, tree `1 + (2 + 2)`) | `pairsplit_chain.py`, `pairsplit_adv.py` | closes for every valid root split tested (about 189,000 in strict binary matroids and `M(K_6)`, 125,000 in sparse random chains); the 4-blocks then close completely in 99.7% / 99.93% / 99.99% of root splits for 2 / 3 / 4 bases (`pairsplit_result.txt`) |
+| The same, two bases | `pairsplit_two.py` | proved over `F_2` by an identity (see the note); no failure sampled over `F_3`, `F_5`; the shapes `(1, 1, 3)` and, in rank 4, `(1, 1, 2)` do fail |
+| "The pair split always closes" | `pairsplit_rigid_example.py` | **false**: a rigid chain of three bases with 3-cycle holonomy (not strict) |
+| A cycle of pair-split relations with one slack relation closes | `pairsplit_local.py` | true for all relation types over `F_2` (51), `F_3` (434) and for the 1,664 types found over `F_2`, `F_3`, `F_5`, `F_7`; 36 tight types |
 
 ## Reading
 
@@ -36,3 +40,6 @@ relations between orderings, decided by boolean matrix products (`chainlib.py`).
 * In the rank induction the inserted elements never share a window, so reinsertion is a bipartite
   matching. The success rate falls by a roughly constant factor per added basis, which looks like
   independent local events.
+* Fixing only the single elements and leaving the 4-blocks free behaves the opposite way: almost
+  every root split closes, and the failure rate falls as bases are added. See Section 8 of
+  `docs/research-ledger/BEYOND_RANK4_ROUTES.md`.

@@ -3,8 +3,9 @@
 Date: 2026-11-10. Branch: `probe/duality` (forked from `probe/rank4`).
 
 **Status.** Section 1 is kernel-checked in Lean (standard axioms; probe workflow green on the
-commit named there). Sections 2 to 6 are paper arguments and enumeration results; none of them
-is formalized, and no claim there proves a new case of KUM. The enumeration scripts are in
+commit named there). Sections 2 to 6 and 8 are paper arguments and enumeration results; none of
+them is formalized, and no claim there proves a new case of KUM. Section 8 was added on
+2026-11-11. The enumeration scripts are in
 `experiments/chains_of_bases/` (plain Python, no SAT solver; "exhaustive" always means over
 binary matroids of the stated size).
 
@@ -25,8 +26,7 @@ Notation: `M` has rank `r` on `n` elements; `n = g·p`, `r = g·q` with `gcd(p, 
 | At a fixed density, KUM at the multiple `g` follows from the strict cases at multiples `2..g`; `gcd(n, r) = 2` with a proper tight set, in every rank | `HigherRankKUM/RatioInduction.lean` |
 | Aligned window criterion for interleavings (the reinsertion step of Section 4) | `HigherRankKUM/SlotInsertion.lean` |
 
-All rows except the last built clean on the full probe list at commit `d834c99`;
-`SlotInsertion.lean` built clean on its own at commit `1850171`.
+All rows built clean on the full probe list at commit `f1fd0c5`.
 
 Limit of the large-`n` deletion theorem: with an extension theorem it would reduce KUM at size
 `n` to size `n - r`, but the descent stops just below `r · 2^(r+1)`, where nothing is known. New
@@ -174,15 +174,116 @@ Perturbing the weights therefore cannot produce a CBO, which is the structural r
 
 ## 7. Targets, in order
 
-1. A closing criterion for twisted `(2, 2)`-split cycles (six states per block, rank-4
-   contractions). With the pair-cycle theory it is the only new ingredient rank 5 needs for
-   three or more bases through the tree `1 + (2 + 2)`.
+1. The tree `1 + (2 + 2)` for rank 5 (Section 8). Three pieces, in order: (a) prove the slack
+   lemma for all matroids (it is a statement about two relations on six states); (b) show that
+   strict density excludes a pair-split cycle whose composite is tight with the identity
+   blocked, at least for one root split of every chain; (c) the leaves: the two pair cycles,
+   which fail for 0.01% to 0.3% of the root splits of strict matroids.
 2. `gcd(n, r) = 2` in even rank beyond 4: the tight half is done; the strict half needs a
    deletable basis at small sizes, an insertion lemma for `q` pairs, and the sizes
    `2r ≤ n < 3r`.
 3. KUM(5, 10) by hand. In the language of Section 4 it is a Kotlar–Ziv type statement for the
    pair `(M / x_0, M / x_1)` on 8 elements, that is, Gabow's problem in rank 5 for some
-   complementary pair; it is known only by SAT.
+   complementary pair; in this repository it is known only by SAT.
 4. A closing criterion for triple cycles (Section 3), needed by rank 6 with `gcd = 3`.
 5. Minimal uniformly dense matroids (a CBO of a matroid with fewer bases is a CBO of `M`; in
    rank 2 the minimal ones have at most three parallel classes). Untested beyond rank 2.
+
+## 8. The tree `1 + (2 + 2)`: the pair split of 4-blocks
+
+Scripts: `pairsplit_local.py`, `pairsplit_chain.py`, `pairsplit_adv.py`, `pairsplit_two.py`,
+`pairsplit_rigid_example.py`; numbers in `pairsplit_result.txt`.
+
+**Setting.** `B_0, …, B_{k-1}` are disjoint bases of a rank-5 matroid in a cyclic order. A
+*root split* picks `x_i ∈ B_i` with `B_i - x_i + x_{i+1}` a basis (a closed walk in the exchange
+graphs; always exists). Put `W_i = B_i - x_i`. A *pair split* picks a trailing pair
+`Q_i ⊆ W_i` for every `i`, with `Q_i ∪ x_{i+1} ∪ (W_{i+1} - Q_{i+1})` a basis. So it is a closed
+walk through the relations
+
+    T_i(Q, Q') = 1  iff  Q ∪ x_{i+1} ∪ (W_{i+1} - Q')  is a basis,
+
+each on the six 2-subsets of a 4-set. If it closes, what is left are two pair cycles.
+
+### Local theory: one relation
+
+Let `W`, `W'` be bases of a rank-4 matroid `N` and `T(Q, Q') = [Q ∪ (W' - Q') is a basis]`.
+
+* `T` is a permutation of the six states iff `W'` is elementwise parallel to `W` (*rigid*).
+  Proof: a row with one entry means two elements of `W'` lie in the closure of `Q`; an element
+  of `W'` lies in the closure of three pairs if it is parallel to an element of `W`, of one pair
+  if its fundamental circuit has two elements of `W`, and of none otherwise; `6 · 2 = 4 · 3`.
+* For a bijection `π : W → W'` say `T` *meets* `π` if `Q ∪ π(W - Q)` is a basis for some `Q`.
+  `T` is **slack** if it meets all 24 bijections and **tight** otherwise: some bijection `β` has
+  `Q ∪ β(W - Q)` dependent for all six `Q`. For a matrix `A` of `W'` in the basis `W`, tight
+  means that after a column permutation all six principal `2 × 2` minors vanish:
+  `a_ii a_jj = a_ij a_ji`. A rigid relation with parallel map `π` blocks `β` exactly when
+  `π⁻¹β` is a 3-cycle or a 4-cycle.
+* Types up to relabelling `W` and `W'`: 51 over `F_2` (17 tight), 434 over `F_3` (31 tight;
+  one new dense tight type, a symmetric Hadamard matrix), both exhaustive. Adding 6,000,000
+  sampled matrices over each of `F_5` and `F_7` gives 1,664 types, 36 of them tight. Every tight
+  type contains a bijection (`Q ∪ π(W - Q)` a basis for all `Q`); 41 slack types contain none.
+* For matrices over one field the set of relations is closed under composition after a field
+  extension: `T(A D B) = T(A) ∘ T(B)` for a generic diagonal `D`, because the monomials
+  `d_k d_l` of the 2-compound of `D` are distinct. The 1,664 types are closed under composition.
+
+### Closing criterion (verified, not proved)
+
+* **Slack lemma.** A cycle that contains one slack relation closes. Checked for every cycle
+  with relations of the `F_2` types, of the `F_3` types, and of the 1,664 types (the semigroups
+  of products have 948, 1,305 and 1,664 classes). No proof for arbitrary matroids yet.
+* A cycle fails iff its composite relation is tight with the identity blocked. For a rigid
+  chain this is the holonomy 3-cycle or 4-cycle of Section 4.
+* A full row or column is not needed: only 1 of the 51 binary types meets every permutation of
+  the six states, but 34 are slack.
+
+### Two bases: an identity
+
+Take `B_0` as the unit vectors, `B_1` as the columns of `A`, `x_0` = row 0, `x_1` = column 0. A
+split of size `c` closes iff some `c`-subsets `Q`, `Q'` of the other indices have
+`det A[Q, Q'] ≠ 0` and `det A⁻¹[Q', Q] ≠ 0` (Jacobi). By Cauchy–Binet
+
+    Σ_{Q'} det A[Q, Q'] · det A⁻¹[Q', Q]  =  1 - Σ_{i ∈ Q} A[i, 0] · A⁻¹[0, i],
+
+because the compression of `A · A⁻¹` to the other indices is the identity minus a rank-one
+matrix. So the split closes unless `A[i, 0] · A⁻¹[0, i] = 1 / c` for every `i ≥ 1`. When the
+characteristic divides `c` this is impossible: **for two bases of a binary matroid of rank 5
+every choice of `x_0`, `x_1` admits a pair split**, with no assumption on the root split.
+`pairsplit_two.py` found no failure over `F_3` (227,548 matrices) or `F_5` (192,593) either. The
+shape matters: the split `(1, 1, 3)` over `F_2` and `(1, 1, 2)` in rank 4 over `F_3` do fail.
+For `k` bases the holonomy is the identity minus a matrix of rank at most `k - 1`, and the
+identity no longer decides it.
+
+### Measurements
+
+Share of valid root splits, binary matroids of rank 5:
+
+| source | `k` | root splits | some relation slack | pair split closes | 4-blocks close completely |
+|---|---|---|---|---|---|
+| strict, random | 2 | 79,396 | 98.9% | all | 99.7% |
+| strict, random | 3 | 87,610 | 97.5% | all | 99.93% |
+| strict, random | 4 | 15,342 | 98.2% | all | 99.99% |
+| `M(K_6)` | 3 | 6,624 | 97.5% | all | 99.92% |
+| sparse random chains, no density assumption | 2 | 39,366 | 72.6% | all | 97.4% |
+| sparse random chains | 3 | 61,788 | 94.8% | all | 99.7% |
+| sparse random chains | 4 | 24,390 | 98.4% | all | 99.98% |
+
+Every chain in every run had a root split that closes completely. Compare Section 4, where a
+fixed ordering of the contraction extends in 42% / 16% / 7% of cases: fixing only the single
+elements `x_i` and leaving the 4-blocks free loses almost nothing, and the loss shrinks as `k`
+grows.
+
+**The pair split can fail.** `pairsplit_rigid_example.py`: three bases over `F_2` with all
+three relations rigid and holonomy a 3-cycle; that root split does not close (16 of the 17
+root splits of the chain do, 12 completely). The matroid is not strict: a hyperplane holds 12
+of its 15 elements. No strict example and no random example has been found.
+
+### What this changes
+
+* The split step is governed by a small finite object (six states; 36 tight types found),
+  and a single non-degenerate relation settles it. This is the analogue of the slack/tight
+  dichotomy of XP that triples do not have (Section 3).
+* The remaining obstructions are of two kinds: cycles of tight relations whose composite blocks
+  the identity, and failing pair cycles at the leaves. Both are rare and both come from
+  parallel structure in contractions, which is what strict density limits. A proof for rank 5
+  along this tree would be a density argument against these two configurations for one root
+  split per chain, not a search.

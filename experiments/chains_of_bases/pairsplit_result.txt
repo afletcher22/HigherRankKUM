@@ -1,0 +1,74 @@
+# pairsplit_chain.py 2 150 60 11
+TOTAL k=2: chains 9000, with a closing choice of x: 9000
+choices of x with a valid root split: 79396
+  some relation slack:      78503 (98.9%)
+  pair-split closes:        79396 (100.0%)
+  W-chain closes fully:     79138 (99.7%)
+  split closes, chain does not: 258
+  all relations tight: 893, of which split closes 893, chain closes 893
+
+# pairsplit_chain.py 3 80 60 12
+TOTAL k=3: chains 4800, with a closing choice of x: 4800
+choices of x with a valid root split: 87610
+  some relation slack:      85457 (97.5%)
+  pair-split closes:        87610 (100.0%)
+  W-chain closes fully:     87548 (99.9%)
+  split closes, chain does not: 62
+  all relations tight: 2153, of which split closes 2153, chain closes 2111
+
+# pairsplit_chain.py 4 16 25 13
+TOTAL k=4: chains 400, with a closing choice of x: 400
+choices of x with a valid root split: 15342
+  some relation slack:      15070 (98.2%)
+  pair-split closes:        15342 (100.0%)
+  W-chain closes fully:     15340 (100.0%)
+  split closes, chain does not: 2
+  all relations tight: 272, of which split closes 272, chain closes 271
+
+# pairsplit_chain.py 3 1 300 5 k6
+TOTAL k=3: chains 300, with a closing choice of x: 300
+choices of x with a valid root split: 6624
+  some relation slack:      6458 (97.5%)
+  pair-split closes:        6624 (100.00%)
+  W-chain closes fully:     6619 (99.92%)
+  split closes, chain does not: 5
+  all relations tight: 166, of which split closes 166, chain closes 164
+
+# pairsplit_adv.py 2 6000 22
+TOTAL k=2 chains=6000: {'valid': 39366, 'slack': 28583, 'split': 39366, 'full': 38332, 'chain_full': 6000, 'chains_with_valid': 6000}
+root splits whose pair-split cycle does not close: 0
+
+# pairsplit_adv.py 3 4000 21
+TOTAL k=3 chains=4000: {'valid': 61788, 'slack': 58577, 'split': 61788, 'full': 61614, 'chain_full': 4000, 'chains_with_valid': 4000}
+root splits whose pair-split cycle does not close: 0
+
+# pairsplit_adv.py 4 600 23
+TOTAL k=4 chains=600: {'valid': 24390, 'slack': 23992, 'split': 24390, 'full': 24384, 'chain_full': 600, 'chains_with_valid': 600}
+root splits whose pair-split cycle does not close: 0
+
+# pairsplit_local.py 2
+F_2: 20160 distinct relations, 51 classes up to S_4 x S_4
+classes containing a permutation of the six states: 51 of 51
+Hall-slack classes (meet every permutation of the six states): 1
+classes meeting all 24 bijections W -> W': 34
+round 1: semigroup has 907 classes (+856)
+round 2: semigroup has 948 classes (+41)
+round 3: semigroup has 948 classes (+0)
+product classes with a zero-diagonal labelling: 26 of 948
+non-absorbing generator classes: 17 of 51
+
+# pairsplit_local.py 3
+F_3: 182934 distinct relations, 434 classes up to S_4 x S_4  [41s]
+classes containing a permutation of the six states: 434 of 434
+Hall-slack classes (meet every permutation of the six states): 289
+classes meeting all 24 bijections W -> W': 403
+round 1: semigroup has 1301 classes (+867)  [44s]
+round 2: semigroup has 1305 classes (+4)  [46s]
+round 3: semigroup has 1305 classes (+0)  [46s]
+product classes with a zero-diagonal labelling: 31 of 1305
+non-absorbing generator classes: 31 of 434  [67s]
+
+# union of relation types from F_2, F_3 (all) and F_5, F_7 (6,000,000 sampled matrices each)
+union: 1664 classes; tight (Pi < 24): 36; tight containing no bijection: 0; classes containing no bijection: 41
+products of two types: no new class (closed under composition)
+slack types occurring in a cycle that does not close: 0
