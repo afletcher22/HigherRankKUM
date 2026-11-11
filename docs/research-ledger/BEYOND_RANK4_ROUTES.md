@@ -113,6 +113,29 @@ ordering of `Q` is not enough: the induction hypothesis has to supply an orderin
 (fully proved) instead of on its own 10-element case, and the first step is a 10-element
 statement: `n = 2r` from `n = 2(r - 1)`, one element and one slot.
 
+### Refinement trees: rank 5 without triple cycles
+
+Sections 3 and 4 are the same operation at different block sizes: split every block of a
+twisted chain into two, which leaves two twisted chains of smaller rank. A CBO is a full binary
+refinement tree whose leaves are single elements. Only the root split is coherent, hence free
+(the split lemma); every deeper split is a closing problem in a twisted chain, and a pair at a
+leaf is a pair cycle.
+
+* The two-base case of Section 4 is not a new statement: peeling the first column of two bases
+  is the first step of a serial symmetric exchange, so `n = 2r` from `n = 2(r - 1)` is Gabow's
+  problem for some complementary pair. The route differs from basis insertion only for three or
+  more bases.
+* Rank 5 can use the tree `5 = 1 + (2 + 2)` instead of `5 = 3 + 2`: the root split `(4, 1)` is
+  free; the 4-blocks `W_i` form a twisted chain with `N_i = M / x_i`; splitting them into pairs
+  needs a closed walk of 2-subsets with `Q_{i-1} ∪ P_i` a basis of `M / x_i` (six states per
+  block); the leaves are two pair cycles. No triple cycle occurs. In a fully rigid chain the
+  split closes iff the holonomy permutation of four points fixes some pair setwise, so the
+  obstructions are 3-cycles and 4-cycles.
+* For representable matroids the matrix of the chain after peeling `x_i`, `x_{i+1}` is the Schur
+  complement of that entry of `A_i`, so the holonomy of a peeled chain is a product of
+  compressions of matrices whose product is the identity. A closed walk of `c`-subsets exists as
+  soon as the `c`-th compound of the holonomy has a nonzero diagonal entry.
+
 ## 5. What vHT returns near the uniform weights
 
 Theorem 2.1 gives an arc placement for every rational point `w` of the base polytope. If every
@@ -151,12 +174,15 @@ Perturbing the weights therefore cannot produce a CBO, which is the structural r
 
 ## 7. Targets, in order
 
-1. The two-base step of Section 4 from rank 4 to rank 5: a Kotlar–Ziv type statement for the
-   pair `(M / x_0, M / x_1)` on 8 elements. It would give a human proof of KUM(5, 10).
+1. A closing criterion for twisted `(2, 2)`-split cycles (six states per block, rank-4
+   contractions). With the pair-cycle theory it is the only new ingredient rank 5 needs for
+   three or more bases through the tree `1 + (2 + 2)`.
 2. `gcd(n, r) = 2` in even rank beyond 4: the tight half is done; the strict half needs a
    deletable basis at small sizes, an insertion lemma for `q` pairs, and the sizes
    `2r ≤ n < 3r`.
-3. A closing criterion for triple cycles (Section 3), needed by rank 5 for more than two bases
-   and by rank 6 with `gcd = 3`.
-4. Minimal uniformly dense matroids (a CBO of a matroid with fewer bases is a CBO of `M`; in
+3. KUM(5, 10) by hand. In the language of Section 4 it is a Kotlar–Ziv type statement for the
+   pair `(M / x_0, M / x_1)` on 8 elements, that is, Gabow's problem in rank 5 for some
+   complementary pair; it is known only by SAT.
+4. A closing criterion for triple cycles (Section 3), needed by rank 6 with `gcd = 3`.
+5. Minimal uniformly dense matroids (a CBO of a matroid with fewer bases is a CBO of `M`; in
    rank 2 the minimal ones have at most three parallel classes). Untested beyond rank 2.
