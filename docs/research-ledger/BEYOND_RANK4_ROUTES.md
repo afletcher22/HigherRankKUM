@@ -191,7 +191,7 @@ Perturbing the weights therefore cannot produce a CBO, which is the structural r
 
 ## 8. The tree `1 + (2 + 2)`: the pair split of 4-blocks
 
-Scripts: `pairsplit_local.py`, `pairsplit_chain.py`, `pairsplit_adv.py`, `pairsplit_two.py`,
+Scripts: `pairsplit_local.py`, `pairsplit_union.py`, `pairsplit_chain.py`, `pairsplit_adv.py`, `pairsplit_two.py`,
 `pairsplit_rigid_example.py`; numbers in `pairsplit_result.txt`.
 
 **Setting.** `B_0, …, B_{k-1}` are disjoint bases of a rank-5 matroid in a cyclic order. A
