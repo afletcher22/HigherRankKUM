@@ -72,3 +72,37 @@ non-absorbing generator classes: 31 of 434  [67s]
 union: 1664 classes; tight (Pi < 24): 36; tight containing no bijection: 0; classes containing no bijection: 41
 products of two types: no new class (closed under composition)
 slack types occurring in a cycle that does not close: 0
+
+# pairsplit_tightsearch.py rigid
+chains with a valid root split: 33856; pair split fails: 600
+margin histogram of the failures (>0 strict, 0 tight flat, <0 not uniformly dense): {0: 504, 1: 96}
+the 96 strict chains: (valid root splits, pair split closes, chain closes) = (15, 14, 14) x 24, (23, 22, 22) x 24, (25, 24, 24) x 48
+
+# pairsplit_tightsearch.py tight 400000 3   (first 100000 samples)
+tight matrices in GL_4(2): 6408 of 20160
+chains with a valid root split: 106151; pair split fails: 1 (margin 0)
+
+# pairsplit_pairs.py
+invertible matrices: 9999360
+number of slack choices -> matrices: {0: 202320, 1: 247200, 2: 349200, 3: 436800, 4: 501600, 5: 532800, 6: 727200, 7: 835200, 8: 619200, 9: 900000, 10: 916800, 11: 760800, 12: 842400, 13: 828000, 14: 504000, 15: 507840, 16: 175200, 17: 96000, 18: 14400, 19: 2400}
+totally tight (no slack choice): 202320
+
+# pairsplit_triples.py
+classes up to relabelling the two bases: 28
+chains with all three pairs totally tight (A up to relabelling): 949440
+margin histogram: {0: 945720, 1: 3720}
+the 3720 strict chains: 13 valid root splits each, pair split closes for 13, chain closes for 13
+
+# pairsplit_structured.py rigid 6000 1
+chains by margin {0: 5370, 1: 628, 2: 2}; no pair split for any root split: none; no closing root split: none
+
+# pairsplit_structured.py tight 6000 2
+chains by margin {0: 2194, 1: 3726, 2: 80}; no pair split for any root split: none; no closing root split: none
+
+# slack_orders.py 3 q
+g=3, F_2: 168 relations, 7 classes, 1 slack, 6 tight; semigroup 167 classes; slack classes in a cycle that does not close: 0
+g=3, F_3: 378 relations, 18 classes, 9 slack, 9 tight; semigroup 169 classes; slack classes in a cycle that does not close: 0
+g=3, F_5: 487 relations, 27 classes, 18 slack, 9 tight; semigroup 169 classes; slack classes in a cycle that does not close: 0
+
+# 4-blocks, full orderings, F_2 (slack_orders.minors with g = 4)
+20160 distinct relations, 0 meet all 24 bijections; pairs (T, P) with no closed 2-walk: 9221832 of 20160^2

@@ -30,6 +30,11 @@ relations between orderings, decided by boolean matrix products (`chainlib.py`).
 | The same, two bases | `pairsplit_two.py` | proved over `F_2` by an identity (see the note); no failure sampled over `F_3`, `F_5`; the shapes `(1, 1, 3)` and, in rank 4, `(1, 1, 2)` do fail |
 | "The pair split always closes" | `pairsplit_rigid_example.py` | **false**: a rigid chain of three bases with 3-cycle holonomy (not strict) |
 | A cycle of pair-split relations with one slack relation closes | `pairsplit_local.py`, `pairsplit_union.py` | true for all relation types over `F_2` (51), `F_3` (434) and for the 1,664 types found over `F_2`, `F_3`, `F_5`, `F_7`; 36 tight types |
+| The pair split closes for every root split of a strict matroid | `pairsplit_tightsearch.py` | **false**: 96 strict chains over `F_2` with two rigid relations have one failing root split each; all their other root splits close completely |
+| Some admissible choice for two consecutive bases gives a slack relation | `pairsplit_pairs.py` | true for 98.0% of the 9,999,360 pairs of bases over `F_2`; the 202,320 exceptions fall into 28 classes |
+| Three bases with every consecutive pair an exception | `pairsplit_triples.py` | 949,440 chains, 3,720 strict; each strict one has 13 root splits and all close completely |
+| Every chain of three bases has a root split whose 4-blocks close completely | `pairsplit_structured.py` | no failure in 12,000 structured chains over `F_2` (4,436 strict), nor in any earlier run |
+| Slack lemma for full orderings | `slack_orders.py` | triples: holds over `F_2`, `F_3`, `F_5`; 4-blocks over `F_2`: vacuous, no relation meets all 24 bijections |
 
 ## Reading
 

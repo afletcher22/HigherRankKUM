@@ -76,7 +76,8 @@ the reverse exchange graph, and the only coupling is `f ≠ ℓ`. Each graph mis
 edges at a vertex. A fully rigid triple cycle (every triple elementwise parallel to the next)
 closes iff its holonomy permutation is the identity. One non-rigid relation is **not** enough to
 close a cycle: an inscribed triangle sends every first element anywhere except to its own point.
-So the slack/tight dichotomy of XP has no direct rank-3 analogue.
+So "not rigid" is not the right notion of slack for triples. With slack defined as "meets every
+bijection" the dichotomy does hold for triples in every check (Section 8).
 
 ## 4. Rank induction by one element per block
 
@@ -176,8 +177,9 @@ Perturbing the weights therefore cannot produce a CBO, which is the structural r
 
 1. The tree `1 + (2 + 2)` for rank 5 (Section 8). Three pieces, in order: (a) prove the slack
    lemma for all matroids (it is a statement about two relations on six states); (b) show that
-   strict density excludes a pair-split cycle whose composite is tight with the identity
-   blocked, at least for one root split of every chain; (c) the leaves: the two pair cycles,
+   every chain in a strict matroid has a root split with a slack relation, apart from an
+   explicit family that closes anyway (over `F_2` and three bases: a slack choice exists for
+   98% of pairs of bases, and the chains with none form one strict family); (c) the leaves: the two pair cycles,
    which fail for 0.01% to 0.3% of the root splits of strict matroids.
 2. `gcd(n, r) = 2` in even rank beyond 4: the tight half is done; the strict half needs a
    deletable basis at small sizes, an insertion lemma for `q` pairs, and the sizes
@@ -275,7 +277,51 @@ grows.
 **The pair split can fail.** `pairsplit_rigid_example.py`: three bases over `F_2` with all
 three relations rigid and holonomy a 3-cycle; that root split does not close (16 of the 17
 root splits of the chain do, 12 completely). The matroid is not strict: a hyperplane holds 12
-of its 15 elements. No strict example and no random example has been found.
+of its 15 elements. No random example has been found; strict examples exist and are described
+under "Structured search" below.
+
+### Structured search (second round, 2026-11-11)
+
+Random matroids are a weak adversary here, so the same questions were put to chains built to
+be degenerate. Scripts: `pairsplit_tightsearch.py`, `pairsplit_pairs.py`,
+`pairsplit_triples.py`, `pairsplit_structured.py`, `slack_orders.py`. Everything is over `F_2`.
+
+A matroid on `3r` elements that is a union of three disjoint bases is uniformly dense (a flat of
+rank `d` holds at most `d` elements of each basis), so for three bases the only question about
+density is strictness. Below, *margin* is the minimum of `3·r(F) - |F|` over proper nonempty
+flats; strict means margin `> 0`.
+
+* **A single root split can fail in a strict matroid.** Build `W_1` elementwise parallel to
+  `W_0` modulo `x_1` and `W_2` elementwise parallel to `W_1` modulo `x_2` (all choices of `x_1`,
+  `x_2` and of the multiples added: 33,856 chains with a valid root split). The pair split
+  fails for 600 of them, and 96 of those matroids are strict. In each of the 96 it is the only
+  root split that fails: the chain has 15, 23 or 25 valid root splits and all the others close
+  completely. So the statement to prove is "some root split closes", not "every root split
+  closes"; the random runs above never met this case.
+* **Two bases: almost every pair has a slack choice.** Over all 9,999,360 pairs of disjoint
+  bases (`B` the unit vectors, `B'` the columns of a matrix in `GL_5(2)`), call a choice
+  `a ∈ B`, `b ∈ B'` admissible if `B - a + b` is a basis. 202,320 pairs (2.0%) have no
+  admissible choice with a slack relation (*totally tight* pairs): 28 classes up to relabelling,
+  all with at most 11 nonzero entries except one dense class with 21.
+* **Three bases with every consecutive pair totally tight:** 949,440 chains (first pair up to
+  relabelling). 3,720 of the matroids are strict; each of those chains has 13 valid root splits
+  and all 13 close completely.
+* **Is there always a closing root split?** 6,000 chains with two rigid relations and 6,000
+  with two tight relations (no density assumption; 630 and 3,806 of them strict):
+  every chain has a root split whose 4-blocks close completely.
+* **The slack criterion for full orderings.** Take the states to be the orderings of a block and
+  call a relation slack if it meets every bijection. For triples the slack lemma holds in every
+  check (`F_2`: 7 types, 1 slack; `F_3`: 18 types, 9 slack; `F_5`: 27 types, 18 slack; no slack
+  type occurs in a cycle that does not close), which corrects Section 3: triples do have a
+  slack/tight dichotomy, with "meets every bijection" in place of "not rigid". For 4-blocks over
+  `F_2` it is vacuous: none of the 20,160 relations meets all 24 bijections at the level of
+  orderings, so for binary matroids no single relation can force a 4-block chain to close
+  completely. The pair level, where 34 of the 51 types are slack, is the right granularity, and
+  the leaves need a second argument.
+
+What this leaves for three bases in a strict binary matroid: either some consecutive pair has a
+slack choice, and it has to be extended to a valid root split and then through the two pair
+cycles; or every pair is totally tight, and that case is a single family that closes.
 
 ### What this changes
 
@@ -284,6 +330,7 @@ of its 15 elements. No strict example and no random example has been found.
   dichotomy of XP that triples do not have (Section 3).
 * The remaining obstructions are of two kinds: cycles of tight relations whose composite blocks
   the identity, and failing pair cycles at the leaves. Both are rare and both come from
-  parallel structure in contractions, which is what strict density limits. A proof for rank 5
-  along this tree would be a density argument against these two configurations for one root
-  split per chain, not a search.
+  parallel structure in contractions. Strict density does not exclude them for a given root
+  split, but in every example another root split of the same chain closes. A proof for rank 5
+  along this tree therefore has to choose the root split, and the choice has to be made
+  jointly for the three steps (slack relation, valid root split, leaves).
