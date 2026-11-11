@@ -10,6 +10,7 @@ import HigherRankKUM.BalancedWindow
 import HigherRankKUM.BalancedWindowRight
 import HigherRankKUM.BalancedWindowDecomposition
 import HigherRankKUM.BalancedGluing
+import HigherRankKUM.SlotInsertion
 import HigherRankKUM.PeriodicWindow
 import HigherRankKUM.PeriodicGluing
 import HigherRankKUM.PeriodicGluingRegression
