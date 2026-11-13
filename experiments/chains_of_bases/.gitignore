@@ -1,1 +1,2 @@
-pairsplit_pairs_totally_tight.npy
+*.npy
+__pycache__/

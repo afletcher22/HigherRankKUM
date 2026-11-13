@@ -35,6 +35,10 @@ relations between orderings, decided by boolean matrix products (`chainlib.py`).
 | Three bases with every consecutive pair an exception | `pairsplit_triples.py` | 949,440 chains, 3,720 strict; each strict one has 13 root splits and all close completely |
 | Every chain of three bases has a root split whose 4-blocks close completely | `pairsplit_structured.py` | no failure in 12,000 structured chains over `F_2` (4,436 strict), nor in any earlier run |
 | Slack lemma for full orderings | `slack_orders.py` | triples: holds over `F_2`, `F_3`, `F_5`; 4-blocks over `F_2`: vacuous, no relation meets all 24 bijections |
+| Slack lemma for all matroids: two matroids of rank 4 on `W + W'` with no common basis meeting `W` in two elements are both tight, and both contain a bijection | `slack_allmatroids.py`, `slack_allmatroids_check.py` | true for all 5,828,710 labelled matroids in which `W`, `W'` are bases (618,214 relations, 1,695 classes, 43 tight); the relations are closed under composition, so it holds for cycles of every length |
+| The enumeration is complete | `slack_allmatroids_validate.py` | contains every relation of `GL_4(F_2)`, `GL_4(F_3)` and of samples over `F_5`, `F_7`, `F_11`; 3,200,452 sparse paving matroids, equal to an independent count |
+| Rank criterion for blocked pairs; blocked pairs of total support | `slack_blocked.py` | criterion agrees on every sampled pair (`F_2`, `F_3`, `F_7`); total support: only pairs of permutation matrices over `F_2`, 8 support patterns over `F_3` |
+| Blocked pairs of total support, all matroids | `slack_total_support.py` | 1,671 pairs, 8 pairs of exchange graphs up to symmetry (the same 8 as over `F_3`); one member is rigid, or both have shape `2+1+1`, or the shapes are `2+1+1` and `3+1` |
 
 ## Reading
 
@@ -48,3 +52,6 @@ relations between orderings, decided by boolean matrix products (`chainlib.py`).
 * Fixing only the single elements and leaving the 4-blocks free behaves the opposite way: almost
   every root split closes, and the failure rate falls as bases are added. See Section 8 of
   `docs/research-ledger/BEYOND_RANK4_ROUTES.md`.
+* The slack lemma is a property of all matroids, not of small fields: it was checked on the
+  complete list of rank-4 matroids on 8 elements, and the blocked pairs reduce to eight shapes
+  (Section 9 of the note).

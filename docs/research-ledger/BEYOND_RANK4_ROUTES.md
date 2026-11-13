@@ -3,11 +3,12 @@
 Date: 2026-11-10. Branch: `probe/duality` (forked from `probe/rank4`).
 
 **Status.** Section 1 is kernel-checked in Lean (standard axioms; probe workflow green on the
-commit named there). Sections 2 to 6 and 8 are paper arguments and enumeration results; none of
-them is formalized, and no claim there proves a new case of KUM. Section 8 was added on
-2026-11-11. The enumeration scripts are in
-`experiments/chains_of_bases/` (plain Python, no SAT solver; "exhaustive" always means over
-binary matroids of the stated size).
+commit named there). Sections 2 to 6, 8 and 9 are paper arguments and enumeration results; none
+of them is formalized, and no claim there proves a new case of KUM. Section 8 was added on
+2026-11-11 and Section 9 on 2026-11-12. The enumeration scripts are in
+`experiments/chains_of_bases/` (plain Python, no SAT solver; "exhaustive" means over binary
+matroids of the stated size, except in Section 9, where it means over all matroids of rank 4 on
+8 elements).
 
 Notation: `M` has rank `r` on `n` elements; `n = g·p`, `r = g·q` with `gcd(p, q) = 1`, so
 `g = gcd(n, r)` and `p / q` is the density. A *CBO* is a cyclic basis ordering.
@@ -175,8 +176,10 @@ Perturbing the weights therefore cannot produce a CBO, which is the structural r
 
 ## 7. Targets, in order
 
-1. The tree `1 + (2 + 2)` for rank 5 (Section 8). Three pieces, in order: (a) prove the slack
-   lemma for all matroids (it is a statement about two relations on six states); (b) show that
+1. The tree `1 + (2 + 2)` for rank 5 (Section 8). Three pieces, in order: (a) the slack
+   lemma for all matroids: verified by exhaustion over the rank-4 matroids on 8 elements
+   (Section 9), hand proof reduced to a classification of blocked pairs of total support;
+   (b) show that
    every chain in a strict matroid has a root split with a slack relation, apart from an
    explicit family that closes anyway (over `F_2` and three bases: a slack choice exists for
    98% of pairs of bases, and the chains with none form one strict family); (c) the leaves: the two pair cycles,
@@ -228,11 +231,11 @@ Let `W`, `W'` be bases of a rank-4 matroid `N` and `T(Q, Q') = [Q ∪ (W' - Q') 
   extension: `T(A D B) = T(A) ∘ T(B)` for a generic diagonal `D`, because the monomials
   `d_k d_l` of the 2-compound of `D` are distinct. The 1,664 types are closed under composition.
 
-### Closing criterion (verified, not proved)
+### Closing criterion (verified for all matroids in Section 9, no hand proof)
 
 * **Slack lemma.** A cycle that contains one slack relation closes. Checked for every cycle
   with relations of the `F_2` types, of the `F_3` types, and of the 1,664 types (the semigroups
-  of products have 948, 1,305 and 1,664 classes). No proof for arbitrary matroids yet.
+  of products have 948, 1,305 and 1,664 classes). Section 9 checks it for every matroid.
 * A cycle fails iff its composite relation is tight with the identity blocked. For a rigid
   chain this is the holonomy 3-cycle or 4-cycle of Section 4.
 * A full row or column is not needed: only 1 of the 51 binary types meets every permutation of
@@ -334,3 +337,127 @@ cycles; or every pair is totally tight, and that case is a single family that cl
   split, but in every example another root split of the same chain closes. A proof for rank 5
   along this tree therefore has to choose the root split, and the choice has to be made
   jointly for the three steps (slack relation, valid root split, leaves).
+
+## 9. The slack lemma for all matroids (2026-11-12)
+
+Scripts: `slack_allmatroids.py`, `slack_allmatroids_check.py`, `slack_allmatroids_validate.py`,
+`slack_blocked.py`, `slack_total_support.py`; numbers in `pairsplit_result.txt`.
+
+**Status.** The slack lemma of Section 8 is now a verified finite statement about all matroids,
+not only about matrices over small fields. The verification is an exhaustive enumeration of the
+rank-4 matroids on 8 elements (plain search, no SAT solver). It is not a hand proof; the
+reductions below are proved and say what a hand proof still has to do.
+
+### Reformulation
+
+Let `N` be a matroid on `W ⊔ W'` and `N'` a matroid on `W' ⊔ W`, of rank 4, with `W` and `W'`
+bases of both, and let `T`, `T'` be their pair-split relations. The 2-cycle closes iff some
+`Q`, `Q'` have `Q ∪ (W' - Q')` a basis of `N` and `Q' ∪ (W - Q)` a basis of `N'`. The second set
+is the complement of the first, so:
+
+> the 2-cycle closes iff `N` and the dual of `N'` have a common basis that meets `W` in exactly
+> two elements.
+
+Call two matroids `M_1`, `M_2` on `W ⊔ W'` (both with bases `W`, `W'`) **blocked** if they have
+no such common basis. The transpose of a pair-split relation is the relation of the dual
+matroid, so the family of relations is closed under transposition, and
+
+* `M` is tight iff it is blocked against a rigid matroid (`W'` parallel to `W` along a
+  bijection `β`);
+* the slack lemma for 2-cycles says: **if `M_1` and `M_2` are blocked, both are tight.**
+
+### What the enumeration shows
+
+`slack_allmatroids.py` lists every matroid of rank 4 on `W ⊔ W'` in which `W` and `W'` are
+bases: 5,828,710 labelled matroids (574,215 after fixing the exchange graph between `W` and
+`W'` up to relabelling). They have 618,214 distinct relations, in 1,695 classes up to
+relabelling `W` and `W'`; 43 classes are tight. The matrices over `F_2`, `F_3`, `F_5`, `F_7` of
+Section 8 gave 1,664 classes and 36 tight ones; the other 31 classes (7 of them tight) were not
+seen in those samples and belong to other fields or to non-representable matroids.
+
+* **(S) In every blocked pair, both matroids contain a bijection**: there is `π : W → W'` with
+  `(W - P) ∪ π(P)` a basis for all six pairs `P`. The other matroid is then blocked against the
+  rigid matroid of `π`, hence tight. So the slack lemma holds for 2-cycles in all matroids.
+  The 41 classes that contain no bijection are slack and are blocked against nothing.
+* **Closure.** The composition of two relations is again the relation of a matroid (checked for
+  all pairs of classes and all relabellings of the middle block). Hence a cycle of any length
+  whose composite avoids the diagonal is a blocked pair `(T_0, (T_1 ⋯ T_{k-1})ᵀ)`, and the slack
+  lemma holds for cycles of every length in every matroid: **a cycle of pair-split relations
+  that contains one slack relation closes.**
+* A class is tight iff it is blocked against something (43 classes either way), and every
+  tight class contains a bijection.
+
+Checks of the enumeration (`slack_allmatroids_validate.py`): it contains every relation of
+`GL_4(F_2)` and `GL_4(F_3)` and of 6,000,000 sampled matrices over each of `F_5`, `F_7`, `F_11`;
+and its number of sparse paving matroids, 3,200,452, equals the number of independent sets of
+the Johnson graph `J(8, 4)` avoiding `W` and `W'`, counted by a separate recursion. Every
+matroid found is checked against the basis exchange axiom, not only against the 3-term
+condition used for pruning.
+
+### Two reductions towards a hand proof (proved)
+
+**Rank criterion.** For a 2-set `S ⊆ W` the common bases of `M_1`, `M_2` containing `S` and
+meeting `W` in `S` are the common bases of the rank-2 matroids `M_1 / S` and `M_2 / S`
+restricted to `W'`. Two matroids of rank 2 on the same set have no common basis iff some `X`
+has `r_1(X) + r_2(Xᶜ) ≤ 1` (matroid intersection). One of the two ranks is then 0, and `X` can
+be enlarged to all of `cl_1(S) ∩ W'`. So `M_1`, `M_2` are blocked iff for every 2-set `S ⊆ W`
+
+    r_2(S ∪ (W' - cl_1 S)) ≤ 3    or    r_1(S ∪ (W' - cl_2 S)) ≤ 3.
+
+For matrices `A_1`, `A_2` (rows `W`, columns `W'`, `M_k = [I | A_k]`), with `P = W - S` and
+`supp_k P` the columns in which the rows `P` of `A_k` are not both zero:
+
+    rank A_2[P, supp_1 P] ≤ 1    or    rank A_1[P, supp_2 P] ≤ 1        for every pair of rows P.
+
+(`slack_blocked.py q star n` tests this on random pairs; no disagreement over `F_2`, `F_3`,
+`F_7`.) A transversal `π` of the support of `A_2` handles every pair of the second kind:
+`π P ⊆ supp_2 P`, so `det A_1[P, π P] = 0`. For a pair of the first kind it fails only when
+`A_2[P, π P]` is a singular `2 × 2` block without zeros. Over `F_2` every transversal of `A_2`
+blocks `A_1`; over `F_3` this fails for 24 of 215,520 blocked pairs, although some bijection
+always works.
+
+**Degeneration to total support.** Let `A⁰` be `A` with every entry deleted that lies on no
+nonzero transversal. There are integer weights with `u_i + v_j ≥ 0` on the support of `A` and
+equality exactly on the support of `A⁰` (a strictly complementary dual solution of the
+assignment problem). Then `diag(t^u) · A · diag(t^v)` is polynomial in `t`, equals `A⁰` at
+`t = 0`, and its minors are monomial multiples of those of `A`. So `det A⁰ = det A`, and every
+`2 × 2` minor that vanishes on `A` vanishes on `A⁰`. Consequences: if `(A_1, A_2)` is blocked,
+so is `(A_1⁰, A_2⁰)`; and a bijection contained in `A⁰` is contained in `A`. **So (S), for
+matrices over any field, follows from (S) for pairs of matrices of total support**, that is,
+direct sums of fully indecomposable blocks.
+
+**What is left for a hand proof.** A classification of the blocked pairs of total support. The
+enumeration gives it for all matroids (`slack_total_support.py`; a matroid has total support if
+every edge of its exchange graph between `W` and `W'` lies in a perfect matching): there are
+1,671 such pairs (the exchange graph of `M_1` in a fixed normal form), and their exchange graphs
+form 8 pairs up to symmetry, the same 8 that occur over `F_3` (over `F_2` only the first two). Writing a graph by
+the sizes of its fully indecomposable blocks:
+
+| `M_1` | `M_2` |
+|---|---|
+| `1+1+1+1` (rigid) | rigid, differing by a 3-cycle |
+| rigid | rigid, differing by a 4-cycle |
+| rigid | `2+1+1` |
+| rigid | `3+1`, the `3 × 3` block with one zero |
+| rigid | `4`, all sixteen exchanges valid |
+| `2+1+1` | `2+1+1` (two relative positions) |
+| `2+1+1` | `3+1`, the `3 × 3` block with one zero |
+
+In particular a matroid of total support with two `2 × 2` blocks is blocked against nothing, and
+one with a block of size 3 or 4 only against a rigid matroid or (size 3) one of shape `2+1+1`.
+A hand proof of (S) is therefore: the two reductions above, the exclusion of every other pair
+of shapes, and a bijection exhibited in each of the eight. A further tool for the exclusion: for
+a generic diagonal `D` the entries of `A_1 D A_2ᵀ` are linear forms `ℓ_ij` in the `d_k`, the pair
+is blocked iff `ℓ_ii ℓ_jj = ℓ_ij ℓ_ji` for all `i ≠ j`, and unique factorization leaves three cases
+for each pair: both sides vanish, or `{ℓ_ii, ℓ_jj}` and `{ℓ_ij, ℓ_ji}` agree up to scalars in one
+of two ways.
+
+### What this changes
+
+* Target 1(a) of Section 7 is settled as a fact: the split step of the tree `1 + (2 + 2)` is
+  decided by the tight classes alone (43 of 1,695), for representable and non-representable
+  matroids alike. What is missing is a proof that a person can read, and for a formalization
+  either that proof or a certified version of the enumeration.
+* A failing cycle is a cycle of tight relations, each containing a bijection. Tightness is
+  parallel structure in a contraction `M / x_{i+1}`, so targets 1(b) and 1(c) are unchanged:
+  the root split still has to be chosen, jointly for the slack relation and the leaves.

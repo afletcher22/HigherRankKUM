@@ -106,3 +106,76 @@ g=3, F_5: 487 relations, 27 classes, 18 slack, 9 tight; semigroup 169 classes; s
 
 # 4-blocks, full orderings, F_2 (slack_orders.minors with g = 4)
 20160 distinct relations, 0 meet all 24 bijections; pairs (T, P) with no closed 2-walk: 9221832 of 20160^2
+
+# ---- Section 9 (2026-11-12): the slack lemma for all matroids ----
+
+# slack_allmatroids.py slack_allmatroids_relations.npy
+level-1 graphs with a perfect matching, up to S4 x S4: 149
+graph 148/149 (ffff): 434660 matroids, total 574215, relations 160950
+TOTAL matroids (level-1 graph up to symmetry): 574215; passing octahedra only: 574216; distinct relations: 160950
+
+# slack_allmatroids_check.py slack_allmatroids_relations.npy closure
+relations found: 160950; classes up to S4 x S4: 1695; labelled relations: 618214
+tight classes: 43, slack: 1652; classes containing a bijection: 1654; tight classes containing none: 0
+  blocked pairs (class of M1, labelled M2)      1577
+  ... with M1 slack                             0
+  ... with M1 containing no bijection           0
+  ... with M2 containing no bijection           0
+classes blocked against something: 43 (tight classes: 43)
+products a.sigma.b: 434893 (distinct for fixed a), not among the matroid relations: 0
+
+# slack_blocked.py 2
+F_2: 20160 relations, 6408 tight; tight relations containing no bijection: 0
+  blocked pairs of relations                    154128
+  ... with a slack member                       0
+  ... with a member containing no bijection     0
+  blocked pairs, both of total support          336
+support patterns of the blocked pairs of total support, up to symmetry: 2
+  A1: 0001 0010 0100 1000   A2: 0001 0100 1000 0010
+  A1: 0001 0010 0100 1000   A2: 0010 0100 1000 0001
+
+# slack_blocked.py q star 40000
+F_2: 40000 pairs, 1421 blocked, rank criterion disagrees on 0
+F_3: 40000 pairs, 408 blocked, rank criterion disagrees on 0
+F_7: 40000 pairs, 65 blocked, rank criterion disagrees on 0
+
+# transversal rule (scratch run, asymmetric form: A blocked against every transversal of B)
+F_2: 948 of 948 blocked pairs (class of A, B); F_3: 215496 of 215520 (relation of A, relation and transversal set of B)
+
+# slack_blocked.py 3
+F_3: 182934 relations, 11238 tight; tight relations containing no bijection: 0
+  blocked pairs of relations                    215520
+  ... with a slack member                       0
+  ... with a member containing no bijection     0
+  blocked pairs, both of total support          2976
+support patterns of the blocked pairs of total support, up to symmetry: 8
+  A1: 0001 0010 0100 1000   A2: 0001 0100 1000 0010
+  A1: 0001 0010 0100 1000   A2: 0010 0100 1000 0001
+  A1: 0001 0010 0100 1000   A2: 0010 0100 1001 1001
+  A1: 0001 0010 1100 1100   A2: 0010 0100 1001 1001
+  A1: 0001 0010 1100 1100   A2: 0010 1100 0001 1100
+  A1: 0001 0010 0100 1000   A2: 0010 1100 1101 1101
+  A1: 0001 0010 1100 1100   A2: 0010 1100 1101 1101
+  A1: 0001 0010 0100 1000   A2: 1111 1111 1111 1111
+
+# slack_allmatroids_validate.py slack_allmatroids_relations.npy
+classes 1695, labelled 618214
+F_2: 20160 relations, 0 not among the matroid relations
+F_3: 182934 relations, 0 not among the matroid relations
+F_5 sample: 195523 relations, 0 not among the matroid relations
+F_7 sample: 201224 relations, 0 not among the matroid relations
+F_11 sample: 178825 relations, 0 not among the matroid relations
+labelled matroids with W, W' bases: 5828710; sparse paving among them: 3200452; independent sets of J(8,4): 3200452
+
+# slack_total_support.py
+matroids of total support (exchange graph up to symmetry): 158667 relations
+labelled relations of total support: 427550
+blocked pairs of total support: 1671; with a member containing no bijection: 0; pairs of exchange graphs up to symmetry: 8
+  M1: 0001 0010 0100 1000   M2: 0001 0100 1000 0010
+  M1: 0001 0010 0100 1000   M2: 0010 0100 1000 0001
+  M1: 0001 0010 0100 1000   M2: 0010 0100 1001 1001
+  M1: 0001 0010 1100 1100   M2: 0010 0100 1001 1001
+  M1: 0001 0010 1100 1100   M2: 0010 1100 0001 1100
+  M1: 0001 0010 0100 1000   M2: 0010 1100 1101 1101
+  M1: 0001 0010 1100 1100   M2: 0010 1100 1101 1101
+  M1: 0001 0010 0100 1000   M2: 1111 1111 1111 1111
